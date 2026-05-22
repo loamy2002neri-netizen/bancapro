@@ -1182,6 +1182,47 @@
   .upload-area:hover { border-color:var(--accent); color:var(--text-secondary); background:rgba(99,102,241,0.04); }
   .upload-icon { font-size:28px; margin-bottom:8px; display:block; }
 
+/* ═══════════════════════════════════════════════
+   ADAPTAÇÃO MOBILE — iOS & Android
+   ═══════════════════════════════════════════════ */
+
+/* Configurações: 2 colunas no desktop, 1 no celular */
+.settings-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+
+/* Remove o flash cinza ao tocar e impede o ajuste de fonte do sistema */
+* { -webkit-tap-highlight-color: rgba(0,0,0,0); }
+html { -webkit-text-size-adjust:100%; text-size-adjust:100%; }
+
+/* Respeita a área segura (notch / barra inferior) no iPhone */
+@supports (padding: max(0px)) {
+  .topbar      { padding-left: max(16px, env(safe-area-inset-left)); padding-right: max(16px, env(safe-area-inset-right)); }
+  .sidebar     { padding-bottom: env(safe-area-inset-bottom); }
+  .auth-screen { padding-left: max(16px, env(safe-area-inset-left)); padding-right: max(16px, env(safe-area-inset-right)); padding-bottom: env(safe-area-inset-bottom); }
+  .toast-container { right: max(24px, env(safe-area-inset-right)); bottom: max(24px, env(safe-area-inset-bottom)); }
+}
+
+/* Usa a altura real da tela no mobile (evita "pulo" com a barra do navegador) */
+@supports (height: 100dvh) {
+  .auth-screen { min-height: 100dvh; }
+}
+
+@media (max-width:768px) {
+  /* Configurações empilha em 1 coluna */
+  .settings-grid { grid-template-columns:1fr; }
+
+  /* Campos com >=16px evitam o ZOOM automático do iOS ao focar */
+  .form-input, .form-select, textarea,
+  input[type="text"], input[type="email"], input[type="password"],
+  input[type="number"], input[type="date"] { font-size:16px; }
+
+  /* Rolagem com inércia (suave) no iOS */
+  .main, .sidebar, .modal, .notif-panel { -webkit-overflow-scrolling: touch; }
+
+  /* Alvos de toque confortáveis (mín. ~44px) */
+  .btn-primary, .icon-btn, .btn-ghost, .nav-item, .period-tab { min-height:44px; }
+  .auth-card { padding:32px 24px; }
+}
+
   /* ── EVO FILTER BUTTONS ── */
   .evo-btn {
     padding:5px 12px; border-radius:6px; border:none; background:transparent;
