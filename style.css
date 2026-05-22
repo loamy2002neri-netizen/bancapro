@@ -1218,6 +1218,23 @@
   .upload-area:hover { border-color:var(--accent); color:var(--text-secondary); background:rgba(99,102,241,0.04); }
   .upload-icon { font-size:28px; margin-bottom:8px; display:block; }
 
+/* ── PAYWALL (bloqueio por assinatura) ── */
+.paywall-overlay {
+  position: fixed; inset: 0; z-index: 9999;
+  background: rgba(6,13,24,0.94);
+  display: flex; align-items: center; justify-content: center; padding: 20px;
+}
+.paywall-card {
+  background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px;
+  padding: 34px 28px; max-width: 380px; width: 100%; text-align: center; box-shadow: var(--shadow);
+}
+.paywall-emoji { font-size: 40px; margin-bottom: 6px; }
+.paywall-title { font-size: 21px; font-weight: 800; color: var(--text-primary); margin-bottom: 8px; }
+.paywall-sub { font-size: 14px; color: var(--text-secondary); line-height: 1.55; margin-bottom: 22px; }
+.paywall-foot { margin-top: 16px; font-size: 13px; color: var(--text-muted); }
+.paywall-foot a { color: var(--accent); cursor: pointer; text-decoration: none; }
+.paywall-foot a:hover { text-decoration: underline; }
+
 /* ═══════════════════════════════════════════════
    ADAPTAÇÃO MOBILE — iOS & Android
    ═══════════════════════════════════════════════ */

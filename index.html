@@ -996,6 +996,18 @@
     </div><!-- /page-content -->
   </main>
 </div><!-- /app -->
+<!-- PAYWALL — bloqueio para quem não é assinante (trial expirado) -->
+<div id="paywallOverlay" class="paywall-overlay" style="display:none">
+  <div class="paywall-card">
+    <div class="paywall-emoji">⏳</div>
+    <div class="paywall-title">Seu acesso expirou</div>
+    <div class="paywall-sub">Seu período grátis terminou. Assine o BancaPRO para continuar usando o painel completo.</div>
+    <button class="btn-primary" style="margin-bottom:10px" onclick="subscribeNow()">Assinar Premium · R$ 24,90/mês</button>
+    <button class="btn-primary" onclick="subscribeNow('anual')">Assinar Anual · R$ 199/ano</button>
+    <div class="paywall-foot">Já assinou? <a onclick="location.reload()">Atualizar</a> &nbsp;·&nbsp; <a onclick="logout()">Sair</a></div>
+  </div>
+</div>
+
 <script src="config.js" defer></script>
 <script src="script.js" defer></script>
 </body>

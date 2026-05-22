@@ -7,6 +7,9 @@ _serve.ps1
 # Documentação de setup (não faz parte do site)
 supabase_setup.sql
 
+# Edge Functions do Supabase (vivem no painel, têm segredo — não publicar)
+supabase/
+
 # Sistema
 Thumbs.db
 .DS_Store

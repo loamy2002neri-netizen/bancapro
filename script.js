@@ -99,6 +99,7 @@ let notifOpen = false;
 // ══════════════════════════════════════════════
 let sbClient = null;
 let currentUserId = null;
+let currentAuthUser = null;
 
 // Cria (uma vez) o cliente Supabase a partir das chaves em config.js
 function getSb() {
@@ -224,7 +225,42 @@ async function enterApp(user) {
   recomputeAll();
   loadStoredBranding();
   setTimeout(() => showToast('Bem-vindo de volta! 👋','success'), 400);
+  // Bloqueio por assinatura (não trava modo local nem o dono nem o trial)
+  currentAuthUser = user;
+  try {
+    const allowed = await checkAccess(user);
+    if (allowed) hidePaywall(); else showPaywall();
+  } catch(e) { hidePaywall(); }
 }
+
+// ─── Controle de acesso por assinatura ───
+const OWNER_EMAILS = ['loamy2002neri@gmail.com', 'loamy69zzz@gmail.com']; // nunca bloqueado (dono)
+
+async function hasActiveSubscription(email) {
+  const sb = getSb();
+  if (!sb || !email) return false;
+  try {
+    const { data, error } = await sb.from('subscribers').select('status').eq('email', email.toLowerCase()).maybeSingle();
+    if (error) return false;
+    return !!(data && data.status === 'active');
+  } catch(e) { return false; }
+}
+
+async function checkAccess(user) {
+  if (!getSb()) return true;                 // modo local: sem bloqueio
+  const email = (user && user.email || '').toLowerCase();
+  if (OWNER_EMAILS.includes(email)) return true;
+  if (await hasActiveSubscription(email)) return true;
+  // Trial: 7 dias desde a criação da conta (não dá pra burlar limpando o navegador)
+  try {
+    const created = user && user.created_at ? new Date(user.created_at).getTime() : 0;
+    if (created && (Date.now() - created) < TRIAL_DAYS * 86400000) return true;
+  } catch(e) {}
+  return false;
+}
+
+function showPaywall() { const el = document.getElementById('paywallOverlay'); if (el) el.style.display = 'flex'; }
+function hidePaywall() { const el = document.getElementById('paywallOverlay'); if (el) el.style.display = 'none'; }
 
 async function doLogin() {
   const email = (document.getElementById('loginEmail').value || '').trim().toLowerCase();
