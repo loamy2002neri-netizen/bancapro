@@ -2124,6 +2124,23 @@ function applyCustomColor() {
   document.documentElement.style.setProperty('--accent2', c);
   showToast('Cor personalizada aplicada!','success');
 }
+// Atalho de tema na topbar (alterna claro/escuro)
+function toggleTheme() {
+  let cur = 'dark';
+  try { cur = localStorage.getItem('bancapro-theme') || 'dark'; } catch(e){}
+  const next = cur === 'light' ? 'dark' : 'light';
+  setTheme(next);
+  updateThemeBtn(next);
+}
+function updateThemeBtn(theme) {
+  if (!theme) { try { theme = localStorage.getItem('bancapro-theme') || 'dark'; } catch(e){ theme = 'dark'; } }
+  const btn = document.getElementById('themeBtn');
+  if (btn) {
+    btn.textContent = theme === 'light' ? '🌙' : '☀️';
+    btn.title = theme === 'light' ? 'Mudar para escuro' : 'Mudar para claro';
+  }
+}
+
 function setTheme(theme, el) {
   document.querySelectorAll('.theme-btn').forEach(b => b.classList.remove('active'));
   if(el) el.classList.add('active');
@@ -3232,6 +3249,8 @@ checkMQ(mq);
 
 // Carrega logo/favicon salvos antes mesmo do login (pra atualizar a tela de login)
 loadStoredBranding();
+// Deixa o ícone do botão de tema na topbar coerente com o tema atual
+updateThemeBtn();
 
 // ══════════════════════════════════════════════
 //  ACESSIBILIDADE
