@@ -282,6 +282,63 @@ async function handleReturnFromCheckout() {
   showToast('Recebemos seu pagamento. Se não liberar, clique em "Atualizar" na tela de assinatura.','info');
 }
 
+// Preenche o card "Gerenciar Assinatura" nas Configurações
+async function renderSubscriptionCard() {
+  const el = document.getElementById('subscriptionCard');
+  if (!el) return;
+  const user = currentAuthUser;
+  const sb = getSb();
+  let planName = 'Trial Gratuito', isActive = false, isTrial = false, validUntil = null;
+
+  if (sb && user) {
+    try {
+      const { data } = await sb.from('subscribers').select('status,plan,updated_at')
+        .eq('email', (user.email || '').toLowerCase()).maybeSingle();
+      if (data && data.status === 'active') {
+        isActive = true;
+        planName = data.plan || 'Premium';
+        const isAnnual = /anual|annual|year|ano/i.test(planName);
+        const base = data.updated_at ? new Date(data.updated_at) : new Date();
+        validUntil = new Date(base.getTime() + (isAnnual ? 365 : 30) * 86400000);
+      }
+    } catch(e) {}
+  }
+  if (!isActive && user && user.created_at) {
+    const end = new Date(new Date(user.created_at).getTime() + TRIAL_DAYS * 86400000);
+    if (end.getTime() > Date.now()) { isTrial = true; validUntil = end; planName = 'Trial Gratuito'; }
+  }
+  // Dono: sempre ativo
+  if (!isActive && !isTrial && user && typeof OWNER_EMAILS !== 'undefined' && OWNER_EMAILS.includes((user.email||'').toLowerCase())) {
+    isActive = true; planName = 'Acesso de Dono';
+  }
+
+  const daysLeft = validUntil ? Math.max(0, Math.ceil((validUntil.getTime() - Date.now()) / 86400000)) : null;
+  const validStr = validUntil ? validUntil.toLocaleDateString('pt-BR') : '—';
+
+  if (isActive || isTrial) {
+    const dotColor = isActive ? 'var(--green)' : 'var(--accent)';
+    const statusTxt = isActive ? 'Ativo' : 'Trial ativo';
+    const dl = daysLeft != null ? `${daysLeft} ${daysLeft === 1 ? 'dia' : 'dias'}` : '—';
+    el.innerHTML = `
+      <div class="sub-plan-name">${escapeHtml(planName)}</div>
+      <div class="sub-status-line"><span class="sub-dot" style="background:${dotColor}"></span><span style="color:${dotColor};font-weight:600">${statusTxt}</span></div>
+      <div class="sub-grid">
+        <div><div class="sub-k">Status</div><div class="sub-v">${isActive ? 'Active' : 'Trial'}</div></div>
+        <div><div class="sub-k">Válido até</div><div class="sub-v">${validStr}</div></div>
+        <div><div class="sub-k">Dias restantes</div><div class="sub-v" style="color:${daysLeft != null && daysLeft <= 3 ? 'var(--red)' : 'var(--text-primary)'}">${dl}</div></div>
+      </div>
+      <button class="${isTrial ? 'btn-primary' : 'btn-ghost'}" style="margin-top:16px;width:auto;padding:9px 18px" onclick="goTo('recharge')">${isTrial ? 'Assinar agora →' : 'Ver planos / gerenciar'}</button>
+    `;
+  } else {
+    el.innerHTML = `
+      <div class="sub-plan-name">Sem assinatura ativa</div>
+      <div class="sub-status-line"><span class="sub-dot" style="background:var(--red)"></span><span style="color:var(--red);font-weight:600">Inativo</span></div>
+      <p style="font-size:13px;color:var(--text-secondary);margin:10px 0 4px;line-height:1.5">Seu período acabou. Assine para liberar o painel completo.</p>
+      <button class="btn-primary" style="margin-top:8px;width:auto;padding:9px 18px" onclick="goTo('recharge')">Assinar agora →</button>
+    `;
+  }
+}
+
 async function doLogin() {
   const email = (document.getElementById('loginEmail').value || '').trim().toLowerCase();
   const password = document.getElementById('loginPassword').value || '';
@@ -412,6 +469,7 @@ function goTo(section, el) {
   if(section === 'compare') setTimeout(initCompareChart, 100);
   if(section === 'methods') setTimeout(initMethodEvolution, 100);
   if(section === 'recharge') setTimeout(updateTrialBanner, 50);
+  if(section === 'settings') setTimeout(renderSubscriptionCard, 50);
 }
 
 function setPeriod(p, el) {

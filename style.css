@@ -1218,6 +1218,15 @@
   .upload-area:hover { border-color:var(--accent); color:var(--text-secondary); background:rgba(99,102,241,0.04); }
   .upload-icon { font-size:28px; margin-bottom:8px; display:block; }
 
+/* ── CARD GERENCIAR ASSINATURA ── */
+.sub-plan-name { font-size:20px; font-weight:800; color:var(--text-primary); margin-bottom:6px; }
+.sub-status-line { display:flex; align-items:center; gap:7px; font-size:13px; margin-bottom:16px; }
+.sub-dot { width:9px; height:9px; border-radius:50%; display:inline-block; }
+.sub-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; }
+@media (max-width:480px) { .sub-grid { grid-template-columns:1fr 1fr; } }
+.sub-k { font-size:11px; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.04em; margin-bottom:3px; }
+.sub-v { font-size:15px; font-weight:700; color:var(--text-primary); }
+
 /* ── PAYWALL (bloqueio por assinatura) ── */
 .paywall-overlay {
   position: fixed; inset: 0; z-index: 9999;
