@@ -231,6 +231,10 @@ async function enterApp(user) {
     const allowed = await checkAccess(user);
     if (allowed) hidePaywall(); else showPaywall();
   } catch(e) { hidePaywall(); }
+  // Voltou do checkout? mostra "obrigado" e reconfere a assinatura
+  try {
+    if (new URLSearchParams(location.search).get('assinatura') === 'ok') handleReturnFromCheckout();
+  } catch(e){}
 }
 
 // ─── Controle de acesso por assinatura ───
@@ -261,6 +265,22 @@ async function checkAccess(user) {
 
 function showPaywall() { const el = document.getElementById('paywallOverlay'); if (el) el.style.display = 'flex'; }
 function hidePaywall() { const el = document.getElementById('paywallOverlay'); if (el) el.style.display = 'none'; }
+
+// Ao voltar do checkout (URL com ?assinatura=ok): agradece e reconfere a assinatura
+// algumas vezes (o webhook do Kirvano pode levar alguns segundos pra chegar).
+async function handleReturnFromCheckout() {
+  try { history.replaceState(null, '', location.pathname); } catch(e){}
+  showToast('Pagamento recebido! Ativando seu acesso… 🎉','success');
+  for (let i = 0; i < 8; i++) {
+    await new Promise(r => setTimeout(r, 2500));
+    if (currentAuthUser && await checkAccess(currentAuthUser)) {
+      hidePaywall();
+      showToast('Assinatura ativa! Acesso liberado ✅','success');
+      return;
+    }
+  }
+  showToast('Recebemos seu pagamento. Se não liberar, clique em "Atualizar" na tela de assinatura.','info');
+}
 
 async function doLogin() {
   const email = (document.getElementById('loginEmail').value || '').trim().toLowerCase();
@@ -1802,8 +1822,12 @@ function updateTrialBanner() {
 }
 
 function subscribeNow(plan) {
-  const url = (plan === 'anual') ? window.CHECKOUT_ANUAL : window.CHECKOUT_MENSAL;
+  let url = (plan === 'anual') ? window.CHECKOUT_ANUAL : window.CHECKOUT_MENSAL;
   if (url && /^https?:\/\//.test(url) && String(url).indexOf('COLE_') !== 0) {
+    // Preenche o email do usuário no checkout, pra assinatura casar com a conta
+    let email = (currentAuthUser && currentAuthUser.email) || '';
+    if (!email) { try { email = localStorage.getItem('bancapro-user-email') || ''; } catch(e){} }
+    if (email) url += (url.indexOf('?') === -1 ? '?' : '&') + 'email=' + encodeURIComponent(email);
     showToast('Abrindo o checkout seguro…','info');
     window.location.href = url;
   } else {
