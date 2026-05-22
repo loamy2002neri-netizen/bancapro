@@ -4,6 +4,9 @@ _serve.ps1
 # Config interna do Claude Code
 .claude/
 
+# Documentação de setup (não faz parte do site)
+supabase_setup.sql
+
 # Sistema
 Thumbs.db
 .DS_Store

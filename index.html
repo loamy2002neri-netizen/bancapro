@@ -7,6 +7,7 @@
 <title>BancaPRO — Gestão Financeira</title>
 <link rel="icon" type="image/svg+xml" id="appFavicon" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%236366f1'/><text x='50' y='66' font-family='Arial,sans-serif' font-size='62' font-weight='800' fill='%23fff' text-anchor='middle'>B</text></svg>"/>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <link rel="stylesheet" href="style.css"/>
 </head>
 <body>
@@ -23,11 +24,11 @@
       <div class="auth-sub">Entre na sua conta para continuar</div>
       <div class="form-group">
         <label class="form-label">E-mail</label>
-        <input class="form-input" type="email" placeholder="seu@email.com" value="admin@bancapro.com"/>
+        <input class="form-input" type="email" id="loginEmail" placeholder="seu@email.com" autocomplete="email"/>
       </div>
       <div class="form-group">
         <label class="form-label">Senha</label>
-        <input class="form-input" type="password" placeholder="••••••••" value="123456"/>
+        <input class="form-input" type="password" id="loginPassword" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()"/>
       </div>
       <button class="btn-primary" onclick="doLogin()">Entrar na plataforma →</button>
       <div class="auth-links">
@@ -38,17 +39,17 @@
     <div id="registerForm" style="display:none">
       <div class="auth-title">Criar conta</div>
       <div class="auth-sub">Comece a controlar suas bancas hoje</div>
-      <div class="form-group"><label class="form-label">Nome</label><input class="form-input" type="text" placeholder="Seu nome"/></div>
-      <div class="form-group"><label class="form-label">E-mail</label><input class="form-input" type="email" placeholder="seu@email.com"/></div>
-      <div class="form-group"><label class="form-label">Senha</label><input class="form-input" type="password" placeholder="Mín. 8 caracteres"/></div>
-      <button class="btn-primary" onclick="doLogin()">Criar conta grátis →</button>
+      <div class="form-group"><label class="form-label">Nome</label><input class="form-input" type="text" id="regName" placeholder="Seu nome" autocomplete="name"/></div>
+      <div class="form-group"><label class="form-label">E-mail</label><input class="form-input" type="email" id="regEmail" placeholder="seu@email.com" autocomplete="email"/></div>
+      <div class="form-group"><label class="form-label">Senha</label><input class="form-input" type="password" id="regPassword" placeholder="Mín. 6 caracteres" autocomplete="new-password" onkeydown="if(event.key==='Enter')doRegister()"/></div>
+      <button class="btn-primary" onclick="doRegister()">Criar conta grátis →</button>
       <div class="auth-links"><a onclick="showLogin()">Já tenho conta</a></div>
     </div>
     <div id="resetForm" style="display:none">
       <div class="auth-title">Recuperar senha</div>
       <div class="auth-sub">Enviaremos um link de redefinição</div>
-      <div class="form-group"><label class="form-label">E-mail</label><input class="form-input" type="email" placeholder="seu@email.com"/></div>
-      <button class="btn-primary" onclick="showToast('E-mail enviado! Verifique sua caixa de entrada.','success')">Enviar link →</button>
+      <div class="form-group"><label class="form-label">E-mail</label><input class="form-input" type="email" id="resetEmail" placeholder="seu@email.com" autocomplete="email"/></div>
+      <button class="btn-primary" onclick="doReset()">Enviar link →</button>
       <div class="auth-links"><a onclick="showLogin()">Voltar ao login</a></div>
     </div>
   </div>
@@ -963,6 +964,7 @@
     </div><!-- /page-content -->
   </main>
 </div><!-- /app -->
+<script src="config.js" defer></script>
 <script src="script.js" defer></script>
 </body>
 </html>

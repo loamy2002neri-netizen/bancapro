@@ -46,6 +46,7 @@ function persistState() {
     localStorage.setItem(STORAGE_KEYS.methodsCompare, JSON.stringify(methodsCompare));
     localStorage.setItem(STORAGE_KEYS.methodsCatalog, JSON.stringify(METHODS_CATALOG));
   } catch(e) { /* quota / modo anônimo / etc — ignora */ }
+  if (typeof schedulePush === 'function') schedulePush();
 }
 
 function loadPersistedState() {
@@ -94,11 +95,125 @@ let currentPeriod = 'month';
 let notifOpen = false;
 
 // ══════════════════════════════════════════════
-//  AUTH
+//  AUTH + BANCO DE DADOS (Supabase)
 // ══════════════════════════════════════════════
-function doLogin() {
+let sbClient = null;
+let currentUserId = null;
+
+// Cria (uma vez) o cliente Supabase a partir das chaves em config.js
+function getSb() {
+  if (sbClient) return sbClient;
+  const url = window.SUPABASE_URL, key = window.SUPABASE_ANON_KEY;
+  if (!window.supabase || !url || !key || String(url).indexOf('COLE_') === 0) return null;
+  sbClient = window.supabase.createClient(url, key);
+  return sbClient;
+}
+
+// Chaves do localStorage que pertencem a cada usuário (sincronizadas no banco)
+const SYNC_KEYS = [
+  'bancapro-transactions',
+  'bancapro-goals',
+  'bancapro-methods-compare',
+  'bancapro-methods-catalog',
+  'bancapro-accounts',
+  'bancapro-user-name',
+  'bancapro-user-email',
+  'bancapro-logo',
+  'bancapro-favicon'
+];
+
+function clearUserLocal() {
+  SYNC_KEYS.forEach(k => { try { localStorage.removeItem(k); } catch(e){} });
+}
+
+// ─── Backend LOCAL (usado quando o Supabase não está configurado) ───
+// Guarda contas no navegador com senha protegida por hash SHA-256 + salt.
+const LOCAL_USERS_KEY = 'bancapro-users';
+const LOCAL_SESSION_KEY = 'bancapro-session';
+function localGetUsers() {
+  try { return JSON.parse(localStorage.getItem(LOCAL_USERS_KEY) || '[]'); } catch(e) { return []; }
+}
+function localSetUsers(list) {
+  try { localStorage.setItem(LOCAL_USERS_KEY, JSON.stringify(list)); } catch(e){}
+}
+function randomId() {
+  if (crypto.randomUUID) return crypto.randomUUID();
+  return 'u' + Date.now().toString(16) + Math.random().toString(16).slice(2);
+}
+async function hashPassword(password, salt) {
+  const enc = new TextEncoder().encode(salt + ':' + password);
+  const buf = await crypto.subtle.digest('SHA-256', enc);
+  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
+}
+
+// Aplica um blob de dados (vindo da nuvem ou do navegador) nas chaves ativas
+function applyBlob(blob) {
+  if (!blob || typeof blob !== 'object') return;
+  Object.keys(blob).forEach(k => {
+    if (SYNC_KEYS.indexOf(k) !== -1 && blob[k] != null) {
+      try { localStorage.setItem(k, blob[k]); } catch(e){}
+    }
+  });
+}
+
+// Baixa o "banco" do usuário e popula o localStorage para os loaders existentes lerem
+async function pullUserData(userId) {
+  clearUserLocal();
+  const sb = getSb();
+  if (sb) {
+    try {
+      const { data, error } = await sb.from('user_data').select('data').eq('user_id', userId).maybeSingle();
+      if (error) { console.warn('pullUserData', error); return; }
+      applyBlob(data && data.data ? data.data : null);
+    } catch(e) { console.warn('pullUserData', e); }
+  } else {
+    try {
+      const raw = localStorage.getItem('bancapro-userdata-' + userId);
+      if (raw) applyBlob(JSON.parse(raw));
+    } catch(e){}
+  }
+}
+
+// Salva o "banco" do usuário (debounced — chamado por persistState/persistAccounts/saveProfile)
+let _pushTimer = null;
+function schedulePush() {
+  if (!currentUserId) return;
+  clearTimeout(_pushTimer);
+  _pushTimer = setTimeout(pushUserData, 800);
+}
+async function pushUserData() {
+  if (!currentUserId) return;
+  const blob = {};
+  SYNC_KEYS.forEach(k => {
+    try { const v = localStorage.getItem(k); if (v != null) blob[k] = v; } catch(e){}
+  });
+  const sb = getSb();
+  if (sb) {
+    try {
+      const { error } = await sb.from('user_data')
+        .upsert({ user_id: currentUserId, data: blob, updated_at: new Date().toISOString() }, { onConflict: 'user_id' });
+      if (error) console.warn('pushUserData', error);
+    } catch(e) { console.warn('pushUserData', e); }
+  } else {
+    try { localStorage.setItem('bancapro-userdata-' + currentUserId, JSON.stringify(blob)); } catch(e){}
+  }
+}
+
+// Entra no app depois de autenticado
+async function enterApp(user) {
+  currentUserId = user.id;
   document.getElementById('authScreen').style.display = 'none';
   document.getElementById('appLayout').style.display = 'flex';
+  await pullUserData(user.id);
+  try {
+    if (user.email && !localStorage.getItem('bancapro-user-email')) {
+      localStorage.setItem('bancapro-user-email', user.email);
+    }
+    const metaName = user.user_metadata && user.user_metadata.name;
+    if (metaName && !localStorage.getItem('bancapro-user-name')) {
+      localStorage.setItem('bancapro-user-name', metaName);
+    }
+  } catch(e){}
   loadPersistedState();
   loadAccounts();
   loadProfile();
@@ -108,15 +223,117 @@ function doLogin() {
   renderAccounts();
   recomputeAll();
   loadStoredBranding();
-  setTimeout(() => showToast('Bem-vindo de volta! 👋','success'), 500);
+  setTimeout(() => showToast('Bem-vindo de volta! 👋','success'), 400);
 }
-function logout() {
-  document.getElementById('appLayout').style.display = 'none';
-  document.getElementById('authScreen').style.display = 'flex';
+
+async function doLogin() {
+  const email = (document.getElementById('loginEmail').value || '').trim().toLowerCase();
+  const password = document.getElementById('loginPassword').value || '';
+  if (!email || !password) { showToast('Preencha email e senha.','error'); return; }
+  const sb = getSb();
+  if (sb) {
+    showToast('Entrando…','info');
+    try {
+      const { data, error } = await sb.auth.signInWithPassword({ email, password });
+      if (error) { showToast('Email ou senha incorretos.','error'); return; }
+      await enterApp(data.user);
+    } catch(e) { showToast('Erro ao entrar. Tente novamente.','error'); }
+  } else {
+    const u = localGetUsers().find(x => x.email === email);
+    if (!u) { showToast('Email ou senha incorretos.','error'); return; }
+    const h = await hashPassword(password, u.salt);
+    if (h !== u.passHash) { showToast('Email ou senha incorretos.','error'); return; }
+    try { localStorage.setItem(LOCAL_SESSION_KEY, u.id); } catch(e){}
+    await enterApp({ id: u.id, email: u.email, user_metadata: { name: u.name } });
+  }
 }
+
+async function doRegister() {
+  const name = (document.getElementById('regName').value || '').trim();
+  const email = (document.getElementById('regEmail').value || '').trim().toLowerCase();
+  const password = document.getElementById('regPassword').value || '';
+  if (!name || !email || !password) { showToast('Preencha nome, email e senha.','error'); return; }
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { showToast('Email inválido.','error'); return; }
+  if (password.length < 6) { showToast('A senha precisa de pelo menos 6 caracteres.','error'); return; }
+  const sb = getSb();
+  if (sb) {
+    showToast('Criando conta…','info');
+    try {
+      const { data, error } = await sb.auth.signUp({ email, password, options: { data: { name } } });
+      if (error) {
+        const m = String(error.message || '').toLowerCase();
+        if (m.includes('registered') || m.includes('already')) showToast('Esse email já tem conta. Faça login.','error');
+        else showToast('Não foi possível criar a conta: ' + (error.message || ''),'error');
+        return;
+      }
+      if (data.session && data.user) {
+        await enterApp(data.user); // confirmação de email desligada → entra direto
+      } else {
+        showToast('Conta criada! Confirme pelo link enviado ao seu email para entrar.','success');
+        showLogin();
+      }
+    } catch(e) { showToast('Erro ao criar conta. Tente novamente.','error'); }
+  } else {
+    const users = localGetUsers();
+    if (users.some(x => x.email === email)) { showToast('Esse email já tem conta. Faça login.','error'); return; }
+    const salt = randomId();
+    const passHash = await hashPassword(password, salt);
+    const id = randomId();
+    users.push({ id, name, email, salt, passHash });
+    localSetUsers(users);
+    try { localStorage.setItem(LOCAL_SESSION_KEY, id); } catch(e){}
+    showToast('Conta criada com sucesso! 🎉','success');
+    await enterApp({ id, email, user_metadata: { name } });
+  }
+}
+
+async function doReset() {
+  const email = (document.getElementById('resetEmail').value || '').trim().toLowerCase();
+  if (!email) { showToast('Digite seu email.','error'); return; }
+  const sb = getSb();
+  if (sb) {
+    try {
+      const { error } = await sb.auth.resetPasswordForEmail(email);
+      if (error) { showToast('Não foi possível enviar: ' + (error.message || ''),'error'); return; }
+      showToast('Email enviado! Verifique sua caixa de entrada.','success');
+      showLogin();
+    } catch(e) { showToast('Erro ao enviar email.','error'); }
+  } else {
+    showToast('Recuperação por email só funciona com o banco na nuvem (Supabase).','warning');
+  }
+}
+
+async function logout() {
+  const sb = getSb();
+  try { if (sb) await sb.auth.signOut(); } catch(e){}
+  try { localStorage.removeItem(LOCAL_SESSION_KEY); } catch(e){}
+  clearUserLocal();
+  currentUserId = null;
+  location.reload();
+}
+
 function showLogin() { document.getElementById('loginForm').style.display='block'; document.getElementById('registerForm').style.display='none'; document.getElementById('resetForm').style.display='none'; }
 function showRegister() { document.getElementById('loginForm').style.display='none'; document.getElementById('registerForm').style.display='block'; document.getElementById('resetForm').style.display='none'; }
 function showReset() { document.getElementById('loginForm').style.display='none'; document.getElementById('registerForm').style.display='none'; document.getElementById('resetForm').style.display='block'; }
+
+// Restaura sessão ao abrir a página (auto-login se já estiver logado)
+(async function restoreSession(){
+  const sb = getSb();
+  if (sb) {
+    try {
+      const { data } = await sb.auth.getSession();
+      if (data && data.session && data.session.user) await enterApp(data.session.user);
+    } catch(e){}
+  } else {
+    try {
+      const sid = localStorage.getItem(LOCAL_SESSION_KEY);
+      if (sid) {
+        const u = localGetUsers().find(x => x.id === sid);
+        if (u) await enterApp({ id: u.id, email: u.email, user_metadata: { name: u.name } });
+      }
+    } catch(e){}
+  }
+})();
 
 // ══════════════════════════════════════════════
 //  NAVIGATION
@@ -976,6 +1193,7 @@ let editingAccountId = null;        // id da conta sendo editada, ou null para c
 const ACCOUNTS_KEY = 'bancapro-accounts';
 function persistAccounts() {
   try { localStorage.setItem(ACCOUNTS_KEY, JSON.stringify(accounts)); } catch(e) {}
+  if (typeof schedulePush === 'function') schedulePush();
 }
 function loadAccounts() {
   try {
@@ -1667,6 +1885,7 @@ function saveProfile() {
     localStorage.setItem('bancapro-user-name', name);
     if(email) localStorage.setItem('bancapro-user-email', email);
   } catch(e) {}
+  if (typeof schedulePush === 'function') schedulePush();
   updateUserName();
   // Atualiza avatar (inicial)
   document.querySelectorAll('.user-avatar').forEach(el => { el.textContent = name.charAt(0).toUpperCase(); });
