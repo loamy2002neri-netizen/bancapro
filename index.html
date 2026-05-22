@@ -1,0 +1,968 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR" class="dark">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>BancaPRO — Gestão Financeira</title>
+<link rel="icon" type="image/svg+xml" id="appFavicon" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%236366f1'/><text x='50' y='66' font-family='Arial,sans-serif' font-size='62' font-weight='800' fill='%23fff' text-anchor='middle'>B</text></svg>"/>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+
+<!-- AUTH SCREEN -->
+<div class="auth-screen" id="authScreen">
+  <div class="auth-card">
+    <div class="auth-logo">
+      <div class="auth-logo-icon" id="authLogoIcon">B</div>
+      <div class="auth-logo-text">Banca<span>PRO</span></div>
+    </div>
+    <div id="loginForm">
+      <div class="auth-title">Bem-vindo de volta 👋</div>
+      <div class="auth-sub">Entre na sua conta para continuar</div>
+      <div class="form-group">
+        <label class="form-label">E-mail</label>
+        <input class="form-input" type="email" placeholder="seu@email.com" value="admin@bancapro.com"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Senha</label>
+        <input class="form-input" type="password" placeholder="••••••••" value="123456"/>
+      </div>
+      <button class="btn-primary" onclick="doLogin()">Entrar na plataforma →</button>
+      <div class="auth-links">
+        <a onclick="showReset()">Esqueci minha senha</a> &nbsp;·&nbsp;
+        <a onclick="showRegister()">Criar conta</a>
+      </div>
+    </div>
+    <div id="registerForm" style="display:none">
+      <div class="auth-title">Criar conta</div>
+      <div class="auth-sub">Comece a controlar suas bancas hoje</div>
+      <div class="form-group"><label class="form-label">Nome</label><input class="form-input" type="text" placeholder="Seu nome"/></div>
+      <div class="form-group"><label class="form-label">E-mail</label><input class="form-input" type="email" placeholder="seu@email.com"/></div>
+      <div class="form-group"><label class="form-label">Senha</label><input class="form-input" type="password" placeholder="Mín. 8 caracteres"/></div>
+      <button class="btn-primary" onclick="doLogin()">Criar conta grátis →</button>
+      <div class="auth-links"><a onclick="showLogin()">Já tenho conta</a></div>
+    </div>
+    <div id="resetForm" style="display:none">
+      <div class="auth-title">Recuperar senha</div>
+      <div class="auth-sub">Enviaremos um link de redefinição</div>
+      <div class="form-group"><label class="form-label">E-mail</label><input class="form-input" type="email" placeholder="seu@email.com"/></div>
+      <button class="btn-primary" onclick="showToast('E-mail enviado! Verifique sua caixa de entrada.','success')">Enviar link →</button>
+      <div class="auth-links"><a onclick="showLogin()">Voltar ao login</a></div>
+    </div>
+  </div>
+</div>
+
+<!-- NOTIFICATION PANEL -->
+<div class="notif-panel" id="notifPanel">
+  <div class="notif-header">Notificações <span class="notif-clear" onclick="clearNotifs()">Limpar tudo</span></div>
+  <div id="notifList"></div>
+</div>
+
+<!-- ADD TRANSACTION MODAL -->
+<div class="modal-overlay" id="txModal">
+  <div class="modal">
+    <div class="modal-title">Nova Transação</div>
+    <div class="modal-sub">Registre uma entrada ou despesa</div>
+    <div class="form-group">
+      <label class="form-label">Tipo</label>
+      <select class="form-select" id="txType">
+        <option value="income">💚 Entrada / Receita</option>
+        <option value="expense">🔴 Despesa / Saída</option>
+      </select>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Valor (R$)</label>
+        <input class="form-input" type="number" placeholder="0,00" id="txValue"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Data</label>
+        <input class="form-input" type="date" id="txDate"/>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Método</label>
+      <select class="form-select" id="txMethod">
+        <option>Delay</option><option>Freebet</option><option>Surebet</option><option>iGaming</option><option>Duplo Green</option><option>Métodos</option><option>Geral</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Descrição</label>
+      <input class="form-input" type="text" placeholder="Descreva a transação..." id="txDesc"/>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-ghost" onclick="closeTxModal()">Cancelar</button>
+      <button class="btn-primary" style="width:auto;padding:9px 20px" onclick="saveTransaction()">Salvar →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ADD/EDIT GOAL MODAL -->
+<div class="modal-overlay" id="goalModal">
+  <div class="modal">
+    <div class="modal-title" id="goalModalTitle">🎯 Nova Meta</div>
+    <div class="modal-sub" id="goalModalSub">Defina um objetivo financeiro pra acompanhar</div>
+    <div class="form-group">
+      <label class="form-label">Nome da meta</label>
+      <input class="form-input" type="text" placeholder="Ex: Surebet, Reserva, Viagem..." id="goalName"/>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Ícone (emoji)</label>
+      <input class="form-input" type="text" placeholder="🎯" id="goalIcon" maxlength="4" style="max-width:120px"/>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Valor da meta (R$)</label>
+        <input class="form-input" type="number" placeholder="5000" id="goalTarget" min="0" step="any"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Valor atual (R$)</label>
+        <input class="form-input" type="number" placeholder="0" id="goalCurrent" value="0" step="any"/>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-ghost" onclick="closeGoalModal()">Cancelar</button>
+      <button class="btn-primary" style="width:auto;padding:9px 20px" onclick="saveGoal()" id="goalSaveBtn">Salvar →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ACCOUNT MODAL (cadastrar/editar conta de aposta) -->
+<div class="modal-overlay" id="accountModal">
+  <div class="modal" style="width:560px;max-width:95vw">
+    <div class="modal-title" id="accountModalTitle">🏦 Nova Conta Depositada</div>
+    <div class="modal-sub" id="accountModalSub">Registre o saldo que você tem numa casa de aposta</div>
+
+    <div class="form-group">
+      <label class="form-label">Casa de aposta</label>
+      <div id="houseSelector" class="house-selector"></div>
+      <div id="customHouseGroup" style="display:none;margin-top:10px">
+        <input class="form-input" type="text" id="customHouseName" placeholder="Nome da casa (ex: MinhaBet)" maxlength="40"/>
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Saldo depositado (R$)</label>
+        <input class="form-input" type="number" placeholder="100,00" id="accountAmount" step="0.01" min="0"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Última atualização</label>
+        <input class="form-input" type="date" id="accountDate"/>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Observação (opcional)</label>
+      <input class="form-input" type="text" id="accountNote" placeholder="Ex: Bônus em rollover, freebet R$50..." maxlength="80"/>
+    </div>
+
+    <div class="modal-actions" style="justify-content:space-between">
+      <button class="btn-danger" id="accountDeleteBtn" onclick="deleteAccount()" style="display:none">🗑️ Excluir</button>
+      <div style="display:flex;gap:8px;margin-left:auto">
+        <button class="btn-ghost" onclick="closeAccountModal()">Cancelar</button>
+        <button class="btn-primary" style="width:auto;padding:9px 20px" onclick="saveAccount()">Salvar →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- METHODS CATALOG MODAL (gerenciar métodos: adicionar/editar/remover) -->
+<div class="modal-overlay" id="methodsCatalogModal">
+  <div class="modal" style="width:760px;max-width:96vw">
+    <div class="modal-title">⚙️ Gerenciar Métodos</div>
+    <div class="modal-sub">Adicione, edite ou remova seus métodos de trabalho. As mudanças refletem em toda a plataforma.</div>
+    <div id="methodsCatalogList" style="display:flex;flex-direction:column;gap:10px;max-height:55vh;overflow-y:auto;padding-right:4px"></div>
+    <button class="btn-ghost" style="margin-top:12px;width:100%;justify-content:center" onclick="addMethodCatalogRow()">+ Adicionar método</button>
+    <div class="modal-actions" style="justify-content:space-between">
+      <button class="btn-ghost" style="font-size:12px;color:var(--text-muted)" onclick="resetMethodsCatalogToDefaults()">↩️ Restaurar padrão</button>
+      <div style="display:flex;gap:8px">
+        <button class="btn-ghost" onclick="closeMethodsCatalogModal()">Cancelar</button>
+        <button class="btn-primary" style="width:auto;padding:9px 20px" onclick="saveMethodsCatalog()">Salvar →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- METHODS COMPARE MODAL (editor de Abr vs Mai) -->
+<div class="modal-overlay" id="methodsCompareModal">
+  <div class="modal" style="width:640px;max-width:95vw">
+    <div class="modal-title">✏️ Editar Comparativo por Método</div>
+    <div class="modal-sub">Altere nomes, valores ou adicione/remova métodos. Os dois gráficos atualizam automaticamente.</div>
+    <div id="methodsCompareList" style="display:flex;flex-direction:column;gap:10px;max-height:50vh;overflow-y:auto;padding-right:4px"></div>
+    <button class="btn-ghost" style="margin-top:12px;width:100%;justify-content:center" onclick="addMethodCompare()">+ Adicionar método</button>
+    <div class="modal-actions">
+      <button class="btn-ghost" onclick="closeMethodsCompareModal()">Cancelar</button>
+      <button class="btn-primary" style="width:auto;padding:9px 20px" onclick="saveMethodsCompare()">Salvar →</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST CONTAINER -->
+<div class="toast-container" id="toastContainer"></div>
+
+<!-- CUSTOM CONFIRM MODAL -->
+<div class="modal-overlay" id="confirmModal">
+  <div class="modal" style="width:440px">
+    <div class="modal-title" id="confirmTitle">Confirmar ação</div>
+    <div class="modal-sub" id="confirmMessage">Você tem certeza?</div>
+    <div class="modal-actions">
+      <button class="btn-ghost" id="confirmCancelBtn">Cancelar</button>
+      <button class="btn-danger" id="confirmOkBtn" style="padding:9px 20px">Confirmar</button>
+    </div>
+  </div>
+</div>
+
+<!-- OVERLAY BACKDROP (mobile) -->
+<div class="overlay-backdrop" id="backdrop" onclick="closeSidebar()"></div>
+
+<!-- APP LAYOUT -->
+<div class="app" id="appLayout" style="display:none">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <div class="logo-icon" id="sidebarLogoIcon">B</div>
+      <div>
+        <div class="logo-text" id="sidebarLogoText">Banca<span>PRO</span></div>
+        <div style="font-size:10px;color:var(--text-muted);margin-top:1px">v2.0 Premium</div>
+      </div>
+    </div>
+
+    <div class="sidebar-section">
+      <div class="sidebar-section-label">Principal</div>
+      <div class="nav-item active" onclick="goTo('dashboard',this)"><span class="nav-icon">⚡</span>Dashboard<span class="live-badge" style="margin-left:auto;font-size:10px"><span class="live-dot"></span>Live</span></div>
+      <div class="nav-item" onclick="goTo('methods',this)"><span class="nav-icon">📊</span>Métodos</div>
+      <div class="nav-item" onclick="goTo('transactions',this)"><span class="nav-icon">💸</span>Transações</div>
+      <div class="nav-item" onclick="goTo('accounts',this)"><span class="nav-icon">🏦</span>Contas Depositadas</div>
+      <div class="nav-item" onclick="goTo('recharge',this)"><span class="nav-icon">💳</span>Recarga<span class="nav-badge green">Ativo</span></div>
+    </div>
+
+    <div class="sidebar-section">
+      <div class="sidebar-section-label">Análise</div>
+      <div class="nav-item" onclick="goTo('reports',this)"><span class="nav-icon">📈</span>Relatórios</div>
+      <div class="nav-item" onclick="goTo('goals',this)"><span class="nav-icon">🎯</span>Metas</div>
+      <div class="nav-item" onclick="goTo('compare',this)"><span class="nav-icon">🔀</span>Comparativo</div>
+    </div>
+
+    <div class="sidebar-section">
+      <div class="sidebar-section-label">Sistema</div>
+      <div class="nav-item" onclick="goTo('settings',this)"><span class="nav-icon">⚙️</span>Configurações</div>
+      <div class="nav-item" onclick="goTo('admin',this)"><span class="nav-icon">👑</span>Admin</div>
+    </div>
+
+    <div class="sidebar-footer">
+      <div class="user-pill">
+        <div class="user-avatar">A</div>
+        <div><div class="user-name" id="sidebarUserName">Admin</div><div class="user-role">Administrador</div></div>
+        <div class="user-status"></div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="main">
+
+    <!-- TOPBAR -->
+    <div class="topbar">
+      <button class="icon-btn menu-btn" onclick="toggleSidebar()" aria-label="Abrir menu lateral" style="display:none">☰</button>
+      <div class="topbar-title">
+        <div class="topbar-breadcrumb">BancaPRO / <span id="breadcrumb">Dashboard</span></div>
+      </div>
+      <div class="topbar-actions">
+        <button class="btn-ghost" style="padding:6px 14px;font-size:12px" onclick="openTxModal()">+ Transação</button>
+        <button class="icon-btn" onclick="toggleNotif()" id="notifBtn" aria-label="Notificações">🔔<div class="notif-dot" id="notifDot"></div></button>
+        <button class="icon-btn" onclick="goTo('settings',null)" aria-label="Configurações">⚙️</button>
+        <button class="icon-btn" onclick="logout()" aria-label="Sair">→</button>
+      </div>
+    </div>
+
+    <!-- PAGE CONTENT -->
+    <div class="page-content">
+
+      <!-- ═══ DASHBOARD ═══ -->
+      <div class="section active" id="sec-dashboard">
+        <div class="page-header">
+          <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
+            <div>
+              <div class="page-title">Dashboard Financeiro ⚡</div>
+              <div class="page-subtitle">Visão completa da sua banca em tempo real</div>
+            </div>
+            <div class="period-tabs">
+              <div class="period-tab" onclick="setPeriod('day',this)">Hoje</div>
+              <div class="period-tab" onclick="setPeriod('week',this)">Semana</div>
+              <div class="period-tab active" onclick="setPeriod('month',this)">Mês</div>
+              <div class="period-tab" onclick="setPeriod('year',this)">Ano</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- KPI CARDS -->
+        <div class="kpi-grid">
+          <div class="kpi-card" style="--card-color:var(--accent)">
+            <div class="kpi-label">💰 Saldo Total</div>
+            <div class="kpi-value" id="kpi-saldo">R$ 0</div>
+            <div class="kpi-change neutral" id="kpi-saldo-change">—</div>
+            <div class="kpi-sub" id="kpi-saldo-sub">Mês atual</div>
+            <div class="kpi-bg-icon">💰</div>
+          </div>
+          <div class="kpi-card" style="--card-color:var(--green)">
+            <div class="kpi-label">📈 Lucro Total</div>
+            <div class="kpi-value" id="kpi-lucro">R$ 0</div>
+            <div class="kpi-change neutral" id="kpi-lucro-change">—</div>
+            <div class="kpi-sub" id="kpi-lucro-sub">Mês atual</div>
+            <div class="kpi-bg-icon">📈</div>
+          </div>
+          <div class="kpi-card" style="--card-color:var(--red)">
+            <div class="kpi-label">💸 Despesas</div>
+            <div class="kpi-value" id="kpi-despesas">R$ 0</div>
+            <div class="kpi-change neutral" id="kpi-despesas-change">—</div>
+            <div class="kpi-sub" id="kpi-despesas-sub">Mês atual</div>
+            <div class="kpi-bg-icon">💸</div>
+          </div>
+          <div class="kpi-card" style="--card-color:var(--yellow)">
+            <div class="kpi-label">🏆 ROI Médio</div>
+            <div class="kpi-value" id="kpi-roi">0%</div>
+            <div class="kpi-change neutral" id="kpi-roi-change">—</div>
+            <div class="kpi-sub" id="kpi-roi-sub">Mês atual</div>
+            <div class="kpi-bg-icon">🏆</div>
+          </div>
+        </div>
+
+        <!-- SECONDARY KPIs -->
+        <div class="stat-row">
+          <div class="stat-chip"><div class="stat-chip-label">Receita Total</div><div class="stat-chip-value" id="statReceitaTotal">R$ 24.360</div></div>
+          <div class="stat-chip"><div class="stat-chip-label">Lucro Hoje</div><div class="stat-chip-value" id="statLucroHoje" style="color:var(--green)">+R$ 840</div></div>
+          <div class="stat-chip"><div class="stat-chip-label">Lucro Semanal</div><div class="stat-chip-value" id="statLucroSemanal" style="color:var(--green)">+R$ 4.120</div></div>
+          <div class="stat-chip"><div class="stat-chip-label">Lucro Mensal</div><div class="stat-chip-value" id="statLucroMensal" style="color:var(--green)">+R$ 16.840</div></div>
+          <div class="stat-chip"><div class="stat-chip-label">Métodos Ativos</div><div class="stat-chip-value" id="statMetodosAtivos">6 / 6</div></div>
+          <div class="stat-chip"><div class="stat-chip-label">Transações</div><div class="stat-chip-value" id="statTransacoes">247</div></div>
+          <div class="stat-chip"><div class="stat-chip-label">Metas Atingidas</div><div class="stat-chip-value" id="statMetasAtingidas" style="color:var(--green)">4 / 5</div></div>
+        </div>
+
+        <!-- MAIN CHART -->
+        <div class="chart-card" style="overflow:hidden;padding:24px;margin-bottom:20px">
+
+          <!-- Header: título + legenda -->
+          <div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:14px">
+            <div>
+              <div class="chart-title" style="font-size:14px">Evolução Financeira</div>
+              <div class="chart-subtitle" id="evoSubtitle">Mensal — Jan a Dez 2026</div>
+            </div>
+            <div class="chart-legend" style="gap:14px">
+              <div class="legend-item"><div class="legend-dot" style="background:#6366f1"></div>Saldo</div>
+              <div class="legend-item"><div class="legend-dot" style="background:#10b981"></div>Lucro</div>
+              <div class="legend-item"><div class="legend-dot" style="background:#f43f5e"></div>Despesas</div>
+              <div class="legend-item"><div class="legend-dot" style="background:#f59e0b"></div>Receita</div>
+            </div>
+          </div>
+
+          <!-- Filtros de período -->
+          <div class="evo-filters" style="display:flex;align-items:center;gap:6px;margin-bottom:14px;flex-wrap:wrap">
+            <div style="display:flex;gap:4px;background:var(--bg-secondary);border:1px solid var(--border);border-radius:8px;padding:3px">
+              <button class="evo-btn active" data-mode="today"  onclick="setEvoMode('today',this)">Hoje</button>
+              <button class="evo-btn"        data-mode="7d"     onclick="setEvoMode('7d',this)">7 Dias</button>
+              <button class="evo-btn"        data-mode="30d"    onclick="setEvoMode('30d',this)">30 Dias</button>
+              <button class="evo-btn"        data-mode="yearly"  onclick="setEvoMode('yearly',this)">Anual</button>
+              <button class="evo-btn"        data-mode="custom" onclick="setEvoMode('custom',this)">Personalizado</button>
+            </div>
+            <!-- Date range (aparece só no modo custom) -->
+            <div id="evoDateRange" style="display:none;align-items:center;gap:6px" class="evo-date-row">
+              <div style="display:flex;align-items:center;gap:6px">
+                <input type="date" id="evoDateFrom" class="form-input" style="padding:5px 10px;font-size:12px;width:130px" onchange="applyCustomRange()"/>
+                <span style="color:var(--text-muted);font-size:12px">até</span>
+                <input type="date" id="evoDateTo" class="form-input" style="padding:5px 10px;font-size:12px;width:130px" onchange="applyCustomRange()"/>
+              </div>
+            </div>
+          </div>
+
+          <!-- Canvas: altura fixa via container pai — evita recalculo ao trocar filtro -->
+          <div id="mainChartWrap" style="position:relative;width:100%;height:400px;overflow:hidden">
+            <canvas id="mainChart" width="800" height="400" style="display:block;width:100%!important;height:100%!important"></canvas>
+          </div>
+        </div>
+
+        <!-- CHART GRID -->
+        <div class="chart-grid" style="margin-top:20px">
+
+          <!-- BARRA: 65% -->
+          <div class="chart-card">
+            <div class="chart-header">
+              <div>
+                <div class="chart-title">Por Categoria</div>
+                <div class="chart-subtitle">Receita comparativa por Métodos — Abr vs Mai</div>
+              </div>
+              <div class="chart-legend" style="gap:14px">
+                <div class="legend-item" style="color:#cbd5e1;font-size:13px"><div class="legend-dot" style="background:#64748b;width:10px;height:10px;border-radius:50%"></div>Abril</div>
+                <div class="legend-item" style="color:#cbd5e1;font-size:13px"><div class="legend-dot" style="background:#10b981;width:10px;height:10px;border-radius:50%"></div>Maio</div>
+              </div>
+            </div>
+            <!-- Wrapper com altura fixa em px — garante renderização do canvas -->
+            <div id="methodChartWrap" style="position:relative;width:100%;height:260px">
+              <canvas id="methodChart" width="600" height="260" style="width:100%!important;height:100%!important;display:block"></canvas>
+            </div>
+          </div>
+
+          <!-- DONUT: 35% -->
+          <div class="chart-card">
+            <div class="chart-header">
+              <div>
+                <div class="chart-title">Distribuição</div>
+                <div class="chart-subtitle">% de lucro por método</div>
+              </div>
+            </div>
+            <!-- Wrapper com altura fixa em px — garante renderização do donut -->
+            <div id="pieChartWrap" style="position:relative;width:100%;height:260px;display:flex;align-items:center;justify-content:center">
+              <canvas id="pieChart" width="240" height="240" style="display:block"></canvas>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- ALERTS -->
+        <div style="margin-top:20px">
+          <div class="alert-box warning">
+            <div>⚠️</div>
+            <div><div class="alert-title">iGaming — Alerta de Despesas</div>iGaming ultrapassou o limite de despesas em 24%. Revise sua estratégia para este método.</div>
+          </div>
+          <div class="alert-box success">
+            <div>🎯</div>
+            <div><div class="alert-title">Meta Atingida!</div>Surebet atingiu R$5.220 de lucro este mês, superando a meta de R$5.000 em 4.4%!</div>
+          </div>
+        </div>
+
+        <!-- RECENT TRANSACTIONS -->
+        <div class="transactions-card" style="margin-top:20px">
+          <div class="transactions-header">
+            <div class="transactions-header-title">Histórico Recente</div>
+            <button class="btn-ghost" style="padding:5px 12px;font-size:12px" onclick="goTo('transactions',null)">Ver todos →</button>
+          </div>
+          <table class="tx-table">
+            <thead><tr><th>Data</th><th>Descrição</th><th>Método</th><th>Tipo</th><th>Valor</th></tr></thead>
+            <tbody id="recentTxBody">
+              <tr><td>14/05</td><td>Lucro Surebet</td><td><span class="tx-method-pill">Surebet</span></td><td><span class="tx-type-badge income">↑ Entrada</span></td><td class="tx-amount income">+R$ 380,00</td></tr>
+              <tr><td>14/05</td><td>Taxa plataforma</td><td><span class="tx-method-pill">iGaming</span></td><td><span class="tx-type-badge expense">↓ Despesa</span></td><td class="tx-amount expense">-R$ 120,00</td></tr>
+              <tr><td>13/05</td><td>Aposta Delay</td><td><span class="tx-method-pill">Delay</span></td><td><span class="tx-type-badge income">↑ Entrada</span></td><td class="tx-amount income">+R$ 240,00</td></tr>
+              <tr><td>13/05</td><td>Freebet Convertida</td><td><span class="tx-method-pill">Freebet</span></td><td><span class="tx-type-badge income">↑ Entrada</span></td><td class="tx-amount income">+R$ 180,00</td></tr>
+              <tr><td>12/05</td><td>Despesa Geral</td><td><span class="tx-method-pill">Geral</span></td><td><span class="tx-type-badge expense">↓ Despesa</span></td><td class="tx-amount expense">-R$ 95,00</td></tr>
+              <tr><td>12/05</td><td>Duplo Green</td><td><span class="tx-method-pill">Duplo Green</span></td><td><span class="tx-type-badge income">↑ Entrada</span></td><td class="tx-amount income">+R$ 420,00</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ═══ MÉTODOS ═══ -->
+      <div class="section" id="sec-methods">
+        <div class="page-header" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
+          <div>
+            <div class="page-title">Gestão de Métodos 📊</div>
+            <div class="page-subtitle">Performance individual de cada estratégia</div>
+          </div>
+          <button class="btn-primary" style="width:auto;padding:9px 18px" onclick="openMethodsCatalogModal()">⚙️ Gerenciar métodos</button>
+        </div>
+
+        <!-- RANKING -->
+        <div class="ranking-card">
+          <div style="font-size:15px;font-weight:700;margin-bottom:12px">🏆 Ranking — Métodos Mais Lucrativos</div>
+          <div id="rankingList"></div>
+        </div>
+
+        <!-- METHOD CARDS -->
+        <div class="methods-grid" id="methodCardsGrid"></div>
+
+        <!-- METHOD CHART — ampliado (500px desktop / 340px mobile) -->
+        <div class="chart-card" style="padding:20px;margin-top:16px">
+          <div class="chart-header" style="margin-bottom:12px">
+            <div><div class="chart-title" style="font-size:15px;font-weight:600">Evolução por Método — Últimos 6 Meses</div></div>
+          </div>
+          <div id="methodEvolutionWrap" style="height:500px;width:100%;position:relative">
+            <canvas id="methodEvolutionChart"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══ TRANSAÇÕES ═══ -->
+      <div class="section" id="sec-transactions">
+        <div class="page-header">
+          <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
+            <div>
+              <div class="page-title">Controle Financeiro 💸</div>
+              <div class="page-subtitle">Gerencie todas as suas transações</div>
+            </div>
+            <div style="display:flex;gap:8px">
+              <button class="btn-success" onclick="openTxModal()">+ Entrada</button>
+              <button class="btn-danger" onclick="openTxModalExpense()">- Despesa</button>
+              <button class="btn-ghost" onclick="exportTransactionsPDF()">📥 Exportar PDF</button>
+              <button class="btn-ghost" onclick="exportTransactionsCSV()">📊 Excel</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- FILTERS -->
+        <div class="form-card">
+          <div class="form-card-title">🔍 Filtros</div>
+          <div class="form-row">
+            <div class="form-group"><label class="form-label">De</label><input class="form-input" type="date" id="filterDateFrom"/></div>
+            <div class="form-group"><label class="form-label">Até</label><input class="form-input" type="date" id="filterDateTo"/></div>
+            <div class="form-group"><label class="form-label">Método</label><select class="form-select" id="filterMethod"><option value="">Todos</option><option>Delay</option><option>Freebet</option><option>Surebet</option><option>iGaming</option><option>Duplo Green</option><option>Métodos</option></select></div>
+            <div class="form-group"><label class="form-label">Tipo</label><select class="form-select" id="filterType"><option value="">Todos</option><option value="income">Entrada</option><option value="expense">Despesa</option></select></div>
+            <div class="form-group" style="display:flex;align-items:flex-end;gap:6px">
+              <button class="btn-primary" style="width:auto;padding:10px 18px" onclick="applyTxFilter()">Filtrar</button>
+              <button class="btn-ghost" style="padding:9px 14px" onclick="clearTxFilter()">Limpar</button>
+            </div>
+          </div>
+          <div id="filterSummary" style="display:none;margin-top:10px;padding:8px 12px;background:rgba(99,102,241,0.08);border:1px solid rgba(99,102,241,0.18);border-radius:8px;font-size:12px;color:var(--accent)">
+            <span id="filterSummaryText"></span>
+          </div>
+        </div>
+
+        <!-- TRANSACTIONS TABLE -->
+        <div class="transactions-card">
+          <div class="transactions-header">
+            <div class="transactions-header-title">Todas as Transações</div>
+            <div style="font-size:12px;color:var(--text-muted)"><span id="txCountLabel">0</span> registros</div>
+          </div>
+          <table class="tx-table">
+            <thead><tr><th>Data</th><th>Descrição</th><th>Categoria</th><th>Método</th><th>Tipo</th><th>Valor</th><th>Saldo</th><th></th></tr></thead>
+            <tbody id="txTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ═══ CONTAS DEPOSITADAS ═══ -->
+      <div class="section" id="sec-accounts">
+        <div class="page-header" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
+          <div>
+            <div class="page-title">Contas Depositadas 🏦</div>
+            <div class="page-subtitle">Controle o saldo de cada casa de aposta — sem esquecer dinheiro parado</div>
+          </div>
+          <div style="display:flex;gap:8px">
+            <button class="btn-ghost" onclick="exportAccountsCSV()">📊 Excel</button>
+            <button class="btn-primary" style="width:auto;padding:9px 18px" onclick="openAccountModal()">+ Adicionar conta</button>
+          </div>
+        </div>
+
+        <!-- KPIs -->
+        <div class="kpi-grid">
+          <div class="kpi-card" style="--card-color:var(--accent)">
+            <div class="kpi-label">💰 Saldo Total nas Casas</div>
+            <div class="kpi-value" id="accTotalValue">R$ 0</div>
+            <div class="kpi-change neutral" id="accTotalSub">0 contas ativas</div>
+          </div>
+          <div class="kpi-card" style="--card-color:var(--green)">
+            <div class="kpi-label">📈 Casa com Maior Saldo</div>
+            <div class="kpi-value" id="accTopValue" style="font-size:18px">—</div>
+            <div class="kpi-change up" id="accTopSub">—</div>
+          </div>
+          <div class="kpi-card" style="--card-color:var(--yellow)">
+            <div class="kpi-label">⚠️ Saldo Baixo (&lt; R$ 50)</div>
+            <div class="kpi-value" id="accLowCount">0</div>
+            <div class="kpi-change down" id="accLowSub">Nenhuma conta com saldo baixo</div>
+          </div>
+          <div class="kpi-card" style="--card-color:var(--blue)">
+            <div class="kpi-label">🏦 Casas Cadastradas</div>
+            <div class="kpi-value" id="accCount">0</div>
+            <div class="kpi-change neutral">de tantas casas que você quiser</div>
+          </div>
+        </div>
+
+        <!-- Busca -->
+        <div class="form-card" style="padding:14px 18px">
+          <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+            <span style="font-size:18px">🔍</span>
+            <input class="form-input" type="text" id="accountSearch" placeholder="Buscar casa de aposta..." oninput="renderAccounts()" style="flex:1;min-width:200px;padding:9px 14px"/>
+            <select class="form-select" id="accountSort" onchange="renderAccounts()" style="width:auto;padding:9px 12px">
+              <option value="value-desc">Maior saldo</option>
+              <option value="value-asc">Menor saldo</option>
+              <option value="name-asc">A → Z</option>
+              <option value="recent">Mais recentes</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Grid de contas -->
+        <div id="accountsGrid" class="accounts-grid"></div>
+        <div id="accountsEmpty" style="display:none;text-align:center;padding:60px 20px;color:var(--text-muted)">
+          <div style="font-size:48px;margin-bottom:14px">🏦</div>
+          <div style="font-size:16px;font-weight:600;color:var(--text-secondary);margin-bottom:6px">Nenhuma conta cadastrada</div>
+          <div style="font-size:13px">Clique em <b>+ Adicionar conta</b> pra começar a registrar suas casas</div>
+        </div>
+      </div>
+      <div class="section" id="sec-recharge">
+        <div class="page-header">
+          <div class="page-title">Planos & Assinatura</div>
+          <div class="page-subtitle">Comece com 7 dias grátis. Sem cartão, sem compromisso.</div>
+        </div>
+
+        <!-- HERO TRIAL BANNER -->
+        <div class="trial-hero">
+          <div class="trial-hero-bg"></div>
+          <div class="trial-hero-content">
+            <div class="trial-hero-badge"><span class="trial-pulse"></span>Período gratuito ativo</div>
+            <div class="trial-hero-title">Você ainda tem <span id="trialDaysLeft">7</span> dias grátis</div>
+            <div class="trial-hero-sub">Aproveite todos os recursos do BancaPRO sem pagar nada até <strong id="trialEndDate">26/05/2026</strong>. Depois disso, é só <strong>R$ 14,90/mês</strong>.</div>
+            <div class="trial-progress">
+              <div class="trial-progress-bar"><div class="trial-progress-fill" id="trialProgressFill" style="width:14.3%"></div></div>
+              <div class="trial-progress-meta"><span id="trialUsedLabel">Dia 1 de 7</span><span id="trialPctLabel">14% concluído</span></div>
+            </div>
+            <div class="trial-hero-actions">
+              <button class="btn-cta-primary" onclick="subscribeNow()">Assinar agora · R$ 14,90/mês</button>
+              <button class="btn-cta-ghost" onclick="continueTrialToast()">Continuar no trial</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- PLANS GRID — Free vs Premium -->
+        <div class="plans-grid">
+          <!-- PLANO GRATUITO -->
+          <div class="plan-card">
+            <div class="plan-header">
+              <div class="plan-name">Trial Gratuito</div>
+              <div class="plan-badge plan-badge-muted">Atual</div>
+            </div>
+            <div class="plan-price">
+              <span class="plan-price-currency">R$</span>
+              <span class="plan-price-value">0</span>
+              <span class="plan-price-period">por 7 dias</span>
+            </div>
+            <div class="plan-desc">Conheça a plataforma sem pagar nada</div>
+            <ul class="plan-features">
+              <li><span class="plan-check">✓</span>Dashboard completo</li>
+              <li><span class="plan-check">✓</span>Até 50 transações</li>
+              <li><span class="plan-check">✓</span>6 métodos cadastrados</li>
+              <li><span class="plan-check">✓</span>Relatórios básicos</li>
+              <li class="plan-feature-off"><span class="plan-x">✕</span>Exportar PDF / Excel</li>
+              <li class="plan-feature-off"><span class="plan-x">✕</span>Suporte prioritário</li>
+              <li class="plan-feature-off"><span class="plan-x">✕</span>Métodos ilimitados</li>
+            </ul>
+            <button class="btn-plan-ghost" disabled>Plano atual</button>
+          </div>
+
+          <!-- PLANO PREMIUM -->
+          <div class="plan-card plan-card-featured">
+            <div class="plan-featured-ribbon">🔥 Mais popular</div>
+            <div class="plan-header">
+              <div class="plan-name">Premium</div>
+              <div class="plan-badge plan-badge-gold">Recomendado</div>
+            </div>
+            <div class="plan-price">
+              <span class="plan-price-currency">R$</span>
+              <span class="plan-price-value">14<small>,90</small></span>
+              <span class="plan-price-period">/mês</span>
+            </div>
+            <div class="plan-desc">Tudo o que você precisa pra gestão profissional</div>
+            <ul class="plan-features">
+              <li><span class="plan-check premium">✓</span><strong>Transações ilimitadas</strong></li>
+              <li><span class="plan-check premium">✓</span><strong>Métodos ilimitados</strong></li>
+              <li><span class="plan-check premium">✓</span>Relatórios avançados (PDF/Excel)</li>
+              <li><span class="plan-check premium">✓</span>Comparativos e projeções</li>
+              <li><span class="plan-check premium">✓</span>Metas personalizadas</li>
+              <li><span class="plan-check premium">✓</span>Backup automático na nuvem</li>
+              <li><span class="plan-check premium">✓</span>Suporte prioritário 24/7</li>
+            </ul>
+            <button class="btn-plan-primary" onclick="subscribeNow()">Assinar Premium → R$ 14,90</button>
+            <div class="plan-guarantee">🔒 Cancele a qualquer momento · Sem fidelidade</div>
+          </div>
+        </div>
+
+        <!-- TRUST BAR -->
+        <div class="trust-bar">
+          <div class="trust-item"><div class="trust-icon">🔒</div><div><div class="trust-title">Pagamento seguro</div><div class="trust-sub">SSL 256-bit</div></div></div>
+          <div class="trust-item"><div class="trust-icon">💳</div><div><div class="trust-title">Pix, cartão e boleto</div><div class="trust-sub">Renovação automática</div></div></div>
+          <div class="trust-item"><div class="trust-icon">↩️</div><div><div class="trust-title">Cancele quando quiser</div><div class="trust-sub">Sem multas</div></div></div>
+          <div class="trust-item"><div class="trust-icon">⚡</div><div><div class="trust-title">Acesso imediato</div><div class="trust-sub">Ativação instantânea</div></div></div>
+        </div>
+
+        <!-- FAQ -->
+        <div class="form-card" style="margin-top:24px">
+          <div class="form-card-title">Perguntas frequentes</div>
+          <div class="faq-list">
+            <div class="faq-item">
+              <div class="faq-q" onclick="toggleFaq(this)"><span>Como funcionam os 7 dias grátis?</span><span class="faq-arrow">▾</span></div>
+              <div class="faq-a">Você tem acesso completo a todos os recursos do BancaPRO por 7 dias sem pagar nada. Não é necessário cadastrar cartão. Ao final do período, basta assinar pra continuar — ou seus dados ficam guardados se quiser voltar depois.</div>
+            </div>
+            <div class="faq-item">
+              <div class="faq-q" onclick="toggleFaq(this)"><span>Posso cancelar quando quiser?</span><span class="faq-arrow">▾</span></div>
+              <div class="faq-a">Sim. A assinatura é mensal e sem fidelidade. Cancele em 1 clique pelo próprio painel a qualquer momento — você continua tendo acesso até o fim do ciclo já pago.</div>
+            </div>
+            <div class="faq-item">
+              <div class="faq-q" onclick="toggleFaq(this)"><span>Quais formas de pagamento são aceitas?</span><span class="faq-arrow">▾</span></div>
+              <div class="faq-a">Aceitamos Pix (com confirmação instantânea), cartão de crédito (Visa, Mastercard, Elo, Hipercard, Amex) e boleto bancário. A cobrança é mensal e automática.</div>
+            </div>
+            <div class="faq-item">
+              <div class="faq-q" onclick="toggleFaq(this)"><span>Meus dados ficam seguros?</span><span class="faq-arrow">▾</span></div>
+              <div class="faq-a">Totalmente. Usamos criptografia de ponta-a-ponta (AES-256) e seus dados financeiros nunca são compartilhados. Backup automático diário em servidores em conformidade com a LGPD.</div>
+            </div>
+            <div class="faq-item">
+              <div class="faq-q" onclick="toggleFaq(this)"><span>Posso testar antes de pagar?</span><span class="faq-arrow">▾</span></div>
+              <div class="faq-a">Sim, é exatamente isso que os 7 dias grátis oferecem: acesso 100% ao Premium pra você testar sem compromisso. Se gostar, continua. Se não, é só não assinar — não cobramos nada.</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- HISTÓRICO DA ASSINATURA -->
+        <div class="transactions-card" style="margin-top:24px">
+          <div class="transactions-header"><div class="transactions-header-title">Histórico da Assinatura</div></div>
+          <table class="tx-table">
+            <thead><tr><th>Data</th><th>Descrição</th><th>Valor</th><th>Status</th></tr></thead>
+            <tbody id="subHistoryBody">
+              <tr><td id="subHistoryDate">—</td><td>Início do período grátis (7 dias)</td><td class="tx-amount income">R$ 0,00</td><td><span class="tx-type-badge income">Ativo</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ═══ RELATÓRIOS ═══ -->
+      <div class="section" id="sec-reports">
+        <div class="page-header">
+          <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
+            <div><div class="page-title">Relatórios 📈</div><div class="page-subtitle">Análise completa da sua performance</div></div>
+            <div style="display:flex;gap:8px">
+              <button class="btn-ghost" onclick="exportReportPDF()">📥 PDF</button>
+              <button class="btn-ghost" onclick="exportTransactionsCSV()">📊 Excel</button>
+            </div>
+          </div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-header"><div><div class="chart-title">Receita vs Despesas vs Lucro</div><div class="chart-subtitle">Evolução mensal completa</div></div></div>
+          <div id="reportChartWrap" style="position:relative;width:100%;height:320px">
+            <canvas id="reportChart"></canvas>
+          </div>
+        </div>
+        <div class="chart-grid">
+          <div class="chart-card">
+            <div class="chart-header"><div class="chart-title">Distribuição de Despesas</div></div>
+            <div id="expenseChartWrap" style="position:relative;width:100%;height:280px;display:flex;align-items:center;justify-content:center">
+              <canvas id="expenseChart" style="max-width:260px;max-height:260px"></canvas>
+            </div>
+          </div>
+          <div class="chart-card">
+            <div class="chart-header"><div class="chart-title">ROI por Método</div></div>
+            <div id="roiChartWrap" style="position:relative;width:100%;height:280px">
+              <canvas id="roiChart"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══ METAS ═══ -->
+      <div class="section" id="sec-goals">
+        <div class="page-header">
+          <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
+            <div><div class="page-title">Sistema de Metas 🎯</div><div class="page-subtitle">Acompanhe seus objetivos financeiros</div></div>
+            <button class="btn-primary" style="width:auto;padding:9px 18px" onclick="openGoalModal()">+ Nova Meta</button>
+          </div>
+        </div>
+        <div class="kpi-grid">
+          <div class="kpi-card" style="--card-color:var(--green)"><div class="kpi-label">✅ Atingidas</div><div class="kpi-value" id="goalsAtingidas">4</div><div class="kpi-change up" id="goalsAtingidasSub">de 5 metas</div></div>
+          <div class="kpi-card" style="--card-color:var(--yellow)"><div class="kpi-label">🟡 Em Progresso</div><div class="kpi-value" id="goalsProgresso">1</div><div class="kpi-change neutral">97.5% completo</div></div>
+          <div class="kpi-card" style="--card-color:var(--red)"><div class="kpi-label">❌ Abaixo</div><div class="kpi-value" id="goalsAbaixo">1</div><div class="kpi-change down">iGaming em alerta</div></div>
+          <div class="kpi-card" style="--card-color:var(--accent)"><div class="kpi-label">🎯 Meta Total</div><div class="kpi-value" id="goalsMetaTotal">R$ 17.500</div><div class="kpi-change up">Alcançada ✅</div></div>
+        </div>
+        <div class="form-card">
+          <div class="form-card-title">📊 Progresso das Metas — Maio 2026</div>
+          <div id="goalsList" style="display:flex;flex-direction:column;gap:16px"></div>
+        </div>
+      </div>
+
+      <!-- ═══ COMPARATIVO ═══ -->
+      <div class="section" id="sec-compare">
+        <div class="page-header"><div class="page-title">Comparação Mensal 🔀</div><div class="page-subtitle" id="compareSubtitle">Mês anterior vs mês atual</div></div>
+        <div class="kpi-grid">
+          <div class="kpi-card" style="--card-color:var(--green)">
+            <div class="kpi-label">Receita</div>
+            <div class="kpi-value" id="cmpReceitaValue">—</div>
+            <div class="kpi-change up" id="cmpReceitaPct">—</div>
+            <div class="kpi-sub" id="cmpReceitaSub">—</div>
+          </div>
+          <div class="kpi-card" style="--card-color:var(--accent)">
+            <div class="kpi-label">Lucro</div>
+            <div class="kpi-value" id="cmpLucroValue">—</div>
+            <div class="kpi-change up" id="cmpLucroPct">—</div>
+            <div class="kpi-sub" id="cmpLucroSub">—</div>
+          </div>
+          <div class="kpi-card" style="--card-color:var(--yellow)">
+            <div class="kpi-label">Despesas</div>
+            <div class="kpi-value" id="cmpDespValue">—</div>
+            <div class="kpi-change down" id="cmpDespPct">—</div>
+            <div class="kpi-sub" id="cmpDespSub">—</div>
+          </div>
+          <div class="kpi-card" style="--card-color:var(--blue)">
+            <div class="kpi-label">ROI</div>
+            <div class="kpi-value" id="cmpRoiValue">—</div>
+            <div class="kpi-change up" id="cmpRoiPct">—</div>
+            <div class="kpi-sub" id="cmpRoiSub">—</div>
+          </div>
+        </div>
+        <div id="compareAutoBanner" style="display:none;align-items:center;gap:8px;padding:10px 14px;background:rgba(99,102,241,0.08);border:1px solid rgba(99,102,241,0.18);border-radius:10px;font-size:12.5px;color:var(--text-secondary);margin-bottom:14px"></div>
+        <div class="chart-card">
+          <div class="chart-header"><div class="chart-title">Comparativo por Método</div></div>
+          <div id="compareChartWrap" style="position:relative;width:100%;height:300px">
+            <canvas id="compareChart"></canvas>
+          </div>
+        </div>
+        <div class="form-card">
+          <div class="form-card-title" style="display:flex;align-items:center;justify-content:space-between;gap:8px">
+            <span>📊 Análise Detalhada por Método</span>
+            <button class="btn-ghost" style="padding:6px 14px;font-size:12px" onclick="openMethodsCompareModal()">✏️ Editar métodos</button>
+          </div>
+          <div id="compareBarsList" style="display:flex;flex-direction:column;gap:12px"></div>
+        </div>
+      </div>
+
+      <!-- ═══ CONFIGURAÇÕES ═══ -->
+      <div class="section" id="sec-settings">
+        <div class="page-header"><div class="page-title">Configurações ⚙️</div><div class="page-subtitle">Personalize sua plataforma</div></div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;flex-wrap:wrap">
+          <div class="form-card">
+            <div class="form-card-title">🏷️ Identidade da Plataforma</div>
+            <div class="form-group"><label class="form-label">Nome da Plataforma</label><input class="form-input" type="text" value="BancaPRO" id="platformName" oninput="updatePlatformName()"/></div>
+            <div class="form-group"><label class="form-label">Slogan</label><input class="form-input" type="text" placeholder="Gestão financeira profissional"/></div>
+
+            <div class="form-group">
+              <label class="form-label">Estilo de cor do nome</label>
+              <div class="theme-toggle">
+                <div class="theme-btn active" id="logoStyleSingle" onclick="setLogoStyle('single')">Cor única</div>
+                <div class="theme-btn" id="logoStyleDouble" onclick="setLogoStyle('double')">Duas cores</div>
+              </div>
+            </div>
+
+            <div class="form-group" id="logoColor1Group">
+              <label class="form-label">Cor do nome</label>
+              <div style="display:flex;gap:8px;align-items:center">
+                <input type="color" id="logoColor1" value="#ffffff" style="width:46px;height:36px;padding:3px;cursor:pointer;background:var(--bg-secondary);border:1px solid var(--glass-border);border-radius:8px" oninput="updatePlatformName()"/>
+                <span style="font-size:12px;color:var(--text-muted)">Cor principal do texto</span>
+              </div>
+            </div>
+
+            <div class="form-group" id="logoSplitGroup" style="display:none">
+              <label class="form-label">Segunda cor (parte separada)</label>
+              <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px">
+                <input type="color" id="logoColor2" value="#6366f1" style="width:46px;height:36px;padding:3px;cursor:pointer;background:var(--bg-secondary);border:1px solid var(--glass-border);border-radius:8px" oninput="updatePlatformName()"/>
+                <span style="font-size:12px;color:var(--text-muted)">Cor da segunda palavra</span>
+              </div>
+              <label class="form-label" style="font-size:12px">Posição da divisão (caracteres a partir do fim)</label>
+              <input class="form-input" type="number" id="logoSplit" value="3" min="1" max="20" oninput="updatePlatformName()" style="max-width:120px"/>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Logo da Plataforma</label>
+              <input type="file" id="logoFileInput" accept="image/png,image/svg+xml,image/jpeg,image/webp" style="display:none" onchange="handleLogoUpload(event)"/>
+              <div class="upload-area" id="logoUploadArea" onclick="document.getElementById('logoFileInput').click()" ondragover="event.preventDefault();this.style.borderColor='var(--accent)'" ondragleave="this.style.borderColor=''" ondrop="handleLogoDrop(event)">
+                <div id="logoPreview" style="display:none;margin-bottom:8px"><img id="logoPreviewImg" style="max-width:80px;max-height:80px;border-radius:10px;object-fit:contain" alt=""/></div>
+                <span class="upload-icon" id="logoUploadIcon">📁</span>
+                <div id="logoUploadText">Arraste ou clique para enviar logo (PNG, SVG)</div>
+                <button type="button" id="logoRemoveBtn" onclick="event.stopPropagation();removeLogo()" style="display:none;margin-top:8px;background:none;border:none;color:var(--red);font-size:12px;cursor:pointer">🗑️ Remover logo</button>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Favicon</label>
+              <input type="file" id="faviconFileInput" accept="image/png,image/x-icon,image/svg+xml,image/jpeg" style="display:none" onchange="handleFaviconUpload(event)"/>
+              <div class="upload-area" id="faviconUploadArea" onclick="document.getElementById('faviconFileInput').click()" ondragover="event.preventDefault();this.style.borderColor='var(--accent)'" ondragleave="this.style.borderColor=''" ondrop="handleFaviconDrop(event)">
+                <div id="faviconPreview" style="display:none;margin-bottom:8px"><img id="faviconPreviewImg" style="width:32px;height:32px;border-radius:6px;object-fit:contain" alt=""/></div>
+                <span class="upload-icon" id="faviconUploadIcon">🖼️</span>
+                <div id="faviconUploadText">Enviar favicon (.ico, .png 32x32)</div>
+                <button type="button" id="faviconRemoveBtn" onclick="event.stopPropagation();removeFavicon()" style="display:none;margin-top:8px;background:none;border:none;color:var(--red);font-size:12px;cursor:pointer">🗑️ Remover favicon</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-card">
+            <div class="form-card-title">🎨 Aparência</div>
+            <div class="settings-section">
+              <div class="settings-label">Tema</div>
+              <div class="theme-toggle">
+                <div class="theme-btn" id="themeBtnDark" onclick="setTheme('dark',this)">🌙 Escuro</div>
+                <div class="theme-btn" id="themeBtnLight" onclick="setTheme('light',this)">☀️ Claro</div>
+                <script>try{document.getElementById(localStorage.getItem('bancapro-theme')==='light'?'themeBtnLight':'themeBtnDark').classList.add('active')}catch(e){document.getElementById('themeBtnDark').classList.add('active')}</script>
+              </div>
+            </div>
+            <div class="settings-section" style="margin-top:16px">
+              <div class="settings-label">Cor Principal</div>
+              <div class="color-swatches">
+                <div class="swatch active" style="background:#6366f1" onclick="setAccent('#6366f1','#8b5cf6',this)" title="Índigo"></div>
+                <div class="swatch" style="background:#3b82f6" onclick="setAccent('#3b82f6','#06b6d4',this)" title="Azul"></div>
+                <div class="swatch" style="background:#10b981" onclick="setAccent('#10b981','#34d399',this)" title="Verde"></div>
+                <div class="swatch" style="background:#f59e0b" onclick="setAccent('#f59e0b','#fbbf24',this)" title="Âmbar"></div>
+                <div class="swatch" style="background:#f43f5e" onclick="setAccent('#f43f5e','#fb7185',this)" title="Rosa"></div>
+                <div class="swatch" style="background:#8b5cf6" onclick="setAccent('#8b5cf6','#a78bfa',this)" title="Roxo"></div>
+                <div class="swatch" style="background:#ec4899" onclick="setAccent('#ec4899','#f472b6',this)" title="Pink"></div>
+                <div class="swatch" style="background:#14b8a6" onclick="setAccent('#14b8a6','#2dd4bf',this)" title="Teal"></div>
+              </div>
+            </div>
+            <div class="settings-section" style="margin-top:16px">
+              <div class="settings-label">Cor Personalizada (HEX)</div>
+              <div style="display:flex;gap:8px">
+                <input class="form-input" type="color" id="customColor" value="#6366f1" style="width:50px;height:40px;padding:4px;cursor:pointer"/>
+                <button class="btn-ghost" onclick="applyCustomColor()">Aplicar</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-card">
+            <div class="form-card-title">👤 Perfil do Usuário</div>
+            <div class="form-group"><label class="form-label">Nome</label><input class="form-input" type="text" value="Admin" id="settingsUserName" oninput="updateUserName()"/></div>
+            <div class="form-group"><label class="form-label">E-mail</label><input class="form-input" type="email" value="admin@bancapro.com" id="settingsUserEmail"/></div>
+            <div class="form-group"><label class="form-label">Nova Senha</label><input class="form-input" type="password" placeholder="••••••••" id="settingsUserPwd"/></div>
+            <button class="btn-primary" onclick="saveProfile()">Salvar Alterações</button>
+          </div>
+
+          <div class="form-card">
+            <div class="form-card-title">🔔 Notificações</div>
+            <div style="display:flex;flex-direction:column;gap:12px">
+              <label style="display:flex;align-items:center;gap:10px;cursor:pointer;font-size:13px">
+                <input type="checkbox" checked style="accent-color:var(--accent);width:15px;height:15px"/> Alertas de gastos altos
+              </label>
+              <label style="display:flex;align-items:center;gap:10px;cursor:pointer;font-size:13px">
+                <input type="checkbox" checked style="accent-color:var(--accent);width:15px;height:15px"/> Metas atingidas
+              </label>
+              <label style="display:flex;align-items:center;gap:10px;cursor:pointer;font-size:13px">
+                <input type="checkbox" checked style="accent-color:var(--accent);width:15px;height:15px"/> Resumo diário
+              </label>
+              <label style="display:flex;align-items:center;gap:10px;cursor:pointer;font-size:13px">
+                <input type="checkbox" style="accent-color:var(--accent);width:15px;height:15px"/> E-mail semanal
+              </label>
+              <label style="display:flex;align-items:center;gap:10px;cursor:pointer;font-size:13px">
+                <input type="checkbox" checked style="accent-color:var(--accent);width:15px;height:15px"/> Recarga expirando
+              </label>
+            </div>
+          </div>
+
+          <div class="form-card" style="border:1px solid rgba(244,63,94,0.25)">
+            <div class="form-card-title">⚠️ Zona de Perigo</div>
+            <p style="font-size:13px;color:var(--text-secondary);margin-bottom:14px;line-height:1.5">
+              Limpa todos os dados salvos no seu navegador (transações, metas e comparativos) e volta ao estado inicial.
+              Esta ação não pode ser desfeita.
+            </p>
+            <button class="btn-danger" onclick="resetAllData()">🗑️ Apagar todos os dados</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══ ADMIN ═══ -->
+      <div class="section" id="sec-admin">
+        <div class="page-header"><div class="page-title">Painel Admin 👑</div><div class="page-subtitle">Gestão de usuários e sistema</div></div>
+        <div class="empty-state">
+          <div class="empty-state-icon">🚧</div>
+          <div class="empty-state-title">Painel Admin em breve</div>
+          <div class="empty-state-sub">
+            Esta área permitirá gerenciar usuários, planos e métricas da plataforma.
+            Disponível quando o BancaPRO tiver backend e múltiplos usuários ativos.
+          </div>
+          <div style="margin-top:18px;display:flex;gap:8px;justify-content:center;flex-wrap:wrap">
+            <span class="empty-feature">👥 Gestão de usuários</span>
+            <span class="empty-feature">📊 Métricas da plataforma</span>
+            <span class="empty-feature">💳 Controle de assinaturas</span>
+            <span class="empty-feature">🔐 Logs de acesso</span>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /page-content -->
+  </main>
+</div><!-- /app -->
+<script src="script.js" defer></script>
+</body>
+</html>

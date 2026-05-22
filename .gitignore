@@ -1,0 +1,9 @@
+# Servidor local de desenvolvimento (não vai para produção)
+_serve.ps1
+
+# Config interna do Claude Code
+.claude/
+
+# Sistema
+Thumbs.db
+.DS_Store
