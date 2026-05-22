@@ -1801,12 +1801,14 @@ function updatePlatformName() {
   } else {
     el.innerHTML = '<span style="color:'+c1+'">'+name+'</span>';
   }
-  // Só atualiza o ícone com a inicial se NÃO houver logo customizada
+  // Sem logo customizada: usa a logo padrão (logo.png); se o arquivo faltar, mostra a inicial
   if(!customLogoDataUrl) {
+    const initial = name.charAt(0).toUpperCase();
+    const defImg = `<img src="brand/logo.png" alt="${initial}" style="width:100%;height:100%;object-fit:contain;border-radius:6px" onerror="this.replaceWith(document.createTextNode('${initial}'))"/>`;
     const sideIcon = document.getElementById('sidebarLogoIcon');
     const authIcon = document.getElementById('authLogoIcon');
-    if(sideIcon) sideIcon.textContent = name.charAt(0).toUpperCase();
-    if(authIcon) authIcon.textContent = name.charAt(0).toUpperCase();
+    if(sideIcon) sideIcon.innerHTML = defImg;
+    if(authIcon) authIcon.innerHTML = defImg;
   }
   document.title = name + ' — Gestão Financeira';
 }
