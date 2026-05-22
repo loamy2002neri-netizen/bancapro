@@ -231,6 +231,12 @@ async function enterApp(user) {
     const allowed = await checkAccess(user);
     if (allowed) hidePaywall(); else showPaywall();
   } catch(e) { hidePaywall(); }
+  // Menu Admin só para o dono
+  try {
+    const isOwner = OWNER_EMAILS.includes((user.email || '').toLowerCase());
+    const navAdmin = document.getElementById('navAdmin');
+    if (navAdmin) navAdmin.style.display = isOwner ? '' : 'none';
+  } catch(e){}
   // Voltou do checkout? mostra "obrigado" e reconfere a assinatura
   try {
     if (new URLSearchParams(location.search).get('assinatura') === 'ok') handleReturnFromCheckout();
@@ -265,6 +271,35 @@ async function checkAccess(user) {
 
 function showPaywall() { const el = document.getElementById('paywallOverlay'); if (el) el.style.display = 'flex'; }
 function hidePaywall() { const el = document.getElementById('paywallOverlay'); if (el) el.style.display = 'none'; }
+
+// Painel do dono: métricas agregadas (via função get_owner_stats no Supabase)
+async function renderAdminStats() {
+  const el = document.getElementById('adminStats');
+  if (!el) return;
+  const sb = getSb();
+  if (!sb) { el.innerHTML = '<div class="empty-state-sub">Disponível só com o banco na nuvem.</div>'; return; }
+  el.innerHTML = '<div class="empty-state-sub">Carregando…</div>';
+  try {
+    const { data, error } = await sb.rpc('get_owner_stats');
+    if (error || !data) {
+      el.innerHTML = '<div style="text-align:center;padding:14px"><div style="font-size:30px">🔒</div><div style="font-weight:700;margin-top:6px">Acesso restrito</div><div class="empty-state-sub">Este painel é só para o dono da plataforma.</div></div>';
+      return;
+    }
+    const s = data;
+    const conv = s.total_users > 0 ? ((s.active_subs / s.total_users) * 100).toFixed(1) : '0';
+    el.innerHTML = `
+      <div class="stat-row" style="grid-template-columns:repeat(4,minmax(0,1fr))">
+        <div class="stat-chip"><div class="stat-chip-label">Usuários totais</div><div class="stat-chip-value">${s.total_users}</div></div>
+        <div class="stat-chip"><div class="stat-chip-label">Assinantes ativos</div><div class="stat-chip-value" style="color:var(--green)">${s.active_subs}</div></div>
+        <div class="stat-chip"><div class="stat-chip-label">Conversão</div><div class="stat-chip-value">${conv}%</div></div>
+        <div class="stat-chip"><div class="stat-chip-label">Cadastros (7 dias)</div><div class="stat-chip-value">${s.signups_7d}</div></div>
+      </div>
+      <div style="margin-top:14px;font-size:12px;color:var(--text-muted)">Já assinaram (total): ${s.total_subs} · Inativos/cancelados: ${s.inactive_subs}</div>
+    `;
+  } catch(e) {
+    el.innerHTML = '<div class="empty-state-sub">Erro ao carregar métricas.</div>';
+  }
+}
 
 // Ao voltar do checkout (URL com ?assinatura=ok): agradece e reconfere a assinatura
 // algumas vezes (o webhook do Kirvano pode levar alguns segundos pra chegar).
@@ -470,6 +505,7 @@ function goTo(section, el) {
   if(section === 'methods') setTimeout(initMethodEvolution, 100);
   if(section === 'recharge') setTimeout(updateTrialBanner, 50);
   if(section === 'settings') setTimeout(renderSubscriptionCard, 50);
+  if(section === 'admin') setTimeout(renderAdminStats, 50);
 }
 
 function setPeriod(p, el) {

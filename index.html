@@ -15,7 +15,7 @@
 <link rel="icon" type="image/png" id="appFavicon" href="brand/logo.png"/>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<link rel="stylesheet" href="style.css?v=3"/>
+<link rel="stylesheet" href="style.css?v=4"/>
 </head>
 <body>
 
@@ -258,7 +258,7 @@
     <div class="sidebar-section">
       <div class="sidebar-section-label">Sistema</div>
       <div class="nav-item" onclick="goTo('settings',this)"><span class="nav-icon">⚙️</span>Configurações</div>
-      <div class="nav-item" onclick="goTo('admin',this)"><span class="nav-icon">👑</span>Admin</div>
+      <div class="nav-item" id="navAdmin" onclick="goTo('admin',this)"><span class="nav-icon">👑</span>Admin</div>
     </div>
 
     <div class="sidebar-footer">
@@ -963,20 +963,13 @@
 
       <!-- ═══ ADMIN ═══ -->
       <div class="section" id="sec-admin">
-        <div class="page-header"><div class="page-title">Painel Admin 👑</div><div class="page-subtitle">Gestão de usuários e sistema</div></div>
-        <div class="empty-state">
-          <div class="empty-state-icon">🚧</div>
-          <div class="empty-state-title">Painel Admin em breve</div>
-          <div class="empty-state-sub">
-            Esta área permitirá gerenciar usuários, planos e métricas da plataforma.
-            Disponível quando o BancaPRO tiver backend e múltiplos usuários ativos.
+        <div class="page-header"><div class="page-title">Painel Admin 👑</div><div class="page-subtitle">Métricas da plataforma (visível só para o dono)</div></div>
+        <div class="form-card">
+          <div class="form-card-title">📊 Métricas da plataforma</div>
+          <div id="adminStats">
+            <div class="empty-state-sub">Carregando…</div>
           </div>
-          <div style="margin-top:18px;display:flex;gap:8px;justify-content:center;flex-wrap:wrap">
-            <span class="empty-feature">👥 Gestão de usuários</span>
-            <span class="empty-feature">📊 Métricas da plataforma</span>
-            <span class="empty-feature">💳 Controle de assinaturas</span>
-            <span class="empty-feature">🔐 Logs de acesso</span>
-          </div>
+          <div style="margin-top:14px"><button class="btn-ghost" onclick="renderAdminStats()" style="padding:8px 16px;font-size:12px">↻ Atualizar</button></div>
         </div>
       </div>
 
@@ -995,7 +988,7 @@
   </div>
 </div>
 
-<script src="config.js?v=3" defer></script>
-<script src="script.js?v=3" defer></script>
+<script src="config.js?v=4" defer></script>
+<script src="script.js?v=4" defer></script>
 </body>
 </html>
