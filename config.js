@@ -10,5 +10,5 @@
 //    (a chave "anon public" pode ficar aqui — é pública por design;
 //     a segurança vem das regras RLS no banco.)
 // ─────────────────────────────────────────────
-window.SUPABASE_URL = 'COLE_SUA_PROJECT_URL_AQUI';
-window.SUPABASE_ANON_KEY = 'COLE_SUA_ANON_PUBLIC_KEY_AQUI';
+window.SUPABASE_URL = 'https://jmkshpqarmctbchoxadu.supabase.co';
+window.SUPABASE_ANON_KEY = 'sb_publishable_mpvpadpbWZv0i040jDP09Q_gnyYn01p';
