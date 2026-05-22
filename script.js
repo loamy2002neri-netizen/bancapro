@@ -297,7 +297,7 @@ async function renderSubscriptionCard() {
       if (data && data.status === 'active') {
         isActive = true;
         planName = data.plan || 'Premium';
-        const isAnnual = /anual|annual|year|ano/i.test(planName);
+        const isAnnual = /anual|annual|yearly/i.test(planName);
         const base = data.updated_at ? new Date(data.updated_at) : new Date();
         validUntil = new Date(base.getTime() + (isAnnual ? 365 : 30) * 86400000);
       }
