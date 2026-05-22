@@ -1722,7 +1722,8 @@ function escapeHtml(str) {
 //  SUBSCRIPTION / TRIAL
 // ══════════════════════════════════════════════
 const TRIAL_DAYS = 7;
-const SUBSCRIPTION_PRICE = 14.90;
+const SUBSCRIPTION_PRICE = 24.90;
+const SUBSCRIPTION_PRICE_ANNUAL = 199;
 
 function loadTrialState() {
   let start = null;
@@ -1764,8 +1765,14 @@ function updateTrialBanner() {
   }
 }
 
-function subscribeNow() {
-  showToast('Redirecionando para o checkout… (integração de pagamento em breve)','info');
+function subscribeNow(plan) {
+  const url = (plan === 'anual') ? window.CHECKOUT_ANUAL : window.CHECKOUT_MENSAL;
+  if (url && /^https?:\/\//.test(url) && String(url).indexOf('COLE_') !== 0) {
+    showToast('Abrindo o checkout seguro…','info');
+    window.location.href = url;
+  } else {
+    showToast('Checkout ainda não configurado — falta o link do Kirvano.','error');
+  }
 }
 function continueTrialToast() {
   showToast('Tudo certo! Aproveite seus dias grátis 🎉','success');

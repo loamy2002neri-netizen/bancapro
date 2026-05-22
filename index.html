@@ -610,13 +610,13 @@
           <div class="trial-hero-content">
             <div class="trial-hero-badge"><span class="trial-pulse"></span>Período gratuito ativo</div>
             <div class="trial-hero-title">Você ainda tem <span id="trialDaysLeft">7</span> dias grátis</div>
-            <div class="trial-hero-sub">Aproveite todos os recursos do BancaPRO sem pagar nada até <strong id="trialEndDate">26/05/2026</strong>. Depois disso, é só <strong>R$ 14,90/mês</strong>.</div>
+            <div class="trial-hero-sub">Aproveite todos os recursos do BancaPRO sem pagar nada até <strong id="trialEndDate">26/05/2026</strong>. Depois disso, a partir de <strong>R$ 16,58/mês</strong> (plano anual) ou <strong>R$ 24,90/mês</strong>.</div>
             <div class="trial-progress">
               <div class="trial-progress-bar"><div class="trial-progress-fill" id="trialProgressFill" style="width:14.3%"></div></div>
               <div class="trial-progress-meta"><span id="trialUsedLabel">Dia 1 de 7</span><span id="trialPctLabel">14% concluído</span></div>
             </div>
             <div class="trial-hero-actions">
-              <button class="btn-cta-primary" onclick="subscribeNow()">Assinar agora · R$ 14,90/mês</button>
+              <button class="btn-cta-primary" onclick="subscribeNow()">Assinar agora · R$ 24,90/mês</button>
               <button class="btn-cta-ghost" onclick="continueTrialToast()">Continuar no trial</button>
             </div>
           </div>
@@ -657,7 +657,7 @@
             </div>
             <div class="plan-price">
               <span class="plan-price-currency">R$</span>
-              <span class="plan-price-value">14<small>,90</small></span>
+              <span class="plan-price-value">24<small>,90</small></span>
               <span class="plan-price-period">/mês</span>
             </div>
             <div class="plan-desc">Tudo o que você precisa pra gestão profissional</div>
@@ -670,8 +670,33 @@
               <li><span class="plan-check premium">✓</span>Backup automático na nuvem</li>
               <li><span class="plan-check premium">✓</span>Suporte prioritário 24/7</li>
             </ul>
-            <button class="btn-plan-primary" onclick="subscribeNow()">Assinar Premium → R$ 14,90</button>
+            <button class="btn-plan-primary" onclick="subscribeNow()">Assinar Premium → R$ 24,90</button>
             <div class="plan-guarantee">🔒 Cancele a qualquer momento · Sem fidelidade</div>
+          </div>
+
+          <!-- PLANO ANUAL -->
+          <div class="plan-card">
+            <div class="plan-header">
+              <div class="plan-name">Premium Anual</div>
+              <div class="plan-badge plan-badge-gold">Economize 33%</div>
+            </div>
+            <div class="plan-price">
+              <span class="plan-price-currency">R$</span>
+              <span class="plan-price-value">199</span>
+              <span class="plan-price-period">/ano</span>
+            </div>
+            <div class="plan-desc">≈ R$ 16,58/mês · pague uma vez no ano</div>
+            <ul class="plan-features">
+              <li><span class="plan-check premium">✓</span><strong>Tudo do Premium</strong></li>
+              <li><span class="plan-check premium">✓</span>Transações e métodos ilimitados</li>
+              <li><span class="plan-check premium">✓</span>Relatórios avançados (PDF/Excel)</li>
+              <li><span class="plan-check premium">✓</span>Comparativos e projeções</li>
+              <li><span class="plan-check premium">✓</span>Backup automático na nuvem</li>
+              <li><span class="plan-check premium">✓</span>Suporte prioritário 24/7</li>
+              <li><span class="plan-check premium">✓</span><strong>Economize R$ 99,80 por ano</strong></li>
+            </ul>
+            <button class="btn-plan-primary" onclick="subscribeNow('anual')">Assinar Anual → R$ 199</button>
+            <div class="plan-guarantee">🔒 1 pagamento por ano · Cancele quando quiser</div>
           </div>
         </div>
 

@@ -12,3 +12,11 @@
 // ─────────────────────────────────────────────
 window.SUPABASE_URL = 'https://jmkshpqarmctbchoxadu.supabase.co';
 window.SUPABASE_ANON_KEY = 'sb_publishable_mpvpadpbWZv0i040jDP09Q_gnyYn01p';
+
+// ─────────────────────────────────────────────
+//  Checkout das assinaturas (Kirvano)
+//  Cole aqui os links de checkout das ofertas criadas no Kirvano.
+//  Enquanto estiver com "COLE_...", o botão mostra um aviso.
+// ─────────────────────────────────────────────
+window.CHECKOUT_MENSAL = 'https://pay.kirvano.com/2f15d0a6-b33c-4a80-9210-41a2da119a09';
+window.CHECKOUT_ANUAL  = 'https://pay.kirvano.com/2f15d0a6-b33c-4a80-9210-41a2da119a09';
