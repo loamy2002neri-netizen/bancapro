@@ -15,7 +15,7 @@
 <link rel="icon" type="image/svg+xml" id="appFavicon" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%236366f1'/><text x='50' y='66' font-family='Arial,sans-serif' font-size='62' font-weight='800' fill='%23fff' text-anchor='middle'>B</text></svg>"/>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<link rel="stylesheet" href="style.css"/>
+<link rel="stylesheet" href="style.css?v=2"/>
 </head>
 <body>
 
@@ -369,7 +369,7 @@
 
           <!-- Filtros de período -->
           <div class="evo-filters" style="display:flex;align-items:center;gap:6px;margin-bottom:14px;flex-wrap:wrap">
-            <div style="display:flex;gap:4px;background:var(--bg-secondary);border:1px solid var(--border);border-radius:8px;padding:3px">
+            <div class="evo-btn-group" style="display:flex;gap:4px;background:var(--bg-secondary);border:1px solid var(--border);border-radius:8px;padding:3px">
               <button class="evo-btn active" data-mode="today"  onclick="setEvoMode('today',this)">Hoje</button>
               <button class="evo-btn"        data-mode="7d"     onclick="setEvoMode('7d',this)">7 Dias</button>
               <button class="evo-btn"        data-mode="30d"    onclick="setEvoMode('30d',this)">30 Dias</button>

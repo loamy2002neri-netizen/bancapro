@@ -1172,7 +1172,6 @@ const HOUSES_CATALOG = [
   {name:'Vbet',       color:'#ffc107', initials:'V'},
   {name:'Stake',      color:'#1ab57e', initials:'S'},
   {name:'EsporteNet', color:'#16a34a', initials:'E'},
-  {name:'MrJack',     color:'#10b981', initials:'M'},
   {name:'Multibet',   color:'#8b5cf6', initials:'M'},
   {name:'Luvabet',    color:'#fb923c', initials:'L'},
   {name:'BR4bet',     color:'#dc2626', initials:'B'},
@@ -1247,28 +1246,104 @@ function closeAccountModal() {
   selectedHouseInModal = null;
 }
 
+// Nome do arquivo do logo a partir do nome da casa (ex.: "Esportes da Sorte" -> "esportesdasorte")
+function houseLogoSlug(name) {
+  return String(name).toLowerCase().replace(/[^a-z0-9]/g, '');
+}
+
+// Domínio de cada casa — usado pra puxar o ícone (favicon) automaticamente
+const HOUSE_DOMAINS = {
+  'Superbet':'superbet.com', 'bet365':'bet365.com', 'Betano':'betano.com', 'Blaze':'blaze.com',
+  'KTO':'kto.com', 'Novibet':'novibet.com', 'Sportingbet':'sportingbet.com', 'Brazino777':'brazino777.com',
+  'BetMGM':'betmgm.com', 'Estrelabet':'estrelabet.com', 'Betnacional':'betnacional.com', 'BetdaSorte':'betdasorte.com',
+  'Esportes da Sorte':'esportesdasorte.com', 'Jonbet':'jonbet.com', '7K Bet':'', 'Pixbet':'pixbet.com',
+  'Vbet':'vbet.com', 'Stake':'stake.com', 'EsporteNet':'esportenet.com',
+  'Multibet':'', 'Luvabet':'', 'BR4bet':'br4.bet', 'Gol de Bet':'goldebet.com',
+  'Hiperbet':'', 'Rivalo':'rivalo.com', 'PlayUZU':'playuzu.com', 'Energia.bet':'energia.bet',
+  'Brasil Bet':'brasilbet.com', 'Esportiva.bet':'esportiva.bet'
+};
+function houseIconUrl(name) {
+  const d = HOUSE_DOMAINS[name];
+  return d ? `https://www.google.com/s2/favicons?domain=${d}&sz=64` : '';
+}
+
+// Tenta a próxima fonte de imagem (formatos/favicon); se acabarem, mostra o selo colorido
+function houseImgError(img) {
+  let fb = [];
+  try { fb = JSON.parse(img.getAttribute('data-fb') || '[]'); } catch(e) {}
+  if (fb.length) {
+    const next = fb.shift();
+    img.setAttribute('data-fb', JSON.stringify(fb));
+    img.src = next;
+  } else {
+    img.style.display = 'none';
+    const b = img.parentNode.querySelector('.house-dd-dot');
+    if (b) b.style.display = 'flex';
+  }
+}
+
 function renderHouseSelector() {
   const sel = document.getElementById('houseSelector');
   if(!sel) return;
-  const opts = HOUSES_CATALOG.map(h => {
-    const isSelected = selectedHouseInModal && !selectedHouseInModal.custom && selectedHouseInModal.name === h.name;
-    return `
-      <div class="house-option ${isSelected ? 'selected' : ''}" onclick="selectHouse('${escapeHtml(h.name)}')" data-name="${escapeHtml(h.name)}">
-        <div class="house-mini-logo" style="--c:${h.color};background:${h.color}">${escapeHtml(h.initials)}</div>
-        <div class="house-option-name">${escapeHtml(h.name)}</div>
-      </div>
-    `;
+  const cur = selectedHouseInModal;
+  // Valor mostrado no "gatilho" do dropdown
+  let valueHtml;
+  if (cur && cur.custom) {
+    valueHtml = `<span class="house-dd-value" style="color:#6366f1">OUTRA</span>`;
+  } else if (cur && cur.name) {
+    valueHtml = `<span class="house-dd-value" style="color:${cur.color}">${escapeHtml(cur.name.toUpperCase())}</span>`;
+  } else {
+    valueHtml = `<span class="house-dd-value placeholder">SELECIONE UMA CASA</span>`;
+  }
+  // Itens do dropdown: ícone (favicon) da casa + nome colorido.
+  // Logo local (logos/<slug>.png) tem prioridade; se faltar, usa o favicon do site;
+  // se ambos falharem, fica só o nome colorido (onerror remove a img).
+  const items = HOUSES_CATALOG.map(h => {
+    const isSel = cur && !cur.custom && cur.name === h.name;
+    const slug = houseLogoSlug(h.name);
+    const fav = houseIconUrl(h.name);
+    // Tenta vários formatos de arquivo local; depois o favicon; por fim, o selo colorido
+    const candidates = [`logos/${slug}.png`, `logos/${slug}.jpg`, `logos/${slug}.jpeg`, `logos/${slug}.webp`];
+    if (fav) candidates.push(fav);
+    const first = candidates[0];
+    const rest = escapeHtml(JSON.stringify(candidates.slice(1)));
+    return `<div class="house-dd-item ${isSel ? 'selected' : ''}" onclick="selectHouse('${escapeHtml(h.name)}')">
+        <img class="house-dd-logo" src="${first}" alt="" data-fb="${rest}" onerror="houseImgError(this)">
+        <span class="house-dd-dot" style="background:${h.color};display:none">${escapeHtml(h.initials)}</span>
+        <span class="house-dd-item-name">${escapeHtml(h.name)}</span>
+      </div>`;
   }).join('');
-  // opção "Outra"
-  const customSelected = selectedHouseInModal && selectedHouseInModal.custom;
-  const customOpt = `
-    <div class="house-option custom ${customSelected ? 'selected' : ''}" onclick="selectHouse('__custom__')">
-      <div class="house-mini-logo">+</div>
-      <div class="house-option-name">Outra</div>
+  const customSelected = cur && cur.custom;
+  const customItem = `<div class="house-dd-item custom ${customSelected ? 'selected' : ''}" onclick="selectHouse('__custom__')">
+      <span class="house-dd-dot custom">+</span>
+      <span class="house-dd-item-name" style="color:var(--text-secondary)">Outra casa</span>
+    </div>`;
+  sel.innerHTML = `
+    <div class="house-dd">
+      <div class="house-dd-caption">CASA SELECIONADA</div>
+      <button type="button" class="house-dd-trigger" onclick="toggleHouseDropdown(event)">
+        ${valueHtml}
+        <span class="house-dd-caret">▾</span>
+      </button>
+      <div class="house-dd-menu" id="houseDdMenu">${items}${customItem}</div>
     </div>
   `;
-  sel.innerHTML = opts + customOpt;
   document.getElementById('customHouseGroup').style.display = customSelected ? 'block' : 'none';
+}
+
+function toggleHouseDropdown(e) {
+  if(e) e.stopPropagation();
+  const menu = document.getElementById('houseDdMenu');
+  if(!menu) return;
+  const willOpen = !menu.classList.contains('open');
+  menu.classList.toggle('open', willOpen);
+  if(willOpen) {
+    setTimeout(() => document.addEventListener('click', closeHouseDropdownOnce, { once:true }), 0);
+  }
+}
+function closeHouseDropdownOnce() {
+  const menu = document.getElementById('houseDdMenu');
+  if(menu) menu.classList.remove('open');
 }
 
 function selectHouse(name) {
