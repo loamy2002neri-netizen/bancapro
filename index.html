@@ -15,7 +15,7 @@
 <link rel="icon" type="image/png" id="appFavicon" href="brand/logo.png"/>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<link rel="stylesheet" href="style.css?v=4"/>
+<link rel="stylesheet" href="style.css?v=5"/>
 </head>
 <body>
 
@@ -969,7 +969,14 @@
           <div id="adminStats">
             <div class="empty-state-sub">Carregando…</div>
           </div>
-          <div style="margin-top:14px"><button class="btn-ghost" onclick="renderAdminStats()" style="padding:8px 16px;font-size:12px">↻ Atualizar</button></div>
+          <div style="margin-top:14px"><button class="btn-ghost" onclick="renderAdminStats();renderAdminUsers()" style="padding:8px 16px;font-size:12px">↻ Atualizar</button></div>
+        </div>
+
+        <div class="form-card" style="margin-top:16px">
+          <div class="form-card-title">👥 Usuários (<span id="adminUsersCount">—</span>)</div>
+          <div id="adminUsers">
+            <div class="empty-state-sub">Carregando…</div>
+          </div>
         </div>
       </div>
 
@@ -988,7 +995,7 @@
   </div>
 </div>
 
-<script src="config.js?v=4" defer></script>
-<script src="script.js?v=4" defer></script>
+<script src="config.js?v=5" defer></script>
+<script src="script.js?v=5" defer></script>
 </body>
 </html>

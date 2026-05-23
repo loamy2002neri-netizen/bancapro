@@ -301,6 +301,40 @@ async function renderAdminStats() {
   }
 }
 
+// Painel do dono: lista de usuários (via função get_owner_users no Supabase)
+async function renderAdminUsers() {
+  const el = document.getElementById('adminUsers');
+  if (!el) return;
+  const sb = getSb();
+  const countEl = document.getElementById('adminUsersCount');
+  if (!sb) { el.innerHTML = '<div class="empty-state-sub">Disponível só com o banco na nuvem.</div>'; return; }
+  el.innerHTML = '<div class="empty-state-sub">Carregando…</div>';
+  try {
+    const { data, error } = await sb.rpc('get_owner_users');
+    if (error || !data) { el.innerHTML = '<div class="empty-state-sub">Acesso restrito.</div>'; return; }
+    if (countEl) countEl.textContent = data.length;
+    if (!data.length) { el.innerHTML = '<div class="empty-state-sub">Nenhum usuário cadastrado ainda.</div>'; return; }
+    const rows = data.map(u => {
+      const st = u.status === 'active' ? {c:'var(--green)',t:'Ativo'}
+               : (u.status === 'sem assinatura' ? {c:'var(--text-muted)',t:'Sem assinatura'} : {c:'var(--red)',t:'Inativo'});
+      const created = u.created_at ? new Date(u.created_at).toLocaleDateString('pt-BR') : '—';
+      const last = u.last_sign_in_at ? new Date(u.last_sign_in_at).toLocaleDateString('pt-BR') : '—';
+      return `<tr>
+        <td>${escapeHtml(u.email || '—')}</td>
+        <td><span style="color:${st.c};font-weight:600">${st.t}</span></td>
+        <td>${escapeHtml(u.plan || '—')}</td>
+        <td>${created}</td>
+        <td>${last}</td>
+      </tr>`;
+    }).join('');
+    el.innerHTML = `<div style="overflow-x:auto"><table class="admin-table">
+      <thead><tr><th>E-mail</th><th>Status</th><th>Plano</th><th>Cadastro</th><th>Último acesso</th></tr></thead>
+      <tbody>${rows}</tbody></table></div>`;
+  } catch(e) {
+    el.innerHTML = '<div class="empty-state-sub">Erro ao carregar usuários.</div>';
+  }
+}
+
 // Ao voltar do checkout (URL com ?assinatura=ok): agradece e reconfere a assinatura
 // algumas vezes (o webhook do Kirvano pode levar alguns segundos pra chegar).
 async function handleReturnFromCheckout() {
@@ -505,7 +539,7 @@ function goTo(section, el) {
   if(section === 'methods') setTimeout(initMethodEvolution, 100);
   if(section === 'recharge') setTimeout(updateTrialBanner, 50);
   if(section === 'settings') setTimeout(renderSubscriptionCard, 50);
-  if(section === 'admin') setTimeout(renderAdminStats, 50);
+  if(section === 'admin') setTimeout(() => { renderAdminStats(); renderAdminUsers(); }, 50);
 }
 
 function setPeriod(p, el) {
