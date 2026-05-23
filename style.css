@@ -24,7 +24,7 @@
     --shadow-card: 0 2px 16px rgba(0,0,0,0.3);
   }
   * { margin:0; padding:0; box-sizing:border-box; }
-  html,body { width:100%; height:100%; background:var(--bg-primary); color:var(--text-primary); font-family:'Outfit','Inter',system-ui,-apple-system,sans-serif; overflow-x:hidden; transition:background 0.25s ease, color 0.25s ease; }
+  html,body { width:100%; height:100%; background:var(--bg-primary); color:var(--text-primary); font-family:'Plus Jakarta Sans','Inter',system-ui,-apple-system,sans-serif; overflow-x:hidden; transition:background 0.25s ease, color 0.25s ease; }
   body, .sidebar, .topbar, .main, .chart-card, .kpi-card, .form-card, .transactions-card, .ranking-card, .recharge-card, .stat-chip, .icon-btn, .btn-ghost, .nav-item, .form-input, .form-select, .period-tab, .tx-method-pill, .tag {
     transition: background 0.25s ease, color 0.25s ease, border-color 0.25s ease;
   }
