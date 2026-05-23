@@ -1999,7 +1999,7 @@ function updatePlatformName() {
   // Sem logo customizada: usa a logo padrão (logo.png); se o arquivo faltar, mostra a inicial
   if(!customLogoDataUrl) {
     const initial = name.charAt(0).toUpperCase();
-    const defImg = `<img src="brand/logo.png" alt="${initial}" style="width:100%;height:100%;object-fit:contain;border-radius:6px" onerror="this.replaceWith(document.createTextNode('${initial}'))"/>`;
+    const defImg = `<img src="brand/icon.png" alt="${initial}" style="width:100%;height:100%;object-fit:contain;border-radius:6px" onerror="this.replaceWith(document.createTextNode('${initial}'))"/>`;
     const sideIcon = document.getElementById('sidebarLogoIcon');
     const authIcon = document.getElementById('authLogoIcon');
     if(sideIcon) sideIcon.innerHTML = defImg;
