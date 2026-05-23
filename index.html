@@ -9,13 +9,13 @@
 <meta name="mobile-web-app-capable" content="yes"/>
 <meta name="apple-mobile-web-app-capable" content="yes"/>
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
-<meta name="apple-mobile-web-app-title" content="BancaPRO"/>
+<meta name="apple-mobile-web-app-title" content="Apostack"/>
 <meta name="format-detection" content="telephone=no"/>
-<title>BancaPRO — Gestão Financeira</title>
+<title>Apostack — Gestão Financeira</title>
 <link rel="icon" type="image/png" id="appFavicon" href="brand/logo.png"/>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<link rel="stylesheet" href="style.css?v=5"/>
+<link rel="stylesheet" href="style.css?v=6"/>
 </head>
 <body>
 
@@ -23,8 +23,8 @@
 <div class="auth-screen" id="authScreen">
   <div class="auth-card">
     <div class="auth-logo">
-      <div class="auth-logo-icon" id="authLogoIcon"><img src="brand/logo.png" alt="B" style="width:100%;height:100%;object-fit:contain;border-radius:8px" onerror="this.replaceWith(document.createTextNode('B'))"/></div>
-      <div class="auth-logo-text">Banca<span>PRO</span></div>
+      <div class="auth-logo-icon" id="authLogoIcon"><img src="brand/logo.png" alt="B" style="width:100%;height:100%;object-fit:contain;border-radius:8px" onerror="this.replaceWith(document.createTextNode('A'))"/></div>
+      <div class="auth-logo-text">Apo<span>stack</span></div>
     </div>
     <div id="loginForm">
       <div class="auth-title">Bem-vindo de volta 👋</div>
@@ -232,9 +232,9 @@
   <!-- SIDEBAR -->
   <aside class="sidebar" id="sidebar">
     <div class="sidebar-header">
-      <div class="logo-icon" id="sidebarLogoIcon"><img src="brand/logo.png" alt="B" style="width:100%;height:100%;object-fit:contain;border-radius:6px" onerror="this.replaceWith(document.createTextNode('B'))"/></div>
+      <div class="logo-icon" id="sidebarLogoIcon"><img src="brand/logo.png" alt="B" style="width:100%;height:100%;object-fit:contain;border-radius:6px" onerror="this.replaceWith(document.createTextNode('A'))"/></div>
       <div>
-        <div class="logo-text" id="sidebarLogoText">Banca<span>PRO</span></div>
+        <div class="logo-text" id="sidebarLogoText">Apo<span>stack</span></div>
         <div style="font-size:10px;color:var(--text-muted);margin-top:1px">v2.0 Premium</div>
       </div>
     </div>
@@ -277,7 +277,7 @@
     <div class="topbar">
       <button class="icon-btn menu-btn" onclick="toggleSidebar()" aria-label="Abrir menu lateral" style="display:none">☰</button>
       <div class="topbar-title">
-        <div class="topbar-breadcrumb">BancaPRO / <span id="breadcrumb">Dashboard</span></div>
+        <div class="topbar-breadcrumb">Apostack / <span id="breadcrumb">Dashboard</span></div>
       </div>
       <div class="topbar-actions">
         <button class="btn-ghost" style="padding:6px 14px;font-size:12px" onclick="openTxModal()">+ Transação</button>
@@ -611,7 +611,7 @@
           <div class="trial-hero-content">
             <div class="trial-hero-badge"><span class="trial-pulse"></span>Período gratuito ativo</div>
             <div class="trial-hero-title">Você ainda tem <span id="trialDaysLeft">7</span> dias grátis</div>
-            <div class="trial-hero-sub">Aproveite todos os recursos do BancaPRO sem pagar nada até <strong id="trialEndDate">26/05/2026</strong>. Depois disso, a partir de <strong>R$ 16,58/mês</strong> (plano anual) ou <strong>R$ 24,90/mês</strong>.</div>
+            <div class="trial-hero-sub">Aproveite todos os recursos do Apostack sem pagar nada até <strong id="trialEndDate">26/05/2026</strong>. Depois disso, a partir de <strong>R$ 16,58/mês</strong> (plano anual) ou <strong>R$ 24,90/mês</strong>.</div>
             <div class="trial-progress">
               <div class="trial-progress-bar"><div class="trial-progress-fill" id="trialProgressFill" style="width:14.3%"></div></div>
               <div class="trial-progress-meta"><span id="trialUsedLabel">Dia 1 de 7</span><span id="trialPctLabel">14% concluído</span></div>
@@ -715,7 +715,7 @@
           <div class="faq-list">
             <div class="faq-item">
               <div class="faq-q" onclick="toggleFaq(this)"><span>Como funcionam os 7 dias grátis?</span><span class="faq-arrow">▾</span></div>
-              <div class="faq-a">Você tem acesso completo a todos os recursos do BancaPRO por 7 dias sem pagar nada. Não é necessário cadastrar cartão. Ao final do período, basta assinar pra continuar — ou seus dados ficam guardados se quiser voltar depois.</div>
+              <div class="faq-a">Você tem acesso completo a todos os recursos do Apostack por 7 dias sem pagar nada. Não é necessário cadastrar cartão. Ao final do período, basta assinar pra continuar — ou seus dados ficam guardados se quiser voltar depois.</div>
             </div>
             <div class="faq-item">
               <div class="faq-q" onclick="toggleFaq(this)"><span>Posso cancelar quando quiser?</span><span class="faq-arrow">▾</span></div>
@@ -853,7 +853,7 @@
         <div class="settings-grid">
           <div class="form-card">
             <div class="form-card-title">🏷️ Identidade da Plataforma</div>
-            <div class="form-group"><label class="form-label">Nome da Plataforma</label><input class="form-input" type="text" value="BancaPRO" id="platformName" oninput="updatePlatformName()"/></div>
+            <div class="form-group"><label class="form-label">Nome da Plataforma</label><input class="form-input" type="text" value="Apostack" id="platformName" oninput="updatePlatformName()"/></div>
             <div class="form-group"><label class="form-label">Slogan</label><input class="form-input" type="text" placeholder="Gestão financeira profissional"/></div>
 
             <div class="form-group">
@@ -988,14 +988,14 @@
   <div class="paywall-card">
     <div class="paywall-emoji">⏳</div>
     <div class="paywall-title">Seu acesso expirou</div>
-    <div class="paywall-sub">Seu período grátis terminou. Assine o BancaPRO para continuar usando o painel completo.</div>
+    <div class="paywall-sub">Seu período grátis terminou. Assine o Apostack para continuar usando o painel completo.</div>
     <button class="btn-primary" style="margin-bottom:10px" onclick="subscribeNow()">Assinar Premium · R$ 24,90/mês</button>
     <button class="btn-primary" onclick="subscribeNow('anual')">Assinar Anual · R$ 199/ano</button>
     <div class="paywall-foot">Já assinou? <a onclick="location.reload()">Atualizar</a> &nbsp;·&nbsp; <a onclick="logout()">Sair</a></div>
   </div>
 </div>
 
-<script src="config.js?v=5" defer></script>
-<script src="script.js?v=5" defer></script>
+<script src="config.js?v=6" defer></script>
+<script src="script.js?v=6" defer></script>
 </body>
 </html>

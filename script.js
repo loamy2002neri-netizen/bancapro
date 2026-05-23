@@ -961,7 +961,7 @@ function exportTransactionsCSV() {
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
-  a.download = 'bancapro-transacoes-' + new Date().toISOString().slice(0,10) + '.csv';
+  a.download = 'apostack-transacoes-' + new Date().toISOString().slice(0,10) + '.csv';
   document.body.appendChild(a);
   a.click();
   document.body.removeChild(a);
@@ -981,7 +981,7 @@ function exportTransactionsPDF() {
   if(!win) { showToast('O navegador bloqueou a janela. Permita pop-ups e tente de novo.','error'); return; }
   win.document.write(`
     <!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"/>
-    <title>Relatório de Transações — BancaPRO</title>
+    <title>Relatório de Transações — Apostack</title>
     <style>
       body { font-family: 'Inter', system-ui, sans-serif; padding: 32px; color: #0f172a; max-width: 1100px; margin: 0 auto; }
       h1 { font-size: 24px; margin: 0 0 4px; }
@@ -1000,7 +1000,7 @@ function exportTransactionsPDF() {
       @media print { body { padding: 16px; } }
     </style></head><body>
       <h1>Relatório de Transações</h1>
-      <div class="sub">BancaPRO — Emitido em ${new Date().toLocaleString('pt-BR')}</div>
+      <div class="sub">Apostack — Emitido em ${new Date().toLocaleString('pt-BR')}</div>
       <div class="summary">
         <div class="stat"><div class="stat-label">Receita</div><div class="stat-value green">R$ ${totalReceita.toLocaleString('pt-BR',{minimumFractionDigits:2})}</div></div>
         <div class="stat"><div class="stat-label">Despesas</div><div class="stat-value red">R$ ${totalDespesas.toLocaleString('pt-BR',{minimumFractionDigits:2})}</div></div>
@@ -1024,7 +1024,7 @@ function exportTransactionsPDF() {
         }).join('')}
         </tbody>
       </table>
-      <div class="footer">Gerado por BancaPRO · ${new Date().toLocaleDateString('pt-BR')}</div>
+      <div class="footer">Gerado por Apostack · ${new Date().toLocaleDateString('pt-BR')}</div>
       <script>setTimeout(() => window.print(), 300);<\/script>
     </body></html>
   `);
@@ -1728,7 +1728,7 @@ function exportAccountsCSV() {
   const url = URL.createObjectURL(blob);
   const link = document.createElement('a');
   link.href = url;
-  link.download = 'bancapro-contas-' + new Date().toISOString().slice(0,10) + '.csv';
+  link.download = 'apostack-contas-' + new Date().toISOString().slice(0,10) + '.csv';
   document.body.appendChild(link); link.click(); document.body.removeChild(link);
   setTimeout(() => URL.revokeObjectURL(url), 1000);
   showToast(`✅ ${accounts.length} contas exportadas (Total: ${fmtBRL(total)})`, 'success');
@@ -1984,7 +1984,7 @@ function setLogoStyle(style){
   updatePlatformName();
 }
 function updatePlatformName() {
-  const name = document.getElementById('platformName').value || 'BancaPRO';
+  const name = document.getElementById('platformName').value || 'Apostack';
   const c1 = document.getElementById('logoColor1')?.value || '#ffffff';
   const el = document.getElementById('sidebarLogoText');
   if(logoStyle === 'double' && name.length > 1){
@@ -2081,7 +2081,7 @@ function removeLogo() {
   customLogoDataUrl = null;
   const sideIcon = document.getElementById('sidebarLogoIcon');
   const authIcon = document.getElementById('authLogoIcon');
-  const name = document.getElementById('platformName')?.value || 'BancaPRO';
+  const name = document.getElementById('platformName')?.value || 'Apostack';
   const initial = name.charAt(0).toUpperCase();
   if(sideIcon) sideIcon.innerHTML = initial;
   if(authIcon) authIcon.innerHTML = initial;
