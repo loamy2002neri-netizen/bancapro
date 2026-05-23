@@ -13,3 +13,6 @@ supabase/
 # Sistema
 Thumbs.db
 .DS_Store
+
+# Arte completa da logo (fonte) - nao precisa no deploy
+brand/logo.png
