@@ -18,7 +18,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
-<link rel="stylesheet" href="style.css?v=12"/>
+<link rel="stylesheet" href="style.css?v=13"/>
 </head>
 <body>
 
@@ -1104,32 +1104,40 @@
       <div class="section" id="sec-afiliado">
         <div class="page-header"><div class="page-title">Minhas Indicações 🤝</div><div class="page-subtitle">Divulgue seu link e acompanhe seus ganhos</div></div>
 
-        <div class="form-card" style="background:linear-gradient(135deg, rgba(16,185,129,0.13), rgba(99,102,241,0.06));border:1px solid rgba(16,185,129,0.32)">
-          <div style="font-size:12px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.8px">💰 Saldo disponível</div>
-          <div style="font-size:34px;font-weight:800;color:var(--green);margin:2px 0 2px;letter-spacing:-0.5px" id="affSaldo">R$ 0,00</div>
-          <div style="font-size:11px;color:var(--text-muted)">o que você pode sacar agora</div>
-          <div style="display:flex;gap:10px;margin-top:18px;flex-wrap:wrap">
-            <div style="flex:1;min-width:130px;background:var(--glass);border:1px solid var(--glass-border);border-radius:12px;padding:12px 14px">
-              <div style="font-size:11px;color:var(--text-muted);display:flex;align-items:center;gap:5px">📥 Entradas</div>
-              <div style="font-size:17px;font-weight:700;color:var(--text-primary);margin-top:3px" id="affEntradas">R$ 0,00</div>
-              <div style="font-size:10px;color:var(--text-muted)">comissão dos ativos</div>
-            </div>
-            <div style="flex:1;min-width:130px;background:var(--glass);border:1px solid var(--glass-border);border-radius:12px;padding:12px 14px">
-              <div style="font-size:11px;color:var(--text-muted);display:flex;align-items:center;gap:5px">📤 Saídas</div>
-              <div style="font-size:17px;font-weight:700;color:var(--yellow);margin-top:3px" id="affSaidas">R$ 0,00</div>
-              <div style="font-size:10px;color:var(--text-muted)">já sacado</div>
-            </div>
-            <div style="flex:1;min-width:130px;background:var(--glass);border:1px solid var(--glass-border);border-radius:12px;padding:12px 14px">
-              <div style="font-size:11px;color:var(--text-muted);display:flex;align-items:center;gap:5px">⏳ Pendente</div>
-              <div style="font-size:17px;font-weight:700;color:var(--text-secondary);margin-top:3px" id="affPendente">R$ 0,00</div>
-              <div style="font-size:10px;color:var(--text-muted)">aguardando pagamento</div>
-            </div>
+        <!-- Carteira -->
+        <div class="aff-wallet">
+          <div class="aff-wallet-icon">💰</div>
+          <div class="aff-wallet-info">
+            <div class="aff-wallet-label">Saldo disponível</div>
+            <div class="aff-wallet-value" id="affSaldo">R$ 0,00</div>
+            <div class="aff-wallet-sub">o que você pode sacar agora</div>
+          </div>
+          <div class="aff-wallet-cta">
+            <button class="aff-wallet-btn" onclick="document.getElementById('sqCard').scrollIntoView({behavior:'smooth',block:'center'});var v=document.getElementById('sqValor');if(v){setTimeout(function(){v.focus();},300);}">💸 Sacar</button>
+            <div class="aff-wallet-cta-sub">pagamento via Pix</div>
           </div>
         </div>
 
-        <div class="kpi-grid" style="margin-top:16px;grid-template-columns:repeat(2,minmax(0,1fr))">
+        <!-- Link de indicação -->
+        <div class="aff-link-card">
+          <div class="aff-link-caption">🔗 Seu link de indicação</div>
+          <div class="aff-link-row">
+            <div class="aff-link-url" id="myAffLink">—</div>
+            <div class="aff-link-actions">
+              <button class="aff-btn aff-btn-copy" onclick="copyAffLink()">📋 Copiar</button>
+              <button class="aff-btn aff-btn-share" onclick="shareAffLink()">📲 Compartilhar</button>
+            </div>
+          </div>
+          <div class="aff-link-meta">Código <b id="myAffCode">—</b> · você ganha <b id="myAffCommission">—</b> por assinante ativo, todo mês</div>
+        </div>
+
+        <!-- Métricas -->
+        <div class="kpi-grid aff-kpis">
           <div class="kpi-card" style="--card-color:var(--accent2)"><div class="kpi-label">👥 Indicados</div><div class="kpi-value" id="myAffIndicados">0</div><div class="kpi-sub">no total</div></div>
-          <div class="kpi-card" style="--card-color:var(--green)"><div class="kpi-label">✅ Ativos agora</div><div class="kpi-value" id="myAffAtivos">0</div><div class="kpi-sub">assinantes pagando</div></div>
+          <div class="kpi-card" style="--card-color:var(--green)"><div class="kpi-label">✅ Ativos</div><div class="kpi-value" id="myAffAtivos">0</div><div class="kpi-sub">assinantes pagando</div></div>
+          <div class="kpi-card" style="--card-color:var(--green)"><div class="kpi-label">📥 Comissão/mês</div><div class="kpi-value" style="color:var(--green)" id="affEntradas">R$ 0,00</div><div class="kpi-sub">enquanto ativos</div></div>
+          <div class="kpi-card" style="--card-color:var(--accent)"><div class="kpi-label">💵 Já recebido</div><div class="kpi-value" id="affSaidas">R$ 0,00</div><div class="kpi-sub">total pago até hoje</div></div>
+          <div class="kpi-card" style="--card-color:var(--yellow)"><div class="kpi-label">⏳ Pendente</div><div class="kpi-value" id="affPendente">R$ 0,00</div><div class="kpi-sub">aguardando pagamento</div></div>
         </div>
 
         <div class="form-card" style="margin-top:16px">
@@ -1137,16 +1145,7 @@
           <div id="myAffList"><div class="empty-state-sub">Carregando…</div></div>
         </div>
 
-        <div class="form-card" style="margin-top:16px;padding:12px 16px">
-          <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
-            <div style="font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.6px;white-space:nowrap">🔗 Seu link</div>
-            <div style="font-size:14px;font-weight:700;color:var(--accent2);word-break:break-all;flex:1;min-width:140px" id="myAffLink">—</div>
-            <button class="btn-ghost" style="padding:4px 12px;font-size:12px;white-space:nowrap" onclick="copyAffLink()">📋 Copiar</button>
-          </div>
-          <div style="font-size:11px;color:var(--text-muted);margin-top:6px">Código: <b id="myAffCode">—</b> · Comissão: <b id="myAffCommission">—</b>/assinante ativo</div>
-        </div>
-
-        <div class="form-card" style="margin-top:16px">
+        <div class="form-card" id="sqCard" style="margin-top:16px">
           <div class="form-card-title">💸 Saque de comissão</div>
           <div style="font-size:12px;color:var(--text-muted);margin-bottom:12px">
             Disponível: <b id="sqDisponivel" style="color:var(--green)">R$ 0,00</b>
@@ -1190,6 +1189,6 @@
 </div>
 
 <script src="config.js?v=9" defer></script>
-<script src="script.js?v=26" defer></script>
+<script src="script.js?v=27" defer></script>
 </body>
 </html>

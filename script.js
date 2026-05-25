@@ -602,6 +602,12 @@ function copyAffLink() {
     );
   } catch(e){ showToast('Copie manualmente: '+link,'info'); }
 }
+function shareAffLink() {
+  var link=(document.getElementById('myAffLink')||{}).textContent||'';
+  if(!link || link==='—'){ showToast('Link ainda não carregado.','error'); return; }
+  var msg='💰 Gerencie sua banca de apostas com o Apostack — lucro, ROI e controle por casa. 7 dias grátis: '+link;
+  window.open('https://wa.me/?text='+encodeURIComponent(msg),'_blank');
+}
 
 // ── Captura/registro de indicação (?ref) ──
 async function recordReferralIfAny(user) {
