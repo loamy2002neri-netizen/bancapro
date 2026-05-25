@@ -18,7 +18,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
-<link rel="stylesheet" href="style.css?v=10"/>
+<link rel="stylesheet" href="style.css?v=12"/>
 </head>
 <body>
 
@@ -106,6 +106,22 @@
     <div class="modal-actions">
       <button class="btn-ghost" onclick="closeTxModal()">Cancelar</button>
       <button class="btn-primary" style="width:auto;padding:9px 20px" onclick="saveTransaction()">Salvar →</button>
+    </div>
+  </div>
+</div>
+
+<!-- BANCA INICIAL MODAL -->
+<div class="modal-overlay" id="saldoInicialModal">
+  <div class="modal">
+    <div class="modal-title">🏦 Banca inicial</div>
+    <div class="modal-sub">Defina o saldo de partida da sua banca. O dashboard soma seus resultados a partir desse valor.</div>
+    <div class="form-group">
+      <label class="form-label">Valor inicial (R$)</label>
+      <input class="form-input" type="number" step="0.01" min="0" placeholder="Ex: 10000" id="saldoInicialInput"/>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-ghost" onclick="closeSaldoInicialModal()">Cancelar</button>
+      <button class="btn-primary" style="width:auto;padding:9px 20px" onclick="saveSaldoInicial()">Salvar →</button>
     </div>
   </div>
 </div>
@@ -314,6 +330,7 @@
         <!-- KPI CARDS -->
         <div class="kpi-grid">
           <div class="kpi-card" style="--card-color:var(--accent)">
+            <button class="kpi-edit-btn" onclick="openSaldoInicialModal()" title="Definir banca inicial">✏️</button>
             <div class="kpi-label">💰 Saldo Total</div>
             <div class="kpi-value" id="kpi-saldo">R$ 0</div>
             <div class="kpi-change neutral" id="kpi-saldo-change">—</div>
@@ -857,7 +874,7 @@
           <div class="form-card">
             <div class="form-card-title">🏷️ Identidade da Plataforma</div>
             <div class="form-group"><label class="form-label">Nome da Plataforma</label><input class="form-input" type="text" value="Apostack" id="platformName" oninput="updatePlatformName()"/></div>
-            <div class="form-group"><label class="form-label">Slogan</label><input class="form-input" type="text" placeholder="Gestão financeira profissional"/></div>
+            <div class="form-group"><label class="form-label">Slogan</label><input class="form-input" type="text" id="settingsSlogan" placeholder="Gestão financeira profissional"/></div>
 
             <div class="form-group">
               <label class="form-label">Estilo de cor do nome</label>
@@ -904,6 +921,7 @@
                 <button type="button" id="faviconRemoveBtn" onclick="event.stopPropagation();removeFavicon()" style="display:none;margin-top:8px;background:none;border:none;color:var(--red);font-size:12px;cursor:pointer">🗑️ Remover favicon</button>
               </div>
             </div>
+            <button class="btn-primary" onclick="savePlatformIdentity()" style="margin-top:6px">💾 Salvar alterações</button>
           </div>
 
           <div class="form-card">
@@ -936,6 +954,7 @@
                 <button class="btn-ghost" onclick="applyCustomColor()">Aplicar</button>
               </div>
             </div>
+            <button class="btn-primary" onclick="saveAppearance()" style="margin-top:20px">💾 Salvar alterações</button>
           </div>
 
           <div class="form-card">
@@ -981,6 +1000,13 @@
             <div class="empty-state-sub">Carregando…</div>
           </div>
         </div>
+
+        <div class="form-card" style="margin-top:16px">
+          <div class="form-card-title">🐞 Erros recentes</div>
+          <div id="adminErrors">
+            <div class="empty-state-sub">Carregando…</div>
+          </div>
+        </div>
       </div>
 
     </div><!-- /page-content -->
@@ -998,7 +1024,7 @@
   </div>
 </div>
 
-<script src="config.js?v=7" defer></script>
-<script src="script.js?v=7" defer></script>
+<script src="config.js?v=8" defer></script>
+<script src="script.js?v=9" defer></script>
 </body>
 </html>

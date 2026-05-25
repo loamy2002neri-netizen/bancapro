@@ -26,8 +26,16 @@
 // ══════════════════════════════════════════════
 let transactions = [];
 
-// Saldo histórico acumulado (antes das transações listadas) — começa em 0
-const SALDO_BASE = 0;
+// Banca inicial: saldo de partida definido pelo usuário (antes das transações).
+// O dashboard soma os resultados a partir desse valor.
+let SALDO_BASE = 0;
+function loadSaldoInicial() {
+  try {
+    const v = parseFloat(localStorage.getItem('bancapro-saldo-inicial'));
+    SALDO_BASE = isFinite(v) ? v : 0;
+  } catch(e) { SALDO_BASE = 0; }
+  return SALDO_BASE;
+}
 
 // ══════════════════════════════════════════════
 //  PERSISTÊNCIA (localStorage com fallback gracioso)
@@ -120,7 +128,16 @@ const SYNC_KEYS = [
   'bancapro-user-name',
   'bancapro-user-email',
   'bancapro-logo',
-  'bancapro-favicon'
+  'bancapro-favicon',
+  'bancapro-saldo-inicial',
+  'bancapro-platform-name',
+  'bancapro-slogan',
+  'bancapro-logo-style',
+  'bancapro-logo-color1',
+  'bancapro-logo-color2',
+  'bancapro-logo-split',
+  'bancapro-accent',
+  'bancapro-accent2'
 ];
 
 function clearUserLocal() {
@@ -224,6 +241,7 @@ async function enterApp(user) {
   renderAccounts();
   recomputeAll();
   loadStoredBranding();
+  loadPlatformSettings();
   setTimeout(() => showToast('Bem-vindo de volta! 👋','success'), 400);
   // Bloqueio por assinatura (não trava modo local nem o dono nem o trial)
   currentAuthUser = user;
@@ -332,6 +350,29 @@ async function renderAdminUsers() {
       <tbody>${rows}</tbody></table></div>`;
   } catch(e) {
     el.innerHTML = '<div class="empty-state-sub">Erro ao carregar usuários.</div>';
+  }
+}
+
+// Painel do dono: erros recentes (via get_owner_errors no Supabase)
+async function renderAdminErrors() {
+  const el = document.getElementById('adminErrors');
+  if (!el) return;
+  const sb = getSb();
+  if (!sb) { el.innerHTML = '<div class="empty-state-sub">Disponível só com o banco na nuvem.</div>'; return; }
+  el.innerHTML = '<div class="empty-state-sub">Carregando…</div>';
+  try {
+    const { data, error } = await sb.rpc('get_owner_errors');
+    if (error || !data) { el.innerHTML = '<div class="empty-state-sub">Acesso restrito.</div>'; return; }
+    if (!data.length) { el.innerHTML = '<div class="empty-state-sub" style="color:var(--green)">Nenhum erro registrado. 🎉</div>'; return; }
+    const rows = data.map(function(er) {
+      const dt = er.created_at ? new Date(er.created_at).toLocaleString('pt-BR') : '—';
+      return '<tr><td style="white-space:nowrap">' + dt + '</td><td>' + escapeHtml(er.email || '—') +
+             '</td><td style="color:var(--red)">' + escapeHtml(String(er.message || '').slice(0,90)) +
+             '</td><td style="color:var(--text-muted);font-size:11px">' + escapeHtml(String(er.source || '').slice(0,40)) + '</td></tr>';
+    }).join('');
+    el.innerHTML = '<div style="overflow-x:auto"><table class="admin-table"><thead><tr><th>Quando</th><th>Usuário</th><th>Erro</th><th>Origem</th></tr></thead><tbody>' + rows + '</tbody></table></div>';
+  } catch(e) {
+    el.innerHTML = '<div class="empty-state-sub">Erro ao carregar.</div>';
   }
 }
 
@@ -539,7 +580,7 @@ function goTo(section, el) {
   if(section === 'methods') setTimeout(initMethodEvolution, 100);
   if(section === 'recharge') setTimeout(updateTrialBanner, 50);
   if(section === 'settings') setTimeout(renderSubscriptionCard, 50);
-  if(section === 'admin') setTimeout(() => { renderAdminStats(); renderAdminUsers(); }, 50);
+  if(section === 'admin') setTimeout(() => { renderAdminStats(); renderAdminUsers(); renderAdminErrors(); }, 50);
 }
 
 function setPeriod(p, el) {
@@ -551,6 +592,7 @@ function setPeriod(p, el) {
 }
 
 function applyPeriodToKPIs(p) {
+  loadSaldoInicial();
   const now = new Date();
   const todayStr = now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0')+'-'+String(now.getDate()).padStart(2,'0');
   let fromStr = null;
@@ -590,7 +632,7 @@ function applyPeriodToKPIs(p) {
 
   // Atualiza subtítulos pra contexto
   const subSaldo = document.getElementById('kpi-saldo-sub');
-  if(subSaldo) subSaldo.textContent = periodLabel;
+  if(subSaldo) subSaldo.textContent = (SALDO_BASE > 0 ? 'Banca: ' + fmtBRL(SALDO_BASE) + ' · ' : '') + periodLabel;
   const subLucro = document.getElementById('kpi-lucro-sub');
   if(subLucro) subLucro.textContent = periodLabel;
   const subDespesas = document.getElementById('kpi-despesas-sub');
@@ -743,6 +785,33 @@ function saveTransaction() {
   persistState();
 }
 
+// ── BANCA INICIAL (saldo de partida) ──
+function openSaldoInicialModal() {
+  loadSaldoInicial();
+  const inp = document.getElementById('saldoInicialInput');
+  if(inp) inp.value = SALDO_BASE ? SALDO_BASE : '';
+  document.getElementById('saldoInicialModal').classList.add('open');
+  setTimeout(() => { if(inp) inp.focus(); }, 100);
+}
+function closeSaldoInicialModal() {
+  document.getElementById('saldoInicialModal').classList.remove('open');
+}
+function saveSaldoInicial() {
+  const raw = document.getElementById('saldoInicialInput').value;
+  const val = parseFloat(raw);
+  if(raw !== '' && (!isFinite(val) || val < 0)) {
+    showToast('Informe um valor válido (0 ou maior)!','error');
+    return;
+  }
+  const final = (raw === '' || !isFinite(val)) ? 0 : val;
+  try { localStorage.setItem('bancapro-saldo-inicial', String(final)); } catch(e) {}
+  SALDO_BASE = final;
+  if (typeof schedulePush === 'function') schedulePush();
+  closeSaldoInicialModal();
+  recomputeAll();
+  showToast('Banca inicial definida: ' + fmtBRL(final), 'success');
+}
+
 // ══════════════════════════════════════════════
 //  SYNC ENGINE — recalcula tudo a partir de `transactions`
 // ══════════════════════════════════════════════
@@ -790,6 +859,7 @@ function getMethodStats(methodName) {
 }
 
 function recomputeAll() {
+  loadSaldoInicial();
   // 1) KPIs do topo — agora respeitam o período ativo (Hoje/Semana/Mês/Ano)
   applyPeriodToKPIs(currentPeriod === 'day' ? 'day' : (currentPeriod || 'month'));
 
@@ -2048,6 +2118,7 @@ function readImageFile(file, callback, kind) {
   const reader = new FileReader();
   reader.onload = e => {
     callback(e.target.result);
+    if (typeof schedulePush === 'function') schedulePush();
     showToast(kind==='logo' ? '✅ Logo aplicada!' : '✅ Favicon aplicado!', 'success');
   };
   reader.onerror = () => showToast('Erro ao ler o arquivo','error');
@@ -2095,6 +2166,7 @@ function removeLogo() {
   if(uploadText) uploadText.textContent = 'Arraste ou clique para enviar logo (PNG, SVG)';
   if(removeBtn) removeBtn.style.display = 'none';
   try { localStorage.removeItem('bancapro-logo'); } catch(e) {}
+  if (typeof schedulePush === 'function') schedulePush();
   showToast('Logo removida','info');
 }
 
@@ -2131,6 +2203,7 @@ function removeFavicon() {
   if(uploadText) uploadText.textContent = 'Enviar favicon (.ico, .png 32x32)';
   if(removeBtn) removeBtn.style.display = 'none';
   try { localStorage.removeItem('bancapro-favicon'); } catch(e) {}
+  if (typeof schedulePush === 'function') schedulePush();
   showToast('Favicon restaurado','info');
 }
 
@@ -2140,6 +2213,73 @@ function loadStoredBranding() {
     if(logo) applyLogo(logo);
     const fav = localStorage.getItem('bancapro-favicon');
     if(fav) applyFavicon(fav);
+  } catch(e) {}
+}
+
+// ── Salvar / restaurar Identidade da Plataforma ──
+function savePlatformIdentity() {
+  try {
+    const name = (document.getElementById('platformName')?.value || '').trim() || 'Apostack';
+    localStorage.setItem('bancapro-platform-name', name);
+    localStorage.setItem('bancapro-slogan', (document.getElementById('settingsSlogan')?.value || '').trim());
+    localStorage.setItem('bancapro-logo-style', logoStyle);
+    if(document.getElementById('logoColor1')) localStorage.setItem('bancapro-logo-color1', document.getElementById('logoColor1').value);
+    if(document.getElementById('logoColor2')) localStorage.setItem('bancapro-logo-color2', document.getElementById('logoColor2').value);
+    if(document.getElementById('logoSplit'))  localStorage.setItem('bancapro-logo-split',  document.getElementById('logoSplit').value);
+  } catch(e) {}
+  if (typeof schedulePush === 'function') schedulePush();
+  updatePlatformName();
+  showToast('Identidade salva com sucesso!','success');
+}
+
+// ── Salvar Aparência (cor principal) — o tema já é salvo no setTheme ──
+function saveAppearance() {
+  try {
+    const cs = getComputedStyle(document.documentElement);
+    const accent  = cs.getPropertyValue('--accent').trim();
+    const accent2 = cs.getPropertyValue('--accent2').trim();
+    if(accent)  localStorage.setItem('bancapro-accent', accent);
+    if(accent2) localStorage.setItem('bancapro-accent2', accent2);
+  } catch(e) {}
+  if (typeof schedulePush === 'function') schedulePush();
+  showToast('Aparência salva com sucesso!','success');
+}
+
+// ── Restaura as configs salvas (chamado no carregamento) ──
+function loadPlatformSettings() {
+  try {
+    const name   = localStorage.getItem('bancapro-platform-name');
+    const slogan = localStorage.getItem('bancapro-slogan');
+    const style  = localStorage.getItem('bancapro-logo-style');
+    const c1     = localStorage.getItem('bancapro-logo-color1');
+    const c2     = localStorage.getItem('bancapro-logo-color2');
+    const split  = localStorage.getItem('bancapro-logo-split');
+    const accent = localStorage.getItem('bancapro-accent');
+    const accent2= localStorage.getItem('bancapro-accent2');
+
+    const pn = document.getElementById('platformName');
+    if(name && pn) pn.value = name;
+    const sl = document.getElementById('settingsSlogan');
+    if(slogan && sl) sl.value = slogan;
+    if(c1 && document.getElementById('logoColor1')) document.getElementById('logoColor1').value = c1;
+    if(c2 && document.getElementById('logoColor2')) document.getElementById('logoColor2').value = c2;
+    if(split && document.getElementById('logoSplit')) document.getElementById('logoSplit').value = split;
+
+    // só rebuilda o logo se o usuário customizou algo (senão mantém o padrão)
+    if(name || c1 || c2 || style) {
+      if(style) setLogoStyle(style); else updatePlatformName();
+    }
+
+    if(accent) {
+      document.documentElement.style.setProperty('--accent', accent);
+      document.documentElement.style.setProperty('--accent2', accent2 || accent);
+      document.querySelectorAll('.swatch').forEach(s => {
+        const st = s.getAttribute('style') || '';
+        s.classList.toggle('active', st.indexOf(accent) !== -1);
+      });
+      const cc = document.getElementById('customColor');
+      if(cc) cc.value = accent;
+    }
   } catch(e) {}
 }
 function updateUserName() {
@@ -3319,8 +3459,41 @@ checkMQ(mq);
 
 // Carrega logo/favicon salvos antes mesmo do login (pra atualizar a tela de login)
 loadStoredBranding();
+loadPlatformSettings();
 // Deixa o ícone do botão de tema na topbar coerente com o tema atual
 updateThemeBtn();
+
+// ══════════════════════════════════════════════
+//  MONITORAMENTO DE ERROS (registra no Supabase)
+// ══════════════════════════════════════════════
+let _errCount = 0;
+const _errSeen = new Set();
+function logClientError(message, source, stack) {
+  try {
+    if (_errCount >= 15) return;                 // limite por sessão (evita flood)
+    const key = String(message || '').slice(0, 140);
+    if (_errSeen.has(key)) return;
+    _errSeen.add(key); _errCount++;
+    const sb = (typeof getSb === 'function') ? getSb() : null;
+    if (!sb) return;                              // só registra em modo nuvem
+    let email = '';
+    try { email = (currentAuthUser && currentAuthUser.email) || localStorage.getItem('bancapro-user-email') || ''; } catch(e){}
+    sb.from('error_logs').insert({
+      email: email || null,
+      message: String(message || '').slice(0, 500),
+      source: String(source || location.href).slice(0, 300),
+      stack: stack ? String(stack).slice(0, 2000) : null,
+      user_agent: (navigator.userAgent || '').slice(0, 300)
+    }).then(function(){}, function(){});
+  } catch(e) {}
+}
+window.addEventListener('error', function(e) {
+  logClientError(e.message, (e.filename || '') + ':' + (e.lineno || ''), e.error && e.error.stack);
+});
+window.addEventListener('unhandledrejection', function(e) {
+  const r = e.reason;
+  logClientError('Promise: ' + (r && r.message ? r.message : r), location.href, r && r.stack);
+});
 
 // ══════════════════════════════════════════════
 //  ACESSIBILIDADE
