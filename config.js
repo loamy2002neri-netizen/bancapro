@@ -19,4 +19,4 @@ window.SUPABASE_ANON_KEY = 'sb_publishable_mpvpadpbWZv0i040jDP09Q_gnyYn01p';
 //  Enquanto estiver com "COLE_...", o botão mostra um aviso.
 // ─────────────────────────────────────────────
 window.CHECKOUT_MENSAL = 'https://pay.kirvano.com/2f15d0a6-b33c-4a80-9210-41a2da119a09';
-window.CHECKOUT_ANUAL  = 'https://pay.kirvano.com/2f15d0a6-b33c-4a80-9210-41a2da119a09';
+window.CHECKOUT_ANUAL  = 'https://pay.kirvano.com/dc3e064f-88bb-49b5-9514-94263d870ee1';
