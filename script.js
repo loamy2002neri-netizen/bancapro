@@ -619,7 +619,10 @@ function applyPeriodToKPIs(p) {
   const receita  = filtered.filter(t => t.type==='income').reduce((s,t)=>s+t.value, 0);
   const despesas = filtered.filter(t => t.type==='expense').reduce((s,t)=>s+t.value, 0);
   const lucro    = receita - despesas;
-  const roi      = despesas > 0 ? (lucro/despesas)*100 : (receita > 0 ? 100 : 0);
+  // ROI = retorno sobre a banca inicial (lucro do período ÷ banca).
+  // Sem banca definida, cai pro retorno sobre as despesas (comportamento antigo).
+  const roiBase  = SALDO_BASE > 0 ? SALDO_BASE : despesas;
+  const roi      = roiBase > 0 ? (lucro/roiBase)*100 : (receita > 0 ? 100 : 0);
 
   // Saldo do período = saldo acumulado até o final do dia atual (na janela visível)
   // No caso de "Hoje" = lucro do dia. Para "Mês"/"Ano"/"Semana" = saldo final do recorte.
@@ -639,6 +642,8 @@ function applyPeriodToKPIs(p) {
   if(subLucro) subLucro.textContent = periodLabel;
   const subDespesas = document.getElementById('kpi-despesas-sub');
   if(subDespesas) subDespesas.textContent = periodLabel;
+  const subRoi = document.getElementById('kpi-roi-sub');
+  if(subRoi) subRoi.textContent = (SALDO_BASE > 0 ? 'sobre a banca · ' : '') + periodLabel;
 }
 
 // ══════════════════════════════════════════════
@@ -2812,11 +2817,12 @@ function setEvoMode(mode, el){
   const dr = document.getElementById('evoDateRange');
   if(mode==='custom'){
     dr.style.display='flex';
-    // pre-fill dates
-    const today = new Date('2026-05-14');
-    const ago   = new Date('2026-04-14');
+    // pré-preenche com os últimos 30 dias (relativo a hoje)
+    const today = new Date();
+    const ago   = new Date(); ago.setDate(ago.getDate() - 30);
     document.getElementById('evoDateFrom').value = ago.toISOString().split('T')[0];
     document.getElementById('evoDateTo').value   = today.toISOString().split('T')[0];
+    document.getElementById('evoDateTo').max     = today.toISOString().split('T')[0];
     applyCustomRange();
   } else {
     dr.style.display='none';
