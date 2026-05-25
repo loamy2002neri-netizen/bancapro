@@ -3129,36 +3129,55 @@ function buildReportCharts() {
     });
   }
 
-  // 2) DONUT — Distribuição de DESPESAS por método (total de todos os meses)
+  // 2) DONUT — Distribuição de DESPESAS por método (QUALQUER método, inclusive "Geral"/custom)
   const expenseByMethod = {};
-  METHODS_CATALOG.forEach(m => expenseByMethod[m.name] = 0);
   transactions.forEach(t => {
-    if(t.type==='expense' && expenseByMethod[t.method] !== undefined) {
-      expenseByMethod[t.method] += t.value;
+    if(t.type==='expense') {
+      expenseByMethod[t.method] = (expenseByMethod[t.method] || 0) + t.value;
     }
   });
-  const expItems = METHODS_CATALOG
-    .map(m => ({name:m.name, color:m.color, value:expenseByMethod[m.name]}))
+  const expPalette = ['#6366f1','#f43f5e','#f59e0b','#10b981','#8b5cf6','#22d3ee','#ec4899','#14b8a6','#64748b'];
+  const expItems = Object.keys(expenseByMethod)
+    .map((name, i) => {
+      const m = METHODS_CATALOG.find(x => x.name === name);
+      return { name, color: m ? m.color : expPalette[i % expPalette.length], value: expenseByMethod[name] };
+    })
     .filter(x => x.value > 0)
     .sort((a,b) => b.value - a.value);
 
   const expCanvas = document.getElementById('expenseChart');
   if(expCanvas) {
-    if(reportPieChart) reportPieChart.destroy();
-    reportPieChart = new Chart(expCanvas.getContext('2d'), {
-      type:'doughnut',
-      data:{
-        labels: expItems.map(x=>x.name),
-        datasets:[{data: expItems.map(x=>x.value), backgroundColor: expItems.map(x=>x.color), borderWidth:0, hoverOffset:8}]
-      },
-      options:{
-        responsive:true, maintainAspectRatio:true, cutout:'62%',
-        plugins:{
-          legend:{display:true, position:'bottom', labels:{color:getChartColors().text, font:{size:11}, boxWidth:10, boxHeight:10, usePointStyle:true, pointStyle:'circle', padding:8}},
-          tooltip:{callbacks:{label(c){ const total=c.dataset.data.reduce((a,b)=>a+b,0); const pct=total?((c.raw/total)*100).toFixed(1):'0'; return ' R$ '+c.raw.toLocaleString('pt-BR')+' ('+pct+'%)';}}}
-        }
+    if(reportPieChart) { reportPieChart.destroy(); reportPieChart = null; }
+    const expWrap = expCanvas.parentElement;
+    let expEmpty = expWrap ? expWrap.querySelector('.chart-empty-msg') : null;
+    if(expItems.length === 0) {
+      // estado vazio amigável (em vez de gráfico em branco)
+      expCanvas.style.display = 'none';
+      if(expWrap && !expEmpty) {
+        expEmpty = document.createElement('div');
+        expEmpty.className = 'chart-empty-msg';
+        expEmpty.style.cssText = 'text-align:center;color:var(--text-muted);font-size:13px;padding:20px;line-height:1.5';
+        expEmpty.innerHTML = '<div style="font-size:32px;margin-bottom:8px">💸</div>Nenhuma despesa registrada ainda.<br>Lance transações do tipo <b>Despesa</b> para ver a distribuição.';
+        expWrap.appendChild(expEmpty);
       }
-    });
+    } else {
+      expCanvas.style.display = '';
+      if(expEmpty) expEmpty.remove();
+      reportPieChart = new Chart(expCanvas.getContext('2d'), {
+        type:'doughnut',
+        data:{
+          labels: expItems.map(x=>x.name),
+          datasets:[{data: expItems.map(x=>x.value), backgroundColor: expItems.map(x=>x.color), borderWidth:0, hoverOffset:8}]
+        },
+        options:{
+          responsive:true, maintainAspectRatio:true, cutout:'62%',
+          plugins:{
+            legend:{display:true, position:'bottom', labels:{color:getChartColors().text, font:{size:11}, boxWidth:10, boxHeight:10, usePointStyle:true, pointStyle:'circle', padding:8}},
+            tooltip:{callbacks:{label(c){ const total=c.dataset.data.reduce((a,b)=>a+b,0); const pct=total?((c.raw/total)*100).toFixed(1):'0'; return ' R$ '+c.raw.toLocaleString('pt-BR')+' ('+pct+'%)';}}}
+          }
+        }
+      });
+    }
   }
 
   // 3) BAR — ROI por método
