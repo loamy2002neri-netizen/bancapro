@@ -514,7 +514,78 @@ async function renderMyAffiliatePanel() {
       var rr = await sb.rpc('get_referrals', { p_code: a.code });
       listEl.innerHTML = _affReferralsHtml(rr.data);
     }
+    renderMyWithdrawals(a.a_pagar);
   } catch(e){}
+}
+
+// ── Afiliado: saque de comissão ──
+async function renderMyWithdrawals(aPagar) {
+  var sb=getSb(); if(!sb) return;
+  try {
+    var r=await sb.rpc('my_withdrawals');
+    var list=r.data||[];
+    var pend=list.filter(function(w){return w.status==='pendente';}).reduce(function(s,w){return s+Number(w.amount||0);},0);
+    var disp=Math.max(0,(Number(aPagar)||0)-pend);
+    window._sqDisponivel=disp;
+    setTextSafe('sqDisponivel', _affMoney(disp));
+    setTextSafe('sqTotal', _affMoney(aPagar));
+    var el=document.getElementById('sqHistorico'); if(!el) return;
+    if(!list.length){ el.innerHTML=''; return; }
+    var rows=list.map(function(w){
+      var dt=w.created_at?new Date(w.created_at).toLocaleDateString('pt-BR'):'—';
+      var st=w.status==='pago'?'<span style="color:var(--green);font-weight:600">Pago ✓</span>':'<span style="color:var(--yellow);font-weight:600">Pendente</span>';
+      return '<tr><td>'+dt+'</td><td>'+_affMoney(w.amount)+'</td><td>'+st+'</td></tr>';
+    }).join('');
+    el.innerHTML='<div style="font-size:12px;color:var(--text-muted);margin:10px 0 6px">Seus saques</div><div style="overflow-x:auto"><table class="admin-table"><thead><tr><th>Data</th><th>Valor</th><th>Status</th></tr></thead><tbody>'+rows+'</tbody></table></div>';
+  } catch(e){}
+}
+async function requestWithdrawal() {
+  var sb=getSb(); if(!sb){ showToast('Disponível só com o banco na nuvem.','error'); return; }
+  var valor=parseFloat(document.getElementById('sqValor').value);
+  var tipo=document.getElementById('sqPixTipo').value;
+  var chave=(document.getElementById('sqPixChave').value||'').trim();
+  var obs=(document.getElementById('sqObs').value||'').trim();
+  if(!isFinite(valor) || valor<=0){ showToast('Informe um valor válido!','error'); return; }
+  var disp=Number(window._sqDisponivel||0);
+  if(valor > disp + 0.001){ showToast('Valor maior que o disponível ('+_affMoney(disp)+').','error'); return; }
+  if(!chave){ showToast('Informe a chave PIX!','error'); return; }
+  try {
+    var r=await sb.rpc('request_withdrawal',{p_amount:valor,p_pix_type:tipo,p_pix_key:chave,p_note:obs});
+    if(r.error){ showToast('Erro: '+(r.error.message||'não foi possível'),'error'); return; }
+    showToast('✅ Saque solicitado! Aguarde o pagamento por Pix.','success');
+    document.getElementById('sqValor').value=''; document.getElementById('sqPixChave').value=''; document.getElementById('sqObs').value='';
+    renderMyAffiliatePanel();
+  } catch(e){ showToast('Erro ao solicitar saque.','error'); }
+}
+
+// ── Dono: saques solicitados ──
+async function renderWithdrawalsAdmin() {
+  var el=document.getElementById('adminWithdrawals'); if(!el) return;
+  var sb=getSb(); if(!sb){ el.innerHTML='<div class="empty-state-sub">Disponível só com o banco na nuvem.</div>'; return; }
+  el.innerHTML='<div class="empty-state-sub">Carregando…</div>';
+  try {
+    var r=await sb.rpc('list_withdrawals');
+    if(r.error || !r.data){ el.innerHTML='<div class="empty-state-sub">Acesso restrito.</div>'; return; }
+    if(!r.data.length){ el.innerHTML='<div class="empty-state-sub">Nenhum saque solicitado ainda.</div>'; return; }
+    var rows=r.data.map(function(w){
+      var dt=w.created_at?new Date(w.created_at).toLocaleDateString('pt-BR'):'—';
+      var st=w.status==='pago'?'<span style="color:var(--green);font-weight:600">Pago ✓</span>':'<span style="color:var(--yellow);font-weight:600">Pendente</span>';
+      var acao=w.status==='pendente'?'<button class="btn-ghost" style="padding:5px 10px;font-size:12px;color:var(--green)" data-id="'+w.id+'" onclick="markWithdrawalPaid(this.dataset.id)">Marcar pago</button>':'—';
+      return '<tr><td>'+dt+'</td><td>'+escapeHtml(w.affiliate_email)+'</td><td>'+_affMoney(w.amount)+'</td><td>'+escapeHtml(w.pix_type)+': '+escapeHtml(w.pix_key)+'</td><td>'+escapeHtml(w.note||'—')+'</td><td>'+st+'</td><td style="text-align:right">'+acao+'</td></tr>';
+    }).join('');
+    el.innerHTML='<div style="overflow-x:auto"><table class="admin-table"><thead><tr><th>Data</th><th>Afiliado</th><th>Valor</th><th>Chave PIX</th><th>Obs</th><th>Status</th><th style="text-align:right">Ação</th></tr></thead><tbody>'+rows+'</tbody></table></div>';
+  } catch(e){ el.innerHTML='<div class="empty-state-sub">Erro ao carregar saques.</div>'; }
+}
+async function markWithdrawalPaid(id) {
+  var ok=await customConfirm('Confirmar que você PAGOU este saque por Pix?','Marcar como pago','Marcar pago',false);
+  if(!ok) return;
+  var sb=getSb(); if(!sb) return;
+  try {
+    var r=await sb.rpc('mark_withdrawal_paid',{p_id:parseInt(id,10)});
+    if(r.error){ showToast('Erro: '+(r.error.message||''),'error'); return; }
+    showToast('Saque marcado como pago.','success');
+    renderWithdrawalsAdmin();
+  } catch(e){ showToast('Erro ao marcar.','error'); }
 }
 
 function copyAffLink() {
@@ -835,7 +906,7 @@ function goTo(section, el) {
   if(section === 'recharge') setTimeout(updateTrialBanner, 50);
   if(section === 'settings') setTimeout(renderSubscriptionCard, 50);
   if(section === 'admin') setTimeout(() => { renderAdminStats(); renderAdminUsers(); renderAdminErrors(); }, 50);
-  if(section === 'afiliados') setTimeout(renderAffiliatesAdmin, 50);
+  if(section === 'afiliados') setTimeout(() => { renderAffiliatesAdmin(); renderWithdrawalsAdmin(); }, 50);
   if(section === 'afiliado')  setTimeout(renderMyAffiliatePanel, 50);
 }
 
