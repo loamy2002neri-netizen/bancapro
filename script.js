@@ -259,11 +259,23 @@ async function enterApp(user) {
     const allowed = await checkAccess(user);
     if (allowed) hidePaywall(); else showPaywall();
   } catch(e) { hidePaywall(); }
-  // Menu Admin só para o dono
+  // Menu Admin/Afiliados só para o dono
   try {
     const isOwner = OWNER_EMAILS.includes((user.email || '').toLowerCase());
     const navAdmin = document.getElementById('navAdmin');
     if (navAdmin) navAdmin.style.display = isOwner ? '' : 'none';
+    const navAfiliados = document.getElementById('navAfiliados');
+    if (navAfiliados) navAfiliados.style.display = isOwner ? '' : 'none';
+  } catch(e){}
+  // Registra a indicação (?ref) e libera o painel do afiliado, se for um
+  try {
+    await recordReferralIfAny(user);
+    const sb = getSb();
+    const navAf = document.getElementById('navAfiliado');
+    if (sb && navAf) {
+      const r = await sb.rpc('get_my_affiliate');
+      navAf.style.display = (r.data && r.data.length) ? '' : 'none';
+    }
   } catch(e){}
   // Voltou do checkout? mostra "obrigado" e reconfere a assinatura
   try {
@@ -392,6 +404,138 @@ async function renderAdminUsers() {
   } catch(e) {
     el.innerHTML = '<div class="empty-state-sub">Erro ao carregar usuários.</div>';
   }
+}
+
+// ══════════════════════════════════════════════
+//  AFILIADOS (real — Supabase)
+// ══════════════════════════════════════════════
+const _affColors = { 'Ativo':'var(--green)', 'Inativo':'var(--red)', 'Cadastrado':'var(--accent2)' };
+function _affMoney(v){ return 'R$ ' + (Number(v)||0).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2}); }
+
+// ── Dono: adicionar afiliado ──
+function openAddAffiliateModal() {
+  ['affEmailInput','affCupomInput'].forEach(function(id){ var e=document.getElementById(id); if(e) e.value=''; });
+  var c=document.getElementById('affComissaoInput'); if(c) c.value='50';
+  document.getElementById('addAffiliateModal').classList.add('open');
+}
+function closeAddAffiliateModal() { document.getElementById('addAffiliateModal').classList.remove('open'); }
+async function saveAffiliate() {
+  var email=(document.getElementById('affEmailInput').value||'').trim().toLowerCase();
+  var code=(document.getElementById('affCupomInput').value||'').trim();
+  var pct=parseFloat(document.getElementById('affComissaoInput').value)||50;
+  if(!email || !code){ showToast('Preencha email e código!','error'); return; }
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){ showToast('E-mail inválido!','error'); return; }
+  // comissão em R$ por assinante ativo = pct% do líquido (líquido de R$24,90 ≈ R$21,68)
+  var commission = +((21.68 * pct/100).toFixed(2));
+  var sb=getSb(); if(!sb){ showToast('Disponível só com o banco na nuvem.','error'); return; }
+  try {
+    var r = await sb.rpc('add_affiliate', { p_email: email, p_code: code, p_commission: commission });
+    if(r.error){ showToast('Erro: '+(r.error.message||'não foi possível'),'error'); return; }
+    closeAddAffiliateModal();
+    showToast('✅ Afiliado adicionado: '+email+' (link '+code.toUpperCase()+')','success');
+    renderAffiliatesAdmin();
+  } catch(e){ showToast('Erro ao adicionar afiliado.','error'); }
+}
+async function removeAffiliate(email) {
+  var ok = await customConfirm('Remover o afiliado "'+email+'"? Ele perde o painel de indicações.','Remover afiliado','Remover');
+  if(!ok) return;
+  var sb=getSb(); if(!sb) return;
+  try {
+    var r = await sb.rpc('remove_affiliate', { p_email: email });
+    if(r.error){ showToast('Erro: '+(r.error.message||'não foi possível'),'error'); return; }
+    showToast('Afiliado removido.','info');
+    renderAffiliatesAdmin();
+  } catch(e){ showToast('Erro ao remover.','error'); }
+}
+
+// ── Dono: tabela de afiliados ──
+async function renderAffiliatesAdmin() {
+  var el=document.getElementById('adminAffiliates'); if(!el) return;
+  var sb=getSb(); if(!sb){ el.innerHTML='<div class="empty-state-sub">Disponível só com o banco na nuvem.</div>'; return; }
+  el.innerHTML='<div class="empty-state-sub">Carregando…</div>';
+  try {
+    var r = await sb.rpc('list_affiliates');
+    if(r.error || !r.data){ el.innerHTML='<div class="empty-state-sub">Acesso restrito.</div>'; return; }
+    if(!r.data.length){ el.innerHTML='<div class="empty-state-sub">Nenhum afiliado ainda. Clique em <b>+ Adicionar afiliado</b>.</div>'; return; }
+    var rows=r.data.map(function(a){
+      return '<tr>'+
+        '<td>'+escapeHtml(a.email)+'</td>'+
+        '<td><span class="tx-method-pill">'+escapeHtml(a.code)+'</span></td>'+
+        '<td>'+_affMoney(a.commission)+'/ativo</td>'+
+        '<td>'+a.indicados+'</td>'+
+        '<td style="color:var(--green);font-weight:600">'+a.ativos+'</td>'+
+        '<td style="color:var(--green);font-weight:600">'+_affMoney(a.a_pagar)+'</td>'+
+        '<td style="white-space:nowrap;text-align:right">'+
+          '<button class="btn-ghost" style="padding:5px 10px;font-size:12px" data-code="'+escapeHtml(a.code)+'" onclick="viewAffiliateReferrals(this.dataset.code)">👁 Ver indicados</button> '+
+          '<button class="btn-ghost" style="padding:5px 10px;font-size:12px;color:var(--red)" data-email="'+escapeHtml(a.email)+'" onclick="removeAffiliate(this.dataset.email)">Remover</button>'+
+        '</td></tr>';
+    }).join('');
+    el.innerHTML='<table class="admin-table"><thead><tr><th>Afiliado</th><th>Link</th><th>Comissão</th><th>Indicados</th><th>Ativos</th><th>A pagar</th><th style="text-align:right">Ações</th></tr></thead><tbody>'+rows+'</tbody></table>';
+  } catch(e){ el.innerHTML='<div class="empty-state-sub">Erro ao carregar afiliados.</div>'; }
+}
+
+// ── Lista de indicados de um código (dono: qualquer; afiliado: só o seu) ──
+async function viewAffiliateReferrals(code) {
+  var sb=getSb(); if(!sb) return;
+  setTextSafe('affReferralsName', code);
+  document.getElementById('affReferralsList').innerHTML='<div class="empty-state-sub">Carregando…</div>';
+  document.getElementById('affReferralsModal').classList.add('open');
+  try {
+    var r = await sb.rpc('get_referrals', { p_code: code });
+    document.getElementById('affReferralsList').innerHTML = _affReferralsHtml(r.data);
+  } catch(e){ document.getElementById('affReferralsList').innerHTML='<div class="empty-state-sub">Erro ao carregar.</div>'; }
+}
+function closeAffReferralsModal() { document.getElementById('affReferralsModal').classList.remove('open'); }
+function _affReferralsHtml(data) {
+  if(!data || !data.length) return '<div class="empty-state-sub">Ninguém entrou por esse link ainda.</div>';
+  var rows=data.map(function(r){
+    var dt=r.entrou ? new Date(r.entrou).toLocaleDateString('pt-BR') : '—';
+    return '<tr><td>'+escapeHtml(r.email)+'</td><td>'+dt+'</td><td><span style="color:'+(_affColors[r.status]||'var(--text-muted)')+';font-weight:600">'+r.status+'</span></td></tr>';
+  }).join('');
+  return '<div style="overflow-x:auto"><table class="admin-table"><thead><tr><th>Pessoa</th><th>Entrou em</th><th>Status</th></tr></thead><tbody>'+rows+'</tbody></table></div>';
+}
+
+// ── Afiliado: painel próprio ("Minhas Indicações") ──
+async function renderMyAffiliatePanel() {
+  var sb=getSb(); if(!sb) return;
+  try {
+    var r = await sb.rpc('get_my_affiliate');
+    if(r.error || !r.data || !r.data.length) return;
+    var a=r.data[0];
+    var link = location.origin + '/?ref=' + a.code;
+    setTextSafe('myAffCode', a.code);
+    setTextSafe('myAffLink', link);
+    setTextSafe('myAffCommission', _affMoney(a.commission));
+    setTextSafe('myAffIndicados', a.indicados);
+    setTextSafe('myAffAtivos', a.ativos);
+    setTextSafe('myAffApagar', _affMoney(a.a_pagar));
+    var listEl=document.getElementById('myAffList');
+    if(listEl){
+      var rr = await sb.rpc('get_referrals', { p_code: a.code });
+      listEl.innerHTML = _affReferralsHtml(rr.data);
+    }
+  } catch(e){}
+}
+
+function copyAffLink() {
+  var link=(document.getElementById('myAffLink')||{}).textContent || '';
+  if(!link || link==='—'){ showToast('Link ainda não carregado.','error'); return; }
+  try {
+    navigator.clipboard.writeText(link).then(
+      function(){ showToast('✅ Link copiado!','success'); },
+      function(){ showToast('Copie manualmente: '+link,'info'); }
+    );
+  } catch(e){ showToast('Copie manualmente: '+link,'info'); }
+}
+
+// ── Captura/registro de indicação (?ref) ──
+async function recordReferralIfAny(user) {
+  try {
+    var ref=null; try { ref=localStorage.getItem('bancapro-ref'); } catch(e){}
+    if(!ref || !user || !user.email) return;
+    var sb=getSb(); if(!sb) return;
+    await sb.from('referrals').upsert({ email: (user.email||'').toLowerCase(), ref: ref.toUpperCase() }, { onConflict:'email', ignoreDuplicates:true });
+  } catch(e){}
 }
 
 // Painel do dono: liberar/bloquear acesso manualmente (rede de segurança p/ webhook falho)
@@ -643,6 +787,12 @@ function showLogin() { document.getElementById('loginForm').style.display='block
 function showRegister() { document.getElementById('loginForm').style.display='none'; document.getElementById('registerForm').style.display='block'; document.getElementById('resetForm').style.display='none'; }
 function showReset() { document.getElementById('loginForm').style.display='none'; document.getElementById('registerForm').style.display='none'; document.getElementById('resetForm').style.display='block'; }
 
+// Captura o ?ref= do link de indicação (guarda pra registrar após o login)
+try {
+  const _refParam = new URLSearchParams(location.search).get('ref');
+  if (_refParam && _refParam.trim()) localStorage.setItem('bancapro-ref', _refParam.trim());
+} catch(e){}
+
 // Restaura sessão ao abrir a página (auto-login se já estiver logado)
 (async function restoreSession(){
   const sb = getSb();
@@ -676,7 +826,7 @@ function goTo(section, el) {
       if(n.textContent.toLowerCase().includes(section.toLowerCase())) n.classList.add('active');
     });
   }
-  const labels = {dashboard:'Dashboard',methods:'Métodos',transactions:'Transações',accounts:'Contas Depositadas',recharge:'Recarga',reports:'Relatórios',goals:'Metas',compare:'Comparativo',settings:'Configurações',admin:'Admin'};
+  const labels = {dashboard:'Dashboard',methods:'Métodos',transactions:'Transações',accounts:'Contas Depositadas',recharge:'Recarga',reports:'Relatórios',goals:'Metas',compare:'Comparativo',settings:'Configurações',admin:'Admin',afiliado:'Minhas Indicações',afiliados:'Afiliados'};
   document.getElementById('breadcrumb').textContent = labels[section] || section;
   closeSidebar();
   if(section === 'reports') setTimeout(initReportCharts, 100);
@@ -685,6 +835,8 @@ function goTo(section, el) {
   if(section === 'recharge') setTimeout(updateTrialBanner, 50);
   if(section === 'settings') setTimeout(renderSubscriptionCard, 50);
   if(section === 'admin') setTimeout(() => { renderAdminStats(); renderAdminUsers(); renderAdminErrors(); }, 50);
+  if(section === 'afiliados') setTimeout(renderAffiliatesAdmin, 50);
+  if(section === 'afiliado')  setTimeout(renderMyAffiliatePanel, 50);
 }
 
 function setPeriod(p, el) {

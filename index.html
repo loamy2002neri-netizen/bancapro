@@ -143,6 +143,38 @@
   </div>
 </div>
 
+<!-- ADICIONAR AFILIADO (ADMIN) -->
+<div class="modal-overlay" id="addAffiliateModal">
+  <div class="modal">
+    <div class="modal-title">🤝 Adicionar afiliado</div>
+    <div class="modal-sub">Defina quem é afiliado, o cupom e a comissão</div>
+    <div class="form-group">
+      <label class="form-label">E-mail do afiliado (a conta dele)</label>
+      <input class="form-input" type="email" placeholder="parceiro@email.com" id="affEmailInput"/>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Cupom</label><input class="form-input" type="text" placeholder="Ex: KING10" id="affCupomInput"/></div>
+      <div class="form-group"><label class="form-label">Comissão (% líquido)</label><input class="form-input" type="number" value="50" min="1" max="100" id="affComissaoInput"/></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-ghost" onclick="closeAddAffiliateModal()">Cancelar</button>
+      <button class="btn-primary" style="width:auto;padding:9px 20px" onclick="saveAffiliate()">Adicionar →</button>
+    </div>
+  </div>
+</div>
+
+<!-- VER INDICADOS DO AFILIADO (ADMIN) -->
+<div class="modal-overlay" id="affReferralsModal">
+  <div class="modal" style="width:580px;max-width:95vw">
+    <div class="modal-title">👥 Indicados de <span id="affReferralsName">—</span></div>
+    <div class="modal-sub">Pessoas que entraram pelo cupom desse afiliado (você vê o email completo)</div>
+    <div id="affReferralsList" style="margin-top:8px"></div>
+    <div class="modal-actions">
+      <button class="btn-ghost" onclick="closeAffReferralsModal()">Fechar</button>
+    </div>
+  </div>
+</div>
+
 <!-- ADD/EDIT GOAL MODAL -->
 <div class="modal-overlay" id="goalModal">
   <div class="modal">
@@ -310,7 +342,9 @@
     <div class="sidebar-section">
       <div class="sidebar-section-label">Sistema</div>
       <div class="nav-item" onclick="goTo('settings',this)"><span class="nav-icon">⚙️</span>Configurações</div>
+      <div class="nav-item" id="navAfiliado" onclick="goTo('afiliado',this)" style="display:none"><span class="nav-icon">🤝</span>Minhas Indicações</div>
       <div class="nav-item" id="navAdmin" onclick="goTo('admin',this)"><span class="nav-icon">👑</span>Admin</div>
+      <div class="nav-item" id="navAfiliados" onclick="goTo('afiliados',this)" style="display:none"><span class="nav-icon">🤝</span>Afiliados</div>
     </div>
 
     <div class="sidebar-footer">
@@ -1042,6 +1076,94 @@
         </div>
       </div>
 
+      <!-- ═══ AFILIADOS (GESTÃO — só dono) ═══ -->
+      <div class="section" id="sec-afiliados">
+        <div class="page-header" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
+          <div>
+            <div class="page-title">Afiliados 🤝</div>
+            <div class="page-subtitle">Gerencie seus parceiros e veja quem cada um indicou</div>
+          </div>
+          <button class="btn-primary" style="width:auto;padding:9px 18px" onclick="openAddAffiliateModal()">+ Adicionar afiliado</button>
+        </div>
+        <div class="form-card">
+          <div class="form-card-title">Parceiros afiliados</div>
+          <div id="adminAffiliates" style="margin-top:12px;overflow-x:auto">
+            <table class="admin-table">
+              <thead><tr><th>Afiliado</th><th>Cupom</th><th>Comissão</th><th>Indicados</th><th>Ativos</th><th>A pagar</th><th style="text-align:right">Ações</th></tr></thead>
+              <tbody>
+                <tr>
+                  <td>King Métodos<br><span style="font-size:11px;color:var(--text-muted)">king@grupo.com</span></td>
+                  <td><span class="tx-method-pill">KING10</span></td>
+                  <td>50% líq.</td>
+                  <td>14</td>
+                  <td style="color:var(--green);font-weight:600">9</td>
+                  <td style="color:var(--green);font-weight:600">R$ 97,56</td>
+                  <td style="white-space:nowrap;text-align:right">
+                    <button class="btn-ghost" style="padding:5px 10px;font-size:12px" onclick="viewAffiliateReferrals('King Métodos')">👁 Ver indicados</button>
+                    <button class="btn-ghost" style="padding:5px 10px;font-size:12px;color:var(--red)" onclick="showToast('(demo) afiliado removido','info')">Remover</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td>Duplo Green<br><span style="font-size:11px;color:var(--text-muted)">duplo@grupo.com</span></td>
+                  <td><span class="tx-method-pill">DUPLO</span></td>
+                  <td>50% líq.</td>
+                  <td>6</td>
+                  <td style="color:var(--green);font-weight:600">4</td>
+                  <td style="color:var(--green);font-weight:600">R$ 43,36</td>
+                  <td style="white-space:nowrap;text-align:right">
+                    <button class="btn-ghost" style="padding:5px 10px;font-size:12px" onclick="viewAffiliateReferrals('Duplo Green')">👁 Ver indicados</button>
+                    <button class="btn-ghost" style="padding:5px 10px;font-size:12px;color:var(--red)" onclick="showToast('(demo) afiliado removido','info')">Remover</button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div style="font-size:11px;color:var(--text-muted);margin-top:8px">Você define quem é afiliado, o cupom e a comissão. Cada um vê só os próprios indicados; você vê todos.</div>
+        </div>
+      </div>
+
+      <!-- ═══ MINHAS INDICAÇÕES (AFILIADO) ═══ -->
+      <div class="section" id="sec-afiliado">
+        <div class="page-header"><div class="page-title">Minhas Indicações 🤝</div><div class="page-subtitle">Divulgue seu link e acompanhe seus ganhos</div></div>
+
+        <div class="form-card" style="background:linear-gradient(135deg, rgba(99,102,241,0.14), rgba(139,92,246,0.05));border:1px solid var(--accent)">
+          <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px">
+            <div style="min-width:0;flex:1">
+              <div style="font-size:12px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.8px">Seu link de indicação</div>
+              <div style="display:flex;align-items:center;gap:8px;margin-top:5px;flex-wrap:wrap">
+                <div style="font-size:15px;font-weight:700;color:var(--accent2);word-break:break-all" id="myAffLink">—</div>
+                <button class="btn-ghost" style="padding:5px 12px;font-size:12px" onclick="copyAffLink()">📋 Copiar</button>
+              </div>
+              <div style="font-size:11px;color:var(--text-muted);margin-top:5px">Código: <b id="myAffCode">—</b></div>
+            </div>
+            <div style="text-align:right">
+              <div style="font-size:12px;color:var(--text-muted)">Comissão por assinante ativo</div>
+              <div style="font-size:20px;font-weight:700;color:var(--green)" id="myAffCommission">—</div>
+              <div style="font-size:11px;color:var(--text-muted)">por mês, enquanto for assinante</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="kpi-grid" style="margin-top:16px;grid-template-columns:repeat(3,minmax(0,1fr))">
+          <div class="kpi-card" style="--card-color:var(--accent)"><div class="kpi-label">👥 Indicados</div><div class="kpi-value" id="myAffIndicados">0</div><div class="kpi-sub">no total</div></div>
+          <div class="kpi-card" style="--card-color:var(--green)"><div class="kpi-label">✅ Ativos agora</div><div class="kpi-value" id="myAffAtivos">0</div><div class="kpi-sub">assinantes pagando</div></div>
+          <div class="kpi-card" style="--card-color:var(--yellow)"><div class="kpi-label">💰 A receber este mês</div><div class="kpi-value" style="color:var(--green)" id="myAffApagar">R$ 0,00</div><div class="kpi-sub">ativos × comissão</div></div>
+        </div>
+
+        <div class="form-card" style="margin-top:16px">
+          <div class="form-card-title">👥 Seus indicados</div>
+          <div id="myAffList"><div class="empty-state-sub">Carregando…</div></div>
+        </div>
+
+        <div class="form-card" style="margin-top:16px">
+          <div class="form-card-title">ℹ️ Como funciona</div>
+          <p style="font-size:13px;color:var(--text-secondary);line-height:1.6;margin:0">
+            Divulgue seu <b>link de indicação</b> (botão Copiar acima). Cada pessoa que entrar por ele e assinar conta como seu indicado.
+            Você ganha a comissão acima <b>todo mês</b>, enquanto a pessoa continuar assinante. O pagamento é feito por <b>Pix</b>.
+          </p>
+        </div>
+      </div>
+
     </div><!-- /page-content -->
   </main>
 </div><!-- /app -->
@@ -1058,6 +1180,6 @@
 </div>
 
 <script src="config.js?v=9" defer></script>
-<script src="script.js?v=19" defer></script>
+<script src="script.js?v=20" defer></script>
 </body>
 </html>
