@@ -278,9 +278,12 @@ async function hasActiveSubscription(email) {
   const sb = getSb();
   if (!sb || !email) return false;
   try {
-    const { data, error } = await sb.from('subscribers').select('status').eq('email', email.toLowerCase()).maybeSingle();
+    const { data, error } = await sb.from('subscribers').select('status,valid_until').eq('email', email.toLowerCase()).maybeSingle();
     if (error) return false;
-    return !!(data && data.status === 'active');
+    if (!data || data.status !== 'active') return false;
+    // acesso com prazo (liberação manual por X dias): expira na data
+    if (data.valid_until && new Date(data.valid_until).getTime() < Date.now()) return false;
+    return true;
   } catch(e) { return false; }
 }
 
@@ -321,8 +324,11 @@ async function renderAdminStats() {
     try {
       const { data: users } = await sb.rpc('get_owner_users');
       (users || []).forEach(u => {
-        if (u.status === 'active' && !OWNER_EMAILS.includes((u.email||'').toLowerCase())) {
-          if (/anual|annual|yearly/i.test(u.plan || '')) anual++; else mensal++;
+        const plan = u.plan || '';
+        const isOwner = OWNER_EMAILS.includes((u.email||'').toLowerCase());
+        const isComp  = plan === 'Liberado manualmente'; // cortesia não é receita
+        if (u.status === 'active' && !isOwner && !isComp) {
+          if (/anual|annual|yearly/i.test(plan)) anual++; else mensal++;
         }
       });
     } catch(e) {}
@@ -395,18 +401,30 @@ async function adminSetStatus(btn) {
   if (!email || (status !== 'active' && status !== 'inactive')) return;
   const sb = getSb();
   if (!sb) { showToast('Disponível só com o banco na nuvem.','error'); return; }
-  const verb = status === 'active' ? 'Liberar' : 'Bloquear';
-  const ok = await customConfirm(
-    `${verb} o acesso de "${email}"?`,
-    `${verb} acesso`,
-    verb,
-    status !== 'active'
-  );
-  if (!ok) return;
+
+  let days = null;
+  if (status === 'active') {
+    // pergunta a duração: vazio = permanente
+    const input = prompt(`Liberar acesso de "${email}".\n\nPor quantos DIAS? (deixe vazio para acesso permanente)`, '');
+    if (input === null) return; // cancelou
+    const t = input.trim();
+    if (t !== '') {
+      days = parseInt(t, 10);
+      if (!Number.isFinite(days) || days <= 0) { showToast('Informe um número de dias válido!','error'); return; }
+    }
+  } else {
+    const ok = await customConfirm(`Bloquear o acesso de "${email}"?`, 'Bloquear acesso', 'Bloquear', true);
+    if (!ok) return;
+  }
+
   try {
-    const { error } = await sb.rpc('set_subscriber_status', { target_email: email, new_status: status });
+    const params = { target_email: email, new_status: status, days: days };
+    const { error } = await sb.rpc('set_subscriber_status', params);
     if (error) { showToast('Erro: ' + (error.message || 'não foi possível atualizar'), 'error'); return; }
-    showToast(status === 'active' ? `✅ Acesso liberado para ${email}` : `🚫 Acesso bloqueado para ${email}`, status === 'active' ? 'success' : 'info');
+    const msg = status === 'active'
+      ? (days ? `✅ Liberado para ${email} por ${days} dias` : `✅ Acesso permanente liberado para ${email}`)
+      : `🚫 Acesso bloqueado para ${email}`;
+    showToast(msg, status === 'active' ? 'success' : 'info');
     renderAdminStats();
     renderAdminUsers();
   } catch(e) { showToast('Erro ao atualizar o acesso.','error'); }
@@ -461,14 +479,19 @@ async function renderSubscriptionCard() {
 
   if (sb && user) {
     try {
-      const { data } = await sb.from('subscribers').select('status,plan,updated_at')
+      const { data } = await sb.from('subscribers').select('status,plan,updated_at,valid_until')
         .eq('email', (user.email || '').toLowerCase()).maybeSingle();
-      if (data && data.status === 'active') {
+      const naoExpirou = !data || !data.valid_until || new Date(data.valid_until).getTime() > Date.now();
+      if (data && data.status === 'active' && naoExpirou) {
         isActive = true;
         planName = data.plan || 'Premium';
-        const isAnnual = /anual|annual|yearly/i.test(planName);
-        const base = data.updated_at ? new Date(data.updated_at) : new Date();
-        validUntil = new Date(base.getTime() + (isAnnual ? 365 : 30) * 86400000);
+        if (data.valid_until) {
+          validUntil = new Date(data.valid_until); // liberação manual com prazo
+        } else {
+          const isAnnual = /anual|annual|yearly/i.test(planName);
+          const base = data.updated_at ? new Date(data.updated_at) : new Date();
+          validUntil = new Date(base.getTime() + (isAnnual ? 365 : 30) * 86400000);
+        }
       }
     } catch(e) {}
   }
