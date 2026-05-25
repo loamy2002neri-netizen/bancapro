@@ -137,7 +137,8 @@ const SYNC_KEYS = [
   'bancapro-logo-color2',
   'bancapro-logo-split',
   'bancapro-accent',
-  'bancapro-accent2'
+  'bancapro-accent2',
+  'bancapro-theme'
 ];
 
 function clearUserLocal() {
@@ -244,6 +245,13 @@ async function enterApp(user) {
   recomputeAll();
   loadStoredBranding();
   loadPlatformSettings();
+  // aplica o tema que veio da nuvem (sincroniza entre aparelhos)
+  try {
+    const th = localStorage.getItem('bancapro-theme') || 'dark';
+    const btn = document.getElementById(th === 'light' ? 'themeBtnLight' : 'themeBtnDark');
+    setTheme(th, btn);
+    updateThemeBtn(th);
+  } catch(e){}
   setTimeout(() => showToast('Bem-vindo de volta! 👋','success'), 400);
   // Bloqueio por assinatura (não trava modo local nem o dono nem o trial)
   currentAuthUser = user;
@@ -2476,6 +2484,8 @@ function setTheme(theme, el) {
   window._reportChartsInit = false;
   window._compareInit = false;
   window._methodEvoInit = false;
+  // sincroniza o tema na conta (entre aparelhos)
+  if (typeof schedulePush === 'function') schedulePush();
 }
 
 // ══════════════════════════════════════════════
