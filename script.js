@@ -200,7 +200,7 @@ function schedulePush() {
   _pushTimer = setTimeout(pushUserData, 800);
 }
 async function pushUserData() {
-  if (!currentUserId) return;
+  if (!currentUserId) return null;
   const blob = {};
   SYNC_KEYS.forEach(k => {
     try { const v = localStorage.getItem(k); if (v != null) blob[k] = v; } catch(e){}
@@ -210,10 +210,12 @@ async function pushUserData() {
     try {
       const { error } = await sb.from('user_data')
         .upsert({ user_id: currentUserId, data: blob, updated_at: new Date().toISOString() }, { onConflict: 'user_id' });
-      if (error) console.warn('pushUserData', error);
-    } catch(e) { console.warn('pushUserData', e); }
+      if (error) { console.warn('pushUserData', error); return error; }
+      return null;
+    } catch(e) { console.warn('pushUserData', e); return e; }
   } else {
-    try { localStorage.setItem('bancapro-userdata-' + currentUserId, JSON.stringify(blob)); } catch(e){}
+    try { localStorage.setItem('bancapro-userdata-' + currentUserId, JSON.stringify(blob)); return null; }
+    catch(e){ return e; }
   }
 }
 
@@ -2108,7 +2110,34 @@ function handleFaviconDrop(e) {
   if(file) readImageFile(file, applyFavicon, 'favicon');
 }
 
-function readImageFile(file, callback, kind) {
+// Reduz a imagem pra um tamanho pequeno (mantém a sincronização leve e confiável).
+// SVG ou falha de canvas → mantém o original.
+function downscaleImage(dataUrl, maxDim, cb) {
+  try {
+    const img = new Image();
+    img.onload = function() {
+      try {
+        let w = img.naturalWidth || img.width;
+        let h = img.naturalHeight || img.height;
+        if(!w || !h) { cb(dataUrl); return; }
+        if(w > maxDim || h > maxDim) {
+          const scale = maxDim / Math.max(w, h);
+          w = Math.max(1, Math.round(w * scale));
+          h = Math.max(1, Math.round(h * scale));
+        }
+        const canvas = document.createElement('canvas');
+        canvas.width = w; canvas.height = h;
+        canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+        const out = canvas.toDataURL('image/png');
+        cb(out && out.length < dataUrl.length ? out : dataUrl);
+      } catch(e) { cb(dataUrl); }
+    };
+    img.onerror = function(){ cb(dataUrl); };
+    img.src = dataUrl;
+  } catch(e) { cb(dataUrl); }
+}
+
+async function readImageFile(file, callback, kind) {
   if(!file.type.startsWith('image/')) {
     showToast('Selecione um arquivo de imagem válido!','error'); return;
   }
@@ -2117,9 +2146,14 @@ function readImageFile(file, callback, kind) {
   }
   const reader = new FileReader();
   reader.onload = e => {
-    callback(e.target.result);
-    if (typeof schedulePush === 'function') schedulePush();
-    showToast(kind==='logo' ? '✅ Logo aplicada!' : '✅ Favicon aplicado!', 'success');
+    const maxDim = kind === 'favicon' ? 64 : 256;   // logo pequena = sync leve
+    downscaleImage(e.target.result, maxDim, async (finalUrl) => {
+      callback(finalUrl);
+      showToast('Salvando…','info');
+      const err = (typeof pushUserData === 'function') ? await pushUserData() : null;
+      if (err) showToast('Erro ao salvar na nuvem: ' + (err.message || err), 'error');
+      else showToast(kind==='logo' ? '✅ Logo salva!' : '✅ Favicon salvo!', 'success');
+    });
   };
   reader.onerror = () => showToast('Erro ao ler o arquivo','error');
   reader.readAsDataURL(file);
@@ -2217,7 +2251,7 @@ function loadStoredBranding() {
 }
 
 // ── Salvar / restaurar Identidade da Plataforma ──
-function savePlatformIdentity() {
+async function savePlatformIdentity() {
   try {
     const name = (document.getElementById('platformName')?.value || '').trim() || 'Apostack';
     localStorage.setItem('bancapro-platform-name', name);
@@ -2227,13 +2261,15 @@ function savePlatformIdentity() {
     if(document.getElementById('logoColor2')) localStorage.setItem('bancapro-logo-color2', document.getElementById('logoColor2').value);
     if(document.getElementById('logoSplit'))  localStorage.setItem('bancapro-logo-split',  document.getElementById('logoSplit').value);
   } catch(e) {}
-  if (typeof schedulePush === 'function') schedulePush();
   updatePlatformName();
-  showToast('Identidade salva com sucesso!','success');
+  showToast('Salvando…','info');
+  const err = (typeof pushUserData === 'function') ? await pushUserData() : null;
+  if (err) showToast('Erro ao salvar na nuvem: ' + (err.message || err), 'error');
+  else showToast('Identidade salva com sucesso!','success');
 }
 
 // ── Salvar Aparência (cor principal) — o tema já é salvo no setTheme ──
-function saveAppearance() {
+async function saveAppearance() {
   try {
     const cs = getComputedStyle(document.documentElement);
     const accent  = cs.getPropertyValue('--accent').trim();
@@ -2241,8 +2277,10 @@ function saveAppearance() {
     if(accent)  localStorage.setItem('bancapro-accent', accent);
     if(accent2) localStorage.setItem('bancapro-accent2', accent2);
   } catch(e) {}
-  if (typeof schedulePush === 'function') schedulePush();
-  showToast('Aparência salva com sucesso!','success');
+  showToast('Salvando…','info');
+  const err = (typeof pushUserData === 'function') ? await pushUserData() : null;
+  if (err) showToast('Erro ao salvar na nuvem: ' + (err.message || err), 'error');
+  else showToast('Aparência salva com sucesso!','success');
 }
 
 // ── Restaura as configs salvas (chamado no carregamento) ──
