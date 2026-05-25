@@ -508,7 +508,7 @@ async function renderMyAffiliatePanel() {
     setTextSafe('myAffCommission', _affMoney(a.commission));
     setTextSafe('myAffIndicados', a.indicados);
     setTextSafe('myAffAtivos', a.ativos);
-    setTextSafe('myAffApagar', _affMoney(a.a_pagar));
+    setTextSafe('affEntradas', _affMoney(a.a_pagar));
     var listEl=document.getElementById('myAffList');
     if(listEl){
       var rr = await sb.rpc('get_referrals', { p_code: a.code });
@@ -525,8 +525,11 @@ async function renderMyWithdrawals(aPagar) {
     var r=await sb.rpc('my_withdrawals');
     var list=r.data||[];
     var pend=list.filter(function(w){return w.status==='pendente';}).reduce(function(s,w){return s+Number(w.amount||0);},0);
+    var pago=list.filter(function(w){return w.status==='pago';}).reduce(function(s,w){return s+Number(w.amount||0);},0);
     var disp=Math.max(0,(Number(aPagar)||0)-pend);
     window._sqDisponivel=disp;
+    setTextSafe('affSaidas', _affMoney(pago));
+    setTextSafe('affPendente', _affMoney(pend));
     setTextSafe('sqDisponivel', _affMoney(disp));
     setTextSafe('sqTotal', _affMoney(aPagar));
     var el=document.getElementById('sqHistorico'); if(!el) return;
