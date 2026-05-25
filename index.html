@@ -18,7 +18,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
-<link rel="stylesheet" href="style.css?v=14"/>
+<link rel="stylesheet" href="style.css?v=16"/>
 </head>
 <body>
 
@@ -338,6 +338,7 @@
       <div class="nav-item" onclick="goTo('reports',this)"><span class="nav-icon">📈</span>Relatórios</div>
       <div class="nav-item" onclick="goTo('goals',this)"><span class="nav-icon">🎯</span>Metas</div>
       <div class="nav-item" onclick="goTo('compare',this)"><span class="nav-icon">🔀</span>Comparativo</div>
+      <div class="nav-item" onclick="goTo('calculadora',this)"><span class="nav-icon">🧮</span>Calculadora</div>
     </div>
 
     <div class="sidebar-section">
@@ -1177,6 +1178,91 @@
         </div>
       </div>
 
+      <!-- ═══ CALCULADORA ═══ -->
+      <div class="section" id="sec-calculadora">
+        <div class="page-header"><div class="page-title">Calculadora 🧮</div><div class="page-subtitle">Surebet, stake e proteção de duplo</div></div>
+
+        <div class="period-tabs" style="margin-bottom:18px;display:inline-flex">
+          <div class="period-tab active" onclick="switchCalc('surebet',this)">Surebet</div>
+          <div class="period-tab" onclick="switchCalc('stake',this)">Stake</div>
+          <div class="period-tab" onclick="switchCalc('protecao',this)">Proteção de duplo</div>
+        </div>
+
+        <!-- ─ SUREBET ─ -->
+        <div class="calc-panel active" id="calc-surebet">
+          <div class="form-card" style="margin-bottom:16px;display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+            <label class="form-label" style="margin:0">Casas</label>
+            <select class="form-select" id="sbCount" style="max-width:130px" onchange="sbSetCount(this.value)"></select>
+            <div style="font-size:12px;color:var(--text-muted);flex:1;min-width:180px">Informe as odds e fixe a stake de uma casa — as outras se equilibram para o lucro ser igual em qualquer resultado.</div>
+          </div>
+          <div id="sbCasas" class="sb-grid"></div>
+          <div class="form-card" style="margin-top:16px">
+            <div class="form-card-title">📊 Resumo geral</div>
+            <div class="kpi-grid" style="grid-template-columns:repeat(3,1fr)">
+              <div class="kpi-card" style="--card-color:var(--accent)"><div class="kpi-label">Stake total</div><div class="kpi-value" id="sbTotal">R$ 0,00</div><div class="kpi-sub">investido nas casas</div></div>
+              <div class="kpi-card" style="--card-color:var(--green)"><div class="kpi-label">Lucro garantido</div><div class="kpi-value" id="sbLucro">R$ 0,00</div><div class="kpi-sub">em qualquer resultado</div></div>
+              <div class="kpi-card" style="--card-color:var(--green)"><div class="kpi-label">ROI</div><div class="kpi-value" id="sbRoi">0,00%</div><div class="kpi-sub">lucro sobre o total</div></div>
+            </div>
+            <div id="sbHint" style="font-size:12px;margin-top:12px"></div>
+          </div>
+        </div>
+
+        <!-- ─ STAKE ─ -->
+        <div class="calc-panel" id="calc-stake">
+          <div class="form-card">
+            <div class="form-card-title">💰 Calculadora de stake (odd aumentada)</div>
+            <div class="form-group"><label class="form-label">Valor da banca (R$)</label><input class="form-input" type="number" min="0" step="0.01" id="stkBanca" value="1000" oninput="calcStake()"></div>
+            <div class="form-group"><label class="form-label">Odd normal (justa)</label><input class="form-input" type="number" min="1" step="0.01" id="stkOddN" value="2" oninput="calcStake()"></div>
+            <div class="form-group"><label class="form-label">Odd aumentada (ofertada)</label><input class="form-input" type="number" min="1" step="0.01" id="stkOddA" value="2.5" oninput="calcStake()"></div>
+            <div class="kpi-card" style="--card-color:var(--green)"><div class="kpi-label">Aumento da odd</div><div class="kpi-value" style="color:var(--green)" id="stkAumento">0,00%</div><div class="kpi-sub" id="stkAumentoSub">—</div></div>
+          </div>
+          <div class="form-card" style="margin-top:16px">
+            <div class="form-card-title">Resultado</div>
+            <div class="kpi-grid" style="grid-template-columns:repeat(2,1fr)">
+              <div class="kpi-card" style="--card-color:var(--green)"><div class="kpi-label">Stake recomendada</div><div class="kpi-value" style="color:var(--green)" id="stkStake">R$ 0,00</div><div class="kpi-sub">valor a ser apostado</div></div>
+              <div class="kpi-card" style="--card-color:var(--accent)"><div class="kpi-label">% da banca</div><div class="kpi-value" style="color:var(--accent)" id="stkPct">0,00%</div><div class="kpi-sub">fração da banca total</div></div>
+            </div>
+            <div style="font-size:12px;color:var(--text-muted);margin-top:12px">Baseado no critério de Kelly fracionado (1/10). É uma referência conservadora — não é garantia de lucro.</div>
+          </div>
+        </div>
+
+        <!-- ─ PROTEÇÃO DE DUPLO ─ -->
+        <div class="calc-panel" id="calc-protecao">
+          <div class="form-card">
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
+              <div>
+                <div class="form-card-title" style="margin-bottom:2px">🛡️ Apostas feitas</div>
+                <div style="font-size:12px;color:var(--text-muted)">Coloque o valor e a odd das apostas que você já fez.</div>
+              </div>
+              <div style="text-align:right"><div style="font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.6px">Total a proteger</div><div style="font-size:18px;font-weight:800;color:var(--accent2)" id="pdTotal">R$ 0,00</div></div>
+            </div>
+            <div id="pdBets" style="margin-top:14px"></div>
+            <button class="btn-ghost" style="width:100%;margin-top:10px;border-style:dashed" onclick="pdAddBet()">+ Adicionar aposta</button>
+          </div>
+
+          <div class="form-card" style="margin-top:16px">
+            <div class="form-card-title">🛡️ Aposta de proteção</div>
+            <div class="form-group"><label class="form-label">Casa de aposta</label><input class="form-input" type="text" id="pdProtCasa" placeholder="Ex: Casa de proteção" oninput="calcProtecao()"></div>
+            <div style="display:flex;gap:12px;flex-wrap:wrap">
+              <div class="form-group" style="flex:1;min-width:140px"><label class="form-label">Odd</label><input class="form-input" type="number" min="1" step="0.01" id="pdProtOdd" value="1.5" oninput="calcProtecao()"></div>
+              <div class="form-group" style="flex:1;min-width:140px"><label class="form-label">Comissão %</label><input class="form-input" type="number" min="0" step="0.1" id="pdProtCom" value="0" oninput="calcProtecao()"></div>
+            </div>
+          </div>
+
+          <div class="form-card" style="margin-top:16px">
+            <div class="form-card-title">Resultado da proteção</div>
+            <div class="kpi-grid" style="grid-template-columns:repeat(2,1fr)">
+              <div class="kpi-card" style="--card-color:var(--accent)"><div class="kpi-label">Aposte o valor de</div><div class="kpi-value" style="color:var(--accent)" id="pdStake">R$ 0,00</div><div class="kpi-sub">na casa de proteção</div></div>
+              <div class="kpi-card" style="--card-color:var(--green)"><div class="kpi-label">Lucro estimado</div><div class="kpi-value" id="pdLucro">R$ 0,00</div><div class="kpi-sub">ao proteger o duplo</div></div>
+            </div>
+            <div class="form-card" style="margin-top:14px;background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.3)">
+              <div style="font-size:13px;font-weight:700;color:var(--yellow)">⚠️ Calculadora em fase de testes</div>
+              <div style="font-size:12px;color:var(--text-secondary);margin-top:4px">Os resultados podem conter erros. Confira antes de apostar.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
     </div><!-- /page-content -->
   </main>
 </div><!-- /app -->
@@ -1193,6 +1279,6 @@
 </div>
 
 <script src="config.js?v=9" defer></script>
-<script src="script.js?v=27" defer></script>
+<script src="script.js?v=29" defer></script>
 </body>
 </html>

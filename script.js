@@ -907,7 +907,7 @@ function goTo(section, el) {
       if(n.textContent.toLowerCase().includes(section.toLowerCase())) n.classList.add('active');
     });
   }
-  const labels = {dashboard:'Dashboard',methods:'Métodos',transactions:'Transações',accounts:'Contas Depositadas',recharge:'Recarga',reports:'Relatórios',goals:'Metas',compare:'Comparativo',settings:'Configurações',admin:'Admin',afiliado:'Minhas Indicações',afiliados:'Afiliados'};
+  const labels = {dashboard:'Dashboard',methods:'Métodos',transactions:'Transações',accounts:'Contas Depositadas',recharge:'Recarga',reports:'Relatórios',goals:'Metas',compare:'Comparativo',calculadora:'Calculadora',settings:'Configurações',admin:'Admin',afiliado:'Minhas Indicações',afiliados:'Afiliados'};
   document.getElementById('breadcrumb').textContent = labels[section] || section;
   closeSidebar();
   if(section === 'reports') setTimeout(initReportCharts, 100);
@@ -918,6 +918,7 @@ function goTo(section, el) {
   if(section === 'admin') setTimeout(() => { renderAdminStats(); renderAdminUsers(); renderAdminErrors(); }, 50);
   if(section === 'afiliados') setTimeout(() => { renderAffiliatesAdmin(); renderWithdrawalsAdmin(); }, 50);
   if(section === 'afiliado')  setTimeout(renderMyAffiliatePanel, 50);
+  if(section === 'calculadora') setTimeout(calcInit, 50);
 }
 
 function setPeriod(p, el) {
@@ -3961,3 +3962,201 @@ document.querySelectorAll('.modal-overlay').forEach(overlay => {
     if(e.target === overlay) overlay.classList.remove('open');
   });
 });
+
+// ═══════════════════════════════════════════════
+//  CALCULADORA (Surebet / Stake / Proteção de duplo)
+// ═══════════════════════════════════════════════
+function calcMoney(v){ if(!isFinite(v)) v=0; return 'R$ ' + v.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2}); }
+function calcPct(v){ if(!isFinite(v)) v=0; return v.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2}) + '%'; }
+function calcNum(id){ var el=document.getElementById(id); if(!el) return 0; var n=parseFloat(String(el.value||'').replace(',','.')); return isFinite(n)?n:0; }
+
+var _calcReady = false;
+function calcInit(){
+  if(_calcReady){ sbCompute(); calcStake(); calcProtecao(); return; }
+  _calcReady = true;
+  var sel=document.getElementById('sbCount');
+  if(sel){ var h=''; for(var i=2;i<=8;i++){ h+='<option value="'+i+'"'+(i===2?' selected':'')+'>'+i+' casas</option>'; } sel.innerHTML=h; }
+  sbSetCount(2);
+  calcStake();
+  if(PD.length===0){ PD.push(pdDefaultBet()); PD.push(pdDefaultBet()); }
+  pdRenderBets();
+  calcProtecao();
+}
+function switchCalc(which, el){
+  document.querySelectorAll('.calc-panel').forEach(function(p){ p.classList.remove('active'); });
+  var panel=document.getElementById('calc-'+which); if(panel) panel.classList.add('active');
+  if(el){ el.parentElement.querySelectorAll('.period-tab').forEach(function(t){ t.classList.remove('active'); }); el.classList.add('active'); }
+}
+
+// ── SUREBET ──
+var SB = { n:2, fixed:0, casas:[] };
+function sbDefaultCasa(i){ return { nome:'Casa '+(i+1), tipo:'back', odd:2, stake:100, comissao:0, aumento:0, freebet:false }; }
+function sbSetCount(n){
+  n = parseInt(n,10)||2;
+  SB.n = n;
+  while(SB.casas.length < n) SB.casas.push(sbDefaultCasa(SB.casas.length));
+  SB.casas = SB.casas.slice(0,n);
+  if(SB.fixed >= n) SB.fixed = 0;
+  var sel=document.getElementById('sbCount'); if(sel) sel.value=String(n);
+  sbRenderCasas();
+  sbCompute();
+}
+function sbRenderCasas(){
+  var wrap=document.getElementById('sbCasas'); if(!wrap) return;
+  wrap.innerHTML = SB.casas.map(function(c,i){
+    var isLay = c.tipo==='lay';
+    var stakeLabel = isLay ? 'Stake da Lay (R$)' : 'Stake (R$)';
+    return '<div class="sb-casa">'
+      + '<div class="sb-casa-head"><span class="sb-casa-title">Casa '+(i+1)+'</span></div>'
+      + '<div class="form-group"><label class="form-label">Nome</label><input class="form-input" type="text" value="'+escapeHtml(c.nome)+'" oninput="sbField('+i+',\'nome\',this.value)"></div>'
+      + '<div class="sb-tipo">'
+      +   '<button class="sb-tipo-btn'+(!isLay?' active-back':'')+'" onclick="sbSetTipo('+i+',\'back\')">Back</button>'
+      +   '<button class="sb-tipo-btn'+(isLay?' active-lay':'')+'" onclick="sbSetTipo('+i+',\'lay\')">Lay</button>'
+      + '</div>'
+      + '<div class="form-group"><label class="form-label">Odd</label><input class="form-input" type="number" min="1" step="0.01" value="'+c.odd+'" oninput="sbField('+i+',\'odd\',this.value)"><div class="sb-real" id="sbReal'+i+'">Real: —</div></div>'
+      + '<div class="form-group"><label class="form-label">'+stakeLabel+'</label><input class="form-input" id="sbStake'+i+'" type="number" min="0" step="0.01" value="'+c.stake+'" oninput="sbStakeInput('+i+',this.value)"></div>'
+      + '<div class="sb-resp" id="sbResp'+i+'" style="'+(isLay?'':'display:none')+'">Responsabilidade <b id="sbRespVal'+i+'">R$ 0,00</b></div>'
+      + '<div class="sb-row">'
+      +   '<div class="form-group"><label class="form-label">Comissão %</label><input class="form-input" type="number" min="0" step="0.1" value="'+c.comissao+'" oninput="sbField('+i+',\'comissao\',this.value)"></div>'
+      +   '<div class="form-group"><label class="form-label">Aumento %</label><input class="form-input" type="number" min="0" step="0.1" value="'+c.aumento+'" oninput="sbField('+i+',\'aumento\',this.value)"></div>'
+      + '</div>'
+      + (isLay ? '' : '<label class="sb-freebet"><input type="checkbox" '+(c.freebet?'checked':'')+' onchange="sbField('+i+',\'freebet\',this.checked)"> Freebet (stake não retorna)</label>')
+      + '<div class="sb-result">'
+      +   '<div class="sb-result-line"><span class="lbl">📈 Lucro</span><span class="val" id="sbCasaLucro'+i+'">R$ 0,00</span></div>'
+      +   '<div class="sb-result-line"><span class="lbl">📊 ROI</span><span class="val" id="sbCasaRoi'+i+'">0,00%</span></div>'
+      + '</div>'
+      + '<button class="sb-fixar'+(SB.fixed===i?' active':'')+'" id="sbFixar'+i+'" onclick="sbFixar('+i+')">'+(SB.fixed===i?'✓ Stake fixa':'Fixar stake')+'</button>'
+    + '</div>';
+  }).join('');
+}
+function sbSetTipo(i, tipo){ SB.casas[i].tipo = tipo; if(tipo==='lay') SB.casas[i].freebet=false; sbRenderCasas(); sbCompute(); }
+function sbField(i, key, val){
+  if(key==='nome') SB.casas[i].nome=val;
+  else if(key==='freebet') SB.casas[i].freebet=!!val;
+  else SB.casas[i][key]=parseFloat(String(val).replace(',','.'))||0;
+  sbCompute();
+}
+function sbStakeInput(i, val){
+  SB.casas[i].stake=parseFloat(String(val).replace(',','.'))||0;
+  SB.fixed=i;
+  sbUpdateFixarButtons();
+  sbCompute();
+}
+function sbFixar(i){ SB.fixed=i; sbUpdateFixarButtons(); sbCompute(); }
+function sbUpdateFixarButtons(){
+  SB.casas.forEach(function(c,i){
+    var b=document.getElementById('sbFixar'+i);
+    if(b){ b.classList.toggle('active', SB.fixed===i); b.textContent = SB.fixed===i ? '✓ Stake fixa' : 'Fixar stake'; }
+  });
+}
+function sbBoosted(c){ return (c.odd||0) * (1 + (c.aumento||0)/100); }
+// Multiplicador sobre o DINHEIRO EM RISCO (back: stake; lay: responsabilidade)
+function sbEffOdd(c){
+  var boosted = sbBoosted(c);
+  var cm = 1 - (c.comissao||0)/100;
+  if(c.tipo==='lay') return boosted>1 ? (1 + cm/(boosted-1)) : 0;     // lay convertido em "back equivalente"
+  var win = (boosted - 1) * cm;
+  return c.freebet ? win : (1 + win);                                 // back (freebet: stake não retorna)
+}
+// Converte o valor digitado (back: stake; lay: stake da lay) em dinheiro em risco
+function sbRiskFromInput(c){ return c.tipo==='lay' ? (c.stake||0) * Math.max(0, sbBoosted(c)-1) : (c.stake||0); }
+// Converte dinheiro em risco de volta no valor exibido no campo
+function sbInputFromRisk(c, risk){ if(c.tipo==='lay'){ var d=sbBoosted(c)-1; return d>0 ? risk/d : 0; } return risk; }
+function sbCompute(){
+  var n=SB.n; if(n<1) return;
+  var fixed=SB.casas[SB.fixed]||SB.casas[0];
+  var R=sbRiskFromInput(fixed)*sbEffOdd(fixed);    // retorno alvo (igual em qualquer resultado)
+  var total=0;
+  SB.casas.forEach(function(c,i){
+    var m=sbEffOdd(c);
+    var risk = (i===SB.fixed) ? sbRiskFromInput(c) : (m>0 ? R/m : 0);
+    if(i!==SB.fixed){
+      c.stake = sbInputFromRisk(c, risk);
+      var inp=document.getElementById('sbStake'+i);
+      if(inp && document.activeElement!==inp) inp.value=(isFinite(c.stake)?c.stake:0).toFixed(2);
+    }
+    if(!c.freebet) total += risk;
+    // atualiza badge "Real" e responsabilidade
+    setTextSafe('sbReal'+i, 'Real: ' + (isFinite(sbBoosted(c))?sbBoosted(c):0).toFixed(3).replace('.',','));
+    var resp=document.getElementById('sbResp'+i);
+    if(resp){
+      if(c.tipo==='lay'){ resp.style.display=''; setTextSafe('sbRespVal'+i, calcMoney(sbRiskFromInput(c))); }
+      else resp.style.display='none';
+    }
+  });
+  var lucro=R-total;
+  var roi=total>0 ? (lucro/total*100) : 0;
+  var col = lucro>=0?'var(--green)':'var(--red)';
+  SB.casas.forEach(function(c,i){
+    var le=document.getElementById('sbCasaLucro'+i), re=document.getElementById('sbCasaRoi'+i);
+    if(le){ le.textContent=calcMoney(lucro); le.style.color=col; }
+    if(re){ re.textContent=calcPct(roi); re.style.color=col; }
+  });
+  setTextSafe('sbTotal', calcMoney(total));
+  setTextSafe('sbLucro', calcMoney(lucro));
+  setTextSafe('sbRoi', calcPct(roi));
+  var sl=document.getElementById('sbLucro'), sr=document.getElementById('sbRoi');
+  if(sl) sl.style.color=col; if(sr) sr.style.color=col;
+  var hint=document.getElementById('sbHint');
+  if(hint){
+    if(lucro>0.005) hint.innerHTML='<span style="color:var(--green)">✅ Surebet! Lucro garantido em qualquer resultado.</span>';
+    else if(lucro<-0.005) hint.innerHTML='<span style="color:var(--red)">⚠️ Não é surebet: daria prejuízo. Ajuste as odds.</span>';
+    else hint.innerHTML='<span style="color:var(--text-muted)">Empata (break-even): sem lucro nem prejuízo.</span>';
+  }
+}
+
+// ── STAKE (odd aumentada / Kelly fracionado) ──
+function calcStake(){
+  var banca=calcNum('stkBanca'), oddN=calcNum('stkOddN'), oddA=calcNum('stkOddA');
+  var aumento = (oddN>0) ? ((oddA-oddN)/oddN*100) : 0;
+  setTextSafe('stkAumento', calcPct(aumento));
+  var sub=document.getElementById('stkAumentoSub');
+  if(sub) sub.textContent = (oddN>0&&oddA>0) ? ('De '+oddN.toFixed(2)+' para '+oddA.toFixed(2)) : '—';
+  var p = oddN>1 ? 1/oddN : 0;
+  var b = oddA-1;
+  var f = b>0 ? (b*p-(1-p))/b : 0;
+  var frac = Math.max(0, f/10);
+  var stake = banca*frac;
+  setTextSafe('stkStake', calcMoney(stake));
+  setTextSafe('stkPct', calcPct(frac*100));
+  var stEl=document.getElementById('stkStake'); if(stEl) stEl.style.color = stake>0?'var(--green)':'var(--text-muted)';
+}
+
+// ── PROTEÇÃO DE DUPLO (hedge / encerramento) ──
+var PD = [];
+function pdDefaultBet(){ return {casa:'', valor:0, odd:1.5, comissao:0, aumento:0}; }
+function pdAddBet(){ PD.push(pdDefaultBet()); pdRenderBets(); calcProtecao(); }
+function pdRemoveBet(i){ PD.splice(i,1); if(PD.length===0) PD.push(pdDefaultBet()); pdRenderBets(); calcProtecao(); }
+function pdRenderBets(){
+  var wrap=document.getElementById('pdBets'); if(!wrap) return;
+  wrap.innerHTML = PD.map(function(b,i){
+    return '<div class="pd-bet">'
+     + '<div class="pd-bet-head"><span>Aposta '+(i+1)+'</span>'+(PD.length>1?'<button class="pd-del" onclick="pdRemoveBet('+i+')" title="Remover">🗑</button>':'')+'</div>'
+     + '<div class="form-group" style="margin-bottom:10px"><label class="form-label">Casa de aposta</label><input class="form-input" type="text" value="'+escapeHtml(b.casa)+'" placeholder="Digite a casa" oninput="pdField('+i+',\'casa\',this.value)"></div>'
+     + '<div class="sb-row">'
+     +   '<div class="form-group" style="margin-bottom:0"><label class="form-label">Valor (R$)</label><input class="form-input" type="number" min="0" step="0.01" value="'+b.valor+'" oninput="pdField('+i+',\'valor\',this.value)"></div>'
+     +   '<div class="form-group" style="margin-bottom:0"><label class="form-label">Odd</label><input class="form-input" type="number" min="1" step="0.01" value="'+b.odd+'" oninput="pdField('+i+',\'odd\',this.value)"></div>'
+     + '</div>'
+   + '</div>';
+  }).join('');
+}
+function pdField(i,key,val){
+  if(key==='casa') PD[i].casa=val; else PD[i][key]=parseFloat(String(val).replace(',','.'))||0;
+  calcProtecao();
+}
+function calcProtecao(){
+  var totalRetorno=0, totalStake=0;
+  PD.forEach(function(b){
+    var boosted=(b.odd||0)*(1+(b.aumento||0)/100);
+    totalRetorno += (b.valor||0)*boosted;
+    totalStake += (b.valor||0);
+  });
+  setTextSafe('pdTotal', calcMoney(totalRetorno));
+  var oddP=calcNum('pdProtOdd'), comP=calcNum('pdProtCom');
+  var mP = 1 + (oddP-1)*(1-comP/100);
+  var P = mP>0 ? totalRetorno/mP : 0;
+  var lucro = P*(mP-1) - totalStake;
+  setTextSafe('pdStake', calcMoney(P));
+  setTextSafe('pdLucro', calcMoney(lucro));
+  var le=document.getElementById('pdLucro'); if(le) le.style.color = lucro>=0?'var(--green)':'var(--red)';
+}
