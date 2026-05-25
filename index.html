@@ -126,6 +126,23 @@
   </div>
 </div>
 
+<!-- LIBERAR ACESSO (ADMIN) -->
+<div class="modal-overlay" id="grantModal">
+  <div class="modal">
+    <div class="modal-title">🔓 Liberar acesso</div>
+    <div class="modal-sub">Usuário: <strong id="grantModalEmail">—</strong></div>
+    <div class="form-group">
+      <label class="form-label">Por quantos dias?</label>
+      <input class="form-input" type="number" min="1" step="1" placeholder="Ex: 30 — deixe vazio para acesso permanente" id="grantDaysInput" onkeydown="if(event.key==='Enter'){event.preventDefault();confirmGrant();}"/>
+      <div style="font-size:12px;color:var(--text-muted);margin-top:6px">💡 Vazio = acesso permanente (até você bloquear)</div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-ghost" onclick="closeGrantModal()">Cancelar</button>
+      <button class="btn-primary" style="width:auto;padding:9px 20px" onclick="confirmGrant()">🔓 Liberar →</button>
+    </div>
+  </div>
+</div>
+
 <!-- ADD/EDIT GOAL MODAL -->
 <div class="modal-overlay" id="goalModal">
   <div class="modal">
@@ -1041,6 +1058,6 @@
 </div>
 
 <script src="config.js?v=9" defer></script>
-<script src="script.js?v=16" defer></script>
+<script src="script.js?v=17" defer></script>
 </body>
 </html>

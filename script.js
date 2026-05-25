@@ -395,6 +395,7 @@ async function renderAdminUsers() {
 }
 
 // Painel do dono: liberar/bloquear acesso manualmente (rede de segurança p/ webhook falho)
+let _grantEmail = null;
 async function adminSetStatus(btn) {
   const email  = btn && btn.dataset ? btn.dataset.email : '';
   const status = btn && btn.dataset ? btn.dataset.status : '';
@@ -402,24 +403,45 @@ async function adminSetStatus(btn) {
   const sb = getSb();
   if (!sb) { showToast('Disponível só com o banco na nuvem.','error'); return; }
 
-  let days = null;
   if (status === 'active') {
-    // pergunta a duração: vazio = permanente
-    const input = prompt(`Liberar acesso de "${email}".\n\nPor quantos DIAS? (deixe vazio para acesso permanente)`, '');
-    if (input === null) return; // cancelou
-    const t = input.trim();
-    if (t !== '') {
-      days = parseInt(t, 10);
-      if (!Number.isFinite(days) || days <= 0) { showToast('Informe um número de dias válido!','error'); return; }
-    }
-  } else {
-    const ok = await customConfirm(`Bloquear o acesso de "${email}"?`, 'Bloquear acesso', 'Bloquear', true);
-    if (!ok) return;
+    // abre o modal de liberação (com campo de dias) em vez do prompt() nativo
+    _grantEmail = email;
+    setTextSafe('grantModalEmail', email);
+    const inp = document.getElementById('grantDaysInput');
+    if (inp) inp.value = '';
+    document.getElementById('grantModal').classList.add('open');
+    setTimeout(() => { if (inp) inp.focus(); }, 100);
+    return;
   }
+  // bloquear
+  const ok = await customConfirm(`Bloquear o acesso de "${email}"?`, 'Bloquear acesso', 'Bloquear', true);
+  if (!ok) return;
+  await applyAccess(email, 'inactive', null);
+}
 
+function closeGrantModal() {
+  document.getElementById('grantModal').classList.remove('open');
+  _grantEmail = null;
+}
+
+async function confirmGrant() {
+  const email = _grantEmail;
+  if (!email) { closeGrantModal(); return; }
+  const raw = (document.getElementById('grantDaysInput').value || '').trim();
+  let days = null;
+  if (raw !== '') {
+    days = parseInt(raw, 10);
+    if (!Number.isFinite(days) || days <= 0) { showToast('Informe um número de dias válido (ou deixe vazio = permanente).','error'); return; }
+  }
+  closeGrantModal();
+  await applyAccess(email, 'active', days);
+}
+
+async function applyAccess(email, status, days) {
+  const sb = getSb();
+  if (!sb) return;
   try {
-    const params = { target_email: email, new_status: status, days: days };
-    const { error } = await sb.rpc('set_subscriber_status', params);
+    const { error } = await sb.rpc('set_subscriber_status', { target_email: email, new_status: status, days: days });
     if (error) { showToast('Erro: ' + (error.message || 'não foi possível atualizar'), 'error'); return; }
     const msg = status === 'active'
       ? (days ? `✅ Liberado para ${email} por ${days} dias` : `✅ Acesso permanente liberado para ${email}`)
