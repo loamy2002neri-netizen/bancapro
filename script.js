@@ -2591,6 +2591,9 @@ function loadPlatformSettings() {
     if(name && pn) pn.value = name;
     const sl = document.getElementById('settingsSlogan');
     if(slogan && sl) sl.value = slogan;
+    // mostra o slogan como tagline na tela de login
+    const authSl = document.getElementById('authSlogan');
+    if(authSl){ if(slogan){ authSl.textContent = slogan; authSl.style.display=''; } else { authSl.style.display='none'; } }
     if(c1 && document.getElementById('logoColor1')) document.getElementById('logoColor1').value = c1;
     if(c2 && document.getElementById('logoColor2')) document.getElementById('logoColor2').value = c2;
     if(split && document.getElementById('logoSplit')) document.getElementById('logoSplit').value = split;
