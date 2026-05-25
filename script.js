@@ -470,7 +470,7 @@ async function renderAffiliatesAdmin() {
           '<button class="btn-ghost" style="padding:5px 10px;font-size:12px;color:var(--red)" data-email="'+escapeHtml(a.email)+'" onclick="removeAffiliate(this.dataset.email)">Remover</button>'+
         '</td></tr>';
     }).join('');
-    el.innerHTML='<table class="admin-table"><thead><tr><th>Afiliado</th><th>Link</th><th>Comissão</th><th>Indicados</th><th>Ativos</th><th>A pagar</th><th style="text-align:right">Ações</th></tr></thead><tbody>'+rows+'</tbody></table>';
+    el.innerHTML='<table class="admin-table"><thead><tr><th>Afiliado</th><th>Slug</th><th>Comissão</th><th>Indicados</th><th>Ativos</th><th>A pagar</th><th style="text-align:right">Ações</th></tr></thead><tbody>'+rows+'</tbody></table>';
   } catch(e){ el.innerHTML='<div class="empty-state-sub">Erro ao carregar afiliados.</div>'; }
 }
 
