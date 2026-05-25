@@ -18,7 +18,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
-<link rel="stylesheet" href="style.css?v=16"/>
+<link rel="stylesheet" href="style.css?v=17"/>
 </head>
 <body>
 
@@ -1204,6 +1204,11 @@
               <div class="kpi-card" style="--card-color:var(--green)"><div class="kpi-label">ROI</div><div class="kpi-value" id="sbRoi">0,00%</div><div class="kpi-sub">lucro sobre o total</div></div>
             </div>
             <div id="sbHint" style="font-size:12px;margin-top:12px"></div>
+            <div class="sb-actions">
+              <button class="btn-primary" style="flex:1;min-width:170px" onclick="sbAddToPlanilha()">📋 Adicionar à Planilha</button>
+              <button class="btn-ghost" style="flex:1;min-width:120px" onclick="sbCopyLink()">🔗 Link</button>
+              <button class="btn-ghost" style="flex:1;min-width:120px" onclick="sbCopyTexto()">📄 Texto</button>
+            </div>
           </div>
         </div>
 
@@ -1279,6 +1284,6 @@
 </div>
 
 <script src="config.js?v=9" defer></script>
-<script src="script.js?v=29" defer></script>
+<script src="script.js?v=30" defer></script>
 </body>
 </html>

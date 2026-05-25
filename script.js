@@ -3975,8 +3975,9 @@ function calcInit(){
   if(_calcReady){ sbCompute(); calcStake(); calcProtecao(); return; }
   _calcReady = true;
   var sel=document.getElementById('sbCount');
-  if(sel){ var h=''; for(var i=2;i<=8;i++){ h+='<option value="'+i+'"'+(i===2?' selected':'')+'>'+i+' casas</option>'; } sel.innerHTML=h; }
-  sbSetCount(2);
+  if(sel){ var h=''; for(var i=2;i<=8;i++){ h+='<option value="'+i+'">'+i+' casas</option>'; } sel.innerHTML=h; }
+  if(sbTryLoadFromUrl()){ if(sel) sel.value=String(SB.n); sbRenderCasas(); sbCompute(); }
+  else sbSetCount(2);
   calcStake();
   if(PD.length===0){ PD.push(pdDefaultBet()); PD.push(pdDefaultBet()); }
   pdRenderBets();
@@ -3990,7 +3991,7 @@ function switchCalc(which, el){
 
 // ── SUREBET ──
 var SB = { n:2, fixed:0, casas:[] };
-function sbDefaultCasa(i){ return { nome:'Casa '+(i+1), tipo:'back', odd:2, stake:100, comissao:0, aumento:0, freebet:false }; }
+function sbDefaultCasa(i){ return { nome:'Casa '+(i+1), tipo:'back', odd:2, stake:100, comissao:0, aumento:0, freebet:false, cashback:0, recompensa:0 }; }
 function sbSetCount(n){
   n = parseInt(n,10)||2;
   SB.n = n;
@@ -4019,6 +4020,10 @@ function sbRenderCasas(){
       + '<div class="sb-row">'
       +   '<div class="form-group"><label class="form-label">Comissão %</label><input class="form-input" type="number" min="0" step="0.1" value="'+c.comissao+'" oninput="sbField('+i+',\'comissao\',this.value)"></div>'
       +   '<div class="form-group"><label class="form-label">Aumento %</label><input class="form-input" type="number" min="0" step="0.1" value="'+c.aumento+'" oninput="sbField('+i+',\'aumento\',this.value)"></div>'
+      + '</div>'
+      + '<div class="sb-row">'
+      +   '<div class="form-group"><label class="form-label">Cashback (R$) <span class="sb-hint-q" title="Valor devolvido se esta aposta perder">se perder</span></label><input class="form-input" type="number" min="0" step="0.01" value="'+c.cashback+'" oninput="sbField('+i+',\'cashback\',this.value)"></div>'
+      +   '<div class="form-group"><label class="form-label">Recompensa (R$) <span class="sb-hint-q" title="Bônus/recompensa fixo que você ganha por apostar aqui">bônus fixo</span></label><input class="form-input" type="number" min="0" step="0.01" value="'+c.recompensa+'" oninput="sbField('+i+',\'recompensa\',this.value)"></div>'
       + '</div>'
       + (isLay ? '' : '<label class="sb-freebet"><input type="checkbox" '+(c.freebet?'checked':'')+' onchange="sbField('+i+',\'freebet\',this.checked)"> Freebet (stake não retorna)</label>')
       + '<div class="sb-result">'
@@ -4065,11 +4070,14 @@ function sbInputFromRisk(c, risk){ if(c.tipo==='lay'){ var d=sbBoosted(c)-1; ret
 function sbCompute(){
   var n=SB.n; if(n<1) return;
   var fixed=SB.casas[SB.fixed]||SB.casas[0];
-  var R=sbRiskFromInput(fixed)*sbEffOdd(fixed);    // retorno alvo (igual em qualquer resultado)
-  var total=0;
+  // C = lucro-base (retorno líquido descontando o cashback da casa fixa); equaliza o lucro entre os resultados
+  var C = sbRiskFromInput(fixed)*sbEffOdd(fixed) - (fixed.cashback||0);
+  var CBtotal=0, RECtotal=0, total=0;
+  SB.casas.forEach(function(c){ CBtotal += (c.cashback||0); RECtotal += (c.recompensa||0); });
   SB.casas.forEach(function(c,i){
     var m=sbEffOdd(c);
-    var risk = (i===SB.fixed) ? sbRiskFromInput(c) : (m>0 ? R/m : 0);
+    var Rk = C + (c.cashback||0);               // retorno bruto alvo desta casa
+    var risk = (i===SB.fixed) ? sbRiskFromInput(c) : (m>0 ? Rk/m : 0);
     if(i!==SB.fixed){
       c.stake = sbInputFromRisk(c, risk);
       var inp=document.getElementById('sbStake'+i);
@@ -4084,7 +4092,7 @@ function sbCompute(){
       else resp.style.display='none';
     }
   });
-  var lucro=R-total;
+  var lucro = C + CBtotal + RECtotal - total;   // lucro garantido (igual em qualquer resultado)
   var roi=total>0 ? (lucro/total*100) : 0;
   var col = lucro>=0?'var(--green)':'var(--red)';
   SB.casas.forEach(function(c,i){
@@ -4103,6 +4111,61 @@ function sbCompute(){
     else if(lucro<-0.005) hint.innerHTML='<span style="color:var(--red)">⚠️ Não é surebet: daria prejuízo. Ajuste as odds.</span>';
     else hint.innerHTML='<span style="color:var(--text-muted)">Empata (break-even): sem lucro nem prejuízo.</span>';
   }
+}
+
+// Lucro garantido atual (mesma conta do resumo)
+function sbCurrentProfit(){
+  var fixed=SB.casas[SB.fixed]||SB.casas[0];
+  var C = sbRiskFromInput(fixed)*sbEffOdd(fixed) - (fixed.cashback||0);
+  var CBtotal=0, RECtotal=0, total=0;
+  SB.casas.forEach(function(c){ CBtotal+=(c.cashback||0); RECtotal+=(c.recompensa||0); });
+  SB.casas.forEach(function(c,i){
+    var m=sbEffOdd(c); var Rk=C+(c.cashback||0);
+    var risk=(i===SB.fixed)?sbRiskFromInput(c):(m>0?Rk/m:0);
+    if(!c.freebet) total+=risk;
+  });
+  return { lucro:(C+CBtotal+RECtotal-total), total:total };
+}
+function sbAddToPlanilha(){
+  var r=sbCurrentProfit();
+  if(!isFinite(r.lucro) || Math.abs(r.lucro)<0.005){ showToast('Sem lucro pra registrar. Ajuste as odds.','info'); return; }
+  if(r.lucro<0){ showToast('Esse cenário dá prejuízo — não vou registrar.','error'); return; }
+  var today=new Date().toISOString().slice(0,10);
+  var nomes=SB.casas.map(function(c){return c.nome;}).filter(Boolean).join(' / ');
+  transactions.unshift({id:Date.now(), date:today, desc:'Surebet'+(nomes?' ('+nomes+')':''), method:'Surebet', type:'income', value:+r.lucro.toFixed(2)});
+  if(typeof recomputeAll==='function') recomputeAll();
+  if(typeof persistState==='function') persistState();
+  showToast('✅ Lucro de '+calcMoney(r.lucro)+' adicionado à planilha!','success');
+}
+function sbState(){ return { n:SB.n, fixed:SB.fixed, casas:SB.casas }; }
+function sbCopyLink(){
+  try {
+    var data = btoa(unescape(encodeURIComponent(JSON.stringify(sbState()))));
+    var link = location.origin + location.pathname + '?sb=' + data;
+    if(navigator.clipboard){ navigator.clipboard.writeText(link).then(function(){ showToast('🔗 Link copiado!','success'); }, function(){ showToast('Copie: '+link,'info'); }); }
+    else showToast('Copie: '+link,'info');
+  } catch(e){ showToast('Não foi possível gerar o link.','error'); }
+}
+function sbCopyTexto(){
+  var r=sbCurrentProfit();
+  var linhas = SB.casas.map(function(c,i){
+    var tipo = c.tipo==='lay'?'Lay':'Back';
+    var valor = c.tipo==='lay' ? ('Stake lay '+calcMoney(c.stake)+' (resp. '+calcMoney(sbRiskFromInput(c))+')') : ('Stake '+calcMoney(c.stake));
+    return (i+1)+') '+c.nome+' — '+tipo+' @ '+sbBoosted(c).toFixed(3).replace('.',',')+' · '+valor;
+  });
+  var txt = '📊 Surebet\n' + linhas.join('\n')
+    + '\nStake total: '+calcMoney(r.total)
+    + '\nLucro garantido: '+calcMoney(r.lucro)+' ('+calcPct(r.total>0?r.lucro/r.total*100:0)+')';
+  if(navigator.clipboard){ navigator.clipboard.writeText(txt).then(function(){ showToast('📄 Texto copiado!','success'); }, function(){ showToast('Não foi possível copiar.','error'); }); }
+  else showToast('Copie manualmente.','info');
+}
+function sbTryLoadFromUrl(){
+  try {
+    var p=new URLSearchParams(location.search).get('sb'); if(!p) return false;
+    var obj=JSON.parse(decodeURIComponent(escape(atob(p))));
+    if(obj && obj.casas && obj.casas.length){ SB.n=obj.n||obj.casas.length; SB.fixed=obj.fixed||0; SB.casas=obj.casas; return true; }
+  } catch(e){}
+  return false;
 }
 
 // ── STAKE (odd aumentada / Kelly fracionado) ──
