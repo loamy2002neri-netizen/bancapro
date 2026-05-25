@@ -156,6 +156,22 @@
   </div>
 </div>
 
+<!-- ADICIONAR PROGRESSO À META -->
+<div class="modal-overlay" id="goalProgressModal">
+  <div class="modal">
+    <div class="modal-title">➕ Adicionar progresso</div>
+    <div class="modal-sub" id="goalProgressSub">Some um valor ao progresso da meta</div>
+    <div class="form-group">
+      <label class="form-label">Quanto adicionar (R$)</label>
+      <input class="form-input" type="number" step="any" placeholder="Ex: 250 (use - para subtrair)" id="goalProgressInput"/>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-ghost" onclick="closeGoalProgress()">Cancelar</button>
+      <button class="btn-primary" style="width:auto;padding:9px 20px" onclick="addGoalProgress()">Adicionar →</button>
+    </div>
+  </div>
+</div>
+
 <!-- ACCOUNT MODAL (cadastrar/editar conta de aposta) -->
 <div class="modal-overlay" id="accountModal">
   <div class="modal" style="width:560px;max-width:95vw">
@@ -1025,6 +1041,6 @@
 </div>
 
 <script src="config.js?v=8" defer></script>
-<script src="script.js?v=10" defer></script>
+<script src="script.js?v=11" defer></script>
 </body>
 </html>

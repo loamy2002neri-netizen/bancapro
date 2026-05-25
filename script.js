@@ -1886,6 +1886,38 @@ async function deleteGoal(id) {
   showToast(`Meta "${g.name}" excluída.`, 'info');
 }
 
+// ── Adicionar progresso rápido (manual) ──
+let progressGoalId = null;
+function openGoalProgress(id) {
+  const g = goals.find(x => x.id === id);
+  if(!g) return;
+  progressGoalId = id;
+  const fmt = v => (v < 0 ? '-R$ ' : 'R$ ') + Math.abs(v).toLocaleString('pt-BR', {minimumFractionDigits:0, maximumFractionDigits:2});
+  const sub = document.getElementById('goalProgressSub');
+  if(sub) sub.textContent = `${g.icon} ${g.name} — atual: ${fmt(g.current)} de R$ ${g.target.toLocaleString('pt-BR')}`;
+  const inp = document.getElementById('goalProgressInput');
+  if(inp) inp.value = '';
+  document.getElementById('goalProgressModal').classList.add('open');
+  setTimeout(() => { if(inp) inp.focus(); }, 100);
+}
+function closeGoalProgress() {
+  document.getElementById('goalProgressModal').classList.remove('open');
+  progressGoalId = null;
+}
+function addGoalProgress() {
+  const g = goals.find(x => x.id === progressGoalId);
+  if(!g) { closeGoalProgress(); return; }
+  const amount = parseFloat(document.getElementById('goalProgressInput').value);
+  if(!isFinite(amount) || amount === 0) { showToast('Informe um valor (use - para subtrair)!','error'); return; }
+  g.current += amount;
+  const reached = g.current >= g.target;
+  closeGoalProgress();
+  renderGoals();
+  persistState();
+  const sign = amount > 0 ? '+' : '-';
+  showToast(`${sign}R$ ${Math.abs(amount).toLocaleString('pt-BR',{minimumFractionDigits:0,maximumFractionDigits:2})} em "${g.name}"` + (reached ? ' — meta atingida! 🎉' : ''), reached ? 'success' : 'info');
+}
+
 function renderGoals() {
   const list = document.getElementById('goalsList');
   if(!list) return;
@@ -1938,6 +1970,7 @@ function renderGoals() {
           <span style="display:inline-flex;align-items:center;gap:6px">
             <span style="color:${statusColor}">${currentStr} / ${targetStr} ${statusIcon} ${statusLabel}</span>
             <span class="goal-actions">
+              <button class="goal-action-btn" onclick="openGoalProgress(${g.id})" title="Adicionar progresso" aria-label="Adicionar progresso">➕</button>
               <button class="goal-action-btn" onclick="openGoalModal(${g.id})" title="Editar" aria-label="Editar">✏️</button>
               <button class="goal-action-btn danger" onclick="deleteGoal(${g.id})" title="Excluir" aria-label="Excluir">🗑️</button>
             </span>
