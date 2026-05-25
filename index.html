@@ -1104,10 +1104,27 @@
       <div class="section" id="sec-afiliado">
         <div class="page-header"><div class="page-title">Minhas Indicações 🤝</div><div class="page-subtitle">Divulgue seu link e acompanhe seus ganhos</div></div>
 
-        <div class="kpi-grid" style="grid-template-columns:repeat(3,minmax(0,1fr))">
-          <div class="kpi-card" style="--card-color:var(--accent)"><div class="kpi-label">📥 Entradas</div><div class="kpi-value" id="affEntradas">R$ 0,00</div><div class="kpi-sub">comissão dos ativos</div></div>
-          <div class="kpi-card" style="--card-color:var(--yellow)"><div class="kpi-label">📤 Saídas</div><div class="kpi-value" id="affSaidas">R$ 0,00</div><div class="kpi-sub">já sacado</div></div>
-          <div class="kpi-card" style="--card-color:var(--text-muted)"><div class="kpi-label">⏳ Comissão pendente</div><div class="kpi-value" id="affPendente">R$ 0,00</div><div class="kpi-sub">saque aguardando pagamento</div></div>
+        <div class="form-card" style="background:linear-gradient(135deg, rgba(16,185,129,0.13), rgba(99,102,241,0.06));border:1px solid rgba(16,185,129,0.32)">
+          <div style="font-size:12px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.8px">💰 Saldo disponível</div>
+          <div style="font-size:34px;font-weight:800;color:var(--green);margin:2px 0 2px;letter-spacing:-0.5px" id="affSaldo">R$ 0,00</div>
+          <div style="font-size:11px;color:var(--text-muted)">o que você pode sacar agora</div>
+          <div style="display:flex;gap:10px;margin-top:18px;flex-wrap:wrap">
+            <div style="flex:1;min-width:130px;background:var(--glass);border:1px solid var(--glass-border);border-radius:12px;padding:12px 14px">
+              <div style="font-size:11px;color:var(--text-muted);display:flex;align-items:center;gap:5px">📥 Entradas</div>
+              <div style="font-size:17px;font-weight:700;color:var(--text-primary);margin-top:3px" id="affEntradas">R$ 0,00</div>
+              <div style="font-size:10px;color:var(--text-muted)">comissão dos ativos</div>
+            </div>
+            <div style="flex:1;min-width:130px;background:var(--glass);border:1px solid var(--glass-border);border-radius:12px;padding:12px 14px">
+              <div style="font-size:11px;color:var(--text-muted);display:flex;align-items:center;gap:5px">📤 Saídas</div>
+              <div style="font-size:17px;font-weight:700;color:var(--yellow);margin-top:3px" id="affSaidas">R$ 0,00</div>
+              <div style="font-size:10px;color:var(--text-muted)">já sacado</div>
+            </div>
+            <div style="flex:1;min-width:130px;background:var(--glass);border:1px solid var(--glass-border);border-radius:12px;padding:12px 14px">
+              <div style="font-size:11px;color:var(--text-muted);display:flex;align-items:center;gap:5px">⏳ Pendente</div>
+              <div style="font-size:17px;font-weight:700;color:var(--text-secondary);margin-top:3px" id="affPendente">R$ 0,00</div>
+              <div style="font-size:10px;color:var(--text-muted)">aguardando pagamento</div>
+            </div>
+          </div>
         </div>
 
         <div class="kpi-grid" style="margin-top:16px;grid-template-columns:repeat(2,minmax(0,1fr))">
@@ -1177,6 +1194,6 @@
 </div>
 
 <script src="config.js?v=9" defer></script>
-<script src="script.js?v=24" defer></script>
+<script src="script.js?v=25" defer></script>
 </body>
 </html>

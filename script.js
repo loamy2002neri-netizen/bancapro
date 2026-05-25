@@ -528,6 +528,7 @@ async function renderMyWithdrawals(aPagar) {
     var pago=list.filter(function(w){return w.status==='pago';}).reduce(function(s,w){return s+Number(w.amount||0);},0);
     var disp=Math.max(0,(Number(aPagar)||0)-pend);
     window._sqDisponivel=disp;
+    setTextSafe('affSaldo', _affMoney(disp));
     setTextSafe('affSaidas', _affMoney(pago));
     setTextSafe('affPendente', _affMoney(pend));
     setTextSafe('sqDisponivel', _affMoney(disp));
