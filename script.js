@@ -726,20 +726,20 @@ function applyPeriodToKPIs(p) {
   const roiBase  = SALDO_BASE > 0 ? SALDO_BASE : despesas;
   const roi      = roiBase > 0 ? (lucro/roiBase)*100 : (receita > 0 ? 100 : 0);
 
-  // Saldo do período = saldo acumulado até o final do dia atual (na janela visível)
-  // No caso de "Hoje" = lucro do dia. Para "Mês"/"Ano"/"Semana" = saldo final do recorte.
-  const saldoPeriodo = SALDO_BASE + transactions
-    .filter(t => fromStr ? (t.date >= fromStr && t.date <= todayStr) : (t.date <= todayStr))
+  // Saldo Total = saldo ATUAL da banca (banca inicial + TODO o lucro até hoje).
+  // É fixo: NÃO muda com o período (seu dinheiro é o mesmo independente do filtro).
+  const saldoTotal = SALDO_BASE + transactions
+    .filter(t => t.date <= todayStr)
     .reduce((s,t) => s + (t.type==='income' ? t.value : -t.value), 0);
 
-  setTextSafe('kpi-saldo',    fmtBRL(saldoPeriodo));
+  setTextSafe('kpi-saldo',    fmtBRL(saldoTotal));
   setTextSafe('kpi-lucro',    (lucro < 0 ? '-' : '') + fmtBRL(Math.abs(lucro)));
   setTextSafe('kpi-despesas', fmtBRL(despesas));
   setTextSafe('kpi-roi',      roi.toFixed(1)+'%');
 
   // Atualiza subtítulos pra contexto
   const subSaldo = document.getElementById('kpi-saldo-sub');
-  if(subSaldo) subSaldo.textContent = (SALDO_BASE > 0 ? 'Banca: ' + fmtBRL(SALDO_BASE) + ' · ' : '') + periodLabel;
+  if(subSaldo) subSaldo.textContent = (SALDO_BASE > 0 ? 'Banca: ' + fmtBRL(SALDO_BASE) + ' · saldo atual' : 'Saldo atual da banca');
   const subLucro = document.getElementById('kpi-lucro-sub');
   if(subLucro) subLucro.textContent = periodLabel;
   const subDespesas = document.getElementById('kpi-despesas-sub');
