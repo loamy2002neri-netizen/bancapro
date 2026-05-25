@@ -2576,9 +2576,10 @@ function buildEvoDatasetFor(mode, fromDate, toDate) {
     const startYear  = today.getFullYear();
     const startMonth = today.getMonth() - 11;
     const periodStart = new Date(startYear, startMonth, 1);
+    // compara como string YYYY-MM-DD (evita o bug de fuso do new Date('YYYY-MM-DD') = UTC)
+    const periodStartStr = periodStart.getFullYear()+'-'+String(periodStart.getMonth()+1).padStart(2,'0')+'-01';
     transactions.forEach(t => {
-      const d = new Date(t.date);
-      if(d < periodStart) runningSaldo += (t.type==='income' ? t.value : -t.value);
+      if((t.date||'') < periodStartStr) runningSaldo += (t.type==='income' ? t.value : -t.value);
     });
     for(let i = 11; i >= 0; i--) {
       const d = new Date(today.getFullYear(), today.getMonth() - i, 1);
@@ -2608,9 +2609,9 @@ function buildEvoDatasetFor(mode, fromDate, toDate) {
     // saldo inicial = SALDO_BASE + tudo antes do período
     let runningSaldo = SALDO_BASE;
     const periodStart = new Date(today.getFullYear(), today.getMonth(), today.getDate() - (days-1));
+    const periodStartStr = periodStart.getFullYear()+'-'+String(periodStart.getMonth()+1).padStart(2,'0')+'-'+String(periodStart.getDate()).padStart(2,'0');
     transactions.forEach(t => {
-      const d = new Date(t.date);
-      if(d < periodStart) runningSaldo += (t.type==='income' ? t.value : -t.value);
+      if((t.date||'') < periodStartStr) runningSaldo += (t.type==='income' ? t.value : -t.value);
     });
     for(let i = days - 1; i >= 0; i--) {
       const d = new Date(today.getFullYear(), today.getMonth(), today.getDate() - i);
@@ -2667,8 +2668,7 @@ function buildEvoDatasetFor(mode, fromDate, toDate) {
     let runningSaldo = SALDO_BASE;
     const periodStart = new Date(fromDate);
     transactions.forEach(t => {
-      const d = new Date(t.date);
-      if(d < periodStart) runningSaldo += (t.type==='income' ? t.value : -t.value);
+      if((t.date||'') < fromDate) runningSaldo += (t.type==='income' ? t.value : -t.value);
     });
     const end = new Date(toDate);
     for(let d = new Date(periodStart); d <= end; d.setDate(d.getDate()+1)) {
@@ -2863,9 +2863,9 @@ function getMonthlyByMethodFromTx(year, monthIdx) {
   // retorna { 'Surebet': {receita, despesas, lucro}, ... }
   const byMethod = {};
   METHODS_CATALOG.forEach(m => byMethod[m.name] = {receita:0, despesas:0, lucro:0});
+  const targetYM = String(year) + '-' + String(monthIdx+1).padStart(2,'0');
   transactions.forEach(t => {
-    const d = new Date(t.date);
-    if(d.getFullYear() !== year || d.getMonth() !== monthIdx) return;
+    if((t.date||'').slice(0,7) !== targetYM) return;
     if(!byMethod[t.method]) return;
     if(t.type === 'income')  byMethod[t.method].receita  += t.value;
     if(t.type === 'expense') byMethod[t.method].despesas += t.value;
