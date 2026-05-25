@@ -315,12 +315,32 @@ async function renderAdminStats() {
     }
     const s = data;
     const conv = s.total_users > 0 ? ((s.active_subs / s.total_users) * 100).toFixed(1) : '0';
+
+    // Faturamento (MRR): calcula a partir dos planos dos assinantes ATIVOS
+    let mensal = 0, anual = 0;
+    try {
+      const { data: users } = await sb.rpc('get_owner_users');
+      (users || []).forEach(u => {
+        if (u.status === 'active' && !OWNER_EMAILS.includes((u.email||'').toLowerCase())) {
+          if (/anual|annual|yearly/i.test(u.plan || '')) anual++; else mensal++;
+        }
+      });
+    } catch(e) {}
+    const mrr = mensal * SUBSCRIPTION_PRICE + anual * (SUBSCRIPTION_PRICE_ANNUAL / 12);
+    const fmtMrr = 'R$ ' + mrr.toLocaleString('pt-BR', {minimumFractionDigits:0, maximumFractionDigits:2});
+    const fmtArr = 'R$ ' + (mrr * 12).toLocaleString('pt-BR', {maximumFractionDigits:0});
+
     el.innerHTML = `
       <div class="stat-row" style="grid-template-columns:repeat(4,minmax(0,1fr))">
         <div class="stat-chip"><div class="stat-chip-label">Usuários totais</div><div class="stat-chip-value">${s.total_users}</div></div>
         <div class="stat-chip"><div class="stat-chip-label">Assinantes ativos</div><div class="stat-chip-value" style="color:var(--green)">${s.active_subs}</div></div>
         <div class="stat-chip"><div class="stat-chip-label">Conversão</div><div class="stat-chip-value">${conv}%</div></div>
         <div class="stat-chip"><div class="stat-chip-label">Cadastros (7 dias)</div><div class="stat-chip-value">${s.signups_7d}</div></div>
+      </div>
+      <div class="stat-row" style="grid-template-columns:repeat(3,minmax(0,1fr));margin-top:10px">
+        <div class="stat-chip"><div class="stat-chip-label">💰 Faturamento mensal (MRR)</div><div class="stat-chip-value" style="color:var(--green)">${fmtMrr}</div></div>
+        <div class="stat-chip"><div class="stat-chip-label">Projeção anual</div><div class="stat-chip-value">${fmtArr}</div></div>
+        <div class="stat-chip"><div class="stat-chip-label">Ativos: mensal / anual</div><div class="stat-chip-value">${mensal} / ${anual}</div></div>
       </div>
       <div style="margin-top:14px;font-size:12px;color:var(--text-muted)">Já assinaram (total): ${s.total_subs} · Inativos/cancelados: ${s.inactive_subs}</div>
     `;
@@ -347,20 +367,49 @@ async function renderAdminUsers() {
                : (u.status === 'sem assinatura' ? {c:'var(--text-muted)',t:'Sem assinatura'} : {c:'var(--red)',t:'Inativo'});
       const created = u.created_at ? new Date(u.created_at).toLocaleDateString('pt-BR') : '—';
       const last = u.last_sign_in_at ? new Date(u.last_sign_in_at).toLocaleDateString('pt-BR') : '—';
+      const emailAttr = escapeHtml(u.email || '');
+      const action = u.status === 'active'
+        ? `<button class="btn-ghost" style="padding:5px 10px;font-size:12px;color:var(--red)" data-email="${emailAttr}" data-status="inactive" onclick="adminSetStatus(this)">🚫 Bloquear</button>`
+        : `<button class="btn-ghost" style="padding:5px 10px;font-size:12px;color:var(--green)" data-email="${emailAttr}" data-status="active" onclick="adminSetStatus(this)">🔓 Liberar</button>`;
       return `<tr>
         <td>${escapeHtml(u.email || '—')}</td>
         <td><span style="color:${st.c};font-weight:600">${st.t}</span></td>
         <td>${escapeHtml(u.plan || '—')}</td>
         <td>${created}</td>
         <td>${last}</td>
+        <td style="white-space:nowrap;text-align:right">${u.email ? action : ''}</td>
       </tr>`;
     }).join('');
     el.innerHTML = `<div style="overflow-x:auto"><table class="admin-table">
-      <thead><tr><th>E-mail</th><th>Status</th><th>Plano</th><th>Cadastro</th><th>Último acesso</th></tr></thead>
+      <thead><tr><th>E-mail</th><th>Status</th><th>Plano</th><th>Cadastro</th><th>Último acesso</th><th style="text-align:right">Ações</th></tr></thead>
       <tbody>${rows}</tbody></table></div>`;
   } catch(e) {
     el.innerHTML = '<div class="empty-state-sub">Erro ao carregar usuários.</div>';
   }
+}
+
+// Painel do dono: liberar/bloquear acesso manualmente (rede de segurança p/ webhook falho)
+async function adminSetStatus(btn) {
+  const email  = btn && btn.dataset ? btn.dataset.email : '';
+  const status = btn && btn.dataset ? btn.dataset.status : '';
+  if (!email || (status !== 'active' && status !== 'inactive')) return;
+  const sb = getSb();
+  if (!sb) { showToast('Disponível só com o banco na nuvem.','error'); return; }
+  const verb = status === 'active' ? 'Liberar' : 'Bloquear';
+  const ok = await customConfirm(
+    `${verb} o acesso de "${email}"?`,
+    `${verb} acesso`,
+    verb,
+    status !== 'active'
+  );
+  if (!ok) return;
+  try {
+    const { error } = await sb.rpc('set_subscriber_status', { target_email: email, new_status: status });
+    if (error) { showToast('Erro: ' + (error.message || 'não foi possível atualizar'), 'error'); return; }
+    showToast(status === 'active' ? `✅ Acesso liberado para ${email}` : `🚫 Acesso bloqueado para ${email}`, status === 'active' ? 'success' : 'info');
+    renderAdminStats();
+    renderAdminUsers();
+  } catch(e) { showToast('Erro ao atualizar o acesso.','error'); }
 }
 
 // Painel do dono: erros recentes (via get_owner_errors no Supabase)
