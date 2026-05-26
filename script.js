@@ -3039,6 +3039,8 @@ let chartDefaults = getChartDefaults();
 function buildEvoDatasetFor(mode, fromDate, toDate) {
   const monthShort = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
   const today = new Date();
+  // Formata a data em YYYY-MM-DD usando o fuso LOCAL (toISOString usa UTC e atrasa 1 dia no Brasil)
+  const isoLocal = d => d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
 
   if(mode === 'yearly') {
     // Últimos 12 meses encerrando no mês atual
@@ -3088,7 +3090,7 @@ function buildEvoDatasetFor(mode, fromDate, toDate) {
     });
     for(let i = days - 1; i >= 0; i--) {
       const d = new Date(today.getFullYear(), today.getMonth(), today.getDate() - i);
-      const iso = d.toISOString().split('T')[0];
+      const iso = isoLocal(d);
       let dayRec = 0, dayDes = 0;
       transactions.forEach(t => {
         if(t.date === iso) {
@@ -3110,7 +3112,7 @@ function buildEvoDatasetFor(mode, fromDate, toDate) {
   if(mode === 'today') {
     // Transações só têm data (sem hora), então mostramos 2 pontos: "Início do dia" → "Agora".
     // Assim a linha aparece (1 ponto só não desenha) e dá pra ver o movimento de hoje.
-    const iso = today.toISOString().split('T')[0];
+    const iso = isoLocal(today);
     let dayRec = 0, dayDes = 0;
     transactions.forEach(t => {
       if(t.date === iso) {
@@ -3146,7 +3148,7 @@ function buildEvoDatasetFor(mode, fromDate, toDate) {
     });
     const end = new Date(toDate);
     for(let d = new Date(periodStart); d <= end; d.setDate(d.getDate()+1)) {
-      const iso = d.toISOString().split('T')[0];
+      const iso = isoLocal(d);
       let dayRec = 0, dayDes = 0;
       transactions.forEach(t => {
         if(t.date === iso) {
