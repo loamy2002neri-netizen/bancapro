@@ -3717,14 +3717,16 @@ function renderCompareKPIs() {
   const roiPrev = prev.despesas > 0 ? (prev.lucro / prev.despesas) * 100 : (prev.receita > 0 ? 100 : 0);
   const dRoi = roiCurr - roiPrev; // diferença em pontos percentuais (pp)
   const pctRoiChange = roiPrev !== 0 ? ((roiCurr - roiPrev) / Math.abs(roiPrev)) * 100 : 0;
-  const roiValueTxt = (dRoi >= 0 ? '+' : '') + dRoi.toFixed(1) + 'pp';
+  // formata com até 1 casa decimal, sem o ".0" quando é número redondo
+  const num1 = n => { const r = Math.round(n*10)/10; return r % 1 === 0 ? r.toLocaleString('pt-BR') : r.toLocaleString('pt-BR',{minimumFractionDigits:1,maximumFractionDigits:1}); };
+  const roiValueTxt = (dRoi >= 0 ? '+' : '') + num1(dRoi) + ' pp';
   setTextSafe('cmpRoiValue', roiValueTxt);
   const cmpRoiPct = document.getElementById('cmpRoiPct');
   if(cmpRoiPct) {
     cmpRoiPct.textContent = `${arrow(dRoi)} ${sign(pctRoiChange)} ${dRoi >= 0 ? 'melhora' : 'queda'}`;
     cmpRoiPct.className = 'kpi-change ' + (dRoi >= 0 ? 'up' : 'down');
   }
-  setTextSafe('cmpRoiSub', `${prevShort}: ${roiPrev.toFixed(1)}% → ${currShort}: ${roiCurr.toFixed(1)}%`);
+  setTextSafe('cmpRoiSub', `${prevShort}: ${num1(roiPrev)}% → ${currShort}: ${num1(roiCurr)}%`);
 
   // Atualiza o banner de modo (auto/manual)
   const banner = document.getElementById('compareAutoBanner');
