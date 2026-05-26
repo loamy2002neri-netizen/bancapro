@@ -3237,8 +3237,8 @@ function buildEvoChart(mode, fromDate, toDate) {
             title(items){
               const raw = items[0].label;
               if(isDaily && raw.includes('-')){
-                const d=new Date(raw);
-                return String(d.getDate()).padStart(2,'0')+'/'+String(d.getMonth()+1).padStart(2,'0')+'/'+d.getFullYear();
+                const p = raw.split('-');   // YYYY-MM-DD (sem new Date pra não ter fuso)
+                return p[2]+'/'+p[1]+'/'+p[0];
               }
               return raw;
             },
@@ -3260,8 +3260,8 @@ function buildEvoChart(mode, fromDate, toDate) {
             callback(val,idx){
               const lbl = labels[idx];
               if(isDaily && lbl && lbl.includes('-')){
-                const d=new Date(lbl);
-                return String(d.getDate()).padStart(2,'0')+'/'+String(d.getMonth()+1).padStart(2,'0');
+                const p = lbl.split('-');   // YYYY-MM-DD (sem new Date pra não ter fuso)
+                return p[2]+'/'+p[1];
               }
               return lbl;
             }
@@ -3282,6 +3282,8 @@ function buildEvoChart(mode, fromDate, toDate) {
 
 function fmtLabel(dateStr){
   if(!dateStr) return '';
+  const p = String(dateStr).split('-');   // YYYY-MM-DD → dd/mm/yyyy (sem fuso)
+  if(p.length === 3) return p[2]+'/'+p[1]+'/'+p[0];
   const d=new Date(dateStr);
   return String(d.getDate()).padStart(2,'0')+'/'+String(d.getMonth()+1).padStart(2,'0')+'/'+d.getFullYear();
 }
