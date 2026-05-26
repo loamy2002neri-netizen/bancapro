@@ -1327,8 +1327,8 @@ html { -webkit-text-size-adjust:100%; text-size-adjust:100%; }
   .stat-row .stat-chip { text-align: center; }
   .stat-row > .stat-chip:last-child:nth-child(odd) { grid-column: 1 / -1; }
 
-  /* Gráfico de rosca: preenche o card sem estourar (par com maintainAspectRatio:false) */
-  #pieChartWrap { width:100%; max-width:300px; height:230px; margin:0 auto; padding:0; }
+  /* Gráfico de rosca: menor, com folga pra não estourar o card */
+  #pieChartWrap { width:100%; max-width:260px; height:215px; margin:0 auto; padding:0; }
   #pieChart { max-width:100% !important; max-height:100% !important; }
 
   .evo-btn-group { flex-wrap: wrap; justify-content: center; }
