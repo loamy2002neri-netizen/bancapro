@@ -922,7 +922,7 @@ async function doReset() {
   const sb = getSb();
   if (sb) {
     try {
-      const { error } = await sb.auth.resetPasswordForEmail(email);
+      const { error } = await sb.auth.resetPasswordForEmail(email, { redirectTo: location.origin + location.pathname });
       if (error) { showToast('Não foi possível enviar: ' + (error.message || ''),'error'); return; }
       showToast('Email enviado! Verifique sua caixa de entrada.','success');
       showLogin();
@@ -951,7 +951,30 @@ function togglePw(btn, id) {
   btn.setAttribute('aria-label', show ? 'Ocultar senha' : 'Mostrar senha');
 }
 function showRegister() { document.getElementById('loginForm').style.display='none'; document.getElementById('registerForm').style.display='block'; document.getElementById('resetForm').style.display='none'; }
-function showReset() { document.getElementById('loginForm').style.display='none'; document.getElementById('registerForm').style.display='none'; document.getElementById('resetForm').style.display='block'; }
+function showReset() { document.getElementById('loginForm').style.display='none'; document.getElementById('registerForm').style.display='none'; document.getElementById('resetForm').style.display='block'; const r=document.getElementById('recoveryForm'); if(r) r.style.display='none'; }
+function showRecovery() {
+  const auth = document.getElementById('authScreen'); if(auth) auth.style.display='';
+  const app = document.getElementById('appLayout'); if(app) app.style.display='none';
+  ['loginForm','registerForm','resetForm'].forEach(id => { const e=document.getElementById(id); if(e) e.style.display='none'; });
+  const r=document.getElementById('recoveryForm'); if(r) r.style.display='block';
+  setTimeout(() => { const i=document.getElementById('recPwd'); if(i) i.focus(); }, 100);
+}
+async function doRecovery() {
+  const p1 = (document.getElementById('recPwd')||{}).value || '';
+  const p2 = (document.getElementById('recPwd2')||{}).value || '';
+  if (p1.length < 6) { showToast('A nova senha precisa de pelo menos 6 caracteres.','error'); return; }
+  if (p1 !== p2) { showToast('As senhas não conferem.','error'); return; }
+  const sb = getSb();
+  if (!sb) { showToast('Disponível só com o banco na nuvem.','error'); return; }
+  try {
+    const { error } = await sb.auth.updateUser({ password: p1 });
+    if (error) { showToast('Não foi possível trocar a senha: ' + (error.message||''),'error'); return; }
+    showToast('✅ Senha redefinida! Você já pode entrar.','success');
+    try { history.replaceState(null, '', location.origin + location.pathname); } catch(e){}
+    try { await sb.auth.signOut(); } catch(e){}
+    showLogin();
+  } catch(e) { showToast('Erro ao redefinir a senha.','error'); }
+}
 
 // Captura o ?ref= do link de indicação (guarda pra registrar após o login)
 try {
@@ -963,9 +986,13 @@ try {
 (async function restoreSession(){
   const sb = getSb();
   if (sb) {
+    // Retorno do link de "redefinir senha": mostra a tela de definir nova senha
+    sb.auth.onAuthStateChange((event) => { if (event === 'PASSWORD_RECOVERY') showRecovery(); });
+    const isRecovery = /type=recovery/.test(location.hash || '');
     try {
       const { data } = await sb.auth.getSession();
-      if (data && data.session && data.session.user) await enterApp(data.session.user);
+      if (isRecovery) { showRecovery(); }
+      else if (data && data.session && data.session.user) { await enterApp(data.session.user); }
     } catch(e){}
   } else {
     try {

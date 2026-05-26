@@ -79,6 +79,26 @@
       <button class="btn-primary" onclick="doReset()">Enviar link →</button>
       <div class="auth-links"><a onclick="showLogin()">Voltar ao login</a></div>
     </div>
+    <div id="recoveryForm" style="display:none">
+      <div class="auth-title">Definir nova senha 🔑</div>
+      <div class="auth-sub">Escolha a nova senha da sua conta</div>
+      <div class="form-group">
+        <label class="form-label">Nova senha</label>
+        <div class="pw-wrap">
+          <input class="form-input" type="password" id="recPwd" placeholder="Mín. 6 caracteres" autocomplete="new-password"/>
+          <button type="button" class="pw-toggle" onclick="togglePw(this,'recPwd')" aria-label="Mostrar senha">👁</button>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Confirmar nova senha</label>
+        <div class="pw-wrap">
+          <input class="form-input" type="password" id="recPwd2" placeholder="Digite a nova senha de novo" autocomplete="new-password" onkeydown="if(event.key==='Enter')doRecovery()"/>
+          <button type="button" class="pw-toggle" onclick="togglePw(this,'recPwd2')" aria-label="Mostrar senha">👁</button>
+        </div>
+      </div>
+      <button class="btn-primary" onclick="doRecovery()">Salvar nova senha →</button>
+      <div class="auth-links"><a onclick="showLogin()">Voltar ao login</a></div>
+    </div>
   </div>
 </div>
 
@@ -1398,6 +1418,6 @@
 </div>
 
 <script src="config.js?v=9" defer></script>
-<script src="script.js?v=51" defer></script>
+<script src="script.js?v=52" defer></script>
 </body>
 </html>
