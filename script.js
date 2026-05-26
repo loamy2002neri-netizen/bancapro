@@ -879,9 +879,11 @@ async function doRegister() {
   const name = (document.getElementById('regName').value || '').trim();
   const email = (document.getElementById('regEmail').value || '').trim().toLowerCase();
   const password = document.getElementById('regPassword').value || '';
+  const password2 = (document.getElementById('regPassword2') || {}).value || '';
   if (!name || !email || !password) { showToast('Preencha nome, email e senha.','error'); return; }
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { showToast('Email inválido.','error'); return; }
   if (password.length < 6) { showToast('A senha precisa de pelo menos 6 caracteres.','error'); return; }
+  if (password !== password2) { showToast('As senhas não conferem. Digite a mesma nos dois campos.','error'); return; }
   const sb = getSb();
   if (sb) {
     showToast('Criando conta…','info');
@@ -940,6 +942,14 @@ async function logout() {
 }
 
 function showLogin() { document.getElementById('loginForm').style.display='block'; document.getElementById('registerForm').style.display='none'; document.getElementById('resetForm').style.display='none'; }
+function togglePw(btn, id) {
+  const inp = document.getElementById(id); if(!inp) return;
+  const show = inp.type === 'password';
+  inp.type = show ? 'text' : 'password';
+  btn.textContent = '👁';
+  btn.style.opacity = show ? '1' : '';   // olho "aceso" quando a senha está visível
+  btn.setAttribute('aria-label', show ? 'Ocultar senha' : 'Mostrar senha');
+}
 function showRegister() { document.getElementById('loginForm').style.display='none'; document.getElementById('registerForm').style.display='block'; document.getElementById('resetForm').style.display='none'; }
 function showReset() { document.getElementById('loginForm').style.display='none'; document.getElementById('registerForm').style.display='none'; document.getElementById('resetForm').style.display='block'; }
 

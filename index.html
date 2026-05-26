@@ -18,7 +18,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
-<link rel="stylesheet" href="style.css?v=19"/>
+<link rel="stylesheet" href="style.css?v=20"/>
 </head>
 <body>
 
@@ -39,7 +39,10 @@
       </div>
       <div class="form-group">
         <label class="form-label">Senha</label>
-        <input class="form-input" type="password" id="loginPassword" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()"/>
+        <div class="pw-wrap">
+          <input class="form-input" type="password" id="loginPassword" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()"/>
+          <button type="button" class="pw-toggle" onclick="togglePw(this,'loginPassword')" aria-label="Mostrar senha">👁</button>
+        </div>
       </div>
       <button class="btn-primary" onclick="doLogin()">Entrar na plataforma →</button>
       <div class="auth-links">
@@ -52,7 +55,20 @@
       <div class="auth-sub">Comece a controlar suas bancas hoje</div>
       <div class="form-group"><label class="form-label">Nome</label><input class="form-input" type="text" id="regName" placeholder="Seu nome" autocomplete="name"/></div>
       <div class="form-group"><label class="form-label">E-mail</label><input class="form-input" type="email" id="regEmail" placeholder="seu@email.com" autocomplete="email"/></div>
-      <div class="form-group"><label class="form-label">Senha</label><input class="form-input" type="password" id="regPassword" placeholder="Mín. 6 caracteres" autocomplete="new-password" onkeydown="if(event.key==='Enter')doRegister()"/></div>
+      <div class="form-group">
+        <label class="form-label">Senha</label>
+        <div class="pw-wrap">
+          <input class="form-input" type="password" id="regPassword" placeholder="Mín. 6 caracteres" autocomplete="new-password"/>
+          <button type="button" class="pw-toggle" onclick="togglePw(this,'regPassword')" aria-label="Mostrar senha">👁</button>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Confirmar senha</label>
+        <div class="pw-wrap">
+          <input class="form-input" type="password" id="regPassword2" placeholder="Digite a senha de novo" autocomplete="new-password" onkeydown="if(event.key==='Enter')doRegister()"/>
+          <button type="button" class="pw-toggle" onclick="togglePw(this,'regPassword2')" aria-label="Mostrar senha">👁</button>
+        </div>
+      </div>
       <button class="btn-primary" onclick="doRegister()">Criar conta grátis →</button>
       <div class="auth-links"><a onclick="showLogin()">Já tenho conta</a></div>
     </div>
@@ -1354,6 +1370,6 @@
 </div>
 
 <script src="config.js?v=9" defer></script>
-<script src="script.js?v=37" defer></script>
+<script src="script.js?v=39" defer></script>
 </body>
 </html>
