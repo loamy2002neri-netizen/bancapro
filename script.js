@@ -1675,7 +1675,7 @@ function renderRanking() {
         <div class="rank-num ${numCls}">${numIcon}</div>
         <div class="rank-name">${r.icon} ${escapeHtml(r.name)}</div>
         <div class="rank-bar-wrap"><div class="rank-bar" style="width:${isNeg?0:widthPct}%;background:linear-gradient(90deg,${r.color},${r.color2})"></div></div>
-        <div class="rank-roi" ${isNeg?'style="color:var(--red)"':''}>${lucroDisplay} · ${roiTxt} ROI</div>
+        <div class="rank-roi" ${isNeg?'style="color:var(--red)"':''}>${lucroDisplay}<span class="rank-roi-pct"> · ${roiTxt} ROI</span></div>
       </div>
     `;
   }).join('');

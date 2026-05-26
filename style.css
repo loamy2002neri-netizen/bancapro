@@ -1343,6 +1343,7 @@ html { -webkit-text-size-adjust:100%; text-size-adjust:100%; }
   .rank-item { gap:8px; }
   .rank-name { font-size:13px; }
   .rank-roi  { font-size:12.5px; white-space:nowrap; }
+  .rank-roi-pct { display:none; }  /* no mobile mostra só o valor, sem o ROI */
 
   /* Card de Filtros mais compacto */
   .filters-card .form-group { margin-bottom:10px; }
