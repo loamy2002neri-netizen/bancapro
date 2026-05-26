@@ -1162,7 +1162,14 @@
   .stat-chip-label { font-size:11px; color:var(--text-muted); margin-bottom:4px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
   .stat-chip-value { font-size:15px; font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
   @media (max-width:1024px) { .stat-row { grid-template-columns:repeat(4,minmax(0,1fr)); } }
-  @media (max-width:640px)  { .stat-row { grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px; } .stat-chip { padding:10px 12px; } .stat-chip-value { font-size:13px; } }
+  @media (max-width:640px)  {
+    /* força 2 colunas mesmo quando o grid vem inline do JS (Admin) */
+    .stat-row { grid-template-columns:repeat(2,minmax(0,1fr)) !important; gap:8px; }
+    .stat-chip { padding:10px 12px; }
+    /* deixa o rótulo quebrar linha em vez de cortar com "..." */
+    .stat-chip-label { white-space:normal; overflow:visible; text-overflow:clip; line-height:1.25; }
+    .stat-chip-value { font-size:14px; white-space:normal; }
+  }
 
   /* ── RESPONSIVE ── */
   @media (max-width:1024px) {
