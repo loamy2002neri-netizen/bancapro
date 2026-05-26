@@ -1327,14 +1327,26 @@ html { -webkit-text-size-adjust:100%; text-size-adjust:100%; }
   .stat-row .stat-chip { text-align: center; }
   .stat-row > .stat-chip:last-child:nth-child(odd) { grid-column: 1 / -1; }
 
-  /* Gráfico de pizza/rosca: preso ao card — impossível estourar em qualquer largura */
-  #pieChartWrap { width:100%; max-width:240px; height:200px; margin:0 auto; padding:0; }
+  /* Gráfico de rosca: preenche o card sem estourar (par com maintainAspectRatio:false) */
+  #pieChartWrap { width:100%; max-width:300px; height:230px; margin:0 auto; padding:0; }
   #pieChart { max-width:100% !important; max-height:100% !important; }
 
-  /* Seletores de período quebram linha pra não cortar nomes (ex.: "Personalizado") */
   .evo-btn-group { flex-wrap: wrap; justify-content: center; }
   .evo-btn { padding: 6px 9px; font-size: 11.5px; }
-  .period-tabs { flex-wrap: wrap; width: 100%; justify-content: center; }
+
+  /* Abas preenchem a barra inteira (sem espaço sobrando) */
+  .period-tabs { width: 100%; }
+  .period-tab { flex:1 1 0; text-align:center; padding:9px 6px; font-size:12.5px; }
+
+  /* Ranking: esconde a barrinha decorativa e mantém nome + ROI numa linha só */
+  .rank-bar-wrap { display:none; }
+  .rank-item { gap:8px; }
+  .rank-name { font-size:13px; }
+  .rank-roi  { font-size:12.5px; white-space:nowrap; }
+
+  /* Card de Filtros mais compacto */
+  .filters-card .form-group { margin-bottom:10px; }
+  .filters-card .form-card-title { margin-bottom:10px; }
 }
 
   /* ── EVO FILTER BUTTONS ── */

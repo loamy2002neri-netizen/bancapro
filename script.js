@@ -3435,7 +3435,7 @@ function buildDashboardPieChart() {
     type:'doughnut',
     data:{ labels, datasets:[{data, backgroundColor:colors, borderWidth:0, hoverOffset:10}] },
     options:{
-      responsive:true, maintainAspectRatio:true, cutout:'68%',
+      responsive:true, maintainAspectRatio:false, cutout:'68%',
       plugins:{
         legend:{ display:true, position:'bottom', labels:{color:getChartColors().text, padding:10, font:{size:11}, boxWidth:10, boxHeight:10, usePointStyle:true, pointStyle:'circle'} },
         tooltip:{ backgroundColor:getChartColors().tooltipBg, borderColor:getChartColors().tooltipBorder, borderWidth:1, padding:12, titleColor:getChartColors().tooltipTitle, bodyColor:getChartColors().tooltipBody, callbacks:{label(c){const total=c.dataset.data.reduce((a,b)=>a+b,0); const pct=((c.raw/total)*100).toFixed(1); return ' R$'+c.raw.toLocaleString('pt-BR')+' ('+pct+'%)'}}}
