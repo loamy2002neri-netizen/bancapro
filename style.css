@@ -1334,9 +1334,9 @@ html { -webkit-text-size-adjust:100%; text-size-adjust:100%; }
   .evo-btn-group { flex-wrap: wrap; justify-content: center; }
   .evo-btn { padding: 6px 9px; font-size: 11.5px; }
 
-  /* Abas preenchem a barra inteira (sem espaço sobrando) */
-  .period-tabs { width: 100%; }
-  .period-tab { flex:1 1 0; text-align:center; padding:9px 6px; font-size:12.5px; }
+  /* Abas preenchem a barra inteira, mas com altura proporcional ao texto */
+  .period-tabs { width: 100%; padding:3px; }
+  .period-tab { flex:1 1 0; text-align:center; padding:7px 6px; font-size:13.5px; min-height:36px; display:flex; align-items:center; justify-content:center; }
 
   /* Ranking: esconde a barrinha decorativa e mantém nome + ROI numa linha só */
   .rank-bar-wrap { display:none; }
