@@ -3255,7 +3255,7 @@ function buildEvoChart(mode, fromDate, toDate) {
     data:{
       labels,
       datasets:[
-        {label:'Saldo',   data:saldo,    yAxisID:'y1', borderColor:'#6366f1',backgroundColor:saldoGrad,borderWidth:2.5,fill:true, tension:0.4,pointRadius:isMobile?2:3,pointHoverRadius:6,pointBackgroundColor:'#6366f1'},
+        {label:'Saldo',   data:saldo,    borderColor:'#6366f1',backgroundColor:saldoGrad,borderWidth:2.5,fill:true, tension:0.4,pointRadius:isMobile?2:3,pointHoverRadius:6,pointBackgroundColor:'#6366f1'},
         {label:'Lucro',   data:lucro,    borderColor:'#10b981',backgroundColor:lucroGrad,borderWidth:2,  fill:true, tension:0.4,pointRadius:isMobile?2:3,pointHoverRadius:5,pointBackgroundColor:'#10b981'},
         {label:'Receita', data:receita,  borderColor:'#f59e0b',borderWidth:1.5,fill:false,tension:0.4,pointRadius:0,pointHoverRadius:4,borderDash:[2,3]},
         {label:'Despesas',data:despesas, borderColor:'#f43f5e',borderWidth:1.5,fill:false,tension:0.4,pointRadius:0,pointHoverRadius:4,borderDash:[4,4]},
@@ -3313,21 +3313,12 @@ function buildEvoChart(mode, fromDate, toDate) {
           }
         },
         y:{
-          // Eixo da ESQUERDA: mede os fluxos — começa em 0 (sem negativos), topo automático
-          min: 0,
           grid:{color:getChartColors().grid,drawBorder:false},
           ticks:{
             color:getChartColors().text,font:{size:10},
             callback(v){ return v>=1000?(v/1000).toFixed(0)+'k':'R$'+v; }
           },
           position:'left'
-        },
-        // Eixo do SALDO (direita) — dá zoom pra linha ficar dinâmica, mas SEM mostrar números
-        y1:{
-          position:'right',
-          grid:{display:false},
-          ticks:{display:false},
-          border:{display:false}
         }
       }
     }
