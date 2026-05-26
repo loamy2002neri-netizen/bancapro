@@ -1345,9 +1345,12 @@ html { -webkit-text-size-adjust:100%; text-size-adjust:100%; }
   .rank-roi  { font-size:12.5px; white-space:nowrap; }
   .rank-roi-pct { display:none; }  /* no mobile mostra só o valor, sem o ROI */
 
-  /* Card de Filtros mais compacto */
-  .filters-card .form-group { margin-bottom:10px; }
-  .filters-card .form-card-title { margin-bottom:10px; }
+  /* Card de Filtros mais curto: 2 colunas (De|Até, Método|Tipo) + botões largura total */
+  .filters-card .form-group { margin-bottom:8px; }
+  .filters-card .form-card-title { margin-bottom:8px; }
+  .filters-card .form-row { grid-template-columns:1fr 1fr; gap:10px; }
+  .filters-card .form-row > .form-group:last-child { grid-column:1 / -1; }
+  .filters-card .form-label { margin-bottom:4px; }
 }
 
   /* ── EVO FILTER BUTTONS ── */
