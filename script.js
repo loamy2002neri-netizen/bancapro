@@ -387,16 +387,20 @@ async function renderAdminUsers() {
       const created = u.created_at ? new Date(u.created_at).toLocaleDateString('pt-BR') : '—';
       const last = u.last_sign_in_at ? new Date(u.last_sign_in_at).toLocaleDateString('pt-BR') : '—';
       const emailAttr = escapeHtml(u.email || '');
+      const isOwnerRow = OWNER_EMAILS.includes((u.email || '').toLowerCase());
       const action = u.status === 'active'
         ? `<button class="btn-ghost" style="padding:5px 10px;font-size:12px;color:var(--red)" data-email="${emailAttr}" data-status="inactive" onclick="adminSetStatus(this)">🚫 Bloquear</button>`
         : `<button class="btn-ghost" style="padding:5px 10px;font-size:12px;color:var(--green)" data-email="${emailAttr}" data-status="active" onclick="adminSetStatus(this)">🔓 Liberar</button>`;
+      const delBtn = (u.email && !isOwnerRow)
+        ? ` <button class="btn-ghost" style="padding:5px 10px;font-size:12px;color:var(--red)" data-email="${emailAttr}" onclick="adminDeleteUser(this)">🗑 Excluir</button>`
+        : '';
       return `<tr>
         <td>${escapeHtml(u.email || '—')}</td>
         <td><span style="color:${st.c};font-weight:600">${st.t}</span></td>
         <td>${escapeHtml(u.plan || '—')}</td>
         <td>${created}</td>
         <td>${last}</td>
-        <td style="white-space:nowrap;text-align:right">${u.email ? action : ''}</td>
+        <td style="white-space:nowrap;text-align:right">${u.email ? action : ''}${delBtn}</td>
       </tr>`;
     }).join('');
     el.innerHTML = `<div style="overflow-x:auto"><table class="admin-table">
@@ -643,6 +647,26 @@ async function adminSetStatus(btn) {
   const ok = await customConfirm(`Bloquear o acesso de "${email}"?`, 'Bloquear acesso', 'Bloquear', true);
   if (!ok) return;
   await applyAccess(email, 'inactive', null);
+}
+
+// Painel do dono: excluir usuário DEFINITIVAMENTE (login + todos os dados)
+async function adminDeleteUser(btn) {
+  const email = btn && btn.dataset ? btn.dataset.email : '';
+  if (!email) return;
+  if (OWNER_EMAILS.includes(email.toLowerCase())) { showToast('Não dá pra excluir uma conta de dono.', 'error'); return; }
+  const ok = await customConfirm(
+    'Excluir DEFINITIVAMENTE "' + email + '"? Isso apaga o login e todos os dados dele (transações, métodos, assinatura, indicações). Esta ação NÃO pode ser desfeita.',
+    'Excluir usuário', 'Excluir definitivamente', true);
+  if (!ok) return;
+  const sb = getSb();
+  if (!sb) { showToast('Disponível só com o banco na nuvem.', 'error'); return; }
+  try {
+    const r = await sb.rpc('admin_delete_user', { p_email: email });
+    if (r.error) { showToast('Erro: ' + (r.error.message || 'não foi possível'), 'error'); return; }
+    showToast('Usuário excluído.', 'info');
+    renderAdminUsers();
+    if (typeof renderAdminStats === 'function') renderAdminStats();
+  } catch (e) { showToast('Erro ao excluir usuário.', 'error'); }
 }
 
 function closeGrantModal() {
