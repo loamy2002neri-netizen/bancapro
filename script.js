@@ -3108,8 +3108,8 @@ function buildEvoDatasetFor(mode, fromDate, toDate) {
   }
 
   if(mode === 'today') {
-    // Distribui as transações de hoje pelos horários reais (ou agrupa em "Hoje" se não temos horários)
-    // Como nossas transactions só têm data (não hora), agrupa tudo num único bucket
+    // Transações só têm data (sem hora), então mostramos 2 pontos: "Início do dia" → "Agora".
+    // Assim a linha aparece (1 ponto só não desenha) e dá pra ver o movimento de hoje.
     const iso = today.toISOString().split('T')[0];
     let dayRec = 0, dayDes = 0;
     transactions.forEach(t => {
@@ -3119,18 +3119,19 @@ function buildEvoDatasetFor(mode, fromDate, toDate) {
       }
     });
     const dayLuc = dayRec - dayDes;
-    // Saldo até hoje
-    let saldoHoje = SALDO_BASE;
+    // Saldo no início do dia (antes das transações de hoje)
+    let saldoInicio = SALDO_BASE;
     transactions.forEach(t => {
-      if(t.date <= iso) saldoHoje += (t.type==='income' ? t.value : -t.value);
+      if((t.date||'') < iso) saldoInicio += (t.type==='income' ? t.value : -t.value);
     });
+    const saldoAgora = saldoInicio + dayLuc;
     return {
       subtitle: 'Hoje — ' + today.toLocaleDateString('pt-BR'),
-      labels: ['Hoje'],
-      saldo: [saldoHoje],
-      lucro: [dayLuc],
-      despesas: [dayDes],
-      receita: [dayRec],
+      labels: ['Início do dia', 'Agora'],
+      saldo:    [saldoInicio, saldoAgora],
+      lucro:    [0, dayLuc],
+      despesas: [0, dayDes],
+      receita:  [0, dayRec],
       isDaily: false
     };
   }
