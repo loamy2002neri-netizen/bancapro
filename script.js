@@ -3313,6 +3313,8 @@ function buildEvoChart(mode, fromDate, toDate) {
           }
         },
         y:{
+          // Eixo da ESQUERDA: mede os fluxos — começa em 0 (sem negativos), topo automático
+          min: 0,
           grid:{color:getChartColors().grid,drawBorder:false},
           ticks:{
             color:getChartColors().text,font:{size:10},
@@ -3320,14 +3322,12 @@ function buildEvoChart(mode, fromDate, toDate) {
           },
           position:'left'
         },
-        // Eixo próprio do Saldo (direita): dá zoom na faixa do saldo pra mostrar o movimento
+        // Eixo do SALDO (direita) — dá zoom pra linha ficar dinâmica, mas SEM mostrar números
         y1:{
           position:'right',
           grid:{display:false},
-          ticks:{
-            color:getChartColors().text,font:{size:10},
-            callback(v){ return v>=1000?(v/1000).toFixed(0)+'k':'R$'+v; }
-          }
+          ticks:{display:false},
+          border:{display:false}
         }
       }
     }
