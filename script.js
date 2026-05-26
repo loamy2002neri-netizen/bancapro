@@ -138,7 +138,8 @@ const SYNC_KEYS = [
   'bancapro-logo-split',
   'bancapro-accent',
   'bancapro-accent2',
-  'bancapro-theme'
+  'bancapro-theme',
+  'bancapro-notes'
 ];
 
 function clearUserLocal() {
@@ -907,7 +908,7 @@ function goTo(section, el) {
       if(n.textContent.toLowerCase().includes(section.toLowerCase())) n.classList.add('active');
     });
   }
-  const labels = {dashboard:'Dashboard',methods:'Métodos',transactions:'Transações',accounts:'Contas Depositadas',recharge:'Recarga',reports:'Relatórios',goals:'Metas',compare:'Comparativo',calculadora:'Calculadora',settings:'Configurações',admin:'Admin',afiliado:'Minhas Indicações',afiliados:'Afiliados'};
+  const labels = {dashboard:'Dashboard',methods:'Métodos',transactions:'Transações',accounts:'Contas Depositadas',recharge:'Recarga',reports:'Relatórios',goals:'Metas',compare:'Comparativo',calculadora:'Calculadora',anotacoes:'Anotações',settings:'Configurações',admin:'Admin',afiliado:'Minhas Indicações',afiliados:'Afiliados'};
   document.getElementById('breadcrumb').textContent = labels[section] || section;
   closeSidebar();
   if(section === 'reports') setTimeout(initReportCharts, 100);
@@ -919,6 +920,7 @@ function goTo(section, el) {
   if(section === 'afiliados') setTimeout(() => { renderAffiliatesAdmin(); renderWithdrawalsAdmin(); }, 50);
   if(section === 'afiliado')  setTimeout(renderMyAffiliatePanel, 50);
   if(section === 'calculadora') setTimeout(calcInit, 50);
+  if(section === 'anotacoes') setTimeout(notesInit, 50);
 }
 
 function setPeriod(p, el) {
@@ -4126,17 +4128,6 @@ function sbCurrentProfit(){
   });
   return { lucro:(C+CBtotal+RECtotal-total), total:total };
 }
-function sbAddToPlanilha(){
-  var r=sbCurrentProfit();
-  if(!isFinite(r.lucro) || Math.abs(r.lucro)<0.005){ showToast('Sem lucro pra registrar. Ajuste as odds.','info'); return; }
-  if(r.lucro<0){ showToast('Esse cenário dá prejuízo — não vou registrar.','error'); return; }
-  var today=new Date().toISOString().slice(0,10);
-  var nomes=SB.casas.map(function(c){return c.nome;}).filter(Boolean).join(' / ');
-  transactions.unshift({id:Date.now(), date:today, desc:'Surebet'+(nomes?' ('+nomes+')':''), method:'Surebet', type:'income', value:+r.lucro.toFixed(2)});
-  if(typeof recomputeAll==='function') recomputeAll();
-  if(typeof persistState==='function') persistState();
-  showToast('✅ Lucro de '+calcMoney(r.lucro)+' adicionado à planilha!','success');
-}
 function sbState(){ return { n:SB.n, fixed:SB.fixed, casas:SB.casas }; }
 function sbCopyLink(){
   try {
@@ -4222,4 +4213,66 @@ function calcProtecao(){
   setTextSafe('pdStake', calcMoney(P));
   setTextSafe('pdLucro', calcMoney(lucro));
   var le=document.getElementById('pdLucro'); if(le) le.style.color = lucro>=0?'var(--green)':'var(--red)';
+}
+
+// ═══════════════════════════════════════════════
+//  ANOTAÇÕES
+// ═══════════════════════════════════════════════
+var NOTES = [];
+var _notesReady = false;
+var _notesSaveTimer = null;
+function notesLoad(){
+  try { NOTES = JSON.parse(localStorage.getItem('bancapro-notes')||'[]'); if(!Array.isArray(NOTES)) NOTES=[]; }
+  catch(e){ NOTES=[]; }
+}
+function notesSaveLocal(){ try { localStorage.setItem('bancapro-notes', JSON.stringify(NOTES)); } catch(e){} }
+function notesSave(){ notesSaveLocal(); if(typeof schedulePush==='function') schedulePush(); }
+function notesPushDebounced(){
+  notesSaveLocal(); // localStorage sempre atualizado na hora (não perde nada ao fechar)
+  if(_notesSaveTimer) clearTimeout(_notesSaveTimer);
+  _notesSaveTimer = setTimeout(function(){ if(typeof schedulePush==='function') schedulePush(); }, 800);
+}
+function notesInit(){ notesLoad(); notesRender(); _notesReady=true; }
+function notesFmtDate(ts){
+  if(!ts) return '';
+  try { var d=new Date(ts); return 'Editado em '+d.toLocaleDateString('pt-BR')+' '+d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}); } catch(e){ return ''; }
+}
+function notesRender(){
+  var grid=document.getElementById('notesGrid'), empty=document.getElementById('notesEmpty');
+  if(!grid) return;
+  if(!NOTES.length){ grid.innerHTML=''; if(empty) empty.style.display=''; return; }
+  if(empty) empty.style.display='none';
+  grid.innerHTML = NOTES.map(function(n){
+    return '<div class="note-card">'
+      + '<div class="note-head">'
+      +   '<input class="note-title" placeholder="Título" value="'+escapeHtml(n.title||'')+'" oninput="notesEdit('+n.id+',\'title\',this.value)">'
+      +   '<button class="note-del" title="Excluir" onclick="notesDelete('+n.id+')">🗑</button>'
+      + '</div>'
+      + '<textarea class="note-body" placeholder="Escreva sua anotação…" oninput="notesEdit('+n.id+',\'body\',this.value)">'+escapeHtml(n.body||'')+'</textarea>'
+      + '<div class="note-date" id="noteDate'+n.id+'">'+notesFmtDate(n.updated)+'</div>'
+    + '</div>';
+  }).join('');
+}
+function notesAdd(){
+  if(!_notesReady) notesLoad();
+  NOTES.unshift({ id:Date.now(), title:'', body:'', updated:Date.now() });
+  notesSave();
+  notesRender();
+  setTimeout(function(){ var t=document.querySelector('#notesGrid .note-title'); if(t) t.focus(); }, 50);
+}
+function notesEdit(id, field, value){
+  var n=NOTES.filter(function(x){return x.id===id;})[0]; if(!n) return;
+  n[field]=value; n.updated=Date.now();
+  setTextSafe('noteDate'+id, notesFmtDate(n.updated));
+  notesPushDebounced();
+}
+async function notesDelete(id){
+  var ok = (typeof customConfirm==='function')
+    ? await customConfirm('Excluir esta anotação? Não dá pra desfazer.','Excluir anotação','Excluir',true)
+    : confirm('Excluir esta anotação?');
+  if(!ok) return;
+  NOTES = NOTES.filter(function(x){return x.id!==id;});
+  notesSave();
+  notesRender();
+  if(typeof showToast==='function') showToast('Anotação excluída.','info');
 }

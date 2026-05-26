@@ -18,7 +18,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
-<link rel="stylesheet" href="style.css?v=17"/>
+<link rel="stylesheet" href="style.css?v=19"/>
 </head>
 <body>
 
@@ -339,6 +339,7 @@
       <div class="nav-item" onclick="goTo('goals',this)"><span class="nav-icon">🎯</span>Metas</div>
       <div class="nav-item" onclick="goTo('compare',this)"><span class="nav-icon">🔀</span>Comparativo</div>
       <div class="nav-item" onclick="goTo('calculadora',this)"><span class="nav-icon">🧮</span>Calculadora</div>
+      <div class="nav-item" onclick="goTo('anotacoes',this)"><span class="nav-icon">📝</span>Anotações</div>
     </div>
 
     <div class="sidebar-section">
@@ -1205,9 +1206,27 @@
             </div>
             <div id="sbHint" style="font-size:12px;margin-top:12px"></div>
             <div class="sb-actions">
-              <button class="btn-primary" style="flex:1;min-width:170px" onclick="sbAddToPlanilha()">📋 Adicionar à Planilha</button>
-              <button class="btn-ghost" style="flex:1;min-width:120px" onclick="sbCopyLink()">🔗 Link</button>
-              <button class="btn-ghost" style="flex:1;min-width:120px" onclick="sbCopyTexto()">📄 Texto</button>
+              <button class="btn-ghost" style="flex:1;min-width:140px" onclick="sbCopyLink()">🔗 Copiar link</button>
+              <button class="btn-ghost" style="flex:1;min-width:140px" onclick="sbCopyTexto()">📄 Copiar texto</button>
+            </div>
+          </div>
+
+          <div class="form-card calc-tips" style="margin-top:16px">
+            <div class="form-card-title">💡 Como usar a Surebet</div>
+            <p>Surebet é apostar em <b>todos os resultados</b> de um jogo, em casas diferentes, de um jeito que você <b>lucra independente de quem ganhar</b>.</p>
+            <ol>
+              <li>Em <b>Casas</b>, escolha quantos resultados o mercado tem (2 = ex. vitória/derrota; 3 = casa/empate/fora).</li>
+              <li>Preencha o <b>nome</b> e a <b>odd</b> de cada casa.</li>
+              <li>Digite quanto vai apostar em uma casa e toque em <b>Fixar stake</b> — as outras se ajustam sozinhas.</li>
+              <li>Olhe o <b>Lucro garantido</b>: se ficar <b style="color:var(--green)">verde</b>, é surebet (lucro em qualquer resultado). Vermelho = daria prejuízo.</li>
+            </ol>
+            <div class="calc-tips-gloss">
+              <div class="gl"><b>Back / Lay</b> — Back é a aposta normal. Lay é apostar <i>contra</i> (só em bolsa de apostas, tipo Betfair).</div>
+              <div class="gl"><b>Comissão %</b> — taxa da bolsa de apostas (usada no Lay).</div>
+              <div class="gl"><b>Aumento %</b> — quando a casa turbina a odd (superodds). O <b>Real</b> mostra a odd já com o aumento.</div>
+              <div class="gl"><b>Freebet</b> — aposta grátis: a stake não volta, só o lucro.</div>
+              <div class="gl"><b>Cashback (R$)</b> — valor que a casa devolve se aquela aposta perder.</div>
+              <div class="gl"><b>Recompensa (R$)</b> — bônus fixo que você ganha por apostar ali.</div>
             </div>
           </div>
         </div>
@@ -1228,6 +1247,18 @@
               <div class="kpi-card" style="--card-color:var(--accent)"><div class="kpi-label">% da banca</div><div class="kpi-value" style="color:var(--accent)" id="stkPct">0,00%</div><div class="kpi-sub">fração da banca total</div></div>
             </div>
             <div style="font-size:12px;color:var(--text-muted);margin-top:12px">Baseado no critério de Kelly fracionado (1/10). É uma referência conservadora — não é garantia de lucro.</div>
+          </div>
+
+          <div class="form-card calc-tips" style="margin-top:16px">
+            <div class="form-card-title">💡 Como usar</div>
+            <p>Serve pra descobrir <b>quanto apostar numa odd aumentada</b> (superodd) sem arriscar demais a sua banca.</p>
+            <ol>
+              <li>Coloque o <b>valor total da sua banca</b>.</li>
+              <li><b>Odd normal</b> = a odd justa do mercado, sem o aumento.</li>
+              <li><b>Odd aumentada</b> = a odd turbinada que a casa ofereceu.</li>
+              <li>A <b>Stake recomendada</b> é o valor que vale a pena apostar pra aproveitar essa vantagem.</li>
+            </ol>
+            <div class="calc-tips-gloss"><div class="gl">Regra simples: quanto <b>maior o aumento</b> da odd, maior a stake sugerida. É uma aposta de valor — pode perder, mas no longo prazo tende a dar lucro.</div></div>
           </div>
         </div>
 
@@ -1265,6 +1296,30 @@
               <div style="font-size:12px;color:var(--text-secondary);margin-top:4px">Os resultados podem conter erros. Confira antes de apostar.</div>
             </div>
           </div>
+
+          <div class="form-card calc-tips" style="margin-top:16px">
+            <div class="form-card-title">💡 Como usar</div>
+            <p>Serve pra <b>travar lucro</b> ou <b>reduzir o prejuízo</b> de apostas que você já fez, colocando uma aposta numa <b>casa de proteção</b>.</p>
+            <ol>
+              <li>Em <b>Apostas feitas</b>, coloque o <b>valor</b> e a <b>odd</b> de cada aposta que você já tem em aberto (use “+ Adicionar aposta” pra mais de uma).</li>
+              <li>Em <b>Aposta de proteção</b>, coloque a <b>odd</b> da casa onde vai proteger (e a comissão, se for bolsa de apostas).</li>
+              <li><b>Aposte o valor de</b> mostra quanto colocar na proteção; o <b>Lucro estimado</b> é o resultado que fica travado.</li>
+            </ol>
+            <div class="calc-tips-gloss"><div class="gl">Dica: use quando uma aposta sua já está “quase ganha” e você quer <b>garantir o lucro</b> sem depender do resultado final.</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══ ANOTAÇÕES ═══ -->
+      <div class="section" id="sec-anotacoes">
+        <div class="page-header" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
+          <div><div class="page-title">Anotações 📝</div><div class="page-subtitle">Suas notas, estratégias e lembretes</div></div>
+          <button class="btn-primary" style="width:auto;padding:11px 20px" onclick="notesAdd()">+ Nova anotação</button>
+        </div>
+        <div id="notesGrid" class="notes-grid"></div>
+        <div id="notesEmpty" class="notes-empty" style="display:none">
+          <div style="font-size:34px;margin-bottom:10px">📝</div>
+          <div class="empty-state-sub">Nenhuma anotação ainda. Toque em <b>“+ Nova anotação”</b> para criar a primeira — anote estratégias, casas, limites ou o que quiser.</div>
         </div>
       </div>
 
@@ -1284,6 +1339,6 @@
 </div>
 
 <script src="config.js?v=9" defer></script>
-<script src="script.js?v=30" defer></script>
+<script src="script.js?v=33" defer></script>
 </body>
 </html>
