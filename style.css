@@ -1361,22 +1361,27 @@ html { -webkit-text-size-adjust:100%; text-size-adjust:100%; }
   .filters-card .form-input, .filters-card .form-select { width:100%; min-width:0; box-sizing:border-box; }
   .filters-card .form-label { margin-bottom:4px; }
 
-  /* Tabelas viram cartões empilhados no mobile (sem rolar pro lado) */
+  /* Tabelas viram cartões compactos no mobile: campos lado a lado (2 colunas) */
   .tx-table, .tx-table tbody, .admin-table, .admin-table tbody { display:block; width:100%; }
   .tx-table thead, .admin-table thead { display:none; }
   .tx-table tr, .admin-table tr {
-    display:block; background:var(--bg-secondary); border:1px solid var(--glass-border);
-    border-radius:12px; padding:6px 12px; margin-bottom:10px;
+    display:grid; grid-template-columns:1fr 1fr; gap:9px 14px;
+    background:var(--bg-secondary); border:1px solid var(--glass-border);
+    border-radius:12px; padding:12px; margin-bottom:10px;
   }
   .tx-table td, .admin-table td {
-    display:flex; align-items:center; justify-content:space-between; gap:12px;
-    padding:6px 0 !important; border:none !important; text-align:right; white-space:normal; min-width:0;
+    display:flex; flex-direction:column; align-items:flex-start; gap:2px;
+    padding:0 !important; border:none !important; text-align:left; min-width:0;
+    font-size:13px; word-break:break-word;
   }
   .tx-table td::before, .admin-table td::before {
-    content: attr(data-label); color:var(--text-muted); font-size:12px; font-weight:600;
-    text-align:left; flex:none; white-space:nowrap;
+    content: attr(data-label); color:var(--text-muted); font-size:10.5px; font-weight:600;
+    text-transform:uppercase; letter-spacing:.3px;
   }
-  .tx-table td[data-label=""], .admin-table td[data-label=""] { justify-content:flex-end; padding-top:8px !important; }
+  .tx-table td[data-label=""], .admin-table td[data-label=""] {
+    grid-column:1 / -1; align-items:flex-end; padding-top:8px !important;
+    border-top:1px solid var(--glass-border) !important; margin-top:2px;
+  }
   .tx-table td[data-label=""]::before, .admin-table td[data-label=""]::before { content:none; }
 }
 
