@@ -1348,8 +1348,10 @@ html { -webkit-text-size-adjust:100%; text-size-adjust:100%; }
   /* Card de Filtros mais curto: 2 colunas (De|Até, Método|Tipo) + botões largura total */
   .filters-card .form-group { margin-bottom:8px; }
   .filters-card .form-card-title { margin-bottom:8px; }
-  .filters-card .form-row { grid-template-columns:1fr 1fr; gap:10px; }
+  .filters-card .form-row { grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; }
+  .filters-card .form-row > .form-group { min-width:0; }
   .filters-card .form-row > .form-group:last-child { grid-column:1 / -1; }
+  .filters-card .form-input, .filters-card .form-select { width:100%; min-width:0; box-sizing:border-box; }
   .filters-card .form-label { margin-bottom:4px; }
 }
 
