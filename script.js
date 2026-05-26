@@ -406,12 +406,12 @@ async function renderAdminUsers() {
         ? `<button class="btn-ghost" style="padding:5px 14px;font-size:12px" data-email="${emailAttr}" data-status="${statusAttr}" onclick="openEditUser(this)">✏️ Editar</button>`
         : '';
       return `<tr>
-        <td>${escapeHtml(u.email || '—')}</td>
-        <td><span style="color:${st.c};font-weight:600">${st.t}</span></td>
-        <td>${escapeHtml(u.plan || '—')}</td>
-        <td>${created}</td>
-        <td>${last}</td>
-        <td style="white-space:nowrap;text-align:right">${editBtn}</td>
+        <td data-label="E-mail">${escapeHtml(u.email || '—')}</td>
+        <td data-label="Status"><span style="color:${st.c};font-weight:600">${st.t}</span></td>
+        <td data-label="Plano">${escapeHtml(u.plan || '—')}</td>
+        <td data-label="Cadastro">${created}</td>
+        <td data-label="Último acesso">${last}</td>
+        <td data-label="" style="white-space:nowrap;text-align:right">${editBtn}</td>
       </tr>`;
     }).join('');
     el.innerHTML = `<div style="overflow-x:auto"><table class="admin-table">
@@ -475,13 +475,13 @@ async function renderAffiliatesAdmin() {
     if(!r.data.length){ el.innerHTML='<div class="empty-state-sub">Nenhum afiliado ainda. Clique em <b>+ Adicionar afiliado</b>.</div>'; return; }
     var rows=r.data.map(function(a){
       return '<tr>'+
-        '<td>'+escapeHtml(a.email)+'</td>'+
-        '<td><span class="tx-method-pill">'+escapeHtml(a.code)+'</span></td>'+
-        '<td>'+_affMoney(a.commission)+'/ativo</td>'+
-        '<td>'+a.indicados+'</td>'+
-        '<td style="color:var(--green);font-weight:600">'+a.ativos+'</td>'+
-        '<td style="color:var(--green);font-weight:600">'+_affMoney(a.a_pagar)+'</td>'+
-        '<td style="white-space:nowrap;text-align:right">'+
+        '<td data-label="Afiliado">'+escapeHtml(a.email)+'</td>'+
+        '<td data-label="Slug"><span class="tx-method-pill">'+escapeHtml(a.code)+'</span></td>'+
+        '<td data-label="Comissão">'+_affMoney(a.commission)+'/ativo</td>'+
+        '<td data-label="Indicados">'+a.indicados+'</td>'+
+        '<td data-label="Ativos" style="color:var(--green);font-weight:600">'+a.ativos+'</td>'+
+        '<td data-label="A pagar" style="color:var(--green);font-weight:600">'+_affMoney(a.a_pagar)+'</td>'+
+        '<td data-label="" style="white-space:nowrap;text-align:right">'+
           '<button class="btn-ghost" style="padding:5px 10px;font-size:12px" data-code="'+escapeHtml(a.code)+'" onclick="viewAffiliateReferrals(this.dataset.code)">👁 Ver indicados</button> '+
           '<button class="btn-ghost" style="padding:5px 10px;font-size:12px;color:var(--red)" data-email="'+escapeHtml(a.email)+'" onclick="removeAffiliate(this.dataset.email)">Remover</button>'+
         '</td></tr>';
@@ -506,7 +506,7 @@ function _affReferralsHtml(data) {
   if(!data || !data.length) return '<div class="empty-state-sub">Ninguém entrou por esse link ainda.</div>';
   var rows=data.map(function(r){
     var dt=r.entrou ? new Date(r.entrou).toLocaleDateString('pt-BR') : '—';
-    return '<tr><td>'+escapeHtml(r.email)+'</td><td>'+dt+'</td><td><span style="color:'+(_affColors[r.status]||'var(--text-muted)')+';font-weight:600">'+r.status+'</span></td></tr>';
+    return '<tr><td data-label="Pessoa">'+escapeHtml(r.email)+'</td><td data-label="Entrou em">'+dt+'</td><td data-label="Status"><span style="color:'+(_affColors[r.status]||'var(--text-muted)')+';font-weight:600">'+r.status+'</span></td></tr>';
   }).join('');
   return '<div style="overflow-x:auto"><table class="admin-table"><thead><tr><th>Pessoa</th><th>Entrou em</th><th>Status</th></tr></thead><tbody>'+rows+'</tbody></table></div>';
 }
@@ -554,7 +554,7 @@ async function renderMyWithdrawals(aPagar) {
     var rows=list.map(function(w){
       var dt=w.created_at?new Date(w.created_at).toLocaleDateString('pt-BR'):'—';
       var st=w.status==='pago'?'<span style="color:var(--green);font-weight:600">Pago ✓</span>':'<span style="color:var(--yellow);font-weight:600">Pendente</span>';
-      return '<tr><td>'+dt+'</td><td>'+_affMoney(w.amount)+'</td><td>'+st+'</td></tr>';
+      return '<tr><td data-label="Data">'+dt+'</td><td data-label="Valor">'+_affMoney(w.amount)+'</td><td data-label="Status">'+st+'</td></tr>';
     }).join('');
     el.innerHTML='<div style="font-size:12px;color:var(--text-muted);margin:10px 0 6px">Seus saques</div><div style="overflow-x:auto"><table class="admin-table"><thead><tr><th>Data</th><th>Valor</th><th>Status</th></tr></thead><tbody>'+rows+'</tbody></table></div>';
   } catch(e){}
@@ -591,7 +591,7 @@ async function renderWithdrawalsAdmin() {
       var dt=w.created_at?new Date(w.created_at).toLocaleDateString('pt-BR'):'—';
       var st=w.status==='pago'?'<span style="color:var(--green);font-weight:600">Pago ✓</span>':'<span style="color:var(--yellow);font-weight:600">Pendente</span>';
       var acao=w.status==='pendente'?'<button class="btn-ghost" style="padding:5px 10px;font-size:12px;color:var(--green)" data-id="'+w.id+'" onclick="markWithdrawalPaid(this.dataset.id)">Marcar pago</button>':'—';
-      return '<tr><td>'+dt+'</td><td>'+escapeHtml(w.affiliate_email)+'</td><td>'+_affMoney(w.amount)+'</td><td>'+escapeHtml(w.pix_type)+': '+escapeHtml(w.pix_key)+'</td><td>'+escapeHtml(w.note||'—')+'</td><td>'+st+'</td><td style="text-align:right">'+acao+'</td></tr>';
+      return '<tr><td data-label="Data">'+dt+'</td><td data-label="Afiliado">'+escapeHtml(w.affiliate_email)+'</td><td data-label="Valor">'+_affMoney(w.amount)+'</td><td data-label="Chave PIX">'+escapeHtml(w.pix_type)+': '+escapeHtml(w.pix_key)+'</td><td data-label="Obs">'+escapeHtml(w.note||'—')+'</td><td data-label="Status">'+st+'</td><td data-label="" style="text-align:right">'+acao+'</td></tr>';
     }).join('');
     el.innerHTML='<div style="overflow-x:auto"><table class="admin-table"><thead><tr><th>Data</th><th>Afiliado</th><th>Valor</th><th>Chave PIX</th><th>Obs</th><th>Status</th><th style="text-align:right">Ação</th></tr></thead><tbody>'+rows+'</tbody></table></div>';
   } catch(e){ el.innerHTML='<div class="empty-state-sub">Erro ao carregar saques.</div>'; }
@@ -765,9 +765,9 @@ async function renderAdminErrors() {
     if (!data.length) { el.innerHTML = '<div class="empty-state-sub" style="color:var(--green)">Nenhum erro registrado. 🎉</div>'; return; }
     const rows = data.map(function(er) {
       const dt = er.created_at ? new Date(er.created_at).toLocaleString('pt-BR') : '—';
-      return '<tr><td style="white-space:nowrap">' + dt + '</td><td>' + escapeHtml(er.email || '—') +
-             '</td><td style="color:var(--red)">' + escapeHtml(String(er.message || '').slice(0,90)) +
-             '</td><td style="color:var(--text-muted);font-size:11px">' + escapeHtml(String(er.source || '').slice(0,40)) + '</td></tr>';
+      return '<tr><td data-label="Quando" style="white-space:nowrap">' + dt + '</td><td data-label="Usuário">' + escapeHtml(er.email || '—') +
+             '</td><td data-label="Erro" style="color:var(--red)">' + escapeHtml(String(er.message || '').slice(0,90)) +
+             '</td><td data-label="Origem" style="color:var(--text-muted);font-size:11px">' + escapeHtml(String(er.source || '').slice(0,40)) + '</td></tr>';
     }).join('');
     el.innerHTML = '<div style="overflow-x:auto"><table class="admin-table"><thead><tr><th>Quando</th><th>Usuário</th><th>Erro</th><th>Origem</th></tr></thead><tbody>' + rows + '</tbody></table></div>';
   } catch(e) {
@@ -1591,14 +1591,14 @@ function renderAllTransactions(currentBalance) {
     const balanceNow = balanceMap[t.id] || 0;
     const tag = inferTag(t);
     return `<tr>
-      <td>${dateBR(t.date)}</td>
-      <td>${escapeHtml(t.desc)}</td>
-      <td><span class="tag">${tag}</span></td>
-      <td><span class="tx-method-pill">${escapeHtml(t.method)}</span></td>
-      <td><span class="tx-type-badge ${cls}">${arrow}</span></td>
-      <td class="tx-amount ${cls}">${sign}R$ ${t.value.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})}</td>
-      <td>${fmtBRLshort(balanceNow)}</td>
-      <td style="text-align:right"><button class="goal-action-btn danger" onclick="deleteTransaction(${t.id})" title="Excluir" aria-label="Excluir transação">🗑️</button></td>
+      <td data-label="Data">${dateBR(t.date)}</td>
+      <td data-label="Descrição">${escapeHtml(t.desc)}</td>
+      <td data-label="Categoria"><span class="tag">${tag}</span></td>
+      <td data-label="Método"><span class="tx-method-pill">${escapeHtml(t.method)}</span></td>
+      <td data-label="Tipo"><span class="tx-type-badge ${cls}">${arrow}</span></td>
+      <td data-label="Valor" class="tx-amount ${cls}">${sign}R$ ${t.value.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})}</td>
+      <td data-label="Saldo">${fmtBRLshort(balanceNow)}</td>
+      <td data-label="" style="text-align:right"><button class="goal-action-btn danger" onclick="deleteTransaction(${t.id})" title="Excluir" aria-label="Excluir transação">🗑️</button></td>
     </tr>`;
   }).join('');
   body.innerHTML = rows;

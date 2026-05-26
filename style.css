@@ -1360,6 +1360,24 @@ html { -webkit-text-size-adjust:100%; text-size-adjust:100%; }
   .filters-card .form-row > .form-group:last-child { grid-column:1 / -1; }
   .filters-card .form-input, .filters-card .form-select { width:100%; min-width:0; box-sizing:border-box; }
   .filters-card .form-label { margin-bottom:4px; }
+
+  /* Tabelas viram cartões empilhados no mobile (sem rolar pro lado) */
+  .tx-table, .tx-table tbody, .admin-table, .admin-table tbody { display:block; width:100%; }
+  .tx-table thead, .admin-table thead { display:none; }
+  .tx-table tr, .admin-table tr {
+    display:block; background:var(--bg-secondary); border:1px solid var(--glass-border);
+    border-radius:12px; padding:6px 12px; margin-bottom:10px;
+  }
+  .tx-table td, .admin-table td {
+    display:flex; align-items:center; justify-content:space-between; gap:12px;
+    padding:6px 0 !important; border:none !important; text-align:right; white-space:normal; min-width:0;
+  }
+  .tx-table td::before, .admin-table td::before {
+    content: attr(data-label); color:var(--text-muted); font-size:12px; font-weight:600;
+    text-align:left; flex:none; white-space:nowrap;
+  }
+  .tx-table td[data-label=""], .admin-table td[data-label=""] { justify-content:flex-end; padding-top:8px !important; }
+  .tx-table td[data-label=""]::before, .admin-table td[data-label=""]::before { content:none; }
 }
 
   /* ── EVO FILTER BUTTONS ── */
