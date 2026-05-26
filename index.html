@@ -160,6 +160,22 @@
   </div>
 </div>
 
+<!-- DEPOSITAR / RETIRAR (CONTAS DEPOSITADAS) -->
+<div class="modal-overlay" id="balanceModal">
+  <div class="modal">
+    <div class="modal-title" id="balanceModalTitle">Depositar</div>
+    <div class="modal-sub" id="balanceModalSub">Saldo atual: —</div>
+    <div class="form-group">
+      <label class="form-label">Valor (R$)</label>
+      <input class="form-input" type="number" min="0" step="0.01" placeholder="0,00" id="balanceModalValue" onkeydown="if(event.key==='Enter'){event.preventDefault();confirmBalanceAdjust();}"/>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-ghost" onclick="closeBalanceModal()">Cancelar</button>
+      <button class="btn-primary" style="width:auto;padding:9px 20px" id="balanceModalOk" onclick="confirmBalanceAdjust()">Confirmar</button>
+    </div>
+  </div>
+</div>
+
 <!-- EDITAR USUÁRIO (ADMIN) -->
 <div class="modal-overlay" id="editUserModal">
   <div class="modal">
@@ -1382,6 +1398,6 @@
 </div>
 
 <script src="config.js?v=9" defer></script>
-<script src="script.js?v=50" defer></script>
+<script src="script.js?v=51" defer></script>
 </body>
 </html>

@@ -2116,33 +2116,49 @@ async function deleteAccount() {
   showToast(`Conta "${a.house}" excluída.`,'info');
 }
 
-async function quickAdjustBalance(id, delta) {
+// Abre o modal estilizado de depósito/retirada (substitui o prompt() nativo)
+let _balanceAdjust = null; // { id, delta }
+function quickAdjustBalance(id, delta) {
   const a = accounts.find(x => x.id === id);
   if(!a) return;
-  const promptMsg = delta > 0
-    ? `Quanto você está depositando na ${a.house}? (Saldo atual: R$ ${a.balance.toFixed(2)})`
-    : `Quanto você está sacando/usando na ${a.house}? (Saldo atual: R$ ${a.balance.toFixed(2)})`;
-  const value = prompt(promptMsg, '0');
-  if(value === null) return;
-  const v = parseFloat(value);
+  _balanceAdjust = { id: id, delta: delta };
+  const isDep = delta > 0;
+  setTextSafe('balanceModalTitle', (isDep ? '💰 Depositar em ' : '💸 Retirar de ') + a.house);
+  setTextSafe('balanceModalSub', 'Saldo atual: ' + fmtBRL(a.balance));
+  const inp = document.getElementById('balanceModalValue');
+  if(inp) inp.value = '';
+  const ok = document.getElementById('balanceModalOk');
+  if(ok) ok.textContent = isDep ? 'Depositar' : 'Retirar';
+  document.getElementById('balanceModal').classList.add('open');
+  setTimeout(() => { if(inp) inp.focus(); }, 100);
+}
+function closeBalanceModal() {
+  document.getElementById('balanceModal').classList.remove('open');
+  _balanceAdjust = null;
+}
+async function confirmBalanceAdjust() {
+  if(!_balanceAdjust) return;
+  const id = _balanceAdjust.id, delta = _balanceAdjust.delta;
+  const a = accounts.find(x => x.id === id);
+  if(!a) { closeBalanceModal(); return; }
+  const v = parseFloat(String(document.getElementById('balanceModalValue').value || '').replace(',','.'));
   if(isNaN(v) || v < 0) { showToast('Valor inválido!','error'); return; }
   if(delta > 0) {
     a.balance += v;
     showToast(`+R$ ${v.toFixed(2)} adicionado em ${a.house}. Novo saldo: R$ ${a.balance.toFixed(2)}`,'success');
   } else {
     if(v > a.balance) {
-      const ok = await customConfirm(
+      const okc = await customConfirm(
         `Você está retirando R$ ${v.toFixed(2)} mas só tem R$ ${a.balance.toFixed(2)}. O saldo ficará negativo. Confirma?`,
-        'Saldo insuficiente',
-        'Confirmar',
-        false
+        'Saldo insuficiente', 'Confirmar', false
       );
-      if(!ok) return;
+      if(!okc) return; // mantém o modal aberto pra ajustar o valor
     }
     a.balance -= v;
     showToast(`-R$ ${v.toFixed(2)} retirado de ${a.house}. Novo saldo: R$ ${a.balance.toFixed(2)}`,'info');
   }
   a.date = isoDateLocal();
+  closeBalanceModal();
   renderAccounts();
   persistAccounts();
 }
