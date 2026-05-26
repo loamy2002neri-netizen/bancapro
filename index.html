@@ -361,7 +361,6 @@
       <div class="nav-item" onclick="goTo('methods',this)"><span class="nav-icon">📊</span>Métodos</div>
       <div class="nav-item" onclick="goTo('transactions',this)"><span class="nav-icon">💸</span>Transações</div>
       <div class="nav-item" onclick="goTo('accounts',this)"><span class="nav-icon">🏦</span>Contas Depositadas</div>
-      <div class="nav-item" onclick="goTo('recharge',this)"><span class="nav-icon">💳</span>Recarga<span class="nav-badge green">Ativo</span></div>
     </div>
 
     <div class="sidebar-section">
@@ -401,6 +400,7 @@
       </div>
       <div class="topbar-actions">
         <button class="btn-ghost" style="padding:6px 14px;font-size:12px" onclick="openTxModal()">+ Transação</button>
+        <button class="icon-btn" onclick="goTo('recharge',null)" aria-label="Assinatura" title="Assinatura">💳</button>
         <button class="icon-btn" id="themeBtn" onclick="toggleTheme()" aria-label="Mudar tema" title="Mudar tema">☀️</button>
         <button class="icon-btn" onclick="toggleNotif()" id="notifBtn" aria-label="Notificações">🔔<div class="notif-dot" id="notifDot"></div></button>
         <button class="icon-btn" onclick="goTo('settings',null)" aria-label="Configurações">⚙️</button>
@@ -1382,6 +1382,6 @@
 </div>
 
 <script src="config.js?v=9" defer></script>
-<script src="script.js?v=40" defer></script>
+<script src="script.js?v=41" defer></script>
 </body>
 </html>
