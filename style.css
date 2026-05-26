@@ -1283,15 +1283,17 @@ html { -webkit-text-size-adjust:100%; text-size-adjust:100%; }
 
 /* Respeita a área segura (notch / barra inferior) no iPhone */
 @supports (padding: max(0px)) {
-  .topbar      { padding-left: max(16px, env(safe-area-inset-left)); padding-right: max(16px, env(safe-area-inset-right)); }
+  .topbar      { padding-left: max(16px, env(safe-area-inset-left)); padding-right: max(16px, env(safe-area-inset-right)); padding-top: env(safe-area-inset-top); height: calc(60px + env(safe-area-inset-top)); }
   .sidebar     { padding-bottom: env(safe-area-inset-bottom); }
-  .auth-screen { padding-left: max(16px, env(safe-area-inset-left)); padding-right: max(16px, env(safe-area-inset-right)); padding-bottom: env(safe-area-inset-bottom); }
+  .main        { padding-bottom: env(safe-area-inset-bottom); }
+  .auth-screen { padding-left: max(16px, env(safe-area-inset-left)); padding-right: max(16px, env(safe-area-inset-right)); padding-top: env(safe-area-inset-top); padding-bottom: env(safe-area-inset-bottom); }
   .toast-container { right: max(24px, env(safe-area-inset-right)); bottom: max(24px, env(safe-area-inset-bottom)); }
 }
 
-/* Usa a altura real da tela no mobile (evita "pulo" com a barra do navegador) */
+/* Usa a altura real da tela no mobile (evita "pulo" com a barra do navegador no iOS/Android) */
 @supports (height: 100dvh) {
   .auth-screen { min-height: 100dvh; }
+  .app { height: 100dvh; }
 }
 
 @media (max-width:768px) {
