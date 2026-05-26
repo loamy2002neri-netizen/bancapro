@@ -1176,10 +1176,12 @@ document.addEventListener('click', e => {
 // ══════════════════════════════════════════════
 //  MODAL
 // ══════════════════════════════════════════════
+// Data de hoje (ou de uma data) em YYYY-MM-DD no fuso LOCAL — evita o atraso de 1 dia do toISOString (UTC)
+function isoDateLocal(d){ d = d || new Date(); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
 function openTxModal() {
   document.getElementById('txType').value = 'income';
   document.getElementById('txModal').classList.add('open');
-  const d = new Date(); const today = d.toISOString().split('T')[0];
+  const today = isoDateLocal();
   const dateInput = document.getElementById('txDate');
   dateInput.value = today;
   dateInput.max = today;
@@ -1188,7 +1190,7 @@ function openTxModal() {
 function openTxModalExpense() {
   document.getElementById('txType').value = 'expense';
   document.getElementById('txModal').classList.add('open');
-  const today = new Date().toISOString().split('T')[0];
+  const today = isoDateLocal();
   const dateInput = document.getElementById('txDate');
   if(!dateInput.value) dateInput.value = today;
   dateInput.max = today;
@@ -1200,7 +1202,7 @@ function saveTransaction() {
   if(!val || val <= 0) { showToast('Informe um valor válido!','error'); return; }
   const dateVal = document.getElementById('txDate').value;
   if(!dateVal) { showToast('Selecione uma data!','error'); return; }
-  const today = new Date().toISOString().slice(0,10);
+  const today = isoDateLocal();
   if(dateVal > today) { showToast('A data não pode ser no futuro!','error'); return; }
   const type = document.getElementById('txType').value;
   const method = document.getElementById('txMethod').value;
@@ -1909,7 +1911,7 @@ function openAccountModal(accountId) {
     delBtn.style.display = 'none';
     selectedHouseInModal = null;
     document.getElementById('accountAmount').value = '';
-    const today = new Date().toISOString().split('T')[0];
+    const today = isoDateLocal();
     const dateInput = document.getElementById('accountDate');
     dateInput.value = today; dateInput.max = today;
     document.getElementById('accountNote').value = '';
@@ -2058,7 +2060,7 @@ async function saveAccount() {
   }
   const amount = parseFloat(document.getElementById('accountAmount').value);
   if(isNaN(amount) || amount < 0) { showToast('Informe um saldo válido!','error'); return; }
-  const date = document.getElementById('accountDate').value || new Date().toISOString().split('T')[0];
+  const date = document.getElementById('accountDate').value || isoDateLocal();
   const note = document.getElementById('accountNote').value.trim();
 
   if(editingAccountId) {
@@ -2140,7 +2142,7 @@ async function quickAdjustBalance(id, delta) {
     a.balance -= v;
     showToast(`-R$ ${v.toFixed(2)} retirado de ${a.house}. Novo saldo: R$ ${a.balance.toFixed(2)}`,'info');
   }
-  a.date = new Date().toISOString().split('T')[0];
+  a.date = isoDateLocal();
   renderAccounts();
   persistAccounts();
 }
@@ -3298,9 +3300,9 @@ function setEvoMode(mode, el){
     // pré-preenche com os últimos 30 dias (relativo a hoje)
     const today = new Date();
     const ago   = new Date(); ago.setDate(ago.getDate() - 30);
-    document.getElementById('evoDateFrom').value = ago.toISOString().split('T')[0];
-    document.getElementById('evoDateTo').value   = today.toISOString().split('T')[0];
-    document.getElementById('evoDateTo').max     = today.toISOString().split('T')[0];
+    document.getElementById('evoDateFrom').value = isoDateLocal(ago);
+    document.getElementById('evoDateTo').value   = isoDateLocal(today);
+    document.getElementById('evoDateTo').max     = isoDateLocal(today);
     applyCustomRange();
   } else {
     dr.style.display='none';
