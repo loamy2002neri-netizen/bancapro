@@ -1192,8 +1192,15 @@
     .chart-card { padding:16px; border-radius:14px; }
     .chart-grid { grid-template-columns:1fr !important; gap:12px !important; }
     .chart-grid .chart-card { height:260px; }
-    .topbar { padding:0 14px; }
+    .topbar { padding:0 12px; gap:8px; }
     .menu-btn { display:flex !important; }
+    /* Cabe tudo no topo do celular: "+" sem texto, ícones e espaços menores */
+    .topbar-title { overflow:hidden; min-width:0; }
+    .topbar-breadcrumb { white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .topbar-actions { gap:5px; }
+    .topbar-actions .icon-btn { width:32px; }
+    .txbtn-label { display:none; }
+    .txbtn { padding:7px 10px !important; }
     .stat-row { gap:8px; }
     .stat-chip { padding:6px 10px; min-width:90px; }
     .stat-chip-value { font-size:13px; }

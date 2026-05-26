@@ -18,7 +18,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
-<link rel="stylesheet" href="style.css?v=28"/>
+<link rel="stylesheet" href="style.css?v=29"/>
 </head>
 <body>
 
@@ -399,7 +399,7 @@
         <div class="topbar-breadcrumb">Apostack / <span id="breadcrumb">Dashboard</span></div>
       </div>
       <div class="topbar-actions">
-        <button class="btn-ghost" style="padding:6px 14px;font-size:12px" onclick="openTxModal()">+ Transação</button>
+        <button class="btn-ghost txbtn" style="padding:6px 14px;font-size:12px" onclick="openTxModal()" title="Nova transação">+<span class="txbtn-label"> Transação</span></button>
         <button class="icon-btn" onclick="goTo('recharge',null)" aria-label="Assinatura" title="Assinatura">💳</button>
         <button class="icon-btn" id="themeBtn" onclick="toggleTheme()" aria-label="Mudar tema" title="Mudar tema">☀️</button>
         <button class="icon-btn" onclick="toggleNotif()" id="notifBtn" aria-label="Notificações">🔔<div class="notif-dot" id="notifDot"></div></button>
