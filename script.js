@@ -2787,13 +2787,27 @@ function updateUserName() {
   document.getElementById('sidebarUserName').textContent = document.getElementById('settingsUserName').value || 'Admin';
 }
 
-function saveProfile() {
+async function saveProfile() {
   const name  = document.getElementById('settingsUserName').value.trim() || 'Admin';
   const email = document.getElementById('settingsUserEmail').value.trim();
   if(email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
     showToast('E-mail inválido!','error');
     return;
   }
+
+  // --- troca de senha (opcional) ---
+  const cur = (document.getElementById('settingsCurPwd')||{}).value || '';
+  const nw  = (document.getElementById('settingsNewPwd')||{}).value || '';
+  const nw2 = (document.getElementById('settingsNewPwd2')||{}).value || '';
+  const wantsPwd = cur || nw || nw2;
+  if (wantsPwd) {
+    if (!cur || !nw || !nw2) { showToast('Pra trocar a senha, preencha a senha atual, a nova e a confirmação.','error'); return; }
+    if (nw.length < 6)       { showToast('A nova senha precisa de pelo menos 6 caracteres.','error'); return; }
+    if (nw !== nw2)          { showToast('A nova senha e a confirmação não conferem.','error'); return; }
+    const ok = await changePassword(cur, nw);
+    if (!ok) return; // changePassword já avisou o erro
+  }
+
   try {
     localStorage.setItem('bancapro-user-name', name);
     if(email) localStorage.setItem('bancapro-user-email', email);
@@ -2802,7 +2816,39 @@ function saveProfile() {
   updateUserName();
   // Atualiza avatar (inicial)
   document.querySelectorAll('.user-avatar').forEach(el => { el.textContent = name.charAt(0).toUpperCase(); });
-  showToast('Perfil atualizado com sucesso!','success');
+  // limpa os campos de senha
+  ['settingsCurPwd','settingsNewPwd','settingsNewPwd2'].forEach(id => { const e=document.getElementById(id); if(e) e.value=''; });
+  showToast(wantsPwd ? 'Perfil e senha atualizados com sucesso!' : 'Perfil atualizado com sucesso!','success');
+}
+
+// Troca a senha de verdade (confere a senha atual antes). Retorna true se deu certo.
+async function changePassword(currentPwd, newPwd) {
+  const sb = getSb();
+  if (sb) {
+    try {
+      const { data: sess } = await sb.auth.getUser();
+      const email = sess && sess.user ? sess.user.email : '';
+      if (!email) { showToast('Sessão não encontrada. Entre novamente.','error'); return false; }
+      // confere a senha atual reautenticando
+      const { error: reauthErr } = await sb.auth.signInWithPassword({ email, password: currentPwd });
+      if (reauthErr) { showToast('Senha atual incorreta.','error'); return false; }
+      const { error: updErr } = await sb.auth.updateUser({ password: newPwd });
+      if (updErr) { showToast('Não foi possível trocar a senha: ' + (updErr.message||''),'error'); return false; }
+      return true;
+    } catch(e) { showToast('Erro ao trocar a senha.','error'); return false; }
+  } else {
+    try {
+      const sid = localStorage.getItem(LOCAL_SESSION_KEY);
+      const users = localGetUsers();
+      const u = users.find(x => x.id === sid);
+      if (!u) { showToast('Sessão não encontrada.','error'); return false; }
+      const h = await hashPassword(currentPwd, u.salt);
+      if (h !== u.passHash) { showToast('Senha atual incorreta.','error'); return false; }
+      u.passHash = await hashPassword(newPwd, u.salt);
+      localSetUsers(users);
+      return true;
+    } catch(e) { showToast('Erro ao trocar a senha.','error'); return false; }
+  }
 }
 
 function loadProfile() {

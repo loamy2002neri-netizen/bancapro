@@ -1062,7 +1062,19 @@
             <div class="form-card-title">👤 Perfil do Usuário</div>
             <div class="form-group"><label class="form-label">Nome</label><input class="form-input" type="text" value="Admin" id="settingsUserName" oninput="updateUserName()"/></div>
             <div class="form-group"><label class="form-label">E-mail</label><input class="form-input" type="email" value="admin@bancapro.com" id="settingsUserEmail"/></div>
-            <div class="form-group"><label class="form-label">Nova Senha</label><input class="form-input" type="password" placeholder="••••••••" id="settingsUserPwd"/></div>
+            <div style="font-size:12px;color:var(--text-muted);margin:4px 0 10px">🔒 Trocar senha (deixe em branco se não quiser trocar)</div>
+            <div class="form-group">
+              <label class="form-label">Senha atual</label>
+              <div class="pw-wrap"><input class="form-input" type="password" placeholder="Sua senha de agora" id="settingsCurPwd" autocomplete="current-password"/><button type="button" class="pw-toggle" onclick="togglePw(this,'settingsCurPwd')" aria-label="Mostrar senha">👁</button></div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Nova senha</label>
+              <div class="pw-wrap"><input class="form-input" type="password" placeholder="Mín. 6 caracteres" id="settingsNewPwd" autocomplete="new-password"/><button type="button" class="pw-toggle" onclick="togglePw(this,'settingsNewPwd')" aria-label="Mostrar senha">👁</button></div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Confirmar nova senha</label>
+              <div class="pw-wrap"><input class="form-input" type="password" placeholder="Digite a nova senha de novo" id="settingsNewPwd2" autocomplete="new-password"/><button type="button" class="pw-toggle" onclick="togglePw(this,'settingsNewPwd2')" aria-label="Mostrar senha">👁</button></div>
+            </div>
             <button class="btn-primary" onclick="saveProfile()">Salvar Alterações</button>
           </div>
 
@@ -1370,6 +1382,6 @@
 </div>
 
 <script src="config.js?v=9" defer></script>
-<script src="script.js?v=39" defer></script>
+<script src="script.js?v=40" defer></script>
 </body>
 </html>
