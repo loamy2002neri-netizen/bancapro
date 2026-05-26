@@ -144,6 +144,21 @@
   </div>
 </div>
 
+<!-- EDITAR USUÁRIO (ADMIN) -->
+<div class="modal-overlay" id="editUserModal">
+  <div class="modal">
+    <div class="modal-title">✏️ Editar usuário</div>
+    <div class="modal-sub">Usuário: <strong id="editUserEmail">—</strong> · <span id="editUserStatus">—</span></div>
+    <div style="display:flex;flex-direction:column;gap:10px;margin:18px 0 4px">
+      <button class="btn-primary" id="editUserAccessBtn" style="width:100%" onclick="editUserToggleAccess()">🔓 Liberar acesso</button>
+      <button class="btn-ghost" id="editUserDeleteBtn" style="width:100%;color:var(--red);border-color:rgba(244,63,94,0.35)" onclick="editUserDelete()">🗑 Excluir usuário</button>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-ghost" onclick="closeEditUser()">Fechar</button>
+    </div>
+  </div>
+</div>
+
 <!-- ADICIONAR AFILIADO (ADMIN) -->
 <div class="modal-overlay" id="addAffiliateModal">
   <div class="modal">
@@ -739,11 +754,11 @@
             <button class="btn-plan-ghost" disabled>Plano atual</button>
           </div>
 
-          <!-- PLANO PREMIUM -->
+          <!-- PLANO PLUS (MENSAL) -->
           <div class="plan-card plan-card-featured">
             <div class="plan-featured-ribbon">🔥 Mais popular</div>
             <div class="plan-header">
-              <div class="plan-name">Premium</div>
+              <div class="plan-name">Plus Mensal</div>
               <div class="plan-badge plan-badge-gold">Recomendado</div>
             </div>
             <div class="plan-price">
@@ -759,16 +774,16 @@
               <li><span class="plan-check premium">✓</span>Comparativos e projeções</li>
               <li><span class="plan-check premium">✓</span>Metas personalizadas</li>
               <li><span class="plan-check premium">✓</span>Backup automático na nuvem</li>
-              <li><span class="plan-check premium">✓</span>Suporte prioritário 24/7</li>
+              <li><span class="plan-check premium">✓</span>Suporte prioritário</li>
             </ul>
-            <button class="btn-plan-primary" onclick="subscribeNow()">Assinar Premium → R$ 24,90</button>
+            <button class="btn-plan-primary" onclick="subscribeNow()">Assinar Plus → R$ 24,90</button>
             <div class="plan-guarantee">🔒 Cancele a qualquer momento · Sem fidelidade</div>
           </div>
 
-          <!-- PLANO ANUAL -->
+          <!-- PLANO PRO (ANUAL) -->
           <div class="plan-card">
             <div class="plan-header">
-              <div class="plan-name">Premium Anual</div>
+              <div class="plan-name">Pro Anual</div>
               <div class="plan-badge plan-badge-gold">Economize 33%</div>
             </div>
             <div class="plan-price">
@@ -778,15 +793,15 @@
             </div>
             <div class="plan-desc">≈ R$ 16,58/mês · pague uma vez no ano</div>
             <ul class="plan-features">
-              <li><span class="plan-check premium">✓</span><strong>Tudo do Premium</strong></li>
-              <li><span class="plan-check premium">✓</span>Transações e métodos ilimitados</li>
+              <li><span class="plan-check premium">✓</span><strong>Tudo do Plus, e mais:</strong></li>
+              <li><span class="plan-check premium">✓</span><strong>Suporte VIP exclusivo</strong></li>
+              <li><span class="plan-check premium">✓</span><strong>Acesso antecipado a novidades</strong></li>
               <li><span class="plan-check premium">✓</span>Relatórios avançados (PDF/Excel)</li>
               <li><span class="plan-check premium">✓</span>Comparativos e projeções</li>
               <li><span class="plan-check premium">✓</span>Backup automático na nuvem</li>
-              <li><span class="plan-check premium">✓</span>Suporte prioritário 24/7</li>
-              <li><span class="plan-check premium">✓</span><strong>Economize R$ 99,80 por ano</strong></li>
+              <li><span class="plan-check premium">✓</span><strong>Economize R$ 99,80 (~4 meses grátis)</strong></li>
             </ul>
-            <button class="btn-plan-primary" onclick="subscribeNow('anual')">Assinar Anual → R$ 199</button>
+            <button class="btn-plan-primary" onclick="subscribeNow('anual')">Assinar Pro → R$ 199</button>
             <div class="plan-guarantee">🔒 1 pagamento por ano · Cancele quando quiser</div>
           </div>
         </div>
@@ -821,7 +836,7 @@
             </div>
             <div class="faq-item">
               <div class="faq-q" onclick="toggleFaq(this)"><span>Posso testar antes de pagar?</span><span class="faq-arrow">▾</span></div>
-              <div class="faq-a">Sim, é exatamente isso que os 7 dias grátis oferecem: acesso 100% ao Premium pra você testar sem compromisso. Se gostar, continua. Se não, é só não assinar — não cobramos nada.</div>
+              <div class="faq-a">Sim, é exatamente isso que os 7 dias grátis oferecem: acesso 100% a todos os recursos pra você testar sem compromisso. Se gostar, continua. Se não, é só não assinar — não cobramos nada.</div>
             </div>
           </div>
         </div>
@@ -1332,13 +1347,13 @@
     <div class="paywall-emoji">⏳</div>
     <div class="paywall-title">Seu acesso expirou</div>
     <div class="paywall-sub">Seu período grátis terminou. Assine o Apostack para continuar usando o painel completo.</div>
-    <button class="btn-primary" style="margin-bottom:10px" onclick="subscribeNow()">Assinar Premium · R$ 24,90/mês</button>
-    <button class="btn-primary" onclick="subscribeNow('anual')">Assinar Anual · R$ 199/ano</button>
+    <button class="btn-primary" style="margin-bottom:10px" onclick="subscribeNow()">Assinar Plus · R$ 24,90/mês</button>
+    <button class="btn-primary" onclick="subscribeNow('anual')">Assinar Pro · R$ 199/ano</button>
     <div class="paywall-foot">Já assinou? <a onclick="location.reload()">Atualizar</a> &nbsp;·&nbsp; <a onclick="logout()">Sair</a></div>
   </div>
 </div>
 
 <script src="config.js?v=9" defer></script>
-<script src="script.js?v=34" defer></script>
+<script src="script.js?v=36" defer></script>
 </body>
 </html>

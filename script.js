@@ -387,12 +387,9 @@ async function renderAdminUsers() {
       const created = u.created_at ? new Date(u.created_at).toLocaleDateString('pt-BR') : '—';
       const last = u.last_sign_in_at ? new Date(u.last_sign_in_at).toLocaleDateString('pt-BR') : '—';
       const emailAttr = escapeHtml(u.email || '');
-      const isOwnerRow = OWNER_EMAILS.includes((u.email || '').toLowerCase());
-      const action = u.status === 'active'
-        ? `<button class="btn-ghost" style="padding:5px 10px;font-size:12px;color:var(--red)" data-email="${emailAttr}" data-status="inactive" onclick="adminSetStatus(this)">🚫 Bloquear</button>`
-        : `<button class="btn-ghost" style="padding:5px 10px;font-size:12px;color:var(--green)" data-email="${emailAttr}" data-status="active" onclick="adminSetStatus(this)">🔓 Liberar</button>`;
-      const delBtn = (u.email && !isOwnerRow)
-        ? ` <button class="btn-ghost" style="padding:5px 10px;font-size:12px;color:var(--red)" data-email="${emailAttr}" onclick="adminDeleteUser(this)">🗑 Excluir</button>`
+      const statusAttr = escapeHtml(u.status || '');
+      const editBtn = u.email
+        ? `<button class="btn-ghost" style="padding:5px 14px;font-size:12px" data-email="${emailAttr}" data-status="${statusAttr}" onclick="openEditUser(this)">✏️ Editar</button>`
         : '';
       return `<tr>
         <td>${escapeHtml(u.email || '—')}</td>
@@ -400,7 +397,7 @@ async function renderAdminUsers() {
         <td>${escapeHtml(u.plan || '—')}</td>
         <td>${created}</td>
         <td>${last}</td>
-        <td style="white-space:nowrap;text-align:right">${u.email ? action : ''}${delBtn}</td>
+        <td style="white-space:nowrap;text-align:right">${editBtn}</td>
       </tr>`;
     }).join('');
     el.innerHTML = `<div style="overflow-x:auto"><table class="admin-table">
@@ -649,6 +646,45 @@ async function adminSetStatus(btn) {
   await applyAccess(email, 'inactive', null);
 }
 
+// Painel do dono: modal "Editar usuário" (libera/bloqueia ou exclui)
+let _editUser = null;
+function openEditUser(btn) {
+  const email = btn && btn.dataset ? btn.dataset.email : '';
+  const status = btn && btn.dataset ? btn.dataset.status : '';
+  if (!email) return;
+  _editUser = { email: email, status: status };
+  const isActive = status === 'active';
+  setTextSafe('editUserEmail', email);
+  const statusEl = document.getElementById('editUserStatus');
+  if (statusEl) statusEl.innerHTML = isActive
+    ? '<span style="color:var(--green);font-weight:600">Acesso ativo</span>'
+    : '<span style="color:var(--text-muted);font-weight:600">Sem acesso</span>';
+  const accessBtn = document.getElementById('editUserAccessBtn');
+  if (accessBtn) {
+    accessBtn.textContent = isActive ? '🚫 Bloquear acesso' : '🔓 Liberar acesso';
+    accessBtn.className = isActive ? 'btn-ghost' : 'btn-primary';
+    accessBtn.style.width = '100%';
+    accessBtn.style.color = isActive ? 'var(--red)' : '';
+    accessBtn.style.borderColor = isActive ? 'rgba(244,63,94,0.35)' : '';
+  }
+  const delBtn = document.getElementById('editUserDeleteBtn');
+  if (delBtn) delBtn.style.display = OWNER_EMAILS.includes(email.toLowerCase()) ? 'none' : '';
+  document.getElementById('editUserModal').classList.add('open');
+}
+function closeEditUser() { document.getElementById('editUserModal').classList.remove('open'); _editUser = null; }
+function editUserToggleAccess() {
+  if (!_editUser) return;
+  const email = _editUser.email, isActive = _editUser.status === 'active';
+  closeEditUser();
+  adminSetStatus({ dataset: { email: email, status: isActive ? 'inactive' : 'active' } });
+}
+function editUserDelete() {
+  if (!_editUser) return;
+  const email = _editUser.email;
+  closeEditUser();
+  adminDeleteUser({ dataset: { email: email } });
+}
+
 // Painel do dono: excluir usuário DEFINITIVAMENTE (login + todos os dados)
 async function adminDeleteUser(btn) {
   const email = btn && btn.dataset ? btn.dataset.email : '';
@@ -756,7 +792,7 @@ async function renderSubscriptionCard() {
       const naoExpirou = !data || !data.valid_until || new Date(data.valid_until).getTime() > Date.now();
       if (data && data.status === 'active' && naoExpirou) {
         isActive = true;
-        planName = data.plan || 'Premium';
+        planName = data.plan || 'Plus';
         if (data.valid_until) {
           validUntil = new Date(data.valid_until); // liberação manual com prazo
         } else {
