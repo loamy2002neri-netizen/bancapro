@@ -331,6 +331,14 @@ async function renderAdminStats() {
     }
     const s = data;
     const conv = s.total_users > 0 ? ((s.active_subs / s.total_users) * 100).toFixed(1) : '0';
+    // Conversão trial→pago = % dos usuários que JÁ assinaram alguma vez
+    const convTrial = s.total_users > 0 ? ((s.total_subs / s.total_users) * 100).toFixed(1) : '0';
+    // Churn (30 dias) — RPC nova e opcional; mostra "—" se ainda não foi criada no Supabase
+    let churnTxt = '—';
+    try {
+      const { data: ch } = await sb.rpc('get_owner_churn');
+      if (ch && ch.churn_pct != null) churnTxt = ch.churn_pct + '%';
+    } catch(e) {}
 
     // Faturamento (MRR): calcula a partir dos planos dos assinantes ATIVOS
     let mensal = 0, anual = 0;
@@ -350,18 +358,24 @@ async function renderAdminStats() {
     const fmtArr = 'R$ ' + (mrr * 12).toLocaleString('pt-BR', {maximumFractionDigits:0});
 
     el.innerHTML = `
-      <div class="stat-row" style="grid-template-columns:repeat(4,minmax(0,1fr))">
+      <div style="font-size:12px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.6px;font-weight:700;margin-bottom:8px">📌 Os 3 números que importam</div>
+      <div class="stat-row" style="grid-template-columns:repeat(3,minmax(0,1fr))">
+        <div class="stat-chip" style="border-color:rgba(16,185,129,0.35)"><div class="stat-chip-label">✅ Assinantes ativos</div><div class="stat-chip-value" style="font-size:22px;color:var(--green)">${s.active_subs}</div></div>
+        <div class="stat-chip" style="border-color:rgba(244,63,94,0.35)"><div class="stat-chip-label">📉 Churn (30 dias)</div><div class="stat-chip-value" style="font-size:22px;color:var(--red)">${churnTxt}</div></div>
+        <div class="stat-chip" style="border-color:rgba(139,92,246,0.35)"><div class="stat-chip-label">🎯 Conversão trial→pago</div><div class="stat-chip-value" style="font-size:22px;color:var(--accent2)">${convTrial}%</div></div>
+      </div>
+      <div class="stat-row" style="grid-template-columns:repeat(4,minmax(0,1fr));margin-top:14px">
         <div class="stat-chip"><div class="stat-chip-label">Usuários totais</div><div class="stat-chip-value">${s.total_users}</div></div>
-        <div class="stat-chip"><div class="stat-chip-label">Assinantes ativos</div><div class="stat-chip-value" style="color:var(--green)">${s.active_subs}</div></div>
-        <div class="stat-chip"><div class="stat-chip-label">Conversão</div><div class="stat-chip-value">${conv}%</div></div>
+        <div class="stat-chip"><div class="stat-chip-label">Já assinaram (total)</div><div class="stat-chip-value">${s.total_subs}</div></div>
         <div class="stat-chip"><div class="stat-chip-label">Cadastros (7 dias)</div><div class="stat-chip-value">${s.signups_7d}</div></div>
+        <div class="stat-chip"><div class="stat-chip-label">Inativos/cancelados</div><div class="stat-chip-value">${s.inactive_subs}</div></div>
       </div>
       <div class="stat-row" style="grid-template-columns:repeat(3,minmax(0,1fr));margin-top:10px">
         <div class="stat-chip"><div class="stat-chip-label">💰 Faturamento mensal (MRR)</div><div class="stat-chip-value" style="color:var(--green)">${fmtMrr}</div></div>
         <div class="stat-chip"><div class="stat-chip-label">Projeção anual</div><div class="stat-chip-value">${fmtArr}</div></div>
         <div class="stat-chip"><div class="stat-chip-label">Ativos: mensal / anual</div><div class="stat-chip-value">${mensal} / ${anual}</div></div>
       </div>
-      <div style="margin-top:14px;font-size:12px;color:var(--text-muted)">Já assinaram (total): ${s.total_subs} · Inativos/cancelados: ${s.inactive_subs}</div>
+      <div style="margin-top:14px;font-size:12px;color:var(--text-muted)">💡 <b>Ativos</b>: quem está pagando agora. <b>Churn</b>: % que cancelou nos últimos 30 dias. <b>Conversão</b>: dos cadastros, quantos viraram assinantes.</div>
     `;
   } catch(e) {
     el.innerHTML = '<div class="empty-state-sub">Erro ao carregar métricas.</div>';
