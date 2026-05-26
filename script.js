@@ -3155,31 +3155,31 @@ function buildEvoDatasetFor(mode, fromDate, toDate) {
   }
 
   if(mode === 'today') {
-    // Transações só têm data (sem hora), então mostramos 2 pontos: "Início do dia" → "Agora".
-    // Assim a linha aparece (1 ponto só não desenha) e dá pra ver o movimento de hoje.
+    // Plota UM PONTO POR TRANSAÇÃO do dia (em ordem de criação) — deixa a linha
+    // dinâmica em vez de uma reta. Sem hora real, usamos o horário de criação (id).
     const iso = isoLocal(today);
-    let dayRec = 0, dayDes = 0;
-    transactions.forEach(t => {
-      if(t.date === iso) {
-        if(t.type === 'income')  dayRec += t.value;
-        if(t.type === 'expense') dayDes += t.value;
-      }
-    });
-    const dayLuc = dayRec - dayDes;
     // Saldo no início do dia (antes das transações de hoje)
     let saldoInicio = SALDO_BASE;
     transactions.forEach(t => {
       if((t.date||'') < iso) saldoInicio += (t.type==='income' ? t.value : -t.value);
     });
-    const saldoAgora = saldoInicio + dayLuc;
+    const hoje = transactions.filter(t => t.date === iso).slice().sort((a,b) => (a.id||0) - (b.id||0));
+    const labels = ['Início'], saldo = [saldoInicio], lucro = [0], despesas = [0], receita = [0];
+    let rSaldo = saldoInicio, rRec = 0, rDes = 0;
+    hoje.forEach((t, i) => {
+      if(t.type === 'income') { rRec += t.value; rSaldo += t.value; }
+      else                    { rDes += t.value; rSaldo -= t.value; }
+      let lbl;
+      if(i === hoje.length - 1) lbl = 'Agora';
+      else { const d = new Date(t.id); lbl = isNaN(d.getTime()) ? String(i+1) : (String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0')); }
+      labels.push(lbl);
+      saldo.push(rSaldo); lucro.push(rRec - rDes); despesas.push(rDes); receita.push(rRec);
+    });
+    // sem transações hoje: garante 2 pontos pra desenhar a linha (reta no saldo atual)
+    if(hoje.length === 0) { labels.push('Agora'); saldo.push(saldoInicio); lucro.push(0); despesas.push(0); receita.push(0); }
     return {
       subtitle: 'Hoje — ' + today.toLocaleDateString('pt-BR'),
-      labels: ['Início do dia', 'Agora'],
-      saldo:    [saldoInicio, saldoAgora],
-      lucro:    [0, dayLuc],
-      despesas: [0, dayDes],
-      receita:  [0, dayRec],
-      isDaily: false
+      labels, saldo, lucro, despesas, receita, isDaily: false
     };
   }
 
