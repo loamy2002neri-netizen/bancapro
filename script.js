@@ -3235,6 +3235,31 @@ function buildEvoChart(mode, fromDate, toDate) {
   let receita = src.receita;
   const isDaily = src.isDaily;
 
+  // Hoje/7 dias: ajusta o eixo Y pra linha ocupar o gráfico e mostrar os desvios.
+  // Se a banca for grande, o eixo dá ZOOM na faixa do saldo (em vez de começar no
+  // zero), senão o saldo fica colado no topo e parece reto. Nunca abaixo de 0.
+  let yMin, yMax;
+  if(mode === 'today' || mode === '7d') {
+    const all = saldo.concat(lucro, receita, despesas).filter(v => isFinite(v));
+    const sal = saldo.filter(v => isFinite(v));
+    if(all.length && sal.length) {
+      const aLo = Math.min.apply(null, all), aHi = Math.max.apply(null, all);
+      const sLo = Math.min.apply(null, sal), sHi = Math.max.apply(null, sal);
+      const aRange = (aHi - aLo) || Math.abs(aHi) || 1;
+      const sVar = sHi - sLo;
+      // Saldo "some" no eixo cheio? então dá zoom só na faixa do saldo.
+      if(sVar > 0 && sVar < aRange * 0.30) {
+        const pad = sVar * 0.4;
+        yMin = Math.max(0, sLo - pad);
+        yMax = sHi + pad;
+      } else {
+        const pad = aRange * 0.1;
+        yMin = Math.max(0, aLo - pad);
+        yMax = aHi + pad;
+      }
+    }
+  }
+
   if(mode === 'custom' && fromDate && toDate) {
     document.getElementById('evoSubtitle').textContent = 'Personalizado — '+fmtLabel(fromDate)+' a '+fmtLabel(toDate);
   } else {
@@ -3313,10 +3338,20 @@ function buildEvoChart(mode, fromDate, toDate) {
           }
         },
         y:{
+          // Hoje/7d: eixo ajustado ao valor real do período (mostra os desvios); demais: automático
+          min: yMin,
+          max: yMax,
           grid:{color:getChartColors().grid,drawBorder:false},
           ticks:{
             color:getChartColors().text,font:{size:10},
-            callback(v){ return v>=1000?(v/1000).toFixed(0)+'k':'R$'+v; }
+            callback(v){
+              if(Math.abs(v) >= 1000){
+                var n = v/1000;
+                // mostra 1 casa decimal quando o tick nao e um milhar inteiro (evita "4k 4k 3k 3k")
+                return (Math.abs(n - Math.round(n)) < 0.05 ? Math.round(n) : n.toFixed(1)) + 'k';
+              }
+              return 'R$'+v;
+            }
           },
           position:'left'
         }
@@ -3460,7 +3495,7 @@ function buildMethodCategoryChart() {
       },
       scales:{
         x:{grid:{display:false}, ticks:{color:getChartColors().text, font:{size:12}, maxRotation:0}},
-        y:{grid:{color:getChartColors().grid, drawBorder:false}, ticks:{color:getChartColors().text, font:{size:12}, callback(v){return v>=1000?(v/1000).toFixed(0)+'k':v}}}
+        y:{grid:{color:getChartColors().grid, drawBorder:false}, ticks:{color:getChartColors().text, font:{size:12}, callback(v){ if(Math.abs(v)>=1000){ var n=v/1000; return (Math.abs(n-Math.round(n))<0.05?Math.round(n):n.toFixed(1))+'k'; } return v; }}}
       }
     }
   });
