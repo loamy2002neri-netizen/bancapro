@@ -3235,11 +3235,11 @@ function buildEvoChart(mode, fromDate, toDate) {
   let receita = src.receita;
   const isDaily = src.isDaily;
 
-  // Hoje/7 dias: ajusta o eixo Y pra linha ocupar o gráfico e mostrar os desvios.
+  // Hoje/7d/Personalizado: ajusta o eixo Y pra linha ocupar o gráfico e mostrar os desvios.
   // Se a banca for grande, o eixo dá ZOOM na faixa do saldo (em vez de começar no
   // zero), senão o saldo fica colado no topo e parece reto. Nunca abaixo de 0.
-  let yMin, yMax;
-  if(mode === 'today' || mode === '7d') {
+  let yMin, yMax, zoomedToSaldo = false;
+  if(mode === 'today' || mode === '7d' || mode === 'custom') {
     const all = saldo.concat(lucro, receita, despesas).filter(v => isFinite(v));
     const sal = saldo.filter(v => isFinite(v));
     if(all.length && sal.length) {
@@ -3252,12 +3252,25 @@ function buildEvoChart(mode, fromDate, toDate) {
         const pad = sVar * 0.4;
         yMin = Math.max(0, sLo - pad);
         yMax = sHi + pad;
+        zoomedToSaldo = true;
       } else {
         const pad = aRange * 0.1;
         yMin = Math.max(0, aLo - pad);
         yMax = aHi + pad;
       }
     }
+  }
+
+  // Aviso quando o zoom-saldo deixa Lucro/Receita/Despesa fora da escala
+  const axisNote = document.getElementById('evoAxisNote');
+  if(axisNote) {
+    let hideNote = true;
+    if(zoomedToSaldo && yMin != null) {
+      const flows = lucro.concat(receita, despesas).filter(v => isFinite(v));
+      // se algum valor de fluxo cai abaixo do yMin, ele fica fora do grafico
+      if(flows.length && Math.min.apply(null, flows) < yMin) hideNote = false;
+    }
+    axisNote.style.display = hideNote ? 'none' : '';
   }
 
   if(mode === 'custom' && fromDate && toDate) {
