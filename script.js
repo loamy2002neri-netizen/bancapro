@@ -139,7 +139,8 @@ const SYNC_KEYS = [
   'bancapro-accent',
   'bancapro-accent2',
   'bancapro-theme',
-  'bancapro-notes'
+  'bancapro-notes',
+  'bancapro-avatar'
 ];
 
 function clearUserLocal() {
@@ -1026,7 +1027,7 @@ function goTo(section, el) {
   if(section === 'compare') setTimeout(initCompareChart, 100);
   if(section === 'methods') setTimeout(initMethodEvolution, 100);
   if(section === 'recharge') setTimeout(updateTrialBanner, 50);
-  if(section === 'settings') setTimeout(renderSubscriptionCard, 50);
+  if(section === 'settings') { setTimeout(renderSubscriptionCard, 50); setTimeout(applyAvatar, 50); }
   if(section === 'admin') setTimeout(() => { renderAdminStats(); renderAdminUsers(); renderAdminErrors(); }, 50);
   if(section === 'afiliados') setTimeout(() => { renderAffiliatesAdmin(); renderWithdrawalsAdmin(); }, 50);
   if(section === 'afiliado')  setTimeout(renderMyAffiliatePanel, 50);
@@ -1136,6 +1137,104 @@ document.addEventListener('click', function(e){
 document.addEventListener('keydown', function(e){
   if (e.key === 'Escape') closeUserMenu();
 });
+
+// ══════════════════════════════════════════════
+//  AVATAR / FOTO DE PERFIL
+// ══════════════════════════════════════════════
+const AVATAR_KEY = 'bancapro-avatar';
+
+function getAvatarInitial() {
+  const v = document.getElementById('settingsUserName')?.value;
+  const t = document.getElementById('sidebarUserName')?.textContent;
+  const src = (v || t || 'A').trim();
+  return (src[0] || 'A').toUpperCase();
+}
+
+function applyAvatar() {
+  let dataUrl = null;
+  try { dataUrl = localStorage.getItem(AVATAR_KEY); } catch(e){}
+  // Avatar no rodape da sidebar
+  const sb = document.querySelector('.user-pill .user-avatar');
+  if (sb) {
+    if (dataUrl) {
+      sb.style.backgroundImage = 'url('+dataUrl+')';
+      sb.style.backgroundSize = 'cover';
+      sb.style.backgroundPosition = 'center';
+      sb.textContent = '';
+    } else {
+      sb.style.backgroundImage = '';
+      sb.textContent = getAvatarInitial();
+    }
+  }
+  // Preview na pagina Configuracoes
+  const img = document.getElementById('profileAvatarImg');
+  const fallback = document.getElementById('profileAvatarFallback');
+  const removeBtn = document.getElementById('avatarRemoveBtn');
+  if (img && fallback) {
+    if (dataUrl) {
+      img.src = dataUrl;
+      img.style.display = 'block';
+      fallback.style.display = 'none';
+      if (removeBtn) removeBtn.style.display = '';
+    } else {
+      img.removeAttribute('src');
+      img.style.display = 'none';
+      fallback.style.display = '';
+      fallback.textContent = getAvatarInitial();
+      if (removeBtn) removeBtn.style.display = 'none';
+    }
+  }
+}
+
+function handleAvatarUpload(e) {
+  const file = e.target?.files?.[0];
+  if (!file) return;
+  if (file.size > 2 * 1024 * 1024) {
+    alert('Imagem muito grande. Maximo 2 MB.');
+    e.target.value = '';
+    return;
+  }
+  const reader = new FileReader();
+  reader.onload = function(ev) {
+    const img = new Image();
+    img.onload = function() {
+      // Redimensiona pra 256x256 max (mantem proporcao) e converte pra jpeg leve
+      const MAX = 256;
+      let w = img.naturalWidth, h = img.naturalHeight;
+      if (w >= h) { if (w > MAX) { h = Math.round(h * (MAX/w)); w = MAX; } }
+      else { if (h > MAX) { w = Math.round(w * (MAX/h)); h = MAX; } }
+      const c = document.createElement('canvas');
+      c.width = w; c.height = h;
+      c.getContext('2d').drawImage(img, 0, 0, w, h);
+      let dataUrl;
+      try { dataUrl = c.toDataURL('image/jpeg', 0.85); } catch(err) {
+        alert('Nao foi possivel processar a imagem: ' + err.message);
+        return;
+      }
+      try { localStorage.setItem(AVATAR_KEY, dataUrl); } catch(err) {
+        alert('Sem espaco para salvar a foto. Tente uma imagem menor.');
+        return;
+      }
+      applyAvatar();
+      if (typeof schedulePush === 'function') schedulePush();
+    };
+    img.onerror = function(){ alert('Nao consegui ler essa imagem. Tente outra.'); };
+    img.src = ev.target.result;
+  };
+  reader.onerror = function(){ alert('Erro ao ler o arquivo.'); };
+  reader.readAsDataURL(file);
+  // Limpa o input pra permitir reupload da mesma foto
+  e.target.value = '';
+}
+
+function removeAvatar() {
+  try { localStorage.removeItem(AVATAR_KEY); } catch(e){}
+  applyAvatar();
+  if (typeof schedulePush === 'function') schedulePush();
+}
+
+// Carrega o avatar no startup e quando voltar ao app
+document.addEventListener('DOMContentLoaded', applyAvatar);
 
 // ══════════════════════════════════════════════
 //  NOTIFICATIONS
