@@ -18,7 +18,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
-<link rel="stylesheet" href="style.css?v=33"/>
+<link rel="stylesheet" href="style.css?v=38"/>
 </head>
 <body>
 
@@ -31,7 +31,7 @@
     </div>
     <div id="authSlogan" style="text-align:center;color:var(--text-muted);font-size:13px;margin:-4px 0 18px;display:none"></div>
     <div id="loginForm">
-      <div class="auth-title">Bem-vindo de volta 👋</div>
+      <div class="auth-title">Bem-vindo de volta</div>
       <div class="auth-sub">Entre na sua conta para continuar</div>
       <div class="form-group">
         <label class="form-label">E-mail</label>
@@ -41,7 +41,7 @@
         <label class="form-label">Senha</label>
         <div class="pw-wrap">
           <input class="form-input" type="password" id="loginPassword" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()"/>
-          <button type="button" class="pw-toggle" onclick="togglePw(this,'loginPassword')" aria-label="Mostrar senha">👁</button>
+          <button type="button" class="pw-toggle" onclick="togglePw(this,'loginPassword')" aria-label="Mostrar senha"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8S1 12 1 12z"/><circle cx="12" cy="12" r="3"/></svg></button>
         </div>
       </div>
       <button class="btn-primary" onclick="doLogin()">Entrar na plataforma →</button>
@@ -59,14 +59,14 @@
         <label class="form-label">Senha</label>
         <div class="pw-wrap">
           <input class="form-input" type="password" id="regPassword" placeholder="Mín. 6 caracteres" autocomplete="new-password"/>
-          <button type="button" class="pw-toggle" onclick="togglePw(this,'regPassword')" aria-label="Mostrar senha">👁</button>
+          <button type="button" class="pw-toggle" onclick="togglePw(this,'regPassword')" aria-label="Mostrar senha"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8S1 12 1 12z"/><circle cx="12" cy="12" r="3"/></svg></button>
         </div>
       </div>
       <div class="form-group">
         <label class="form-label">Confirmar senha</label>
         <div class="pw-wrap">
           <input class="form-input" type="password" id="regPassword2" placeholder="Digite a senha de novo" autocomplete="new-password" onkeydown="if(event.key==='Enter')doRegister()"/>
-          <button type="button" class="pw-toggle" onclick="togglePw(this,'regPassword2')" aria-label="Mostrar senha">👁</button>
+          <button type="button" class="pw-toggle" onclick="togglePw(this,'regPassword2')" aria-label="Mostrar senha"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8S1 12 1 12z"/><circle cx="12" cy="12" r="3"/></svg></button>
         </div>
       </div>
       <button class="btn-primary" onclick="doRegister()">Criar conta grátis →</button>
@@ -86,14 +86,14 @@
         <label class="form-label">Nova senha</label>
         <div class="pw-wrap">
           <input class="form-input" type="password" id="recPwd" placeholder="Mín. 6 caracteres" autocomplete="new-password"/>
-          <button type="button" class="pw-toggle" onclick="togglePw(this,'recPwd')" aria-label="Mostrar senha">👁</button>
+          <button type="button" class="pw-toggle" onclick="togglePw(this,'recPwd')" aria-label="Mostrar senha"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8S1 12 1 12z"/><circle cx="12" cy="12" r="3"/></svg></button>
         </div>
       </div>
       <div class="form-group">
         <label class="form-label">Confirmar nova senha</label>
         <div class="pw-wrap">
           <input class="form-input" type="password" id="recPwd2" placeholder="Digite a nova senha de novo" autocomplete="new-password" onkeydown="if(event.key==='Enter')doRecovery()"/>
-          <button type="button" class="pw-toggle" onclick="togglePw(this,'recPwd2')" aria-label="Mostrar senha">👁</button>
+          <button type="button" class="pw-toggle" onclick="togglePw(this,'recPwd2')" aria-label="Mostrar senha"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8S1 12 1 12z"/><circle cx="12" cy="12" r="3"/></svg></button>
         </div>
       </div>
       <button class="btn-primary" onclick="doRecovery()">Salvar nova senha →</button>
@@ -119,8 +119,8 @@
     <div class="form-group">
       <label class="form-label">Tipo</label>
       <select class="form-select" id="txType">
-        <option value="income">💚 Entrada / Receita</option>
-        <option value="expense">🔴 Despesa / Saída</option>
+        <option value="income">Entrada / Receita</option>
+        <option value="expense">Despesa / Saída</option>
       </select>
     </div>
     <div class="form-row">
@@ -153,7 +153,7 @@
 <!-- BANCA INICIAL MODAL -->
 <div class="modal-overlay" id="saldoInicialModal">
   <div class="modal">
-    <div class="modal-title">🏦 Banca inicial</div>
+    <div class="modal-title">Banca inicial</div>
     <div class="modal-sub">Defina o saldo de partida da sua banca. O dashboard soma seus resultados a partir desse valor.</div>
     <div class="form-group">
       <label class="form-label">Valor inicial (R$)</label>
@@ -174,7 +174,7 @@
     <div class="form-group">
       <label class="form-label">Por quantos dias?</label>
       <input class="form-input" type="number" min="1" step="1" placeholder="Ex: 30 — deixe vazio para acesso permanente" id="grantDaysInput" onkeydown="if(event.key==='Enter'){event.preventDefault();confirmGrant();}"/>
-      <div style="font-size:12px;color:var(--text-muted);margin-top:6px">💡 Vazio = acesso permanente (até você bloquear)</div>
+      <div style="font-size:12px;color:var(--text-muted);margin-top:6px">Vazio = acesso permanente (até você bloquear)</div>
     </div>
     <div class="modal-actions">
       <button class="btn-ghost" onclick="closeGrantModal()">Cancelar</button>
@@ -202,7 +202,7 @@
 <!-- EDITAR USUÁRIO (ADMIN) -->
 <div class="modal-overlay" id="editUserModal">
   <div class="modal">
-    <div class="modal-title">✏️ Editar usuário</div>
+    <div class="modal-title">Editar usuário</div>
     <div class="modal-sub">Usuário: <strong id="editUserEmail">—</strong> · <span id="editUserStatus">—</span></div>
     <div style="display:flex;flex-direction:column;gap:10px;margin:18px 0 4px">
       <button class="btn-primary" id="editUserAccessBtn" style="width:100%" onclick="editUserToggleAccess()">🔓 Liberar acesso</button>
@@ -217,7 +217,7 @@
 <!-- ADICIONAR AFILIADO (ADMIN) -->
 <div class="modal-overlay" id="addAffiliateModal">
   <div class="modal">
-    <div class="modal-title">🤝 Adicionar afiliado</div>
+    <div class="modal-title">Adicionar afiliado</div>
     <div class="modal-sub">Defina quem é afiliado, o slug e a comissão</div>
     <div class="form-group">
       <label class="form-label">E-mail do afiliado (a conta dele)</label>
@@ -237,7 +237,7 @@
 <!-- VER INDICADOS DO AFILIADO (ADMIN) -->
 <div class="modal-overlay" id="affReferralsModal">
   <div class="modal" style="width:580px;max-width:95vw">
-    <div class="modal-title">👥 Indicados de <span id="affReferralsName">—</span></div>
+    <div class="modal-title">Indicados de <span id="affReferralsName">—</span></div>
     <div class="modal-sub">Pessoas que entraram pelo link desse afiliado (você vê o email completo)</div>
     <div id="affReferralsList" style="margin-top:8px"></div>
     <div class="modal-actions">
@@ -249,7 +249,7 @@
 <!-- ADD/EDIT GOAL MODAL -->
 <div class="modal-overlay" id="goalModal">
   <div class="modal">
-    <div class="modal-title" id="goalModalTitle">🎯 Nova Meta</div>
+    <div class="modal-title" id="goalModalTitle">Nova Meta</div>
     <div class="modal-sub" id="goalModalSub">Defina um objetivo financeiro pra acompanhar</div>
     <div class="form-group">
       <label class="form-label">Nome da meta</label>
@@ -257,7 +257,7 @@
     </div>
     <div class="form-group">
       <label class="form-label">Ícone (emoji)</label>
-      <input class="form-input" type="text" placeholder="🎯" id="goalIcon" maxlength="4" style="max-width:120px"/>
+      <input class="form-input" type="text" placeholder="Ex: meta" id="goalIcon" maxlength="4" style="max-width:120px"/>
     </div>
     <div class="form-row">
       <div class="form-group">
@@ -295,7 +295,7 @@
 <!-- ACCOUNT MODAL (cadastrar/editar conta de aposta) -->
 <div class="modal-overlay" id="accountModal">
   <div class="modal" style="width:560px;max-width:95vw">
-    <div class="modal-title" id="accountModalTitle">🏦 Nova Conta Depositada</div>
+    <div class="modal-title" id="accountModalTitle">Nova Conta Depositada</div>
     <div class="modal-sub" id="accountModalSub">Registre o saldo que você tem numa casa de aposta</div>
 
     <div class="form-group">
@@ -335,12 +335,12 @@
 <!-- METHODS CATALOG MODAL (gerenciar métodos: adicionar/editar/remover) -->
 <div class="modal-overlay" id="methodsCatalogModal">
   <div class="modal" style="width:760px;max-width:96vw">
-    <div class="modal-title">⚙️ Gerenciar Métodos</div>
+    <div class="modal-title">Gerenciar Métodos</div>
     <div class="modal-sub">Adicione, edite ou remova seus métodos de trabalho. As mudanças refletem em toda a plataforma.</div>
     <div id="methodsCatalogList" style="display:flex;flex-direction:column;gap:10px;max-height:55vh;overflow-y:auto;padding-right:4px"></div>
     <button class="btn-ghost" style="margin-top:12px;width:100%;justify-content:center" onclick="addMethodCatalogRow()">+ Adicionar método</button>
     <div class="modal-actions" style="justify-content:space-between">
-      <button class="btn-ghost" style="font-size:12px;color:var(--text-muted)" onclick="resetMethodsCatalogToDefaults()">↩️ Restaurar padrão</button>
+      <button class="btn-ghost" style="font-size:12px;color:var(--text-muted)" onclick="resetMethodsCatalogToDefaults()">Restaurar padrão</button>
       <div style="display:flex;gap:8px">
         <button class="btn-ghost" onclick="closeMethodsCatalogModal()">Cancelar</button>
         <button class="btn-primary" style="width:auto;padding:9px 20px" onclick="saveMethodsCatalog()">Salvar →</button>
@@ -352,7 +352,7 @@
 <!-- METHODS COMPARE MODAL (editor de Abr vs Mai) -->
 <div class="modal-overlay" id="methodsCompareModal">
   <div class="modal" style="width:640px;max-width:95vw">
-    <div class="modal-title">✏️ Editar Comparativo por Método</div>
+    <div class="modal-title">Editar Comparativo por Método</div>
     <div class="modal-sub">Altere nomes, valores ou adicione/remova métodos. Os dois gráficos atualizam automaticamente.</div>
     <div id="methodsCompareList" style="display:flex;flex-direction:column;gap:10px;max-height:50vh;overflow-y:auto;padding-right:4px"></div>
     <button class="btn-ghost" style="margin-top:12px;width:100%;justify-content:center" onclick="addMethodCompare()">+ Adicionar método</button>
@@ -396,27 +396,27 @@
 
     <div class="sidebar-section">
       <div class="sidebar-section-label">Principal</div>
-      <div class="nav-item active" onclick="goTo('dashboard',this)"><span class="nav-icon">⚡</span>Dashboard<span class="live-badge" style="margin-left:auto;font-size:10px"><span class="live-dot"></span>Live</span></div>
-      <div class="nav-item" onclick="goTo('methods',this)"><span class="nav-icon">📊</span>Métodos</div>
-      <div class="nav-item" onclick="goTo('transactions',this)"><span class="nav-icon">💸</span>Transações</div>
-      <div class="nav-item" onclick="goTo('accounts',this)"><span class="nav-icon">🏦</span>Contas Depositadas</div>
+      <div class="nav-item active" onclick="goTo('dashboard',this)"><span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M3 12L12 4l9 8M5 10v10h14V10"/></svg></span>Dashboard<span class="live-badge" style="margin-left:auto;font-size:10px"><span class="live-dot"></span>Live</span></div>
+      <div class="nav-item" onclick="goTo('methods',this)"><span class="nav-icon"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></span>Métodos</div>
+      <div class="nav-item" onclick="goTo('transactions',this)"><span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M7 17V3M3 7l4-4 4 4M17 7v14M13 17l4 4 4-4"/></svg></span>Transações</div>
+      <div class="nav-item" onclick="goTo('accounts',this)"><span class="nav-icon"><svg viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="14" rx="2"/><path d="M3 10h18M16 14h2"/></svg></span>Contas Depositadas</div>
     </div>
 
     <div class="sidebar-section">
       <div class="sidebar-section-label">Análise</div>
-      <div class="nav-item" onclick="goTo('reports',this)"><span class="nav-icon">📈</span>Relatórios</div>
-      <div class="nav-item" onclick="goTo('goals',this)"><span class="nav-icon">🎯</span>Metas</div>
-      <div class="nav-item" onclick="goTo('compare',this)"><span class="nav-icon">🔀</span>Comparativo</div>
-      <div class="nav-item" onclick="goTo('calculadora',this)"><span class="nav-icon">🧮</span>Calculadora</div>
-      <div class="nav-item" onclick="goTo('anotacoes',this)"><span class="nav-icon">📝</span>Anotações</div>
+      <div class="nav-item" onclick="goTo('reports',this)"><span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M3 20h18M7 20V12M12 20V8M17 20v-6"/></svg></span>Relatórios</div>
+      <div class="nav-item" onclick="goTo('goals',this)"><span class="nav-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.5" fill="currentColor" stroke="none"/></svg></span>Metas</div>
+      <div class="nav-item" onclick="goTo('compare',this)"><span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M3 20V14M9 20V10M15 20V6M21 20V8"/></svg></span>Comparativo</div>
+      <div class="nav-item" onclick="goTo('calculadora',this)"><span class="nav-icon"><svg viewBox="0 0 24 24"><rect x="4" y="2" width="16" height="20" rx="2"/><rect x="7" y="5" width="10" height="3"/><circle cx="8" cy="13" r="0.8" fill="currentColor" stroke="none"/><circle cx="12" cy="13" r="0.8" fill="currentColor" stroke="none"/><circle cx="16" cy="13" r="0.8" fill="currentColor" stroke="none"/><circle cx="8" cy="17" r="0.8" fill="currentColor" stroke="none"/><circle cx="12" cy="17" r="0.8" fill="currentColor" stroke="none"/><circle cx="16" cy="17" r="0.8" fill="currentColor" stroke="none"/></svg></span>Calculadora</div>
+      <div class="nav-item" onclick="goTo('anotacoes',this)"><span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M5 3h12a2 2 0 012 2v14a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2zM8 8h8M8 12h8M8 16h5"/></svg></span>Anotações</div>
     </div>
 
     <div class="sidebar-section">
       <div class="sidebar-section-label">Sistema</div>
-      <div class="nav-item" onclick="goTo('settings',this)"><span class="nav-icon">⚙️</span>Configurações</div>
-      <div class="nav-item" id="navAfiliado" onclick="goTo('afiliado',this)" style="display:none"><span class="nav-icon">🤝</span>Minhas Indicações</div>
-      <div class="nav-item" id="navAdmin" onclick="goTo('admin',this)"><span class="nav-icon">👑</span>Admin</div>
-      <div class="nav-item" id="navAfiliados" onclick="goTo('afiliados',this)" style="display:none"><span class="nav-icon">🤝</span>Afiliados</div>
+      <div class="nav-item" onclick="goTo('settings',this)"><span class="nav-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 01-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg></span>Configurações</div>
+      <div class="nav-item" id="navAfiliado" onclick="goTo('afiliado',this)" style="display:none"><span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg></span>Minhas Indicações</div>
+      <div class="nav-item" id="navAdmin" onclick="goTo('admin',this)"><span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M12 2l8 4v6c0 5-3.5 9-8 10-4.5-1-8-5-8-10V6l8-4z"/><path d="M9 12l2 2 4-4"/></svg></span>Admin</div>
+      <div class="nav-item" id="navAfiliados" onclick="goTo('afiliados',this)" style="display:none"><span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg></span>Afiliados</div>
     </div>
 
     <div class="sidebar-footer">
@@ -433,17 +433,17 @@
 
     <!-- TOPBAR -->
     <div class="topbar">
-      <button class="icon-btn menu-btn" onclick="toggleSidebar()" aria-label="Abrir menu lateral" style="display:none">☰</button>
+      <button class="icon-btn menu-btn" onclick="toggleSidebar()" aria-label="Abrir menu lateral" style="display:none"><svg viewBox="0 0 24 24"><path d="M3 6h18M3 12h18M3 18h18"/></svg></button>
       <div class="topbar-title">
         <div class="topbar-breadcrumb">Apostack / <span id="breadcrumb">Dashboard</span></div>
       </div>
       <div class="topbar-actions">
-        <button class="btn-ghost txbtn" style="padding:6px 14px;font-size:12px" onclick="openTxModal()" title="Nova transação">+<span class="txbtn-label"> Transação</span></button>
-        <button class="icon-btn" onclick="goTo('recharge',null)" aria-label="Assinatura" title="Assinatura">💳</button>
-        <button class="icon-btn" id="themeBtn" onclick="toggleTheme()" aria-label="Mudar tema" title="Mudar tema">☀️</button>
-        <button class="icon-btn" onclick="toggleNotif()" id="notifBtn" aria-label="Notificações">🔔<div class="notif-dot" id="notifDot"></div></button>
-        <button class="icon-btn" onclick="goTo('settings',null)" aria-label="Configurações">⚙️</button>
-        <button class="icon-btn" onclick="logout()" aria-label="Sair">→</button>
+        <button class="btn-ghost txbtn" style="padding:6px 14px;font-size:12px" onclick="openTxModal()" title="Nova transação"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg><span class="txbtn-label"> Transação</span></button>
+        <button class="icon-btn" onclick="goTo('recharge',null)" aria-label="Assinatura" title="Assinatura"><svg viewBox="0 0 24 24"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M2 10h20M6 14h4"/></svg></button>
+        <button class="icon-btn" id="themeBtn" onclick="toggleTheme()" aria-label="Mudar tema" title="Mudar tema"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg></button>
+        <button class="icon-btn" onclick="toggleNotif()" id="notifBtn" aria-label="Notificações"><svg viewBox="0 0 24 24"><path d="M6 8a6 6 0 0112 0c0 7 3 9 3 9H3s3-2 3-9M10 21h4"/></svg><div class="notif-dot" id="notifDot"></div></button>
+        <button class="icon-btn" onclick="goTo('settings',null)" aria-label="Configurações"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 01-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg></button>
+        <button class="icon-btn" onclick="logout()" aria-label="Sair"><svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/></svg></button>
       </div>
     </div>
 
@@ -455,7 +455,7 @@
         <div class="page-header">
           <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
             <div>
-              <div class="page-title">Dashboard Financeiro ⚡</div>
+              <div class="page-title">Dashboard Financeiro</div>
               <div class="page-subtitle">Visão completa da sua banca em tempo real</div>
             </div>
             <div class="period-tabs">
@@ -470,7 +470,7 @@
         <!-- KPI CARDS -->
         <div class="kpi-grid">
           <div class="kpi-card" style="--card-color:var(--accent)">
-            <button class="kpi-edit-btn" onclick="openSaldoInicialModal()" title="Definir banca inicial">✏️</button>
+            <button class="kpi-edit-btn" onclick="openSaldoInicialModal()" title="Definir banca inicial"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg></button>
             <div class="kpi-label">Saldo Total</div>
             <div class="kpi-value" id="kpi-saldo">R$ 0</div>
             <div class="kpi-change neutral" id="kpi-saldo-change">—</div>
@@ -519,7 +519,7 @@
             <div>
               <div class="chart-title" style="font-size:14px">Evolução Financeira</div>
               <div class="chart-subtitle" id="evoSubtitle">Mensal — Jan a Dez 2026</div>
-              <div id="evoAxisNote" style="display:none;font-size:11px;color:#f59e0b;margin-top:4px;font-weight:600">⚠️ Lucro/Despesa fora da escala — veja os KPIs acima</div>
+              <div id="evoAxisNote" style="display:none;font-size:11px;color:#f59e0b;margin-top:4px;font-weight:600">Lucro/Despesa fora da escala — veja os KPIs acima</div>
             </div>
             <div class="chart-legend" style="gap:14px">
               <div class="legend-item"><div class="legend-dot" style="background:#6366f1"></div>Saldo</div>
@@ -594,11 +594,11 @@
         <!-- ALERTS -->
         <div style="margin-top:20px">
           <div class="alert-box warning">
-            <div>⚠️</div>
+            <div><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div>
             <div><div class="alert-title">iGaming — Alerta de Despesas</div>iGaming ultrapassou o limite de despesas em 24%. Revise sua estratégia para este método.</div>
           </div>
           <div class="alert-box success">
-            <div>🎯</div>
+            <div><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.5" fill="currentColor" stroke="none"/></svg></div>
             <div><div class="alert-title">Meta Atingida!</div>Surebet atingiu R$5.220 de lucro este mês, superando a meta de R$5.000 em 4.4%!</div>
           </div>
         </div>
@@ -627,15 +627,15 @@
       <div class="section" id="sec-methods">
         <div class="page-header" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
           <div>
-            <div class="page-title">Gestão de Métodos 📊</div>
+            <div class="page-title">Gestão de Métodos</div>
             <div class="page-subtitle">Performance individual de cada estratégia</div>
           </div>
-          <button class="btn-primary" style="width:auto;padding:9px 18px" onclick="openMethodsCatalogModal()">⚙️ Gerenciar métodos</button>
+          <button class="btn-primary" style="width:auto;padding:9px 18px" onclick="openMethodsCatalogModal()">Gerenciar métodos</button>
         </div>
 
         <!-- RANKING -->
         <div class="ranking-card">
-          <div style="font-size:15px;font-weight:700;margin-bottom:12px">🏆 Ranking — Métodos Mais Lucrativos</div>
+          <div style="font-size:15px;font-weight:700;margin-bottom:12px">Ranking — Métodos Mais Lucrativos</div>
           <div id="rankingList"></div>
         </div>
 
@@ -658,14 +658,14 @@
         <div class="page-header">
           <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
             <div>
-              <div class="page-title">Controle Financeiro 💸</div>
+              <div class="page-title">Controle Financeiro</div>
               <div class="page-subtitle">Gerencie todas as suas transações</div>
             </div>
             <div style="display:flex;gap:8px">
               <button class="btn-success" onclick="openTxModal()">+ Entrada</button>
               <button class="btn-danger" onclick="openTxModalExpense()">- Despesa</button>
-              <button class="btn-ghost" onclick="exportTransactionsPDF()">📥 Exportar PDF</button>
-              <button class="btn-ghost" onclick="exportTransactionsCSV()">📊 Excel</button>
+              <button class="btn-ghost" onclick="exportTransactionsPDF()">Exportar PDF</button>
+              <button class="btn-ghost" onclick="exportTransactionsCSV()">Excel</button>
             </div>
           </div>
         </div>
@@ -705,11 +705,11 @@
       <div class="section" id="sec-accounts">
         <div class="page-header" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
           <div>
-            <div class="page-title">Contas Depositadas 🏦</div>
+            <div class="page-title">Contas Depositadas</div>
             <div class="page-subtitle">Controle o saldo de cada casa de aposta — sem esquecer dinheiro parado</div>
           </div>
           <div style="display:flex;gap:8px">
-            <button class="btn-ghost" onclick="exportAccountsCSV()">📊 Excel</button>
+            <button class="btn-ghost" onclick="exportAccountsCSV()">Excel</button>
             <button class="btn-primary" style="width:auto;padding:9px 18px" onclick="openAccountModal()">+ Adicionar conta</button>
           </div>
         </div>
@@ -717,22 +717,22 @@
         <!-- KPIs -->
         <div class="kpi-grid">
           <div class="kpi-card" style="--card-color:var(--accent)">
-            <div class="kpi-label">💰 Saldo Total nas Casas</div>
+            <div class="kpi-label">Saldo Total nas Casas</div>
             <div class="kpi-value" id="accTotalValue">R$ 0</div>
             <div class="kpi-change neutral" id="accTotalSub">0 contas ativas</div>
           </div>
           <div class="kpi-card" style="--card-color:var(--green)">
-            <div class="kpi-label">📈 Casa com Maior Saldo</div>
+            <div class="kpi-label">Casa com Maior Saldo</div>
             <div class="kpi-value" id="accTopValue" style="font-size:18px">—</div>
             <div class="kpi-change up" id="accTopSub">—</div>
           </div>
           <div class="kpi-card" style="--card-color:var(--yellow)">
-            <div class="kpi-label">⚠️ Saldo Baixo (&lt; R$ 50)</div>
+            <div class="kpi-label">Saldo Baixo (&lt; R$ 50)</div>
             <div class="kpi-value" id="accLowCount">0</div>
             <div class="kpi-change down" id="accLowSub">Nenhuma conta com saldo baixo</div>
           </div>
           <div class="kpi-card" style="--card-color:var(--blue)">
-            <div class="kpi-label">🏦 Casas Cadastradas</div>
+            <div class="kpi-label">Casas Cadastradas</div>
             <div class="kpi-value" id="accCount">0</div>
             <div class="kpi-change neutral">de tantas casas que você quiser</div>
           </div>
@@ -755,7 +755,7 @@
         <!-- Grid de contas -->
         <div id="accountsGrid" class="accounts-grid"></div>
         <div id="accountsEmpty" style="display:none;text-align:center;padding:60px 20px;color:var(--text-muted)">
-          <div style="font-size:48px;margin-bottom:14px">🏦</div>
+          <div style="margin-bottom:14px;display:flex;justify-content:center;color:var(--text-muted)"><svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="14" rx="2"/><path d="M3 10h18M16 14h2"/></svg></div>
           <div style="font-size:16px;font-weight:600;color:var(--text-secondary);margin-bottom:6px">Nenhuma conta cadastrada</div>
           <div style="font-size:13px">Clique em <b>+ Adicionar conta</b> pra começar a registrar suas casas</div>
         </div>
@@ -812,7 +812,7 @@
 
           <!-- PLANO PLUS (MENSAL) -->
           <div class="plan-card plan-card-featured">
-            <div class="plan-featured-ribbon">🔥 Mais popular</div>
+            <div class="plan-featured-ribbon">Mais popular</div>
             <div class="plan-header">
               <div class="plan-name">Plus Mensal</div>
               <div class="plan-badge plan-badge-gold">Recomendado</div>
@@ -833,7 +833,7 @@
               <li><span class="plan-check premium">✓</span>Suporte prioritário</li>
             </ul>
             <button class="btn-plan-primary" onclick="subscribeNow()">Assinar Plus → R$ 24,90</button>
-            <div class="plan-guarantee">🔒 Cancele a qualquer momento · Sem fidelidade</div>
+            <div class="plan-guarantee">Cancele a qualquer momento · Sem fidelidade</div>
           </div>
 
           <!-- PLANO PRO (ANUAL) -->
@@ -858,16 +858,16 @@
               <li><span class="plan-check premium">✓</span><strong>Economize R$ 99,80 (~4 meses grátis)</strong></li>
             </ul>
             <button class="btn-plan-primary" onclick="subscribeNow('anual')">Assinar Pro → R$ 199</button>
-            <div class="plan-guarantee">🔒 1 pagamento por ano · Cancele quando quiser</div>
+            <div class="plan-guarantee">1 pagamento por ano · Cancele quando quiser</div>
           </div>
         </div>
 
         <!-- TRUST BAR -->
         <div class="trust-bar">
-          <div class="trust-item"><div class="trust-icon">🔒</div><div><div class="trust-title">Pagamento seguro</div><div class="trust-sub">SSL 256-bit</div></div></div>
-          <div class="trust-item"><div class="trust-icon">💳</div><div><div class="trust-title">Pix, cartão e boleto</div><div class="trust-sub">Renovação automática</div></div></div>
-          <div class="trust-item"><div class="trust-icon">↩️</div><div><div class="trust-title">Cancele quando quiser</div><div class="trust-sub">Sem multas</div></div></div>
-          <div class="trust-item"><div class="trust-icon">⚡</div><div><div class="trust-title">Acesso imediato</div><div class="trust-sub">Ativação instantânea</div></div></div>
+          <div class="trust-item"><div class="trust-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg></div><div><div class="trust-title">Pagamento seguro</div><div class="trust-sub">SSL 256-bit</div></div></div>
+          <div class="trust-item"><div class="trust-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M2 10h20M6 14h4"/></svg></div><div><div class="trust-title">Pix, cartão e boleto</div><div class="trust-sub">Renovação automática</div></div></div>
+          <div class="trust-item"><div class="trust-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 109-9 9.75 9.75 0 00-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg></div><div><div class="trust-title">Cancele quando quiser</div><div class="trust-sub">Sem multas</div></div></div>
+          <div class="trust-item"><div class="trust-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg></div><div><div class="trust-title">Acesso imediato</div><div class="trust-sub">Ativação instantânea</div></div></div>
         </div>
 
         <!-- FAQ -->
@@ -910,7 +910,7 @@
 
         <!-- SUPORTE -->
         <div style="margin-top:24px;text-align:center;font-size:14px;color:var(--text-secondary)">
-          💬 Dúvidas sobre o plano ou problema no pagamento?
+          Dúvidas sobre o plano ou problema no pagamento?
           <a href="mailto:suporteapostack@gmail.com?subject=D%C3%BAvida%20sobre%20assinatura" style="color:var(--accent);text-decoration:none;font-weight:600">Fale com o suporte</a>
         </div>
       </div>
@@ -919,10 +919,10 @@
       <div class="section" id="sec-reports">
         <div class="page-header">
           <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
-            <div><div class="page-title">Relatórios 📈</div><div class="page-subtitle">Análise completa da sua performance</div></div>
+            <div><div class="page-title">Relatórios</div><div class="page-subtitle">Análise completa da sua performance</div></div>
             <div style="display:flex;gap:8px">
-              <button class="btn-ghost" onclick="exportReportPDF()">📥 PDF</button>
-              <button class="btn-ghost" onclick="exportTransactionsCSV()">📊 Excel</button>
+              <button class="btn-ghost" onclick="exportReportPDF()">PDF</button>
+              <button class="btn-ghost" onclick="exportTransactionsCSV()">Excel</button>
             </div>
           </div>
         </div>
@@ -952,25 +952,25 @@
       <div class="section" id="sec-goals">
         <div class="page-header">
           <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
-            <div><div class="page-title">Sistema de Metas 🎯</div><div class="page-subtitle">Acompanhe seus objetivos financeiros</div></div>
+            <div><div class="page-title">Sistema de Metas</div><div class="page-subtitle">Acompanhe seus objetivos financeiros</div></div>
             <button class="btn-primary" style="width:auto;padding:9px 18px" onclick="openGoalModal()">+ Nova Meta</button>
           </div>
         </div>
         <div class="kpi-grid">
-          <div class="kpi-card" style="--card-color:var(--green)"><div class="kpi-label">✅ Atingidas</div><div class="kpi-value" id="goalsAtingidas">4</div><div class="kpi-change up" id="goalsAtingidasSub">de 5 metas</div></div>
-          <div class="kpi-card" style="--card-color:var(--yellow)"><div class="kpi-label">🟡 Em Progresso</div><div class="kpi-value" id="goalsProgresso">1</div><div class="kpi-change neutral">97.5% completo</div></div>
-          <div class="kpi-card" style="--card-color:var(--red)"><div class="kpi-label">❌ Abaixo</div><div class="kpi-value" id="goalsAbaixo">1</div><div class="kpi-change down">iGaming em alerta</div></div>
-          <div class="kpi-card" style="--card-color:var(--accent)"><div class="kpi-label">🎯 Meta Total</div><div class="kpi-value" id="goalsMetaTotal">R$ 17.500</div><div class="kpi-change up">Alcançada ✅</div></div>
+          <div class="kpi-card" style="--card-color:var(--green)"><div class="kpi-label">Atingidas</div><div class="kpi-value" id="goalsAtingidas">4</div><div class="kpi-change up" id="goalsAtingidasSub">de 5 metas</div></div>
+          <div class="kpi-card" style="--card-color:var(--yellow)"><div class="kpi-label">Em Progresso</div><div class="kpi-value" id="goalsProgresso">1</div><div class="kpi-change neutral">97.5% completo</div></div>
+          <div class="kpi-card" style="--card-color:var(--red)"><div class="kpi-label">Abaixo</div><div class="kpi-value" id="goalsAbaixo">1</div><div class="kpi-change down">iGaming em alerta</div></div>
+          <div class="kpi-card" style="--card-color:var(--accent)"><div class="kpi-label">Meta Total</div><div class="kpi-value" id="goalsMetaTotal">R$ 17.500</div><div class="kpi-change up">Alcançada</div></div>
         </div>
         <div class="form-card">
-          <div class="form-card-title">📊 Progresso das Metas — Maio 2026</div>
+          <div class="form-card-title">Progresso das Metas — Maio 2026</div>
           <div id="goalsList" style="display:flex;flex-direction:column;gap:16px"></div>
         </div>
       </div>
 
       <!-- ═══ COMPARATIVO ═══ -->
       <div class="section" id="sec-compare">
-        <div class="page-header"><div class="page-title">Comparação Mensal 🔀</div><div class="page-subtitle" id="compareSubtitle">Mês anterior vs mês atual</div></div>
+        <div class="page-header"><div class="page-title">Comparação Mensal</div><div class="page-subtitle" id="compareSubtitle">Mês anterior vs mês atual</div></div>
         <div class="kpi-grid">
           <div class="kpi-card" style="--card-color:var(--green)">
             <div class="kpi-label">Receita</div>
@@ -1006,8 +1006,8 @@
         </div>
         <div class="form-card">
           <div class="form-card-title" style="display:flex;align-items:center;justify-content:space-between;gap:8px">
-            <span>📊 Análise Detalhada por Método</span>
-            <button class="btn-ghost" style="padding:6px 14px;font-size:12px" onclick="openMethodsCompareModal()">✏️ Editar métodos</button>
+            <span>Análise Detalhada por Método</span>
+            <button class="btn-ghost" style="padding:6px 14px;font-size:12px" onclick="openMethodsCompareModal()">Editar métodos</button>
           </div>
           <div id="compareBarsList" style="display:flex;flex-direction:column;gap:12px"></div>
         </div>
@@ -1015,7 +1015,7 @@
 
       <!-- ═══ CONFIGURAÇÕES ═══ -->
       <div class="section" id="sec-settings">
-        <div class="page-header"><div class="page-title">Configurações ⚙️</div><div class="page-subtitle">Personalize sua plataforma</div></div>
+        <div class="page-header"><div class="page-title">Configurações</div><div class="page-subtitle">Personalize sua plataforma</div></div>
 
         <div class="settings-grid">
           <div class="form-card">
@@ -1077,7 +1077,7 @@
               <div class="settings-label">Tema</div>
               <div class="theme-toggle">
                 <div class="theme-btn" id="themeBtnDark" onclick="setTheme('dark',this)">🌙 Escuro</div>
-                <div class="theme-btn" id="themeBtnLight" onclick="setTheme('light',this)">☀️ Claro</div>
+                <div class="theme-btn" id="themeBtnLight" onclick="setTheme('light',this)">Claro</div>
                 <script>try{document.getElementById(localStorage.getItem('bancapro-theme')==='light'?'themeBtnLight':'themeBtnDark').classList.add('active')}catch(e){document.getElementById('themeBtnDark').classList.add('active')}</script>
               </div>
             </div>
@@ -1108,31 +1108,31 @@
             <div class="form-card-title">👤 Perfil do Usuário</div>
             <div class="form-group"><label class="form-label">Nome</label><input class="form-input" type="text" value="Admin" id="settingsUserName" oninput="updateUserName()"/></div>
             <div class="form-group"><label class="form-label">E-mail</label><input class="form-input" type="email" value="admin@bancapro.com" id="settingsUserEmail"/></div>
-            <div style="font-size:12px;color:var(--text-muted);margin:4px 0 10px">🔒 Trocar senha (deixe em branco se não quiser trocar)</div>
+            <div style="font-size:12px;color:var(--text-muted);margin:4px 0 10px">Trocar senha (deixe em branco se não quiser trocar)</div>
             <div class="form-group">
               <label class="form-label">Senha atual</label>
-              <div class="pw-wrap"><input class="form-input" type="password" placeholder="Sua senha de agora" id="settingsCurPwd" autocomplete="current-password"/><button type="button" class="pw-toggle" onclick="togglePw(this,'settingsCurPwd')" aria-label="Mostrar senha">👁</button></div>
+              <div class="pw-wrap"><input class="form-input" type="password" placeholder="Sua senha de agora" id="settingsCurPwd" autocomplete="current-password"/><button type="button" class="pw-toggle" onclick="togglePw(this,'settingsCurPwd')" aria-label="Mostrar senha"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8S1 12 1 12z"/><circle cx="12" cy="12" r="3"/></svg></button></div>
             </div>
             <div class="form-group">
               <label class="form-label">Nova senha</label>
-              <div class="pw-wrap"><input class="form-input" type="password" placeholder="Mín. 6 caracteres" id="settingsNewPwd" autocomplete="new-password"/><button type="button" class="pw-toggle" onclick="togglePw(this,'settingsNewPwd')" aria-label="Mostrar senha">👁</button></div>
+              <div class="pw-wrap"><input class="form-input" type="password" placeholder="Mín. 6 caracteres" id="settingsNewPwd" autocomplete="new-password"/><button type="button" class="pw-toggle" onclick="togglePw(this,'settingsNewPwd')" aria-label="Mostrar senha"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8S1 12 1 12z"/><circle cx="12" cy="12" r="3"/></svg></button></div>
             </div>
             <div class="form-group">
               <label class="form-label">Confirmar nova senha</label>
-              <div class="pw-wrap"><input class="form-input" type="password" placeholder="Digite a nova senha de novo" id="settingsNewPwd2" autocomplete="new-password"/><button type="button" class="pw-toggle" onclick="togglePw(this,'settingsNewPwd2')" aria-label="Mostrar senha">👁</button></div>
+              <div class="pw-wrap"><input class="form-input" type="password" placeholder="Digite a nova senha de novo" id="settingsNewPwd2" autocomplete="new-password"/><button type="button" class="pw-toggle" onclick="togglePw(this,'settingsNewPwd2')" aria-label="Mostrar senha"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8S1 12 1 12z"/><circle cx="12" cy="12" r="3"/></svg></button></div>
             </div>
             <button class="btn-primary" onclick="saveProfile()">Salvar Alterações</button>
           </div>
 
           <div class="form-card">
-            <div class="form-card-title">💳 Gerenciar Assinatura</div>
+            <div class="form-card-title">Gerenciar Assinatura</div>
             <div id="subscriptionCard">
               <div style="color:var(--text-muted);font-size:13px">Carregando…</div>
             </div>
           </div>
 
           <div class="form-card">
-            <div class="form-card-title">💬 Suporte</div>
+            <div class="form-card-title">Suporte</div>
             <p style="font-size:13px;color:var(--text-secondary);margin-bottom:14px;line-height:1.5">
               Precisa de ajuda, encontrou um bug ou tem uma sugestão? Fala com a gente —
               respondemos em até 24h em dias úteis.
@@ -1141,7 +1141,7 @@
           </div>
 
           <div class="form-card" style="border:1px solid rgba(244,63,94,0.25)">
-            <div class="form-card-title">⚠️ Zona de Perigo</div>
+            <div class="form-card-title">Zona de Perigo</div>
             <p style="font-size:13px;color:var(--text-secondary);margin-bottom:14px;line-height:1.5">
               Limpa todos os dados salvos no seu navegador (transações, metas e comparativos) e volta ao estado inicial.
               Esta ação não pode ser desfeita.
@@ -1153,9 +1153,9 @@
 
       <!-- ═══ ADMIN ═══ -->
       <div class="section" id="sec-admin">
-        <div class="page-header"><div class="page-title">Painel Admin 👑</div><div class="page-subtitle">Métricas da plataforma (visível só para o dono)</div></div>
+        <div class="page-header"><div class="page-title">Painel Admin</div><div class="page-subtitle">Métricas da plataforma (visível só para o dono)</div></div>
         <div class="form-card">
-          <div class="form-card-title">📊 Métricas da plataforma</div>
+          <div class="form-card-title">Métricas da plataforma</div>
           <div id="adminStats">
             <div class="empty-state-sub">Carregando…</div>
           </div>
@@ -1163,7 +1163,7 @@
         </div>
 
         <div class="form-card" style="margin-top:16px">
-          <div class="form-card-title">👥 Usuários (<span id="adminUsersCount">—</span>)</div>
+          <div class="form-card-title">Usuários (<span id="adminUsersCount">—</span>)</div>
           <div id="adminUsers">
             <div class="empty-state-sub">Carregando…</div>
           </div>
@@ -1181,7 +1181,7 @@
       <div class="section" id="sec-afiliados">
         <div class="page-header" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
           <div>
-            <div class="page-title">Afiliados 🤝</div>
+            <div class="page-title">Afiliados</div>
             <div class="page-subtitle">Gerencie seus parceiros e veja quem cada um indicou</div>
           </div>
           <button class="btn-primary" style="width:auto;padding:9px 18px" onclick="openAddAffiliateModal()">+ Adicionar afiliado</button>
@@ -1195,14 +1195,14 @@
         </div>
 
         <div class="form-card" style="margin-top:16px">
-          <div class="form-card-title">💸 Saques solicitados</div>
+          <div class="form-card-title">Saques solicitados</div>
           <div id="adminWithdrawals" style="margin-top:12px;overflow-x:auto"><div class="empty-state-sub">Carregando…</div></div>
         </div>
       </div>
 
       <!-- ═══ MINHAS INDICAÇÕES (AFILIADO) ═══ -->
       <div class="section" id="sec-afiliado">
-        <div class="page-header"><div class="page-title">Minhas Indicações 🤝</div><div class="page-subtitle">Divulgue seu link e acompanhe seus ganhos</div></div>
+        <div class="page-header"><div class="page-title">Minhas Indicações</div><div class="page-subtitle">Divulgue seu link e acompanhe seus ganhos</div></div>
 
         <!-- Carteira -->
         <div class="aff-wallet">
@@ -1210,13 +1210,13 @@
             <div class="aff-wallet-info">
               <div class="aff-wallet-labelrow">
                 <span class="aff-wallet-label">Saldo disponível</span>
-                <span class="aff-wallet-pix">⚡ Pix</span>
+                <span class="aff-wallet-pix">Pix</span>
               </div>
               <div class="aff-wallet-value" id="affSaldo">R$ 0,00</div>
               <div class="aff-wallet-sub">o que você pode sacar agora</div>
             </div>
             <div class="aff-wallet-cta">
-              <button class="aff-wallet-btn" onclick="document.getElementById('sqCard').scrollIntoView({behavior:'smooth',block:'center'});var v=document.getElementById('sqValor');if(v){setTimeout(function(){v.focus();},300);}">💸 Sacar agora</button>
+              <button class="aff-wallet-btn" onclick="document.getElementById('sqCard').scrollIntoView({behavior:'smooth',block:'center'});var v=document.getElementById('sqValor');if(v){setTimeout(function(){v.focus();},300);}">Sacar agora</button>
               <div class="aff-wallet-cta-sub">cai na sua conta via Pix</div>
             </div>
           </div>
@@ -1228,7 +1228,7 @@
           <div class="aff-link-row">
             <div class="aff-link-url" id="myAffLink">—</div>
             <div class="aff-link-actions">
-              <button class="aff-btn aff-btn-copy" onclick="copyAffLink()">📋 Copiar</button>
+              <button class="aff-btn aff-btn-copy" onclick="copyAffLink()">Copiar</button>
               <button class="aff-btn aff-btn-share" onclick="shareAffLink()">📲 Compartilhar</button>
             </div>
           </div>
@@ -1237,20 +1237,20 @@
 
         <!-- Métricas -->
         <div class="kpi-grid aff-kpis">
-          <div class="kpi-card" style="--card-color:var(--accent2)"><div class="kpi-label">👥 Indicados</div><div class="kpi-value" id="myAffIndicados">0</div><div class="kpi-sub">no total</div></div>
-          <div class="kpi-card" style="--card-color:var(--green)"><div class="kpi-label">✅ Ativos</div><div class="kpi-value" id="myAffAtivos">0</div><div class="kpi-sub">assinantes pagando</div></div>
-          <div class="kpi-card" style="--card-color:var(--green)"><div class="kpi-label">📥 Comissão/mês</div><div class="kpi-value" style="color:var(--green)" id="affEntradas">R$ 0,00</div><div class="kpi-sub">enquanto ativos</div></div>
-          <div class="kpi-card" style="--card-color:var(--yellow)"><div class="kpi-label">⏳ Pendente</div><div class="kpi-value" id="affPendente">R$ 0,00</div><div class="kpi-sub">aguardando pagamento</div></div>
-          <div class="kpi-card" style="--card-color:var(--accent)"><div class="kpi-label">💵 Já recebido</div><div class="kpi-value" id="affSaidas">R$ 0,00</div><div class="kpi-sub">total pago até hoje</div></div>
+          <div class="kpi-card" style="--card-color:var(--accent2)"><div class="kpi-label">Indicados</div><div class="kpi-value" id="myAffIndicados">0</div><div class="kpi-sub">no total</div></div>
+          <div class="kpi-card" style="--card-color:var(--green)"><div class="kpi-label">Ativos</div><div class="kpi-value" id="myAffAtivos">0</div><div class="kpi-sub">assinantes pagando</div></div>
+          <div class="kpi-card" style="--card-color:var(--green)"><div class="kpi-label">Comissão/mês</div><div class="kpi-value" style="color:var(--green)" id="affEntradas">R$ 0,00</div><div class="kpi-sub">enquanto ativos</div></div>
+          <div class="kpi-card" style="--card-color:var(--yellow)"><div class="kpi-label">Pendente</div><div class="kpi-value" id="affPendente">R$ 0,00</div><div class="kpi-sub">aguardando pagamento</div></div>
+          <div class="kpi-card" style="--card-color:var(--accent)"><div class="kpi-label">Já recebido</div><div class="kpi-value" id="affSaidas">R$ 0,00</div><div class="kpi-sub">total pago até hoje</div></div>
         </div>
 
         <div class="form-card" style="margin-top:16px">
-          <div class="form-card-title">👥 Seus indicados</div>
+          <div class="form-card-title">Seus indicados</div>
           <div id="myAffList"><div class="empty-state-sub">Carregando…</div></div>
         </div>
 
         <div class="form-card" id="sqCard" style="margin-top:16px">
-          <div class="form-card-title">💸 Saque de comissão</div>
+          <div class="form-card-title">Saque de comissão</div>
           <div style="font-size:12px;color:var(--text-muted);margin-bottom:12px">
             Disponível: <b id="sqDisponivel" style="color:var(--green)">R$ 0,00</b>
             &nbsp;·&nbsp; Total comissão do mês: <b id="sqTotal">R$ 0,00</b>
@@ -1279,7 +1279,7 @@
 
       <!-- ═══ CALCULADORA ═══ -->
       <div class="section" id="sec-calculadora">
-        <div class="page-header"><div class="page-title">Calculadora 🧮</div><div class="page-subtitle">Surebet, stake e proteção de duplo</div></div>
+        <div class="page-header"><div class="page-title">Calculadora</div><div class="page-subtitle">Surebet, stake e proteção de duplo</div></div>
 
         <div class="period-tabs" style="margin-bottom:18px;display:inline-flex">
           <div class="period-tab active" onclick="switchCalc('surebet',this)">Surebet</div>
@@ -1296,7 +1296,7 @@
           </div>
           <div id="sbCasas" class="sb-grid"></div>
           <div class="form-card" style="margin-top:16px">
-            <div class="form-card-title">📊 Resumo geral</div>
+            <div class="form-card-title">Resumo geral</div>
             <div class="kpi-grid" style="grid-template-columns:repeat(3,1fr)">
               <div class="kpi-card" style="--card-color:var(--accent)"><div class="kpi-label">Stake total</div><div class="kpi-value" id="sbTotal">R$ 0,00</div><div class="kpi-sub">investido nas casas</div></div>
               <div class="kpi-card" style="--card-color:var(--green)"><div class="kpi-label">Lucro garantido</div><div class="kpi-value" id="sbLucro">R$ 0,00</div><div class="kpi-sub">em qualquer resultado</div></div>
@@ -1310,7 +1310,7 @@
           </div>
 
           <div class="form-card calc-tips" style="margin-top:16px">
-            <div class="form-card-title">💡 Como usar a Surebet</div>
+            <div class="form-card-title">Como usar a Surebet</div>
             <p>Surebet é apostar em <b>todos os resultados</b> de um jogo, em casas diferentes, de um jeito que você <b>lucra independente de quem ganhar</b>.</p>
             <ol>
               <li>Em <b>Casas</b>, escolha quantos resultados o mercado tem (2 = ex. vitória/derrota; 3 = casa/empate/fora).</li>
@@ -1332,7 +1332,7 @@
         <!-- ─ STAKE ─ -->
         <div class="calc-panel" id="calc-stake">
           <div class="form-card">
-            <div class="form-card-title">💰 Calculadora de stake (odd aumentada)</div>
+            <div class="form-card-title">Calculadora de stake (odd aumentada)</div>
             <div class="form-group"><label class="form-label">Valor da banca (R$)</label><input class="form-input" type="number" min="0" step="0.01" id="stkBanca" value="1000" oninput="calcStake()"></div>
             <div class="form-group"><label class="form-label">Odd normal (justa)</label><input class="form-input" type="number" min="1" step="0.01" id="stkOddN" value="2" oninput="calcStake()"></div>
             <div class="form-group"><label class="form-label">Odd aumentada (ofertada)</label><input class="form-input" type="number" min="1" step="0.01" id="stkOddA" value="2.5" oninput="calcStake()"></div>
@@ -1348,7 +1348,7 @@
           </div>
 
           <div class="form-card calc-tips" style="margin-top:16px">
-            <div class="form-card-title">💡 Como usar</div>
+            <div class="form-card-title">Como usar</div>
             <p>Serve pra descobrir <b>quanto apostar numa odd aumentada</b> (superodd) sem arriscar demais a sua banca.</p>
             <ol>
               <li>Coloque o <b>valor total da sua banca</b>.</li>
@@ -1365,7 +1365,7 @@
           <div class="form-card">
             <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
               <div>
-                <div class="form-card-title" style="margin-bottom:2px">🛡️ Apostas feitas</div>
+                <div class="form-card-title" style="margin-bottom:2px">Apostas feitas</div>
                 <div style="font-size:12px;color:var(--text-muted)">Coloque o valor e a odd das apostas que você já fez.</div>
               </div>
               <div style="text-align:right"><div style="font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.6px">Total a proteger</div><div style="font-size:18px;font-weight:800;color:var(--accent2)" id="pdTotal">R$ 0,00</div></div>
@@ -1375,7 +1375,7 @@
           </div>
 
           <div class="form-card" style="margin-top:16px">
-            <div class="form-card-title">🛡️ Aposta de proteção</div>
+            <div class="form-card-title">Aposta de proteção</div>
             <div class="form-group"><label class="form-label">Casa de aposta</label><input class="form-input" type="text" id="pdProtCasa" placeholder="Ex: Casa de proteção" oninput="calcProtecao()"></div>
             <div style="display:flex;gap:12px;flex-wrap:wrap">
               <div class="form-group" style="flex:1;min-width:140px"><label class="form-label">Odd</label><input class="form-input" type="number" min="1" step="0.01" id="pdProtOdd" value="1.5" oninput="calcProtecao()"></div>
@@ -1390,13 +1390,13 @@
               <div class="kpi-card" style="--card-color:var(--green)"><div class="kpi-label">Lucro estimado</div><div class="kpi-value" id="pdLucro">R$ 0,00</div><div class="kpi-sub">ao proteger o duplo</div></div>
             </div>
             <div class="form-card" style="margin-top:14px;background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.3)">
-              <div style="font-size:13px;font-weight:700;color:var(--green)">✅ Cálculo validado</div>
+              <div style="font-size:13px;font-weight:700;color:var(--green)">Cálculo validado</div>
               <div style="font-size:12px;color:var(--text-secondary);margin-top:4px">O lucro trava igual nos dois resultados. Dica: confirme a odd na hora de apostar — elas mudam rápido.</div>
             </div>
           </div>
 
           <div class="form-card calc-tips" style="margin-top:16px">
-            <div class="form-card-title">💡 Como usar</div>
+            <div class="form-card-title">Como usar</div>
             <p>Serve pra <b>travar lucro</b> ou <b>reduzir o prejuízo</b> de apostas que você já fez, colocando uma aposta numa <b>casa de proteção</b>.</p>
             <ol>
               <li>Em <b>Apostas feitas</b>, coloque o <b>valor</b> e a <b>odd</b> de cada aposta que você já tem em aberto (use “+ Adicionar aposta” pra mais de uma).</li>
@@ -1411,12 +1411,12 @@
       <!-- ═══ ANOTAÇÕES ═══ -->
       <div class="section" id="sec-anotacoes">
         <div class="page-header" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
-          <div><div class="page-title">Anotações 📝</div><div class="page-subtitle">Suas notas, estratégias e lembretes</div></div>
+          <div><div class="page-title">Anotações</div><div class="page-subtitle">Suas notas, estratégias e lembretes</div></div>
           <button class="btn-primary" style="width:auto;padding:11px 20px" onclick="notesAdd()">+ Nova anotação</button>
         </div>
         <div id="notesGrid" class="notes-grid"></div>
         <div id="notesEmpty" class="notes-empty" style="display:none">
-          <div style="font-size:34px;margin-bottom:10px">📝</div>
+          <div style="margin-bottom:10px;display:flex;justify-content:center;color:var(--text-muted)"><svg viewBox="0 0 24 24" width="34" height="34" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3h12a2 2 0 012 2v14a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2zM8 8h8M8 12h8M8 16h5"/></svg></div>
           <div class="empty-state-sub">Nenhuma anotação ainda. Toque em <b>“+ Nova anotação”</b> para criar a primeira — anote estratégias, casas, limites ou o que quiser.</div>
         </div>
       </div>
@@ -1427,7 +1427,7 @@
 <!-- PAYWALL — bloqueio para quem não é assinante (trial expirado) -->
 <div id="paywallOverlay" class="paywall-overlay" style="display:none">
   <div class="paywall-card">
-    <div class="paywall-emoji">⏳</div>
+    <div class="paywall-emoji"><svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></div>
     <div class="paywall-title">Seu acesso expirou</div>
     <div class="paywall-sub">Seu período grátis terminou. Assine o Apostack para continuar usando o painel completo.</div>
     <button class="btn-primary" style="margin-bottom:10px" onclick="subscribeNow()">Assinar Plus · R$ 24,90/mês</button>
@@ -1437,6 +1437,6 @@
 </div>
 
 <script src="config.js?v=9" defer></script>
-<script src="script.js?v=64" defer></script>
+<script src="script.js?v=66" defer></script>
 </body>
 </html>
