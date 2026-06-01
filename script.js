@@ -1108,6 +1108,36 @@ function closeSidebar() {
 }
 
 // ══════════════════════════════════════════════
+//  USER MENU (dropdown no rodape da sidebar)
+// ══════════════════════════════════════════════
+function toggleUserMenu(e) {
+  if (e) e.stopPropagation();
+  const menu = document.getElementById('userMenu');
+  const pill = document.getElementById('userPill');
+  if (!menu) return;
+  const isOpen = menu.classList.toggle('open');
+  if (pill) pill.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+}
+function closeUserMenu() {
+  const menu = document.getElementById('userMenu');
+  const pill = document.getElementById('userPill');
+  if (menu) menu.classList.remove('open');
+  if (pill) pill.setAttribute('aria-expanded', 'false');
+}
+// Fecha o menu ao clicar fora ou apertar Esc
+document.addEventListener('click', function(e){
+  const menu = document.getElementById('userMenu');
+  const pill = document.getElementById('userPill');
+  if (!menu || !menu.classList.contains('open')) return;
+  if (pill && pill.contains(e.target)) return;
+  if (menu.contains(e.target)) return;
+  closeUserMenu();
+});
+document.addEventListener('keydown', function(e){
+  if (e.key === 'Escape') closeUserMenu();
+});
+
+// ══════════════════════════════════════════════
 //  NOTIFICATIONS
 // ══════════════════════════════════════════════
 function toggleNotif() {

@@ -18,7 +18,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
-<link rel="stylesheet" href="style.css?v=38"/>
+<link rel="stylesheet" href="style.css?v=39"/>
 </head>
 <body>
 
@@ -420,10 +420,25 @@
     </div>
 
     <div class="sidebar-footer">
-      <div class="user-pill">
+      <div class="user-pill" onclick="toggleUserMenu(event)" role="button" tabindex="0" aria-haspopup="true" aria-expanded="false" id="userPill">
         <div class="user-avatar">A</div>
-        <div><div class="user-name" id="sidebarUserName">Admin</div><div class="user-role">Administrador</div></div>
-        <div class="user-status"></div>
+        <div style="min-width:0;flex:1"><div class="user-name" id="sidebarUserName">Admin</div><div class="user-role">Administrador</div></div>
+        <div class="user-status" title="Online"></div>
+      </div>
+      <div class="user-menu" id="userMenu" role="menu">
+        <a class="user-menu-item" role="menuitem" onclick="goTo('settings',null);closeUserMenu()">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 01-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+          Configurações
+        </a>
+        <a class="user-menu-item" role="menuitem" onclick="toggleTheme();closeUserMenu()">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+          Mudar tema
+        </a>
+        <div class="user-menu-divider"></div>
+        <a class="user-menu-item danger" role="menuitem" onclick="logout();closeUserMenu()">
+          <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/></svg>
+          Sair
+        </a>
       </div>
     </div>
   </aside>
@@ -440,10 +455,7 @@
       <div class="topbar-actions">
         <button class="btn-ghost txbtn" style="padding:6px 14px;font-size:12px" onclick="openTxModal()" title="Nova transação"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg><span class="txbtn-label"> Transação</span></button>
         <button class="icon-btn" onclick="goTo('recharge',null)" aria-label="Assinatura" title="Assinatura"><svg viewBox="0 0 24 24"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M2 10h20M6 14h4"/></svg></button>
-        <button class="icon-btn" id="themeBtn" onclick="toggleTheme()" aria-label="Mudar tema" title="Mudar tema"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg></button>
-        <button class="icon-btn" onclick="toggleNotif()" id="notifBtn" aria-label="Notificações"><svg viewBox="0 0 24 24"><path d="M6 8a6 6 0 0112 0c0 7 3 9 3 9H3s3-2 3-9M10 21h4"/></svg><div class="notif-dot" id="notifDot"></div></button>
-        <button class="icon-btn" onclick="goTo('settings',null)" aria-label="Configurações"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 01-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg></button>
-        <button class="icon-btn" onclick="logout()" aria-label="Sair"><svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/></svg></button>
+        <button class="icon-btn" onclick="toggleNotif()" id="notifBtn" aria-label="Notificações" title="Notificações"><svg viewBox="0 0 24 24"><path d="M6 8a6 6 0 0112 0c0 7 3 9 3 9H3s3-2 3-9M10 21h4"/></svg><div class="notif-dot" id="notifDot"></div></button>
       </div>
     </div>
 
@@ -1437,6 +1449,6 @@
 </div>
 
 <script src="config.js?v=9" defer></script>
-<script src="script.js?v=66" defer></script>
+<script src="script.js?v=67" defer></script>
 </body>
 </html>
