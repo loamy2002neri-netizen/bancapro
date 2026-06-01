@@ -3217,7 +3217,7 @@ function buildEvoDatasetFor(mode, fromDate, toDate) {
 }
 
 let mainChartInstance = null;
-let currentEvoMode = 'yearly';
+let currentEvoMode = 'today';
 
 function buildEvoChart(mode, fromDate, toDate) {
   const w = window.innerWidth;
@@ -3408,8 +3408,11 @@ function applyCustomRange(){
 }
 
 function initCharts() {
-  // MAIN CHART — inicializa no modo mensal
-  buildEvoChart('yearly');
+  // MAIN CHART — inicializa no modo da aba ativa no HTML (default: Hoje)
+  const activeBtn = document.querySelector('.evo-btn.active');
+  const initialMode = (activeBtn && activeBtn.dataset && activeBtn.dataset.mode) || 'today';
+  currentEvoMode = initialMode;
+  buildEvoChart(initialMode);
 
   // Resize responsivo
   window.addEventListener('resize',()=>{
