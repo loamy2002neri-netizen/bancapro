@@ -1635,6 +1635,54 @@ function buildNotifications() {
     });
   }
 
+  // 5) Streak em risco — prioridade máxima
+  try {
+    if (typeof rankComputeStreak === 'function'){
+      const sk = rankComputeStreak();
+      if (sk.atRisk && sk.current > 0){
+        items.unshift({
+          icon:'⚠️', bg:'rgba(245,158,11,0.18)',
+          text:`<strong>Sua sequência de ${sk.current} ${sk.current===1?'dia':'dias'} está em risco!</strong> Registre uma transação hoje pra manter o streak.`,
+          time:'agora'
+        });
+      } else if (sk.current === 7 || sk.current === 14 || sk.current === 30 || sk.current === 60 || sk.current === 100){
+        items.push({
+          icon: sk.current >= 30 ? '👑' : '🔥', bg:'rgba(251,146,60,0.14)',
+          text:`<strong>${sk.current} dias seguidos!</strong> ${sk.current >= 30 ? 'Você virou um lendário do streak.' : 'Continue assim — você está construindo o hábito.'}`,
+          time:'recente'
+        });
+      }
+    }
+  } catch(e){}
+
+  // 6) Tier atual + progresso pro próximo
+  try {
+    let profit = 0;
+    for (let i = 0; i < transactions.length; i++){
+      const t = transactions[i]; const v = Number(t.value) || 0;
+      if (t.type === 'income') profit += v; else if (t.type === 'expense') profit -= v;
+    }
+    profit = Math.max(0, Math.round(profit));
+    if (profit > 0 && typeof rankComputeCurrent === 'function'){
+      const { current, next } = rankComputeCurrent(profit);
+      if (next){
+        const remaining = next.min - profit;
+        const pct = ((profit - current.min) / (next.min - current.min) * 100).toFixed(0);
+        items.push({
+          icon:'🏆', bg:'rgba(124,92,255,0.12)',
+          text:`<strong>Tier atual: ${current.name}</strong> — ${pct}% pra ${next.name}. Faltam R$ ${remaining.toLocaleString('pt-BR')}.`,
+          time:'agora'
+        });
+      } else {
+        items.push({
+          icon:'⭐', bg:'rgba(250,204,21,0.14)',
+          text:`<strong>Tier máximo: ${current.name}!</strong> Você é o topo absoluto do ranking.`,
+          time:'agora'
+        });
+      }
+    }
+  } catch(e){}
+
   if(items.length === 0) {
     list.innerHTML = '<div style="padding:24px;text-align:center;color:var(--text-muted);font-size:13px">Nenhuma notificação ativa 🎉</div>';
     const dot = document.getElementById('notifDot');
