@@ -2217,28 +2217,35 @@ html { -webkit-text-size-adjust:100%; text-size-adjust:100%; }
   .dash-rank-sub{font-size:13px;color:#aeb8d6;letter-spacing:-.1px}
   .dash-rank-sub b{color:#a282ff;font-weight:700}
   .dash-rank-right{position:relative;z-index:1;flex-shrink:0;display:flex;align-items:center;gap:14px}
-  .dash-streak{display:flex;align-items:center;gap:11px;padding:9px 14px;background:linear-gradient(135deg,rgba(251,146,60,.14),rgba(220,38,38,.06));border:1px solid rgba(251,146,60,.32);border-radius:11px;box-shadow:0 4px 12px rgba(251,146,60,.12)}
-  .dash-streak-flame{width:30px;height:36px;line-height:1;flex-shrink:0;filter:drop-shadow(0 3px 6px rgba(251,146,60,.55));animation:streakFlame 2.5s ease-in-out infinite}
+  /* Streak chip — design premium estilo gaming (dark + orange glow + circular flame badge + separador) */
+  /* Streak chip — design premium estilo gaming (dimensionado igual ao botão Ver ranking) */
+  .dash-streak{position:relative;display:inline-flex;align-items:center;gap:7px;padding:3px 14px 3px 3px;background:linear-gradient(180deg,#1a1f33 0%,#0f1326 100%);border:1.5px solid rgba(251,146,60,.7);border-radius:10px;box-shadow:0 0 0 1px rgba(251,146,60,.18) inset,0 4px 12px rgba(251,146,60,.22),0 0 14px rgba(251,146,60,.16);overflow:visible}
+  .dash-streak::before{content:"";position:absolute;inset:-2px;border-radius:11px;background:linear-gradient(135deg,rgba(251,146,60,.5),rgba(234,88,12,.25) 50%,rgba(251,146,60,.5));z-index:-1;filter:blur(3px);opacity:.5}
+  /* Badge circular da chama */
+  .dash-streak-badge{position:relative;width:26px;height:26px;border-radius:50%;background:radial-gradient(circle at 35% 30%,rgba(251,146,60,.18),rgba(15,19,38,.95) 75%);border:1.2px solid rgba(251,146,60,.4);display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:inset 0 1px 0 rgba(255,255,255,.08),0 0 8px rgba(251,146,60,.4)}
+  .dash-streak-flame{width:14px;height:18px;line-height:1;flex-shrink:0;filter:drop-shadow(0 0 5px rgba(251,146,60,.85));animation:streakFlame 2.4s ease-in-out infinite}
   .dash-streak-flame svg{width:100%;height:100%;display:block}
-  @keyframes streakFlame{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-2px) scale(1.05)}}
-  .dash-streak-info{display:flex;flex-direction:column;align-items:flex-start;line-height:1.1}
-  .dash-streak-num{font-size:18px;font-weight:800;color:#fb923c;letter-spacing:-.3px;font-variant-numeric:tabular-nums}
-  .dash-streak-label{font-size:10px;font-weight:700;color:#cdd5ea;letter-spacing:.4px;text-transform:uppercase;margin-top:2px}
-  /* Variante: em risco (sem tx hoje) */
-  .dash-streak.is-at-risk{background:linear-gradient(135deg,rgba(245,158,11,.14),rgba(220,38,38,.10));border-color:rgba(245,158,11,.45);box-shadow:0 4px 12px rgba(245,158,11,.18),0 0 0 1px rgba(245,158,11,.2)}
-  .dash-streak.is-at-risk .dash-streak-num{color:#fbbf24}
-  .dash-streak.is-at-risk .dash-streak-label{color:#fcd34d}
-  .dash-streak.is-at-risk .dash-streak-flame{filter:drop-shadow(0 0 6px rgba(245,158,11,.7));animation:streakFlameWarn 1.4s ease-in-out infinite}
-  @keyframes streakFlameWarn{0%,100%{opacity:.85;transform:scale(1)}50%{opacity:1;transform:scale(1.08)}}
-  /* Variante: 7+ dias — chama mais intensa */
-  .dash-streak.is-record{background:linear-gradient(135deg,rgba(251,146,60,.2),rgba(220,38,38,.10));border-color:rgba(251,146,60,.5);box-shadow:0 6px 16px rgba(251,146,60,.22),0 0 0 1px rgba(251,146,60,.25)}
-  .dash-streak.is-record .dash-streak-num{color:#facc15;text-shadow:0 0 12px rgba(250,204,21,.4)}
-  .dash-streak.is-record .dash-streak-flame{filter:drop-shadow(0 0 10px rgba(251,146,60,.7))}
-  /* Variante: 30+ dias — coroa de fogo dourada */
-  .dash-streak.is-king{background:linear-gradient(135deg,rgba(250,204,21,.18),rgba(251,146,60,.12));border-color:rgba(250,204,21,.55);box-shadow:0 8px 22px rgba(250,204,21,.3),0 0 0 1.5px rgba(250,204,21,.35),0 0 32px rgba(250,204,21,.2)}
-  .dash-streak.is-king .dash-streak-num{color:#fde047;text-shadow:0 0 16px rgba(250,204,21,.6)}
-  .dash-streak.is-king .dash-streak-flame{filter:drop-shadow(0 0 14px rgba(250,204,21,.85))}
-  .dash-streak.is-king .dash-streak-flame svg path:first-of-type{filter:saturate(1.4) brightness(1.15)}
+  @keyframes streakFlame{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-1px) scale(1.05)}}
+  /* Separador vertical entre chama e numero */
+  .dash-streak-sep{width:1px;height:20px;background:linear-gradient(180deg,transparent,rgba(255,255,255,.18) 50%,transparent);margin:0 1px;flex-shrink:0}
+  /* Número grande dourado/laranja */
+  .dash-streak-num{font-size:17px;font-weight:900;letter-spacing:-.6px;line-height:1;font-family:"Plus Jakarta Sans",sans-serif;font-variant-numeric:tabular-nums;background:linear-gradient(180deg,#fef3c7 0%,#fbbf24 50%,#d97706 100%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;filter:drop-shadow(0 1px 3px rgba(217,119,6,.4))}
+  /* Label texto branco */
+  .dash-streak-label{font-size:8.5px;font-weight:800;color:#e7ecff;letter-spacing:1.4px;text-transform:uppercase;text-shadow:0 1px 2px rgba(0,0,0,.6)}
+  /* Variante: em risco (sem tx hoje) — amber forte + pulso rápido */
+  .dash-streak.is-at-risk{border-color:rgba(245,158,11,.85);box-shadow:0 0 0 1px rgba(245,158,11,.25) inset,0 6px 18px rgba(245,158,11,.35),0 0 28px rgba(245,158,11,.3);animation:streakAtRiskGlow 1.6s ease-in-out infinite}
+  @keyframes streakAtRiskGlow{0%,100%{box-shadow:0 0 0 1px rgba(245,158,11,.25) inset,0 6px 18px rgba(245,158,11,.35),0 0 28px rgba(245,158,11,.3)}50%{box-shadow:0 0 0 1px rgba(245,158,11,.4) inset,0 8px 22px rgba(245,158,11,.5),0 0 40px rgba(245,158,11,.45)}}
+  .dash-streak.is-at-risk .dash-streak-num{background:linear-gradient(180deg,#fef9c3 0%,#fbbf24 50%,#b45309 100%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+  .dash-streak.is-at-risk .dash-streak-flame{animation:streakFlame 1.2s ease-in-out infinite}
+  /* Variante: 7+ dias — chama mais quente */
+  .dash-streak.is-record{border-color:rgba(251,146,60,.9);box-shadow:0 0 0 1px rgba(251,146,60,.28) inset,0 8px 22px rgba(251,146,60,.4),0 0 32px rgba(251,146,60,.3)}
+  .dash-streak.is-record .dash-streak-flame{filter:drop-shadow(0 0 12px rgba(251,146,60,1))}
+  /* Variante: 30+ dias — dourado total */
+  .dash-streak.is-king{border-color:rgba(250,204,21,.85);box-shadow:0 0 0 1.5px rgba(250,204,21,.3) inset,0 8px 24px rgba(250,204,21,.4),0 0 36px rgba(250,204,21,.32)}
+  .dash-streak.is-king::before{background:linear-gradient(135deg,rgba(250,204,21,.6),rgba(251,146,60,.3) 50%,rgba(250,204,21,.6))}
+  .dash-streak.is-king .dash-streak-badge{border-color:rgba(250,204,21,.6);box-shadow:inset 0 1px 0 rgba(255,255,255,.12),0 0 18px rgba(250,204,21,.55)}
+  .dash-streak.is-king .dash-streak-num{background:linear-gradient(180deg,#fef9c3 0%,#fde047 50%,#ca8a04 100%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+  .dash-streak.is-king .dash-streak-flame{filter:drop-shadow(0 0 16px rgba(250,204,21,.9)) saturate(1.4) brightness(1.15)}
   @media (max-width:560px){
     .dash-rank-right{flex-direction:column-reverse;width:100%;gap:10px}
     .dash-streak{align-self:stretch;justify-content:center;padding:8px 14px}
