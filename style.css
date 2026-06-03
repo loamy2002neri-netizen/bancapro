@@ -1995,12 +1995,64 @@ html { -webkit-text-size-adjust:100%; text-size-adjust:100%; }
   .rank-tier-bar.is-locked .rank-tier-icon-badge{box-shadow:0 4px 10px rgba(0,0,0,.4),inset 0 1px 0 rgba(255,255,255,.04);background:radial-gradient(circle at 30% 30%,rgba(255,255,255,.05),rgba(15,20,40,.95) 75%)}
   .rank-tier-bar.is-locked .rank-tier-icon-badge::before{opacity:.08}
   .rank-tier-bar.is-locked .rank-tier-icon svg{filter:saturate(.35) brightness(.6) drop-shadow(0 2px 4px rgba(0,0,0,.5))}
+  .rank-tier-bar.is-locked .rank-tier-icon img{filter:saturate(.5) brightness(.7)}
   .rank-tier-bar.is-locked .rank-tier-tube{opacity:.7}
+  /* APEX nunca fica opacidade baixa — sempre brilha pra criar desejo */
+  .rank-tier-bar.is-apex.is-locked{opacity:.92}
+  .rank-tier-bar.is-apex.is-locked .rank-tier-icon img{filter:none}
+  .rank-tier-bar.is-apex.is-locked .rank-tier-tube{opacity:1}
 
   /* Ranks de elite (Mestre+) ganham mais presença */
   .rank-tier-bar:nth-child(n+10) .rank-tier-icon-badge{box-shadow:0 6px 16px rgba(0,0,0,.5),0 0 22px var(--ticon,#7c5cff),0 0 44px var(--ticon,#7c5cff),inset 0 1px 0 rgba(255,255,255,.1)}
   .rank-tier-bar:nth-child(n+14) .rank-tier-icon-badge{box-shadow:0 8px 20px rgba(0,0,0,.5),0 0 28px var(--ticon,#fbbf24),0 0 56px var(--ticon,#fbbf24),inset 0 1px 0 rgba(255,255,255,.15)}
   .rank-tier-bar:nth-child(15) .rank-tier-label{color:#fde047;text-shadow:0 0 16px rgba(250,204,21,.55),0 1px 2px rgba(0,0,0,.5)}
+
+  /* ═══ PROGRESSÃO DE GRADIENTES POR TIER ═══ */
+  /* Quanto mais alto o tier, mais elaborado o gradiente animado no tubo */
+
+  /* is-pro-tier (Safira/Rubi/Diamante — 7-9): 4 stops com movimento sutil */
+  .rank-tier-bar.is-pro-tier .rank-tier-fill{background:linear-gradient(180deg,var(--ticon,#7c5cff) 0%,color-mix(in srgb, var(--ticon, #7c5cff) 70%, white) 25%,var(--ticon,#7c5cff) 50%,color-mix(in srgb, var(--ticon, #7c5cff) 80%, black) 100%) !important;background-size:100% 220% !important;animation:tierProFlow 6s ease-in-out infinite !important;filter:saturate(1.1)}
+  @keyframes tierProFlow{0%{background-position:50% 0%}50%{background-position:50% 100%}100%{background-position:50% 0%}}
+  .rank-tier-bar.is-pro-tier .rank-tier-tube{box-shadow:inset 0 2px 8px rgba(0,0,0,.55),0 0 0 1px rgba(255,255,255,.04),0 0 16px var(--ticon,#7c5cff),0 3px 8px rgba(0,0,0,.25)}
+
+  /* is-elite-tier (Mestre/Elite/Lendário — 10-12): 5 stops + brightness */
+  .rank-tier-bar.is-elite-tier .rank-tier-fill{background:linear-gradient(180deg,color-mix(in srgb, var(--ticon, #a855f7) 50%, white) 0%,var(--ticon,#a855f7) 20%,color-mix(in srgb, var(--ticon, #a855f7) 90%, #ec4899) 45%,var(--ticon,#a855f7) 70%,color-mix(in srgb, var(--ticon, #a855f7) 70%, black) 100%) !important;background-size:100% 260% !important;animation:tierEliteFlow 5s ease-in-out infinite !important;filter:saturate(1.2) brightness(1.05);box-shadow:inset 0 -12px 22px rgba(0,0,0,.4),inset 0 2px 4px rgba(255,255,255,.2),0 0 24px var(--ticon,#a855f7)}
+  @keyframes tierEliteFlow{0%,100%{background-position:50% 0%}50%{background-position:50% 100%}}
+  .rank-tier-bar.is-elite-tier .rank-tier-tube{box-shadow:inset 0 2px 8px rgba(0,0,0,.55),0 0 0 1px rgba(255,255,255,.06),0 0 22px var(--ticon,#a855f7),0 0 44px var(--ticon,#a855f7),0 3px 8px rgba(0,0,0,.3)}
+
+  /* is-godlike-tier (Imortal — 13): violet/lilás iridescente */
+  .rank-tier-bar.is-godlike-tier .rank-tier-fill{background:linear-gradient(180deg,#ddd6fe 0%,#c4b5fd 18%,#a78bfa 36%,#8b5cf6 54%,#7c3aed 72%,#6d28d9 88%,#4c1d95 100%) !important;background-size:120% 300% !important;animation:tierGodlikeFlow 4.2s ease-in-out infinite !important;filter:saturate(1.3) brightness(1.08);box-shadow:inset 0 -14px 24px rgba(67,20,219,.45),inset 0 3px 5px rgba(255,255,255,.3),0 0 28px rgba(139,92,246,.55),0 0 56px rgba(139,92,246,.25)}
+  @keyframes tierGodlikeFlow{0%{background-position:50% 0%;filter:saturate(1.3) brightness(1.08) hue-rotate(0deg)}50%{background-position:50% 100%;filter:saturate(1.4) brightness(1.15) hue-rotate(15deg)}100%{background-position:50% 0%;filter:saturate(1.3) brightness(1.08) hue-rotate(0deg)}}
+  .rank-tier-bar.is-godlike-tier .rank-tier-tube{box-shadow:inset 0 2px 8px rgba(0,0,0,.55),0 0 0 1.5px rgba(139,92,246,.45),0 0 28px rgba(139,92,246,.6),0 0 56px rgba(167,139,250,.35),0 3px 8px rgba(0,0,0,.3)}
+
+  /* is-supremo-tier (Supremo — 14): purple → cyan → pink iridescente */
+  .rank-tier-bar.is-supremo-tier .rank-tier-fill{background:linear-gradient(180deg,#7D3CFF 0%,#5D7AFF 22%,#4ACBFF 45%,#A0A5FF 65%,#C56BFF 82%,#E86BFF 100%) !important;background-size:150% 320% !important;animation:tierSupremoFlow 3.8s ease-in-out infinite !important;filter:saturate(1.4) brightness(1.1);box-shadow:inset 0 -14px 24px rgba(0,0,0,.35),inset 0 3px 5px rgba(255,255,255,.35),0 0 32px rgba(74,203,255,.55),0 0 64px rgba(125,60,255,.35)}
+  @keyframes tierSupremoFlow{0%{background-position:0% 0%;filter:saturate(1.4) brightness(1.1) hue-rotate(0deg)}25%{background-position:50% 33%;filter:saturate(1.5) brightness(1.15) hue-rotate(15deg)}50%{background-position:100% 66%;filter:saturate(1.6) brightness(1.2) hue-rotate(30deg)}75%{background-position:50% 100%;filter:saturate(1.5) brightness(1.15) hue-rotate(15deg)}100%{background-position:0% 0%;filter:saturate(1.4) brightness(1.1) hue-rotate(0deg)}}
+  .rank-tier-bar.is-supremo-tier .rank-tier-tube{box-shadow:inset 0 2px 8px rgba(0,0,0,.55),0 0 0 1.5px rgba(74,203,255,.45),0 0 32px rgba(74,203,255,.6),0 0 64px rgba(232,107,255,.4),0 3px 8px rgba(0,0,0,.3);animation:tierSupremoTubeGlow 4s ease-in-out infinite}
+  @keyframes tierSupremoTubeGlow{0%,100%{box-shadow:inset 0 2px 8px rgba(0,0,0,.55),0 0 0 1.5px rgba(125,60,255,.5),0 0 32px rgba(125,60,255,.6),0 0 64px rgba(232,107,255,.4),0 3px 8px rgba(0,0,0,.3)}50%{box-shadow:inset 0 2px 8px rgba(0,0,0,.55),0 0 0 1.5px rgba(74,203,255,.55),0 0 36px rgba(74,203,255,.75),0 0 72px rgba(232,107,255,.4),0 3px 8px rgba(0,0,0,.3)}}
+  /* Supremo + Imortal nunca opacos demais — sempre brilham */
+  .rank-tier-bar.is-supremo-tier.is-locked{opacity:.85}
+  .rank-tier-bar.is-godlike-tier.is-locked{opacity:.78}
+  .rank-tier-bar.is-elite-tier.is-locked{opacity:.72}
+
+  /* ═══ APEX (R$ 1M) — Lendário absoluto com gradiente animado ═══ */
+  .rank-tier-bar.is-apex .rank-tier-label{color:#fef3c7;text-shadow:0 0 18px rgba(250,204,21,.75),0 0 32px rgba(251,146,60,.45),0 1px 2px rgba(0,0,0,.5);animation:apexLabelShimmer 3s ease-in-out infinite;font-weight:900;letter-spacing:1.8px}
+  @keyframes apexLabelShimmer{0%,100%{text-shadow:0 0 18px rgba(250,204,21,.75),0 0 32px rgba(251,146,60,.45),0 1px 2px rgba(0,0,0,.5)}50%{text-shadow:0 0 24px rgba(254,243,199,.95),0 0 44px rgba(250,204,21,.7),0 1px 2px rgba(0,0,0,.5)}}
+  .rank-tier-bar.is-apex .rank-tier-icon-badge{background:radial-gradient(circle at 30% 30%,rgba(255,255,255,.2),rgba(15,20,40,.85) 75%);border-color:rgba(250,204,21,.55);box-shadow:0 8px 20px rgba(0,0,0,.5),0 0 32px rgba(250,204,21,.7),0 0 64px rgba(251,146,60,.5),0 0 96px rgba(217,119,6,.3),inset 0 1px 0 rgba(255,255,255,.2);animation:apexBadgePulse 2.5s ease-in-out infinite}
+  @keyframes apexBadgePulse{0%,100%{box-shadow:0 8px 20px rgba(0,0,0,.5),0 0 32px rgba(250,204,21,.7),0 0 64px rgba(251,146,60,.5),0 0 96px rgba(217,119,6,.3),inset 0 1px 0 rgba(255,255,255,.2);transform:scale(1)}50%{box-shadow:0 10px 24px rgba(0,0,0,.5),0 0 44px rgba(254,243,199,.85),0 0 80px rgba(250,204,21,.65),0 0 120px rgba(251,146,60,.4),inset 0 1px 0 rgba(255,255,255,.25);transform:scale(1.04)}}
+  .rank-tier-bar.is-apex .rank-tier-tube{border-color:rgba(250,204,21,.45);box-shadow:inset 0 2px 8px rgba(0,0,0,.55),0 0 0 1.5px rgba(250,204,21,.35),0 0 28px rgba(250,204,21,.45),0 0 56px rgba(251,146,60,.3)}
+  /* Fill com gradiente DOURADO PREMIUM animado (champagne → gold → deep gold) */
+  .rank-tier-bar.is-apex .rank-tier-fill{background:linear-gradient(180deg,#FFF8D1 0%,#FAEAA8 18%,#F5DA7B 35%,#F2C230 55%,#E0AB22 75%,#C99200 100%) !important;background-size:200% 400% !important;animation:apexFillFlow 4s ease-in-out infinite !important;box-shadow:inset 0 -14px 24px rgba(146,64,14,.5),inset 0 2px 6px rgba(255,255,255,.4),0 0 32px rgba(242,194,48,.6)}
+  @keyframes apexFillFlow{0%{background-position:50% 0%}25%{background-position:50% 50%}50%{background-position:50% 100%}75%{background-position:50% 50%}100%{background-position:50% 0%}}
+  /* Brilho superior do fill mais intenso */
+  .rank-tier-bar.is-apex .rank-tier-fill::before{background:linear-gradient(180deg,rgba(254,249,195,.85),rgba(254,243,199,.3),transparent) !important;height:24px !important}
+  /* Shimmer mais rápido e mais brilhante */
+  .rank-tier-bar.is-apex .rank-tier-fill::after{background:linear-gradient(180deg,transparent,rgba(254,243,199,.5) 50%,transparent) !important;animation:tierFillShine 2.5s ease-in-out infinite !important}
+  .rank-tier-bar.is-apex .rank-tier-num{color:#fde047 !important;background:linear-gradient(135deg,rgba(250,204,21,.18),rgba(251,146,60,.08)) !important;border-color:rgba(250,204,21,.4) !important;font-weight:900}
+  .rank-tier-bar.is-apex .rank-tier-min{color:#fef3c7 !important;text-shadow:0 0 10px rgba(250,204,21,.7);font-weight:900}
+  /* Partículas/sparkles ao redor da Apex */
+  .rank-tier-bar.is-apex::after{content:"";position:absolute;inset:0;pointer-events:none;background:radial-gradient(circle at 30% 20%,rgba(254,243,199,.4) 0px,transparent 2px),radial-gradient(circle at 70% 40%,rgba(250,204,21,.5) 0px,transparent 2px),radial-gradient(circle at 50% 70%,rgba(254,243,199,.4) 0px,transparent 2px),radial-gradient(circle at 20% 85%,rgba(251,146,60,.4) 0px,transparent 2px);animation:apexSparkles 3s ease-in-out infinite}
+  @keyframes apexSparkles{0%,100%{opacity:.7}50%{opacity:1}}
 
   /* Bottom card */
   .rank-bottom-card{position:relative;background:linear-gradient(160deg,rgba(15,20,40,.7) 0%,rgba(10,14,29,.9) 100%);border:1px solid rgba(255,255,255,.06);border-radius:18px;padding:20px 26px;display:flex;justify-content:space-between;align-items:center;gap:24px;flex-wrap:wrap;overflow:hidden}

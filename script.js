@@ -5036,21 +5036,21 @@ async function notesDelete(id){
 // RANKING
 // ═══════════════════════════════════════════════════════════════
 const RANK_TIERS = [
-  { idx:1,  name:'Ferro',     min:0,        color:'#7a8290', g1:'#9aa3b0', g2:'#5f6775', desc:'Iniciante. Cada real lucrado é um passo na sua jornada.' },
-  { idx:2,  name:'Bronze',    min:1000,     color:'#cd7f32', g1:'#e6934a', g2:'#9a5e26', desc:'Você já saiu do zero. O primeiro milhar de lucro está na conta.' },
-  { idx:3,  name:'Prata',     min:3000,     color:'#c0c0c0', g1:'#e8e8e8', g2:'#8d8d8d', desc:'Apostador consistente. Seu lucro já está acima da média.' },
-  { idx:4,  name:'Ouro',      min:5000,     color:'#ffb700', g1:'#ffd45e', g2:'#c98e00', desc:'Apostador disciplinado. Você opera com método e resultado.' },
-  { idx:5,  name:'Platina',   min:10000,    color:'#a3e6e1', g1:'#c8f5f2', g2:'#6fc6c0', desc:'Veterano. Cinco dígitos de lucro. Você domina a gestão da banca.' },
-  { idx:6,  name:'Esmeralda', min:20000,    color:'#10b981', g1:'#34d399', g2:'#047857', desc:'Estrategista. Suas decisões são baseadas em dados, e o lucro mostra.' },
-  { idx:7,  name:'Safira',    min:50000,    color:'#3b82f6', g1:'#60a5fa', g2:'#1d4ed8', desc:'Apostador profissional. Meio centena de mil em lucro acumulado.' },
-  { idx:8,  name:'Rubi',      min:75000,    color:'#e11d48', g1:'#f43f5e', g2:'#9f1239', desc:'Top 30%. Poucos apostadores chegam neste patamar de lucro.' },
-  { idx:9,  name:'Diamante',  min:100000,   color:'#cbd5e1', g1:'#ffffff', g2:'#94a3b8', desc:'Elite. Seis dígitos de lucro acumulado. Sua gestão é referência.' },
-  { idx:10, name:'Mestre',    min:150000,   color:'#a855f7', g1:'#c084fc', g2:'#7e22ce', desc:'Mestre da banca. Disciplina e lucro em altíssimo nível.' },
-  { idx:11, name:'Elite',     min:250000,   color:'#06b6d4', g1:'#22d3ee', g2:'#0e7490', desc:'Top 5%. Você está entre os melhores apostadores.' },
-  { idx:12, name:'Lendário',  min:500000,   color:'#f97316', g1:'#fb923c', g2:'#c2410c', desc:'Lendário. Meio milhão de reais em lucro acumulado.' },
-  { idx:13, name:'Imortal',   min:700000,   color:'#8b5cf6', g1:'#a78bfa', g2:'#6d28d9', desc:'Status raro. Pouquíssimos apostadores chegam aqui.' },
-  { idx:14, name:'Supremo',   min:850000,   color:'gradient',g1:'#ec4899', g2:'#3b82f6', desc:'Status supremo. A um passo do milhão em lucro acumulado.' },
-  { idx:15, name:'Apex',      min:1000000,  color:'#facc15', g1:'#fde047', g2:'#a16207', desc:'O topo absoluto. R$ 1 milhão em lucro acumulado. Você é o melhor.' }
+  { idx:1,  name:'Ferro',     min:0,        color:'#9CA4B3', g1:'#C9D0DA', g2:'#7B8596', desc:'Iniciante. Cada real lucrado é um passo na sua jornada.' },
+  { idx:2,  name:'Bronze',    min:1000,     color:'#C58147', g1:'#F0B06B', g2:'#9A5B22', desc:'Você já saiu do zero. O primeiro milhar de lucro está na conta.' },
+  { idx:3,  name:'Prata',     min:3000,     color:'#D2DAE6', g1:'#F8FBFF', g2:'#AAB4C3', desc:'Apostador consistente. Seu lucro já está acima da média.' },
+  { idx:4,  name:'Ouro',      min:5000,     color:'#F0CA53', g1:'#FFF2A6', g2:'#D8A100', desc:'Apostador disciplinado. Você opera com método e resultado.' },
+  { idx:5,  name:'Platina',   min:10000,    color:'#A3BECF', g1:'#D8ECF7', g2:'#6E90A7', desc:'Veterano. Cinco dígitos de lucro. Você domina a gestão da banca.' },
+  { idx:6,  name:'Esmeralda', min:20000,    color:'#329F84', g1:'#59F1B6', g2:'#0B6B52', desc:'Estrategista. Suas decisões são baseadas em dados, e o lucro mostra.' },
+  { idx:7,  name:'Safira',    min:50000,    color:'#5085E4', g1:'#8FC4FF', g2:'#1746C9', desc:'Apostador profissional. Meio centena de mil em lucro acumulado.' },
+  { idx:8,  name:'Rubi',      min:75000,    color:'#C53F63', g1:'#FF6A8C', g2:'#8B123A', desc:'Top 30%. Poucos apostadores chegam neste patamar de lucro.' },
+  { idx:9,  name:'Diamante',  min:100000,   color:'#BEE3FF', g1:'#FFFFFF', g2:'#7DC7FF', desc:'Elite. Seis dígitos de lucro acumulado. Sua gestão é referência.' },
+  { idx:10, name:'Mestre',    min:150000,   color:'#9462E3', g1:'#CFA2FF', g2:'#5A22C8', desc:'Mestre da banca. Disciplina e lucro em altíssimo nível.' },
+  { idx:11, name:'Elite',     min:250000,   color:'#49B7CA', g1:'#8BF3FF', g2:'#067C95', desc:'Top 5%. Você está entre os melhores apostadores.' },
+  { idx:12, name:'Lendário',  min:500000,   color:'#E98E35', g1:'#FFD36B', g2:'#D34A00', desc:'Lendário. Meio milhão de reais em lucro acumulado.' },
+  { idx:13, name:'Imortal',   min:700000,   color:'#A66CE4', g1:'#E1B8FF', g2:'#6120C4', desc:'Status raro. Pouquíssimos apostadores chegam aqui.' },
+  { idx:14, name:'Supremo',   min:850000,   color:'gradient',g1:'#7D3CFF', via:'#4ACBFF', g2:'#E86BFF', desc:'Status supremo. A um passo do milhão em lucro acumulado.' },
+  { idx:15, name:'Apex',      min:1000000,  color:'#F2C230', g1:'#FFF8D1', via:'#F2C230', g2:'#C99200', desc:'O topo absoluto. R$ 1 milhão em lucro acumulado. Você é o melhor.' }
 ];
 
 function rankFormatMin(n){
@@ -5775,13 +5775,22 @@ function renderUserRanking(){
       const isCurrent = t.idx === current.idx;
       const isLocked = t.idx > current.idx;
       const heightPct = 22 + Math.pow(t.idx / 15, 1.4) * 76;
-      const iconColor = t.color === 'gradient' ? '#a855f7' : t.color;
+      const iconColor = t.color === 'gradient' ? (t.via || '#a855f7') : t.color;
       const fillBg = t.color === 'gradient'
-        ? 'linear-gradient(180deg,#ec4899 0%,#a855f7 50%,#3b82f6 100%)'
-        : 'linear-gradient(180deg,'+t.g1+' 0%,'+t.color+' 60%,'+t.g2+' 100%)';
+        ? 'linear-gradient(180deg,'+t.g1+' 0%,'+(t.via || '#a855f7')+' 50%,'+t.g2+' 100%)'
+        : (t.via
+            ? 'linear-gradient(180deg,'+t.g1+' 0%,'+t.via+' 50%,'+t.g2+' 100%)'
+            : 'linear-gradient(180deg,'+t.g1+' 0%,'+t.color+' 60%,'+t.g2+' 100%)');
       const shineDelay = ((t.idx * 0.3) % 4).toFixed(1) + 's';
       const tooltip = t.name + ' · ' + rankFormatMin(t.min) + (t.desc ? ' — ' + t.desc.split('.')[0] : '');
-      return '<div class="rank-tier-bar '+(isCurrent?'is-current ':'')+(isLocked?'is-locked':'')+'" style="--ticon:'+iconColor+';--shine-delay:'+shineDelay+'" title="'+tooltip.replace(/"/g,'&quot;')+'">'+
+      // Classes progressivas baseadas no tier idx
+      let groupCls = '';
+      if (t.idx === 15) groupCls = ' is-apex';
+      else if (t.idx === 14) groupCls = ' is-supremo-tier';
+      else if (t.idx === 13) groupCls = ' is-godlike-tier';
+      else if (t.idx >= 10) groupCls = ' is-elite-tier';
+      else if (t.idx >= 7) groupCls = ' is-pro-tier';
+      return '<div class="rank-tier-bar '+(isCurrent?'is-current ':'')+(isLocked?'is-locked':'')+groupCls+'" style="--ticon:'+iconColor+';--shine-delay:'+shineDelay+'" title="'+tooltip.replace(/"/g,'&quot;')+'">'+
         '<div class="rank-tier-label">'+t.name+'</div>'+
         '<div class="rank-tier-icon-badge"><div class="rank-tier-icon">'+rankShieldSVG(t)+'</div></div>'+
         '<div class="rank-tier-tube"><div class="rank-tier-fill" style="height:'+heightPct+'%;background:'+fillBg+'"></div></div>'+
