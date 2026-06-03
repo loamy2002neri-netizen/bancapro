@@ -5100,10 +5100,10 @@ const RANK_MOCK_USERS = [
 
 // Critérios pra entrar no ranking global (mantidos em sync com o RPC get_leaderboard)
 const RANK_ELIGIBILITY = {
-  minTx: 20,
-  minActiveDays: 5,
-  minAccountDays: 7,
-  minProfit: 100
+  minTx: 5,
+  minActiveDays: 2,
+  minAccountDays: 1,
+  minProfit: 1
 };
 
 function rankComputeEligibility(){
