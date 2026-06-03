@@ -983,8 +983,86 @@ try {
   if (_refParam && _refParam.trim()) localStorage.setItem('bancapro-ref', _refParam.trim());
 } catch(e){}
 
+// Modo demo (?demo=1&tab=NAME) — usado pra screenshots da landing page
+(function demoMode(){
+  try{
+    var p = new URLSearchParams(location.search);
+    if(p.get('demo') !== '1') return;
+    var tab = p.get('tab') || 'dashboard';
+    function go(){
+      try{
+        // Reset visual pra default Apostack dark
+        document.documentElement.classList.remove('light');
+        document.documentElement.classList.add('dark');
+        try{ localStorage.removeItem('bancapro-theme'); }catch(e){}
+        try{ localStorage.removeItem('bancapro-platform-name'); }catch(e){}
+        try{ localStorage.removeItem('bancapro-logo'); }catch(e){}
+        document.getElementById('authScreen').style.display='none';
+        document.getElementById('appLayout').style.display='flex';
+        document.querySelectorAll('.section').forEach(function(s){s.classList.remove('active');});
+        var sec = document.getElementById('sec-'+tab);
+        if(sec) sec.classList.add('active');
+        // Trigger inits específicos por seção
+        try{
+          if(tab==='methods' && typeof initMethodEvolution==='function') setTimeout(initMethodEvolution,150);
+          if(tab==='methods' && typeof renderMethodsRanking==='function') setTimeout(renderMethodsRanking,150);
+          if(tab==='transactions' && typeof renderAllTransactions==='function') setTimeout(renderAllTransactions,200);
+          if(tab==='reports' && typeof initReportCharts==='function') setTimeout(initReportCharts,200);
+        }catch(e){}
+        var now=new Date();
+        function tAt(h,m){var d=new Date(now);d.setHours(h,m,0,0);return d.getTime();}
+        function iso(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
+        function dISO(off){var d=new Date(now);d.setDate(d.getDate()-off);return iso(d);}
+        try{ SALDO_BASE=40000; }catch(e){}
+        var tx = [];
+        // Inject 30 dias de transações pra populiar os charts
+        for(var i=29; i>=0; i--){
+          var date = dISO(i);
+          if(i%3===0) tx.push({id:Date.now()+i*100,type:'income',value:Math.round(200+Math.random()*400),method:'Surebet',date:date,desc:'Surebet '+date});
+          if(i%4===0) tx.push({id:Date.now()+i*100+1,type:'income',value:Math.round(100+Math.random()*200),method:'Freebet',date:date,desc:'Freebet '+date});
+          if(i%5===0) tx.push({id:Date.now()+i*100+2,type:'expense',value:Math.round(50+Math.random()*150),method:'iGaming',date:date,desc:'iGaming '+date});
+          if(i%6===0) tx.push({id:Date.now()+i*100+3,type:'income',value:Math.round(150+Math.random()*250),method:'Stake',date:date,desc:'Stake '+date});
+        }
+        // Hoje
+        tx.push({id:tAt(8,0),type:'income',value:8420,method:'Surebet',date:iso(now),desc:'Surebet hoje'});
+        tx.push({id:tAt(12,0),type:'expense',value:2380,method:'iGaming',date:iso(now),desc:'iGaming hoje'});
+        transactions = tx;
+        try{ saveTransactions && saveTransactions(); }catch(e){}
+        // Atualiza KPIs
+        try{
+          if(document.getElementById('kpi-saldo')) document.getElementById('kpi-saldo').textContent='R$ 48.500';
+          if(document.getElementById('kpi-lucro')) document.getElementById('kpi-lucro').textContent='+R$ 8.420';
+          if(document.getElementById('kpi-despesas')) document.getElementById('kpi-despesas').textContent='R$ 2.380';
+          if(document.getElementById('kpi-roi')) document.getElementById('kpi-roi').textContent='18,4%';
+        }catch(e){}
+        if(typeof buildEvoChart==='function') buildEvoChart('today');
+        if(typeof buildMethodCategoryChart==='function') buildMethodCategoryChart();
+        if(typeof buildDashboardPieChart==='function') buildDashboardPieChart();
+        // Inject notas demo pra anotações
+        try{
+          window.NOTES = [
+            {id:'n1',title:'Surebet · 28/05',body:'Bet365 demorou pra aceitar. Tentar Pinnacle primeiro nas próximas surebets.',color:'green',date:Date.now()-3*86400000},
+            {id:'n2',title:'Freebet · 25/05',body:'Stake virou R$ 50 quando devia ser R$ 30. Cuidado com calculadora em odds altas.',color:'yellow',date:Date.now()-6*86400000},
+            {id:'n3',title:'iGaming · 22/05',body:'Voltei pro iGaming, R$ 400 abaixo em 1 noite. Cortar de vez.',color:'red',date:Date.now()-9*86400000},
+            {id:'n4',title:'Stake · 20/05',body:'Boa sequência em over 2.5. Manter padrão até dar 10 apostas pra avaliar.',color:'blue',date:Date.now()-11*86400000}
+          ];
+          if(typeof notesRender==='function') notesRender();
+        }catch(e){}
+        // Reports charts
+        try{ if(typeof initReportCharts==='function') setTimeout(initReportCharts,150); }catch(e){}
+        // Esconde sidebar pra screenshot ficar focado no conteúdo
+        var sb=document.getElementById('sidebar'); if(sb) sb.style.display='none';
+        var bc=document.querySelector('.topbar-breadcrumb'); if(bc) bc.textContent='Apostack';
+      }catch(err){ console.error('demo error',err); }
+    }
+    if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',go); else setTimeout(go,200);
+  }catch(e){}
+})();
+
 // Restaura sessão ao abrir a página (auto-login se já estiver logado)
 (async function restoreSession(){
+  // Se em modo demo, não restaura sessão
+  try{ if(new URLSearchParams(location.search).get('demo')==='1') return; }catch(e){}
   const sb = getSb();
   if (sb) {
     // Retorno do link de "redefinir senha": mostra a tela de definir nova senha
@@ -1021,7 +1099,7 @@ function goTo(section, el) {
     });
   }
   const labels = {dashboard:'Dashboard',methods:'Métodos',transactions:'Transações',accounts:'Contas Depositadas',recharge:'Assinatura',reports:'Relatórios',goals:'Metas',compare:'Comparativo',calculadora:'Calculadora',anotacoes:'Anotações',settings:'Configurações',admin:'Admin',afiliado:'Minhas Indicações',afiliados:'Afiliados'};
-  document.getElementById('breadcrumb').textContent = labels[section] || section;
+  var _bc = document.getElementById('breadcrumb'); if(_bc) _bc.textContent = labels[section] || section;
   closeSidebar();
   if(section === 'reports') setTimeout(initReportCharts, 100);
   if(section === 'compare') setTimeout(initCompareChart, 100);
@@ -1136,6 +1214,197 @@ document.addEventListener('click', function(e){
 });
 document.addEventListener('keydown', function(e){
   if (e.key === 'Escape') closeUserMenu();
+});
+
+// ══════════════════════════════════════════════
+//  TOUR / PASSO-A-PASSO (onboarding)
+// ══════════════════════════════════════════════
+const TOUR_STEPS = [
+  // ===== DASHBOARD =====
+  {
+    selector: '.kpi-grid',
+    title: 'Seus 4 indicadores principais',
+    desc: 'Saldo, lucro, despesas e ROI atualizados em tempo real. O coração do painel.',
+    section: 'dashboard'
+  },
+  {
+    selector: '.period-tabs',
+    title: 'Filtre por período',
+    desc: 'Veja seus números de Hoje, Semana, Mês ou Ano. Cada filtro recalcula tudo automaticamente.',
+    section: 'dashboard'
+  },
+  {
+    selector: '#mainChartWrap',
+    title: 'Evolução Financeira',
+    desc: 'Acompanhe sua banca subindo (ou descendo) no gráfico. Tabs internas: Hoje, 7 Dias, 30 Dias, Anual e Personalizado.',
+    section: 'dashboard'
+  },
+  {
+    selector: '.txbtn',
+    title: 'Nova Transação',
+    desc: 'O botão mais importante. Registre cada depósito, saque ou resultado aqui. É o que alimenta todo o painel.',
+    section: 'dashboard'
+  },
+  // ===== MÉTODOS =====
+  {
+    selector: '#sec-methods .page-header',
+    title: 'Gestão de Métodos',
+    desc: 'Acompanhe a performance de cada estratégia: Surebet, Freebet, iGaming, Stake, etc. Ranking e gráfico mostram qual te dá mais lucro.',
+    section: 'methods'
+  },
+  // ===== TRANSAÇÕES =====
+  {
+    selector: '#sec-transactions .page-header',
+    title: 'Transações',
+    desc: 'Histórico completo de tudo que entrou e saiu da banca. Filtre por data, método ou tipo. Exporte PDF ou Excel.',
+    section: 'transactions'
+  },
+  // ===== CONTAS DEPOSITADAS =====
+  {
+    selector: '#sec-accounts .page-header',
+    title: 'Contas Depositadas',
+    desc: 'Saldo individual por casa de aposta (Bet365, Betano, Pinnacle, etc). Não esqueça dinheiro parado em casa nenhuma.',
+    section: 'accounts'
+  },
+  // ===== RELATÓRIOS =====
+  {
+    selector: '#sec-reports .page-header',
+    title: 'Relatórios',
+    desc: 'Análise mensal completa: Receita vs Despesa, Distribuição de despesas e ROI por método. Exporte em PDF.',
+    section: 'reports'
+  },
+  // ===== METAS =====
+  {
+    selector: '#sec-goals .page-header',
+    title: 'Sistema de Metas',
+    desc: 'Defina objetivos por método ou geral. A Apostack mostra seu progresso e quanto falta pra bater.',
+    section: 'goals'
+  },
+  // ===== COMPARATIVO =====
+  {
+    selector: '#sec-compare .page-header',
+    title: 'Comparativo Mensal',
+    desc: 'Compare o mês atual com o anterior: receita, lucro, despesas e ROI. Veja onde melhorou e onde piorou.',
+    section: 'compare'
+  },
+  // ===== CALCULADORA =====
+  {
+    selector: '#sec-calculadora .page-header',
+    title: 'Calculadora',
+    desc: 'Surebet, stake e proteção de duplo. Coloca os dados, ela faz a conta. Zero erro de divisão.',
+    section: 'calculadora'
+  },
+  // ===== ANOTAÇÕES =====
+  {
+    selector: '#sec-anotacoes .page-header',
+    title: 'Anotações',
+    desc: 'Suas notas, estratégias e lembretes. Aquela aposta que deu errado e você quer lembrar pra não repetir? Anota aqui.',
+    section: 'anotacoes'
+  },
+  // ===== CONFIGURAÇÕES =====
+  {
+    selector: '#sec-settings .page-header',
+    title: 'Configurações',
+    desc: 'Personalize a plataforma, troque sua foto, mude o tema, gerencie sua assinatura e acesse o suporte.',
+    section: 'settings'
+  }
+];
+
+let currentTourStep = 0;
+
+function startTour() {
+  if (typeof goTo === 'function') goTo('dashboard', null);
+  currentTourStep = 0;
+  document.getElementById('tourBackdrop').hidden = false;
+  document.getElementById('tourSpotlight').hidden = false;
+  document.getElementById('tourTooltip').hidden = false;
+  setTimeout(function(){ showTourStep(0); }, 300);
+}
+
+function showTourStep(idx) {
+  const step = TOUR_STEPS[idx];
+  if (!step) return closeTour();
+  if (step.section && typeof goTo === 'function') {
+    const activeSec = document.querySelector('.section.active');
+    if (!activeSec || activeSec.id !== 'sec-' + step.section) {
+      goTo(step.section, null);
+    }
+  }
+  const target = document.querySelector(step.selector);
+  if (!target) {
+    return setTimeout(function(){ currentTourStep++; showTourStep(currentTourStep); }, 200);
+  }
+  target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  setTimeout(function(){ positionTour(target, step, idx); }, 350);
+}
+
+function positionTour(target, step, idx) {
+  const rect = target.getBoundingClientRect();
+  const padding = 10;
+  const spot = document.getElementById('tourSpotlight');
+  spot.style.top = (rect.top - padding) + 'px';
+  spot.style.left = (rect.left - padding) + 'px';
+  spot.style.width = (rect.width + padding * 2) + 'px';
+  spot.style.height = (rect.height + padding * 2) + 'px';
+
+  document.getElementById('tourTag').textContent = 'PASSO ' + (idx + 1) + ' DE ' + TOUR_STEPS.length;
+  document.getElementById('tourTitle').textContent = step.title;
+  document.getElementById('tourDesc').textContent = step.desc;
+  document.getElementById('tourProgressBar').style.width = ((idx + 1) / TOUR_STEPS.length * 100) + '%';
+  document.getElementById('tourNextBtn').textContent = (idx === TOUR_STEPS.length - 1) ? 'Concluir ✓' : 'Próximo ›';
+
+  const tooltip = document.getElementById('tourTooltip');
+  const tooltipW = tooltip.offsetWidth || 340;
+  const tooltipH = tooltip.offsetHeight || 220;
+  const margin = 20;
+  const vw = window.innerWidth, vh = window.innerHeight;
+
+  // Tenta colocar à direita; se não couber, à esquerda; senão, embaixo
+  let left, top;
+  if (rect.right + margin + tooltipW <= vw) {
+    left = rect.right + margin;
+    top = rect.top + (rect.height / 2) - (tooltipH / 2);
+  } else if (rect.left - margin - tooltipW >= 0) {
+    left = rect.left - margin - tooltipW;
+    top = rect.top + (rect.height / 2) - (tooltipH / 2);
+  } else if (rect.bottom + margin + tooltipH <= vh) {
+    left = Math.max(margin, Math.min(rect.left, vw - tooltipW - margin));
+    top = rect.bottom + margin;
+  } else {
+    left = Math.max(margin, Math.min(rect.left, vw - tooltipW - margin));
+    top = Math.max(margin, rect.top - tooltipH - margin);
+  }
+  top = Math.max(margin, Math.min(top, vh - tooltipH - margin));
+  tooltip.style.left = left + 'px';
+  tooltip.style.top = top + 'px';
+}
+
+function nextTourStep() {
+  currentTourStep++;
+  if (currentTourStep >= TOUR_STEPS.length) return closeTour();
+  showTourStep(currentTourStep);
+}
+
+function closeTour() {
+  document.getElementById('tourBackdrop').hidden = true;
+  document.getElementById('tourSpotlight').hidden = true;
+  document.getElementById('tourTooltip').hidden = true;
+  try { localStorage.setItem('bancapro-tour-done', '1'); } catch(e){}
+}
+
+function maybeStartTour() {
+  try {
+    if (localStorage.getItem('bancapro-tour-done') !== '1') {
+      setTimeout(startTour, 900);
+    }
+  } catch(e){}
+}
+
+// Reposiciona o tour quando a janela for redimensionada
+window.addEventListener('resize', function(){
+  if (document.getElementById('tourTooltip') && !document.getElementById('tourTooltip').hidden) {
+    showTourStep(currentTourStep);
+  }
 });
 
 // ══════════════════════════════════════════════

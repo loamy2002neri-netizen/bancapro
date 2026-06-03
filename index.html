@@ -18,7 +18,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
-<link rel="stylesheet" href="style.css?v=40"/>
+<link rel="stylesheet" href="style.css?v=43"/>
 </head>
 <body>
 
@@ -1469,7 +1469,22 @@
   </div>
 </div>
 
+<!-- Tour onboarding -->
+<div class="tour-backdrop" id="tourBackdrop" hidden></div>
+<div class="tour-spotlight" id="tourSpotlight" hidden></div>
+<div class="tour-tooltip" id="tourTooltip" hidden role="dialog" aria-modal="true">
+  <div class="tour-progress"><div class="tour-progress-bar" id="tourProgressBar"></div></div>
+  <button class="tour-tooltip-close" onclick="closeTour()" aria-label="Fechar tour">×</button>
+  <div class="tour-tooltip-tag" id="tourTag">PASSO 1 DE 6</div>
+  <h4 id="tourTitle">Bem-vindo à Apostack</h4>
+  <p id="tourDesc">Vou te mostrar as principais funcionalidades em 6 passos rápidos.</p>
+  <div class="tour-tooltip-actions">
+    <button class="tour-btn tour-btn-exit" onclick="closeTour()">Sair</button>
+    <button class="tour-btn tour-btn-next" onclick="nextTourStep()" id="tourNextBtn">Próximo ›</button>
+  </div>
+</div>
+
 <script src="config.js?v=9" defer></script>
-<script src="script.js?v=68" defer></script>
+<script src="script.js?v=71" defer></script>
 </body>
 </html>

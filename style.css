@@ -1641,3 +1641,26 @@ html { -webkit-text-size-adjust:100%; text-size-adjust:100%; }
   html.light .sb-tipo-btn.active-back { background:#6366f1 !important; color:#fff !important; border-color:transparent !important; }
   html.light .sb-tipo-btn.active-lay { background:#f59e0b !important; color:#3a2606 !important; border-color:transparent !important; }
   html.light .sb-resp { background:#f8fafc !important; border:1px solid #e5e7eb !important; color:#64748b !important; }
+
+  /* Tour / Passo-a-passo */
+  .tour-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:9000;pointer-events:auto}
+  .tour-spotlight{position:fixed;border-radius:14px;box-shadow:0 0 0 9999px rgba(0,0,0,.55),0 0 0 2.5px #7c5cff,0 0 36px rgba(124,92,255,.7);z-index:9001;pointer-events:none;transition:all .35s cubic-bezier(.4,0,.2,1)}
+  .tour-tooltip{position:fixed;width:340px;background:linear-gradient(160deg,#1a2138,#0e1226);border:1px solid rgba(124,92,255,.30);border-radius:14px;padding:22px 22px 18px;z-index:9002;box-shadow:0 24px 60px rgba(0,0,0,.5),0 0 0 1px rgba(124,92,255,.15);color:#fff;font-family:inherit;transition:left .35s cubic-bezier(.4,0,.2,1),top .35s cubic-bezier(.4,0,.2,1),opacity .25s}
+  .tour-tooltip-tag{display:inline-flex;align-items:center;gap:10px;font-size:11px;font-weight:800;color:#a282ff;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:14px}
+  .tour-tooltip-tag::before{content:"";width:24px;height:2.5px;background:linear-gradient(90deg,#7c5cff,#a282ff);border-radius:2px}
+  .tour-tooltip-close{position:absolute;top:14px;right:14px;width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,.06);color:#fff;border:0;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;line-height:1;transition:background .15s;padding:0}
+  .tour-tooltip-close:hover{background:rgba(255,255,255,.14)}
+  .tour-tooltip h4{font-size:18px;font-weight:800;margin:0 0 10px;letter-spacing:-.3px;color:#fff}
+  .tour-tooltip p{font-size:13.5px;color:#aeb8d6;line-height:1.55;margin:0 0 20px}
+  .tour-tooltip-actions{display:flex;justify-content:space-between;align-items:center;gap:12px}
+  .tour-btn{padding:9px 20px;border-radius:9px;font-size:13px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:transform .15s,box-shadow .15s,background .15s;font-family:inherit;border:0}
+  .tour-btn-exit{background:transparent;color:#a282ff;border:1px solid rgba(124,92,255,.45)}
+  .tour-btn-exit:hover{background:rgba(124,92,255,.12)}
+  .tour-btn-next{background:linear-gradient(135deg,#6d78ff,#9a5cff);color:#fff;box-shadow:0 6px 16px rgba(124,92,255,.35)}
+  .tour-btn-next:hover{transform:translateY(-1px);box-shadow:0 10px 22px rgba(124,92,255,.50)}
+  .tour-progress{position:absolute;left:22px;right:22px;top:0;height:3px;background:rgba(124,92,255,.18);border-radius:0 0 14px 14px;overflow:hidden}
+  .tour-progress-bar{height:100%;background:linear-gradient(90deg,#7c5cff,#a282ff);transition:width .4s ease-out}
+  @media (max-width:560px){
+    .tour-tooltip{width:calc(100vw - 32px);left:16px!important;right:16px}
+  }
+
