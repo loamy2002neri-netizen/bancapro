@@ -5126,8 +5126,12 @@ function rankComputeEligibility(){
 }
 
 function rankBuildLeaderboard(youProfit, youName, source){
-  // MOCK temporário: mock-marca "Você" como Pro pra demo (vai virar checkSubscription real)
-  const youIsPro = !!(new URLSearchParams(location.search).get('demo')) || (typeof checkAccess === 'function' && window._isProSubscriber);
+  // Pega meu status Pro do retorno do RPC (se eu já estiver na lista) ou do cache global
+  let youIsPro = !!window._isProSubscriber;
+  if (source && source.length){
+    const myEntry = source.find(u => (u.name||'').toLowerCase() === (youName||'').toLowerCase());
+    if (myEntry) youIsPro = !!myEntry.isPro;
+  }
   const me = { name: youName || 'Você', profit: youProfit, isYou: true, isPro: youIsPro };
   const base = (source && source.length) ? source : RANK_MOCK_USERS;
   const all = base.map(u => Object.assign({ isYou: false }, u));
@@ -5185,11 +5189,10 @@ async function rankFetchLeaderboard(){
     const { data, error } = await sb.rpc('get_leaderboard');
     if (error) { console.warn('rankFetchLeaderboard', error.message); return null; }
     if (!data || !data.length) return [];
-    // MOCK temporário: top 3 do ranking aparecem como Pro (pra você validar o visual antes de plugar na tabela subscribers)
-    return data.map((r, idx) => ({
+    return data.map(r => ({
       name: r.display_name || 'Apostador',
       profit: Number(r.profit) || 0,
-      isPro: (typeof r.is_pro === 'boolean') ? r.is_pro : (idx < 3)
+      isPro: !!r.is_pro
     }));
   } catch(e) { console.warn('rankFetchLeaderboard', e); return null; }
 }
@@ -5275,16 +5278,22 @@ function rankRenderBoard(youProfit){
   }).join('');
 
   if (foot){
-    const elig = rankComputeEligibility();
-    if (!elig.eligible){
+    // Lógica: o RPC é a fonte de verdade. Se eu apareço na lista, sou elegível (por atividade OU por Pro).
+    if (isYouInList){
+      const ahead = yourPos > 1 ? board_users[yourPos - 2] : null;
+      const diff = ahead ? ahead.profit - youProfit : 0;
+      foot.innerHTML = ahead
+        ? 'Faltam <b>'+rankFormatValue(diff)+'</b> pra ultrapassar <b>'+ahead.name+'</b> no #'+(yourPos-1)+'.'
+        : '<b>Você está no topo do ranking.</b>';
+    } else {
+      const elig = rankComputeEligibility();
       const missing = [];
       if (elig.txCount < RANK_ELIGIBILITY.minTx) missing.push('<b>'+(RANK_ELIGIBILITY.minTx - elig.txCount)+' transações</b>');
       if (elig.distinctDays < RANK_ELIGIBILITY.minActiveDays) missing.push('<b>'+(RANK_ELIGIBILITY.minActiveDays - elig.distinctDays)+' dias de atividade</b>');
-      // Lucro intencionalmente omitido da mensagem: dizer "falta R$ 1 de lucro" incentivaria
-      // o usuário a registrar transação fake. O filtro continua ativo no back.
-      foot.innerHTML = '🔒 Pra entrar no ranking global faltam: ' + missing.join(' · ');
+      foot.innerHTML = '🔒 Pra entrar no ranking global faltam: ' + missing.join(' · ') +
+        ' <br/><span style="color:#5a657f">— ou assine o <b style="color:#a282ff">Pro</b> e apareça imediatamente</span>';
 
-      // Linha do user — igual aos outros cards, só que ele está bloqueado (mensagem acima já indica)
+      // Linha do user — igual aos outros cards, indica onde ele está
       const realRanked = board_users.filter(u => !u.isYou);
       const wouldBePos = realRanked.filter(u => u.profit > youProfit).length + 1;
       const { current: youTier } = rankComputeCurrent(youProfit);
@@ -5296,14 +5305,6 @@ function rankRenderBoard(youProfit){
         '<div class="rank-row-tier"><span class="rank-shield">'+rankShieldSVG(youTier)+'</span><span class="rank-row-tier-name">'+youTier.name+'</span></div>'+
         '<div class="rank-row-profit">'+rankFormatValue(youProfit)+'</div>'+
       '</div>';
-    } else if (isYouInList){
-      const ahead = yourPos > 1 ? board_users[yourPos - 2] : null;
-      const diff = ahead ? ahead.profit - youProfit : 0;
-      foot.innerHTML = ahead
-        ? 'Faltam <b>'+rankFormatValue(diff)+'</b> pra ultrapassar <b>'+ahead.name+'</b> no #'+(yourPos-1)+'.'
-        : '<b>Você está no topo do ranking.</b>';
-    } else {
-      foot.innerHTML = 'Você está rankeado. Continue registrando pra subir.';
     }
   }
 }
