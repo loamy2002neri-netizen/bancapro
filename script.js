@@ -5834,6 +5834,9 @@ let _rankPeriod = 'month'; // 'today' / 'week' / 'month' / 'all' — Mês como d
 let _rankRealUsersMonth = null;
 
 function switchRankPeriod(period){
+  // Hoje/Semana ainda nao tem RPC proprio no Supabase — redireciona pra Mes
+  // pra nao mostrar dados mensais com rotulo errado
+  if (period === 'today' || period === 'week') period = 'month';
   _rankPeriod = period;
   ['Today','Week','Month','All'].forEach(suf => {
     const el = document.getElementById('rankTab' + suf);
