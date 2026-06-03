@@ -5914,6 +5914,10 @@ function updateTopbarStreak(){
 // Detecta tier-up: se o tier atual for maior que o ultimo cacheado, mostra celebração
 function detectTierUp(currentTier){
   if (!currentTier) return;
+  // Skip em demo mode — demo nao representa progressao real do usuario
+  try {
+    if (new URLSearchParams(location.search).get('demo') === '1') return;
+  } catch(e){}
   try {
     const lastIdxRaw = localStorage.getItem('bancapro-last-tier-idx');
     const lastIdx = lastIdxRaw ? parseInt(lastIdxRaw, 10) : 0;
