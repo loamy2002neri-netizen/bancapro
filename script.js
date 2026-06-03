@@ -3249,7 +3249,7 @@ function loadPlatformSettings() {
   } catch(e) {}
 }
 function updateUserName() {
-  document.getElementById('sidebarUserName').textContent = document.getElementById('settingsUserName').value || 'Admin';
+  document.getElementById('sidebarUserName').textContent = document.getElementById('settingsUserName').value || 'Apostador';
 }
 
 async function saveProfile() {
@@ -3330,6 +3330,14 @@ function loadProfile() {
     if(email) {
       const ei = document.getElementById('settingsUserEmail');
       if(ei) ei.value = email;
+      // Atualiza role baseado em owner_emails
+      try {
+        const roleEl = document.getElementById('sidebarUserRole');
+        if (roleEl && typeof OWNER_EMAILS !== 'undefined'){
+          const isOwner = OWNER_EMAILS.includes(email.toLowerCase());
+          roleEl.textContent = isOwner ? 'Administrador' : 'Apostador';
+        }
+      } catch(e){}
     }
   } catch(e) {}
 }
