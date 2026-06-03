@@ -55,6 +55,11 @@ function persistState() {
     localStorage.setItem(STORAGE_KEYS.methodsCatalog, JSON.stringify(METHODS_CATALOG));
   } catch(e) { /* quota / modo anônimo / etc — ignora */ }
   if (typeof schedulePush === 'function') schedulePush();
+  // Re-renderiza o ranking se ele estiver visível (atualiza meu lucro na hora)
+  var rs = document.getElementById('sec-ranking');
+  if (rs && rs.classList.contains('active') && typeof renderRanking === 'function') {
+    setTimeout(renderRanking, 100);
+  }
 }
 
 function loadPersistedState() {
@@ -214,6 +219,11 @@ async function pushUserData() {
       const { error } = await sb.from('user_data')
         .upsert({ user_id: currentUserId, data: blob, updated_at: new Date().toISOString() }, { onConflict: 'user_id' });
       if (error) { console.warn('pushUserData', error); return error; }
+      // Se a aba ranking estiver aberta, re-fetch pra refletir nome/lucro atualizado
+      var rs = document.getElementById('sec-ranking');
+      if (rs && rs.classList.contains('active') && typeof renderRanking === 'function'){
+        setTimeout(renderRanking, 300);
+      }
       return null;
     } catch(e) { console.warn('pushUserData', e); return e; }
   } else {
@@ -5101,6 +5111,44 @@ function rankBuildLeaderboard(youProfit, youName, source){
 
 // Busca leaderboard real do Supabase via RPC get_leaderboard (computa lucro de todos os usuários da user_data)
 let _rankRealUsers = null;
+let _rankPollTimer = null;
+let _rankLastProfit = -1;
+
+function rankStartLivePolling(){
+  rankStopLivePolling();
+  _rankPollTimer = setInterval(async function(){
+    // Para se a aba ranking saiu de cena
+    const sec = document.getElementById('sec-ranking');
+    if (!sec || !sec.classList.contains('active')){ rankStopLivePolling(); return; }
+    // Recalcula meu lucro local (caso eu tenha registrado transação)
+    let myProfit = 0;
+    if (typeof transactions !== 'undefined' && Array.isArray(transactions)){
+      for (let i = 0; i < transactions.length; i++){
+        const t = transactions[i];
+        const v = Number(t.value) || 0;
+        if (t.type === 'income') myProfit += v;
+        else if (t.type === 'expense') myProfit -= v;
+      }
+    }
+    const count = Math.max(0, Math.round(myProfit));
+    // Empurra meu user_data atualizado (pra outros usuários verem meu lucro)
+    if (typeof schedulePush === 'function') schedulePush();
+    const real = await rankFetchLeaderboard();
+    if (real && real.length > 0){
+      _rankRealUsers = real;
+      rankRenderBoard(count);
+      // Se meu lucro mudou, atualiza também os outros painéis (KPI/progress)
+      if (count !== _rankLastProfit){
+        _rankLastProfit = count;
+        if (typeof renderRanking === 'function') {/* skip — evita loop */}
+      }
+    }
+  }, 20000); // a cada 20s
+}
+function rankStopLivePolling(){
+  if (_rankPollTimer){ clearInterval(_rankPollTimer); _rankPollTimer = null; }
+}
+
 async function rankFetchLeaderboard(){
   try {
     const sb = (typeof getSb === 'function') ? getSb() : null;
@@ -5241,11 +5289,12 @@ function renderRanking(){
     ).join('');
   }
 
-  // Leaderboard — render imediato com mock, depois substitui pelo real do Supabase
+  // Leaderboard — render imediato com cache (ou mock), depois busca real e re-pinta
   rankRenderBoard(count);
   rankFetchLeaderboard().then(real => {
     if (real && real.length > 0){ _rankRealUsers = real; rankRenderBoard(count); }
   });
+  rankStartLivePolling();
 
   // 15 tier bars
   const barsEl = document.getElementById('rankBars');
