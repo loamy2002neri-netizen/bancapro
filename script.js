@@ -5313,11 +5313,17 @@ function rankComputeEligibility(){
     if (txs[i].type === 'income') profit += v;
     else if (txs[i].type === 'expense') profit -= v;
   }
+  // Pro/Plus/Administrador sao sempre elegiveis (independente de atividade local)
+  let isPro = false;
+  try {
+    const planLabel = localStorage.getItem('bancapro-plan-label') || '';
+    isPro = ['Plus','Pro','Administrador'].indexOf(planLabel) >= 0 || !!window._isProSubscriber;
+  } catch(e){}
   return {
-    txCount, distinctDays, profit: Math.max(0, profit),
-    eligible: txCount >= RANK_ELIGIBILITY.minTx
+    txCount, distinctDays, profit: Math.max(0, profit), isPro,
+    eligible: isPro || (txCount >= RANK_ELIGIBILITY.minTx
       && distinctDays >= RANK_ELIGIBILITY.minActiveDays
-      && profit >= RANK_ELIGIBILITY.minProfit
+      && profit >= RANK_ELIGIBILITY.minProfit)
   };
 }
 
@@ -5709,12 +5715,12 @@ function rankRenderBoard(youProfit){
   // Salva cache de posições pra próxima visita comparar
   rankWritePositionCache(_rankPeriod, newPositions);
 
-  // Foot: só mostra mensagem de bloqueio se não elegível (Sua posição card já cobre o resto)
+  // Foot: só mostra mensagem de bloqueio pra usuários free não-ranqueados
   if (foot){
-    if (isYouInList){
+    const elig = rankComputeEligibility();
+    if (isYouInList || elig.isPro){
       foot.innerHTML = '';
     } else {
-      const elig = rankComputeEligibility();
       const missing = [];
       if (elig.txCount < RANK_ELIGIBILITY.minTx) missing.push('<b>'+(RANK_ELIGIBILITY.minTx - elig.txCount)+' transações</b>');
       if (elig.distinctDays < RANK_ELIGIBILITY.minActiveDays) missing.push('<b>'+(RANK_ELIGIBILITY.minActiveDays - elig.distinctDays)+' dias de atividade</b>');
