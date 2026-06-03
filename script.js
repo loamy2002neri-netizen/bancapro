@@ -5072,8 +5072,20 @@ function rankFormatValue(n){
   return 'R$ ' + n.toLocaleString('pt-BR', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
 }
 
+// Mapeamento tier.idx -> nome do arquivo PNG em brand/ranking/
+const RANK_IMAGE_FILES = {
+  1:'01-ferro', 2:'02-bronze', 3:'03-prata', 4:'04-ouro', 5:'05-platina',
+  6:'06-esmeralda', 7:'07-safira', 8:'08-rubi', 9:'09-diamante', 10:'10-mestre',
+  11:'11-elite', 12:'12-lendario', 13:'13-imortal', 14:'14-supremo', 15:'15-apex'
+};
+
 function rankShieldSVG(tier){
-  const uid = 'rk'+tier.idx+'_'+Math.random().toString(36).slice(2,8);
+  // Usa imagem PNG premium dos ranks (brand/ranking/)
+  if (tier && tier.idx && RANK_IMAGE_FILES[tier.idx]){
+    return '<img class="rank-shield-img" src="brand/ranking/'+RANK_IMAGE_FILES[tier.idx]+'.png" alt="'+tier.name+'" loading="eager"/>';
+  }
+  // Fallback SVG (caso falte alguma imagem)
+  const uid = 'rk'+(tier?.idx||0)+'_'+Math.random().toString(36).slice(2,8);
   const g1 = tier.g1, g2 = tier.g2;
   const isSupreme = tier.color === 'gradient';
   // Gradient principal (4 stops pra profundidade extra)
@@ -5515,72 +5527,10 @@ function renderRankMyPos(youProfit, currentTier){
   }
 }
 
-// SVG premium das medalhas (Top 1/2/3) — disco metálico + fita + estrela central
+// Medalhas premium (Top 1/2/3) — imagens em brand/medals/
 function rankMedalSVG(rank){
-  const palettes = {
-    1: {
-      ribL: '#6d78ff', ribR: '#9a5cff',
-      discTop: '#fef9c3', discMain: '#fbbf24', discMid: '#f59e0b', discDark: '#7c2d12',
-      shine: '#fefce8', glow: 'rgba(251,191,36,.7)'
-    },
-    2: {
-      ribL: '#3b4456', ribR: '#64748b',
-      discTop: '#ffffff', discMain: '#e5e7eb', discMid: '#94a3b8', discDark: '#334155',
-      shine: '#f8fafc', glow: 'rgba(203,213,225,.55)'
-    },
-    3: {
-      ribL: '#7c2d12', ribR: '#92400e',
-      discTop: '#fed7aa', discMain: '#e6934a', discMid: '#cd7f32', discDark: '#5b1d05',
-      shine: '#fef3c7', glow: 'rgba(230,147,74,.55)'
-    }
-  };
-  const p = palettes[rank] || palettes[3];
-  const uid = 'med'+rank+'_'+Math.random().toString(36).slice(2,8);
-  return '<svg viewBox="0 0 80 110" xmlns="http://www.w3.org/2000/svg">'+
-    '<defs>'+
-      '<linearGradient id="'+uid+'_ribL" x1="0" y1="0" x2="0" y2="1">'+
-        '<stop offset="0" stop-color="'+p.ribL+'"/>'+
-        '<stop offset="1" stop-color="'+p.ribL+'" stop-opacity=".5"/>'+
-      '</linearGradient>'+
-      '<linearGradient id="'+uid+'_ribR" x1="0" y1="0" x2="0" y2="1">'+
-        '<stop offset="0" stop-color="'+p.ribR+'"/>'+
-        '<stop offset="1" stop-color="'+p.ribR+'" stop-opacity=".5"/>'+
-      '</linearGradient>'+
-      '<radialGradient id="'+uid+'_disc" cx="35%" cy="28%" r="75%">'+
-        '<stop offset="0" stop-color="'+p.discTop+'"/>'+
-        '<stop offset="0.4" stop-color="'+p.discMain+'"/>'+
-        '<stop offset="0.85" stop-color="'+p.discMid+'"/>'+
-        '<stop offset="1" stop-color="'+p.discDark+'"/>'+
-      '</radialGradient>'+
-      '<radialGradient id="'+uid+'_glow" cx="50%" cy="50%" r="50%">'+
-        '<stop offset="0" stop-color="'+p.glow+'"/>'+
-        '<stop offset="1" stop-color="'+p.glow+'" stop-opacity="0"/>'+
-      '</radialGradient>'+
-    '</defs>'+
-    // Halo glow atrás
-    '<ellipse cx="40" cy="72" rx="40" ry="38" fill="url(#'+uid+'_glow)"/>'+
-    // Fita esquerda
-    '<path d="M10 0 L30 0 L42 40 L30 44 Z" fill="url(#'+uid+'_ribL)" stroke="rgba(0,0,0,.3)" stroke-width=".6" stroke-linejoin="round"/>'+
-    // Fita direita
-    '<path d="M70 0 L50 0 L38 40 L50 44 Z" fill="url(#'+uid+'_ribR)" stroke="rgba(0,0,0,.3)" stroke-width=".6" stroke-linejoin="round"/>'+
-    // Dobra central (sombra)
-    '<path d="M30 0 L50 0 L46 22 L34 22 Z" fill="rgba(0,0,0,.32)"/>'+
-    // Highlights nas fitas
-    '<path d="M12 2 L20 2 L28 32" stroke="rgba(255,255,255,.22)" stroke-width="1.4" fill="none" stroke-linecap="round"/>'+
-    '<path d="M68 2 L60 2 L52 32" stroke="rgba(255,255,255,.22)" stroke-width="1.4" fill="none" stroke-linecap="round"/>'+
-    // Anel externo (sombra metalica)
-    '<circle cx="40" cy="72" r="30" fill="'+p.discDark+'"/>'+
-    // Disco principal
-    '<circle cx="40" cy="72" r="28" fill="url(#'+uid+'_disc)"/>'+
-    // Anel interno
-    '<circle cx="40" cy="72" r="23" fill="none" stroke="'+p.discDark+'" stroke-width=".8" opacity=".55"/>'+
-    // Reflexo superior arqueado
-    '<path d="M22 64 Q40 50 58 64" stroke="'+p.shine+'" stroke-width="2.5" fill="none" opacity=".65" stroke-linecap="round"/>'+
-    // Estrela central
-    '<path d="M40 60 L43.2 70 L53.5 70.2 L45.2 76.4 L48.4 86.4 L40 80.5 L31.6 86.4 L34.8 76.4 L26.5 70.2 L36.8 70 Z" fill="'+p.shine+'" stroke="'+p.discDark+'" stroke-width=".5" stroke-linejoin="round"/>'+
-    // Detalhe central da estrela
-    '<circle cx="40" cy="73" r="2.2" fill="'+p.discDark+'" opacity=".45"/>'+
-    '</svg>';
+  const r = (rank === 1 || rank === 2 || rank === 3) ? rank : 3;
+  return '<img class="rank-medal-img" src="brand/medals/'+r+'.png" alt="'+r+'º lugar" loading="eager"/>';
 }
 
 // 🥇🥈🥉 Pódio Top 3

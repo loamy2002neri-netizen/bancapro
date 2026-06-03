@@ -1746,8 +1746,11 @@ html { -webkit-text-size-adjust:100%; text-size-adjust:100%; }
   .rank-podium{display:grid;grid-template-columns:1fr 1.15fr 1fr;gap:14px;align-items:end;margin-bottom:26px;padding:24px 16px 12px;background:radial-gradient(ellipse at 50% 100%,rgba(124,92,255,.10),transparent 65%);position:relative}
   .rank-podium-slot{position:relative;background:linear-gradient(160deg,rgba(15,20,40,.85) 0%,rgba(10,14,29,.95) 100%);border:1px solid rgba(255,255,255,.06);border-radius:16px;padding:18px 14px 16px;text-align:center;cursor:default;transition:transform .25s,box-shadow .25s;overflow:hidden}
   .rank-podium-slot:hover{transform:translateY(-3px)}
-  .rank-podium-medal{width:50px;height:68px;margin:0 auto 4px;display:flex;align-items:center;justify-content:center;filter:drop-shadow(0 6px 14px rgba(0,0,0,.4))}
-  .rank-podium-medal svg{width:100%;height:100%;display:block}
+  .rank-podium-medal{width:60px;height:80px;margin:0 auto 4px;display:flex;align-items:center;justify-content:center;filter:drop-shadow(0 8px 20px rgba(0,0,0,.5))}
+  .rank-podium-medal svg,.rank-podium-medal img,.rank-medal-img{width:100%;height:100%;display:block;object-fit:contain;pointer-events:none;user-select:none}
+  /* Imagens de rank (PNG premium) — ajustam pra qualquer container existente */
+  .rank-shield-img,.rank-shield img{width:100%;height:100%;display:block;object-fit:contain;pointer-events:none;user-select:none;filter:drop-shadow(0 4px 10px rgba(0,0,0,.4))}
+  .rank-tier-icon img{width:100%;height:100%;display:block;object-fit:contain;filter:drop-shadow(0 3px 8px rgba(0,0,0,.5))}
   .rank-podium-rank{font-size:10px;font-weight:800;letter-spacing:1.5px;margin-bottom:8px}
   .rank-podium-shield{margin:0 auto 10px}
   .rank-podium-name{font-size:14px;font-weight:800;color:#fff;letter-spacing:-.2px;margin-bottom:4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
