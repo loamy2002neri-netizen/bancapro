@@ -423,7 +423,7 @@
     <div class="sidebar-footer">
       <div class="user-pill" onclick="toggleUserMenu(event)" role="button" tabindex="0" aria-haspopup="true" aria-expanded="false" id="userPill">
         <div class="user-avatar"></div>
-        <div style="min-width:0;flex:1"><div class="user-name" id="sidebarUserName">Apostador</div><div class="user-role" id="sidebarUserRole">Apostador</div></div>
+        <div style="min-width:0;flex:1"><div class="user-name" id="sidebarUserName"></div><div class="user-role" id="sidebarUserRole"></div></div>
         <div class="user-status" title="Online"></div>
       </div>
       <div class="user-menu" id="userMenu" role="menu">
@@ -447,6 +447,34 @@
       </div>
     </div>
   </aside>
+  <script>
+  // Hidrata a user-pill e flags de sidebar instantaneamente do localStorage
+  // pra evitar flash de "Apostador" / "Minhas Indicações some-aparece" no reload.
+  // O JS principal vai re-confirmar tudo via auth/RPC depois — mas o usuario nao ve mais piscar.
+  (function hydrateSidebar(){
+    try {
+      var name = localStorage.getItem('bancapro-user-name') || '';
+      var email = (localStorage.getItem('bancapro-user-email') || '').toLowerCase();
+      var nameEl = document.getElementById('sidebarUserName');
+      var roleEl = document.getElementById('sidebarUserRole');
+      var avEl = document.querySelector('.sidebar-footer .user-avatar');
+      if (nameEl) nameEl.textContent = name || 'Apostador';
+      if (avEl) avEl.textContent = name ? name.charAt(0).toUpperCase() : '';
+      var OWNERS = ['loamy2002neri@gmail.com', 'loamy69zzz@gmail.com'];
+      if (roleEl) roleEl.textContent = (email && OWNERS.indexOf(email) >= 0) ? 'Administrador' : 'Apostador';
+      // Mostra "Minhas Indicacoes" se ja foi confirmado afiliado em sessao anterior
+      if (localStorage.getItem('bancapro-is-affiliate') === '1'){
+        var af = document.getElementById('navAfiliado');
+        if (af) af.style.display = '';
+      }
+      // Mostra "Admin" / "Afiliados" se o email cacheado e de owner
+      if (email && OWNERS.indexOf(email) >= 0){
+        var adm = document.getElementById('navAdmin'); if (adm) adm.style.display = '';
+        var afos = document.getElementById('navAfiliados'); if (afos) afos.style.display = '';
+      }
+    } catch(e){}
+  })();
+  </script>
 
   <!-- MAIN CONTENT -->
   <main class="main">
@@ -1162,7 +1190,7 @@
               <input type="file" id="avatarFileInput" accept="image/jpeg,image/png,image/webp" style="display:none" onchange="handleAvatarUpload(event)"/>
             </div>
 
-            <div class="form-group"><label class="form-label">Nome</label><input class="form-input" type="text" value="Admin" id="settingsUserName" oninput="updateUserName()"/></div>
+            <div class="form-group"><label class="form-label">Nome</label><input class="form-input" type="text" value="" placeholder="Seu nome" id="settingsUserName" oninput="updateUserName()"/></div>
             <div class="form-group"><label class="form-label">E-mail</label><input class="form-input" type="email" value="admin@bancapro.com" id="settingsUserEmail"/></div>
             <div style="font-size:12px;color:var(--text-muted);margin:4px 0 10px">Trocar senha (deixe em branco se não quiser trocar)</div>
             <div class="form-group">

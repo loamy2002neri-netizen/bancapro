@@ -287,7 +287,9 @@ async function enterApp(user) {
     const navAf = document.getElementById('navAfiliado');
     if (sb && navAf) {
       const r = await sb.rpc('get_my_affiliate');
-      navAf.style.display = (r.data && r.data.length) ? '' : 'none';
+      const isAffiliate = !!(r.data && r.data.length);
+      navAf.style.display = isAffiliate ? '' : 'none';
+      try { localStorage.setItem('bancapro-is-affiliate', isAffiliate ? '1' : '0'); } catch(e){}
     }
   } catch(e){}
   // Voltou do checkout? mostra "obrigado" e reconfere a assinatura
