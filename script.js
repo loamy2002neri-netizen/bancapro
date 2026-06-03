@@ -5554,11 +5554,22 @@ function renderRankPodium(youProfit){
     const { current } = rankComputeCurrent(u.profit);
     const youCls = u.isYou ? 'is-you' : '';
     slot.className = 'rank-podium-slot rank-podium-' + rank + ' ' + youCls;
+    // Avatar: foto do localStorage se for "você", senão iniciais
+    let avatarHTML = rankUserInitials(u.name);
+    if (u.isYou){
+      try {
+        const dataUrl = localStorage.getItem('bancapro-avatar');
+        if (dataUrl) avatarHTML = '<img src="'+dataUrl+'" alt=""/>';
+      } catch(e){}
+    }
+    // Esconde o nome "Você" do corpo quando for placeholder (avatar + borda já indicam)
+    const displayName = (u.isYou && (u.name === 'Você' || !u.name)) ? '' : u.name;
     slot.innerHTML =
-      '<div class="rank-podium-medal">'+rankMedalSVG(rank)+'</div>'+
+      '<div class="rank-podium-medal-corner">'+rankMedalSVG(rank)+'</div>'+
+      '<div class="rank-podium-avatar">'+avatarHTML+'</div>'+
       '<div class="rank-podium-rank">'+labels[rank]+'</div>'+
       '<div class="rank-podium-shield rank-shield">'+rankShieldSVG(current)+'</div>'+
-      '<div class="rank-podium-name">'+u.name+(u.isPro ? proBadge : '')+'</div>'+
+      (displayName ? '<div class="rank-podium-name">'+displayName+(u.isPro ? proBadge : '')+'</div>' : '')+
       '<div class="rank-podium-tier-name">'+current.name+'</div>'+
       '<div class="rank-podium-profit">'+rankFormatValue(u.profit)+'</div>';
   });
