@@ -6038,10 +6038,9 @@ function rankRenderDashCard(profit, currentTier, board_users){
   if (streakEl){
     if (streak.current > 0){
       streakEl.style.display = 'flex';
-      streakEl.className = 'dash-streak' + (streak.atRisk ? ' is-at-risk' : '') + (streak.current >= 7 ? ' is-record' : '');
+      streakEl.className = 'dash-streak' + (streak.atRisk ? ' is-at-risk' : '') + (streak.current >= 30 ? ' is-king' : (streak.current >= 7 ? ' is-record' : ''));
       document.getElementById('dashStreakNum').textContent = streak.current;
       document.getElementById('dashStreakLabel').textContent = streak.current === 1 ? 'dia' : 'dias seguidos';
-      document.getElementById('dashStreakFlame').textContent = streak.atRisk ? '⚠️' : (streak.current >= 30 ? '👑' : streak.current >= 7 ? '🔥' : '🔥');
     } else {
       streakEl.style.display = 'none';
     }

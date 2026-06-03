@@ -18,7 +18,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
-<link rel="stylesheet" href="style.css?v=64"/>
+<link rel="stylesheet" href="style.css?v=65"/>
 </head>
 <body>
 
@@ -493,10 +493,6 @@
       <div class="topbar-actions">
         <button class="btn-ghost txbtn" style="padding:6px 14px;font-size:12px" onclick="openTxModal()" title="Nova transação"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg><span class="txbtn-label"> Transação</span></button>
         <button class="icon-btn" onclick="toggleNotif()" id="notifBtn" aria-label="Notificações" title="Notificações"><svg viewBox="0 0 24 24"><path d="M6 8a6 6 0 0112 0c0 7 3 9 3 9H3s3-2 3-9M10 21h4"/></svg><div class="notif-dot" id="notifDot"></div></button>
-        <div class="topbar-streak" id="topbarStreak" onclick="goTo('dashboard')" title="Sua sequência de dias com atividade" style="display:none">
-          <span class="topbar-streak-flame" id="topbarStreakFlame">🔥</span>
-          <span class="topbar-streak-num" id="topbarStreakNum">0</span>
-        </div>
       </div>
     </div>
 
@@ -619,7 +615,32 @@
           </div>
           <div class="dash-rank-right">
             <div class="dash-streak" id="dashStreak" style="display:none">
-              <span class="dash-streak-flame" id="dashStreakFlame">🔥</span>
+              <span class="dash-streak-flame" id="dashStreakFlame">
+                <svg viewBox="0 0 32 40" xmlns="http://www.w3.org/2000/svg">
+                  <defs>
+                    <linearGradient id="flameGrad" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0" stop-color="#fef3c7"/>
+                      <stop offset="0.25" stop-color="#fde047"/>
+                      <stop offset="0.55" stop-color="#fb923c"/>
+                      <stop offset="0.85" stop-color="#ef4444"/>
+                      <stop offset="1" stop-color="#991b1b"/>
+                    </linearGradient>
+                    <linearGradient id="flameInner" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0" stop-color="#ffffff"/>
+                      <stop offset="0.4" stop-color="#fef9c3"/>
+                      <stop offset="1" stop-color="#facc15"/>
+                    </linearGradient>
+                    <radialGradient id="flameGlow" cx="50%" cy="65%" r="55%">
+                      <stop offset="0" stop-color="rgba(251,146,60,.6)"/>
+                      <stop offset="1" stop-color="rgba(251,146,60,0)"/>
+                    </radialGradient>
+                  </defs>
+                  <ellipse cx="16" cy="28" rx="14" ry="11" fill="url(#flameGlow)"/>
+                  <path d="M16 3 C20 9 26 13 26 22 C26 30 21 36 16 36 C11 36 6 30 6 22 C6 15 11 11 13 5 C13 8 14 10 16 11 C16 8 16 5 16 3 Z" fill="url(#flameGrad)" stroke="rgba(0,0,0,.18)" stroke-width=".5" stroke-linejoin="round"/>
+                  <path d="M16 14 C19 18 22 21 22 26 C22 31 19 34 16 34 C13 34 10 31 10 26 C10 21 13 19 15 16 C15 18 16 19 17 19 C17 17 16 15 16 14 Z" fill="url(#flameInner)" opacity=".9"/>
+                  <path d="M16 22 C17 24 19 26 19 28 C19 30 18 32 16 32 C14 32 13 30 13 28 C13 26 14 25 15 23 Z" fill="#fef9c3" opacity=".85"/>
+                </svg>
+              </span>
               <div class="dash-streak-info">
                 <div class="dash-streak-num" id="dashStreakNum">0</div>
                 <div class="dash-streak-label" id="dashStreakLabel">dias seguidos</div>
@@ -1664,6 +1685,6 @@
 </div>
 
 <script src="config.js?v=9" defer></script>
-<script src="script.js?v=107" defer></script>
+<script src="script.js?v=108" defer></script>
 </body>
 </html>
