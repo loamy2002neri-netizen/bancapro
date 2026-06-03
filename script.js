@@ -3370,12 +3370,17 @@ function loadProfile() {
     if(email) {
       const ei = document.getElementById('settingsUserEmail');
       if(ei) ei.value = email;
-      // Atualiza role baseado em owner_emails
+      // Atualiza role: owner -> Administrador, senao usa cache do plano (Free/Trial/Plus/Pro)
       try {
         const roleEl = document.getElementById('sidebarUserRole');
         if (roleEl && typeof OWNER_EMAILS !== 'undefined'){
           const isOwner = OWNER_EMAILS.includes(email.toLowerCase());
-          roleEl.textContent = isOwner ? 'Administrador' : 'Apostador';
+          if (isOwner) {
+            roleEl.textContent = 'Administrador';
+          } else {
+            const cached = localStorage.getItem('bancapro-plan-label') || 'Free';
+            roleEl.textContent = cached;
+          }
         }
       } catch(e){}
     }
