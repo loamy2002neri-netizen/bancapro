@@ -5099,12 +5099,11 @@ const RANK_MOCK_USERS = [
 ];
 
 // Critérios pra entrar no ranking global (mantidos em sync com o RPC get_leaderboard)
-// minActiveDays:3 — fase inicial. Sobe pra 5 quando a base ativa passar de ~50 usuários.
-// Forma hábito de 3 sessões (regra clássica de habit formation), filtra contas-laranja,
-// mas mantém o ranking populado pra novos usuários verem comunidade ativa.
+// minActiveDays:2 — vitrine viva pra fase de tração (anti-cheat forte vem do minTx:10).
+// Plano de evolução: subir pra 3 dias quando tiver ~100 usuários ativos.
 const RANK_ELIGIBILITY = {
   minTx: 10,
-  minActiveDays: 3,
+  minActiveDays: 2,
   minAccountDays: 1,
   minProfit: 1
 };
