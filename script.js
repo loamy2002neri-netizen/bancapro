@@ -246,6 +246,7 @@ async function enterApp(user) {
     if (metaName && !localStorage.getItem('bancapro-user-name')) {
       localStorage.setItem('bancapro-user-name', metaName);
     }
+    if (user.created_at) localStorage.setItem('bancapro-user-created-at', user.created_at);
   } catch(e){}
   loadPersistedState();
   loadAccounts();
@@ -5097,14 +5098,59 @@ const RANK_MOCK_USERS = [
   { name: 'Samuel A.',  profit: 2380    }
 ];
 
+// Critérios pra entrar no ranking global (mantidos em sync com o RPC get_leaderboard)
+const RANK_ELIGIBILITY = {
+  minTx: 20,
+  minActiveDays: 5,
+  minAccountDays: 7,
+  minProfit: 100
+};
+
+function rankComputeEligibility(){
+  const txs = (typeof transactions !== 'undefined' && Array.isArray(transactions)) ? transactions : [];
+  const txCount = txs.length;
+  const distinctDays = new Set(txs.map(t => t.date).filter(Boolean)).size;
+  let profit = 0;
+  for (let i = 0; i < txs.length; i++){
+    const v = Number(txs[i].value) || 0;
+    if (txs[i].type === 'income') profit += v;
+    else if (txs[i].type === 'expense') profit -= v;
+  }
+  // tenta inferir tempo de conta a partir da menor data de transação OU do localStorage user-created-at
+  let accountDays = 999;
+  try {
+    const createdRaw = localStorage.getItem('bancapro-user-created-at');
+    if (createdRaw) {
+      const created = new Date(createdRaw);
+      if (!isNaN(created)) accountDays = Math.floor((Date.now() - created.getTime()) / 86400000);
+    } else if (txs.length){
+      const minDate = txs.map(t => t.date).filter(Boolean).sort()[0];
+      if (minDate){
+        const d = new Date(minDate);
+        if (!isNaN(d)) accountDays = Math.floor((Date.now() - d.getTime()) / 86400000);
+      }
+    }
+  } catch(e){}
+  return {
+    txCount, distinctDays, profit: Math.max(0, profit), accountDays,
+    eligible: txCount >= RANK_ELIGIBILITY.minTx
+      && distinctDays >= RANK_ELIGIBILITY.minActiveDays
+      && accountDays >= RANK_ELIGIBILITY.minAccountDays
+      && profit >= RANK_ELIGIBILITY.minProfit
+  };
+}
+
 function rankBuildLeaderboard(youProfit, youName, source){
   const me = { name: youName || 'Você', profit: youProfit, isYou: true };
   const base = (source && source.length) ? source : RANK_MOCK_USERS;
   const all = base.map(u => Object.assign({ isYou: false }, u));
-  // Se o usuário já está no leaderboard (mesmo nome), atualiza pra "você"; senão adiciona
-  const existing = all.findIndex(u => (u.name||'').toLowerCase() === (youName||'').toLowerCase());
-  if (existing >= 0) { all[existing] = me; }
-  else { all.push(me); }
+  // Só insere "você" no ranking se passa nos critérios de elegibilidade
+  const elig = rankComputeEligibility();
+  if (elig.eligible){
+    const existing = all.findIndex(u => (u.name||'').toLowerCase() === (youName||'').toLowerCase());
+    if (existing >= 0) { all[existing] = me; }
+    else { all.push(me); }
+  }
   all.sort((a, b) => b.profit - a.profit);
   return all;
 }
@@ -5178,9 +5224,16 @@ function rankRenderBoard(youProfit){
 
   const board_users = rankBuildLeaderboard(youProfit, youName, _rankRealUsers);
   const yourPos = board_users.findIndex(u => u.isYou) + 1;
+  const isYouInList = yourPos > 0;
   const total = board_users.length;
 
-  if (meta) meta.innerHTML = '<b>'+total.toLocaleString('pt-BR')+'</b> apostadores · Sua posição <b>#'+yourPos+'</b>';
+  if (meta){
+    if (isYouInList){
+      meta.innerHTML = '<b>'+total.toLocaleString('pt-BR')+'</b> apostadores · Sua posição <b>#'+yourPos+'</b>';
+    } else {
+      meta.innerHTML = '<b>'+total.toLocaleString('pt-BR')+'</b> apostadores ranqueados';
+    }
+  }
 
   // Mostra top 10 + (se você está fora do top 10) divider + sua linha + 2 acima/abaixo
   const top = board_users.slice(0, 10);
@@ -5214,11 +5267,23 @@ function rankRenderBoard(youProfit){
   }).join('');
 
   if (foot){
-    const ahead = yourPos > 1 ? board_users[yourPos - 2] : null;
-    const diff = ahead ? ahead.profit - youProfit : 0;
-    foot.innerHTML = ahead
-      ? 'Faltam <b>'+rankFormatValue(diff)+'</b> pra ultrapassar <b>'+ahead.name+'</b> no #'+(yourPos-1)+'.'
-      : '<b>Você está no topo do ranking.</b>';
+    const elig = rankComputeEligibility();
+    if (!elig.eligible){
+      const missing = [];
+      if (elig.txCount < RANK_ELIGIBILITY.minTx) missing.push('<b>'+(RANK_ELIGIBILITY.minTx - elig.txCount)+' transações</b>');
+      if (elig.distinctDays < RANK_ELIGIBILITY.minActiveDays) missing.push('<b>'+(RANK_ELIGIBILITY.minActiveDays - elig.distinctDays)+' dias de atividade</b>');
+      if (elig.accountDays < RANK_ELIGIBILITY.minAccountDays) missing.push('<b>'+(RANK_ELIGIBILITY.minAccountDays - elig.accountDays)+' dias de conta</b>');
+      if (elig.profit < RANK_ELIGIBILITY.minProfit) missing.push('<b>R$ '+(RANK_ELIGIBILITY.minProfit - elig.profit).toFixed(0)+' de lucro</b>');
+      foot.innerHTML = '🔒 Pra entrar no ranking global faltam: ' + missing.join(' · ');
+    } else if (isYouInList){
+      const ahead = yourPos > 1 ? board_users[yourPos - 2] : null;
+      const diff = ahead ? ahead.profit - youProfit : 0;
+      foot.innerHTML = ahead
+        ? 'Faltam <b>'+rankFormatValue(diff)+'</b> pra ultrapassar <b>'+ahead.name+'</b> no #'+(yourPos-1)+'.'
+        : '<b>Você está no topo do ranking.</b>';
+    } else {
+      foot.innerHTML = 'Você está rankeado. Continue registrando pra subir.';
+    }
   }
 }
 
