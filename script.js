@@ -1020,6 +1020,7 @@ try {
           if(tab==='transactions' && typeof renderAllTransactions==='function') setTimeout(renderAllTransactions,200);
           if(tab==='reports' && typeof initReportCharts==='function') setTimeout(initReportCharts,200);
           if(tab==='ranking' && typeof renderUserRanking==='function') setTimeout(renderUserRanking,200);
+          if(tab==='dashboard' && typeof rankUpdateDashCard==='function') setTimeout(rankUpdateDashCard,250);
         }catch(e){}
         var now=new Date();
         function tAt(h,m){var d=new Date(now);d.setHours(h,m,0,0);return d.getTime();}
@@ -1034,6 +1035,11 @@ try {
           if(i%4===0) tx.push({id:Date.now()+i*100+1,type:'income',value:Math.round(100+Math.random()*200),method:'Freebet',date:date,desc:'Freebet '+date});
           if(i%5===0) tx.push({id:Date.now()+i*100+2,type:'expense',value:Math.round(50+Math.random()*150),method:'iGaming',date:date,desc:'iGaming '+date});
           if(i%6===0) tx.push({id:Date.now()+i*100+3,type:'income',value:Math.round(150+Math.random()*250),method:'Stake',date:date,desc:'Stake '+date});
+        }
+        // Garante streak de 7 dias seguidos (demo do streak counter)
+        for(var s=6; s>=0; s--){
+          var sDate = dISO(s);
+          if (!tx.some(t => t.date === sDate)) tx.push({id:Date.now()+5000+s,type:'income',value:Math.round(120+Math.random()*180),method:'Surebet',date:sDate,desc:'Surebet '+sDate});
         }
         // Hoje
         tx.push({id:tAt(8,0),type:'income',value:8420,method:'Surebet',date:iso(now),desc:'Surebet hoje'});
