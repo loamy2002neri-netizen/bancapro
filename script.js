@@ -5508,6 +5508,79 @@ function renderUserRanking(){
 
   // Atualiza o card de ranking no Dashboard
   rankRenderDashCard(count, current, board_users);
+
+  // Atualiza streak no topbar (visivel em todas as abas)
+  updateTopbarStreak();
+
+  // Detecta se o user subiu de tier desde a ultima visita
+  detectTierUp(current);
+}
+
+// Atualiza o chip de streak no topbar (visível em todas as abas)
+function updateTopbarStreak(){
+  const el = document.getElementById('topbarStreak');
+  if (!el) return;
+  const streak = rankComputeStreak();
+  if (streak.current > 0){
+    el.style.display = '';
+    el.className = 'topbar-streak' + (streak.atRisk ? ' is-at-risk' : '') + (streak.current >= 7 ? ' is-record' : '');
+    document.getElementById('topbarStreakNum').textContent = streak.current;
+    document.getElementById('topbarStreakFlame').textContent = streak.atRisk ? '⚠️' : (streak.current >= 30 ? '👑' : '🔥');
+  } else {
+    el.style.display = 'none';
+  }
+}
+
+// Detecta tier-up: se o tier atual for maior que o ultimo cacheado, mostra celebração
+function detectTierUp(currentTier){
+  if (!currentTier) return;
+  try {
+    const lastIdxRaw = localStorage.getItem('bancapro-last-tier-idx');
+    const lastIdx = lastIdxRaw ? parseInt(lastIdxRaw, 10) : 0;
+    if (currentTier.idx > lastIdx){
+      // Subiu de tier — mostra a celebração (skip primeiro carregamento se nunca teve)
+      if (lastIdxRaw) showTierUpModal(currentTier);
+      localStorage.setItem('bancapro-last-tier-idx', String(currentTier.idx));
+    } else if (currentTier.idx < lastIdx){
+      // Caiu (raro mas pode acontecer com correção de lucro) — só atualiza cache
+      localStorage.setItem('bancapro-last-tier-idx', String(currentTier.idx));
+    }
+  } catch(e){}
+}
+
+function showTierUpModal(tier){
+  const overlay = document.getElementById('tierUpOverlay');
+  if (!overlay) return;
+  const isSupreme = tier.color === 'gradient';
+  const color = isSupreme ? '#a855f7' : tier.color;
+  const color2 = isSupreme ? '#ec4899' : tier.g1;
+  overlay.style.setProperty('--tier-up-color', color);
+  overlay.style.setProperty('--tier-up-color-2', color2);
+  document.getElementById('tierUpShield').innerHTML = rankShieldSVG(tier);
+  document.getElementById('tierUpTitleName').textContent = tier.name;
+  document.getElementById('tierUpSubtitle').innerHTML = 'Tier <b>'+tier.idx+' de 15</b> · '+rankFormatMin(tier.min).replace('+',' acumulados');
+  document.getElementById('tierUpDesc').textContent = tier.desc;
+  // Confetti
+  const confetti = document.getElementById('tierUpConfetti');
+  if (confetti){
+    const colors = ['#facc15','#a282ff','#10b981','#f43f5e','#3b82f6','#fb923c'];
+    let html = '';
+    for (let i = 0; i < 35; i++){
+      const c = colors[i % colors.length];
+      const left = (i * 3 + (i*7)%20);
+      const delay = (i*0.08).toFixed(2);
+      const dur = (2.4 + (i%5)*0.3).toFixed(2);
+      html += '<span style="left:'+left+'%;background:'+c+';animation-delay:'+delay+'s;animation-duration:'+dur+'s"></span>';
+    }
+    confetti.innerHTML = html;
+  }
+  overlay.classList.add('is-active');
+}
+
+function closeTierUpModal(e){
+  if (e && e.target && e.target.id !== 'tierUpOverlay') return;
+  const overlay = document.getElementById('tierUpOverlay');
+  if (overlay) overlay.classList.remove('is-active');
 }
 
 // Wrapper assíncrono — busca o leaderboard e renderiza o card do Dashboard
@@ -5529,6 +5602,8 @@ async function rankUpdateDashCard(){
   let youName = (localStorage.getItem('bancapro-user-name')||'').trim() || 'Você';
   const board_users = rankBuildLeaderboard(count, youName, _rankRealUsers);
   rankRenderDashCard(count, current, board_users);
+  updateTopbarStreak();
+  detectTierUp(current);
 }
 
 // Card do Dashboard — mostra "Você está em #X" puxando user pra abrir Ranking

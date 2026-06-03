@@ -18,7 +18,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
-<link rel="stylesheet" href="style.css?v=49"/>
+<link rel="stylesheet" href="style.css?v=50"/>
 </head>
 <body>
 
@@ -491,6 +491,10 @@
         <div class="topbar-breadcrumb">Apostack / <span id="breadcrumb">Dashboard</span></div>
       </div>
       <div class="topbar-actions">
+        <div class="topbar-streak" id="topbarStreak" onclick="goTo('dashboard')" title="Sua sequência de dias com atividade" style="display:none">
+          <span class="topbar-streak-flame" id="topbarStreakFlame">🔥</span>
+          <span class="topbar-streak-num" id="topbarStreakNum">0</span>
+        </div>
         <button class="btn-ghost txbtn" style="padding:6px 14px;font-size:12px" onclick="openTxModal()" title="Nova transação"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg><span class="txbtn-label"> Transação</span></button>
         <button class="icon-btn" onclick="toggleNotif()" id="notifBtn" aria-label="Notificações" title="Notificações"><svg viewBox="0 0 24 24"><path d="M6 8a6 6 0 0112 0c0 7 3 9 3 9H3s3-2 3-9M10 21h4"/></svg><div class="notif-dot" id="notifDot"></div></button>
       </div>
@@ -1608,6 +1612,22 @@
   </div>
 </div>
 
+<!-- Tier-up celebration modal -->
+<div class="tier-up-overlay" id="tierUpOverlay" onclick="closeTierUpModal(event)">
+  <div class="tier-up-modal" id="tierUpModal" onclick="event.stopPropagation()">
+    <div class="tier-up-confetti" id="tierUpConfetti"></div>
+    <div class="tier-up-tag">Você subiu de tier</div>
+    <div class="tier-up-shield" id="tierUpShield"></div>
+    <div class="tier-up-title" id="tierUpTitleName">Bronze</div>
+    <div class="tier-up-subtitle" id="tierUpSubtitle">Tier <b>2 de 15</b> · R$ 1.000+ acumulados</div>
+    <div class="tier-up-desc" id="tierUpDesc">Você já saiu do zero. O primeiro milhar de lucro está na conta.</div>
+    <div class="tier-up-actions">
+      <button class="tier-up-btn-primary" onclick="goTo('ranking');closeTierUpModal()">Ver meu ranking</button>
+      <button class="tier-up-btn-secondary" onclick="closeTierUpModal()">Continuar</button>
+    </div>
+  </div>
+</div>
+
 <!-- Tour onboarding -->
 <div class="tour-backdrop" id="tourBackdrop" hidden></div>
 <div class="tour-spotlight" id="tourSpotlight" hidden></div>
@@ -1624,6 +1644,6 @@
 </div>
 
 <script src="config.js?v=9" defer></script>
-<script src="script.js?v=92" defer></script>
+<script src="script.js?v=93" defer></script>
 </body>
 </html>
