@@ -57,8 +57,8 @@ function persistState() {
   if (typeof schedulePush === 'function') schedulePush();
   // Re-renderiza o ranking se ele estiver visível (atualiza meu lucro na hora)
   var rs = document.getElementById('sec-ranking');
-  if (rs && rs.classList.contains('active') && typeof renderRanking === 'function') {
-    setTimeout(renderRanking, 100);
+  if (rs && rs.classList.contains('active') && typeof renderUserRanking === 'function') {
+    setTimeout(renderUserRanking, 100);
   }
 }
 
@@ -221,8 +221,8 @@ async function pushUserData() {
       if (error) { console.warn('pushUserData', error); return error; }
       // Se a aba ranking estiver aberta, re-fetch pra refletir nome/lucro atualizado
       var rs = document.getElementById('sec-ranking');
-      if (rs && rs.classList.contains('active') && typeof renderRanking === 'function'){
-        setTimeout(renderRanking, 300);
+      if (rs && rs.classList.contains('active') && typeof renderUserRanking === 'function'){
+        setTimeout(renderUserRanking, 300);
       }
       return null;
     } catch(e) { console.warn('pushUserData', e); return e; }
@@ -1018,7 +1018,7 @@ try {
           if(tab==='methods' && typeof renderMethodsRanking==='function') setTimeout(renderMethodsRanking,150);
           if(tab==='transactions' && typeof renderAllTransactions==='function') setTimeout(renderAllTransactions,200);
           if(tab==='reports' && typeof initReportCharts==='function') setTimeout(initReportCharts,200);
-          if(tab==='ranking' && typeof renderRanking==='function') setTimeout(renderRanking,200);
+          if(tab==='ranking' && typeof renderUserRanking==='function') setTimeout(renderUserRanking,200);
         }catch(e){}
         var now=new Date();
         function tAt(h,m){var d=new Date(now);d.setHours(h,m,0,0);return d.getTime();}
@@ -1115,7 +1115,7 @@ function goTo(section, el) {
   if(section === 'reports') setTimeout(initReportCharts, 100);
   if(section === 'compare') setTimeout(initCompareChart, 100);
   if(section === 'methods') setTimeout(initMethodEvolution, 100);
-  if(section === 'ranking') setTimeout(function(){ if(typeof renderRanking==='function') renderRanking(); }, 60);
+  if(section === 'ranking') setTimeout(function(){ if(typeof renderUserRanking==='function') renderUserRanking(); }, 60);
   if(section === 'recharge') setTimeout(updateTrialBanner, 50);
   if(section === 'settings') { setTimeout(renderSubscriptionCard, 50); setTimeout(applyAvatar, 50); }
   if(section === 'admin') setTimeout(() => { renderAdminStats(); renderAdminUsers(); renderAdminErrors(); }, 50);
@@ -5137,11 +5137,7 @@ function rankStartLivePolling(){
     if (real && real.length > 0){
       _rankRealUsers = real;
       rankRenderBoard(count);
-      // Se meu lucro mudou, atualiza também os outros painéis (KPI/progress)
-      if (count !== _rankLastProfit){
-        _rankLastProfit = count;
-        if (typeof renderRanking === 'function') {/* skip — evita loop */}
-      }
+      _rankLastProfit = count;
     }
   }, 20000); // a cada 20s
 }
@@ -5226,7 +5222,7 @@ function rankRenderBoard(youProfit){
   }
 }
 
-function renderRanking(){
+function renderUserRanking(){
   const sec = document.getElementById('sec-ranking');
   if (!sec) return;
   let profit = 0;
