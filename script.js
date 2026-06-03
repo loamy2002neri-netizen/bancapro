@@ -5321,23 +5321,43 @@ function rankComputeEligibility(){
   };
 }
 
+// Normaliza nomes pra comparação (lowercase + trim + remove acentos + colapsa espaços)
+function rankNormalizeName(n){
+  return (n || '')
+    .toString()
+    .toLowerCase()
+    .trim()
+    .normalize('NFD')
+    .replace(new RegExp('[\\u0300-\\u036f]', 'g'), '')
+    .replace(/\s+/g, ' ');
+}
+
 function rankBuildLeaderboard(youProfit, youName, source){
-  // Pega meu status Pro do retorno do RPC (se eu já estiver na lista) ou do cache global
-  let youIsPro = !!window._isProSubscriber;
-  if (source && source.length){
-    const myEntry = source.find(u => (u.name||'').toLowerCase() === (youName||'').toLowerCase());
-    if (myEntry) youIsPro = !!myEntry.isPro;
-  }
-  const me = { name: youName || 'Você', profit: youProfit, isYou: true, isPro: youIsPro };
   const base = (source && source.length) ? source : RANK_MOCK_USERS;
   const all = base.map(u => Object.assign({ isYou: false }, u));
-  // Só insere "você" no ranking se passa nos critérios de elegibilidade
-  const elig = rankComputeEligibility();
-  if (elig.eligible){
-    const existing = all.findIndex(u => (u.name||'').toLowerCase() === (youName||'').toLowerCase());
-    if (existing >= 0) { all[existing] = me; }
-    else { all.push(me); }
+
+  const youNameNorm = rankNormalizeName(youName);
+
+  // Procura minha entrada na lista (matching robusto: case-insensitive, sem acento, trim)
+  const existing = youNameNorm
+    ? all.findIndex(u => rankNormalizeName(u.name) === youNameNorm)
+    : -1;
+
+  let youIsPro = !!window._isProSubscriber;
+  if (existing >= 0){
+    youIsPro = !!all[existing].isPro;
+    // Já estou no leaderboard (via Pro ou atividade) — marca como isYou
+    // Mantém o profit do RPC (source-of-truth) e sobrescreve nome/isYou
+    all[existing] = Object.assign({}, all[existing], { isYou: true, name: youName });
+  } else {
+    // Não estou no leaderboard — só insere se passar nos critérios de elegibilidade
+    const elig = rankComputeEligibility();
+    if (elig.eligible){
+      const me = { name: youName || 'Você', profit: youProfit, isYou: true, isPro: youIsPro };
+      all.push(me);
+    }
   }
+
   all.sort((a, b) => b.profit - a.profit);
   return all;
 }
