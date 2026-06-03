@@ -18,7 +18,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
-<link rel="stylesheet" href="style.css?v=50"/>
+<link rel="stylesheet" href="style.css?v=57"/>
 </head>
 <body>
 
@@ -1518,15 +1518,35 @@
       <div class="section" id="sec-ranking">
         <div class="page-header"><div class="page-title">Ranking</div><div class="page-subtitle">Seu progresso baseado no lucro acumulado</div></div>
 
-        <!-- Ranking global card -->
-        <div class="rank-top-card">
-          <div class="rank-top-head">
-            <div class="rank-top-icon"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l8 4v6c0 5-3.5 9-8 10-4.5-1-8-5-8-10V6l8-4z"/></svg></div>
-            <div style="flex:1">
-              <div class="rank-top-title">Ranking global de apostadores</div>
-              <div class="rank-top-sub">Os maiores lucros acumulados na plataforma</div>
+        <!-- Season header + tabs -->
+        <div class="rank-season">
+          <div class="rank-season-head">
+            <div>
+              <div class="rank-season-title">Temporada atual</div>
+              <div class="rank-season-sub" id="rankSeasonSub">Corrida mensal — reset em 28 dias</div>
             </div>
-            <div class="rank-top-meta" id="rankGlobalMeta">— de — apostadores</div>
+            <div class="rank-season-meta" id="rankGlobalMeta">— apostadores</div>
+          </div>
+          <div class="rank-period-tabs">
+            <button class="rank-period-tab" id="rankTabToday" onclick="switchRankPeriod('today')">Hoje</button>
+            <button class="rank-period-tab" id="rankTabWeek" onclick="switchRankPeriod('week')">Semana</button>
+            <button class="rank-period-tab is-active" id="rankTabMonth" onclick="switchRankPeriod('month')">Mês</button>
+            <button class="rank-period-tab" id="rankTabAll" onclick="switchRankPeriod('all')">Geral</button>
+          </div>
+        </div>
+
+        <!-- 🥇🥈🥉 Pódio Top 3 -->
+        <div class="rank-podium" id="rankPodium" style="display:none">
+          <div class="rank-podium-slot rank-podium-2" id="rankPodium2" onclick="rankPodiumClick(2)"></div>
+          <div class="rank-podium-slot rank-podium-1" id="rankPodium1" onclick="rankPodiumClick(1)"></div>
+          <div class="rank-podium-slot rank-podium-3" id="rankPodium3" onclick="rankPodiumClick(3)"></div>
+        </div>
+
+        <!-- Lista #4 em diante -->
+        <div class="rank-list">
+          <div class="rank-list-head">
+            <div class="rank-list-title" id="rankListTitle">Demais classificados</div>
+            <div class="rank-list-foot-inline" id="rankBoardFootInline"></div>
           </div>
           <div class="rank-board" id="rankBoard"></div>
           <div class="rank-board-foot" id="rankBoardFoot"></div>
@@ -1644,6 +1664,6 @@
 </div>
 
 <script src="config.js?v=9" defer></script>
-<script src="script.js?v=94" defer></script>
+<script src="script.js?v=98" defer></script>
 </body>
 </html>

@@ -5076,18 +5076,33 @@ function rankShieldSVG(tier){
   const uid = 'rk'+tier.idx+'_'+Math.random().toString(36).slice(2,8);
   const g1 = tier.g1, g2 = tier.g2;
   const isSupreme = tier.color === 'gradient';
+  // Gradient principal (4 stops pra profundidade extra)
   const mainStops = isSupreme
-    ? '<stop offset="0" stop-color="#ec4899"/><stop offset="0.4" stop-color="#a855f7"/><stop offset="0.75" stop-color="#3b82f6"/><stop offset="1" stop-color="#22d3ee"/>'
-    : '<stop offset="0" stop-color="'+g1+'"/><stop offset="0.55" stop-color="'+tier.color+'"/><stop offset="1" stop-color="'+g2+'"/>';
+    ? '<stop offset="0" stop-color="#fbbf24"/><stop offset="0.25" stop-color="#ec4899"/><stop offset="0.55" stop-color="#a855f7"/><stop offset="0.85" stop-color="#3b82f6"/><stop offset="1" stop-color="#22d3ee"/>'
+    : '<stop offset="0" stop-color="'+g1+'"/><stop offset="0.45" stop-color="'+tier.color+'"/><stop offset="0.85" stop-color="'+g2+'"/><stop offset="1" stop-color="rgba(0,0,0,.4)"/>';
   const defs = '<defs>'+
     '<linearGradient id="'+uid+'_main" x1="0" y1="0" x2="0" y2="1">'+mainStops+'</linearGradient>'+
-    '<linearGradient id="'+uid+'_shine" x1="0" y1="0" x2="0" y2="1">'+
-      '<stop offset="0" stop-color="rgba(255,255,255,.55)"/><stop offset="1" stop-color="rgba(255,255,255,0)"/>'+
-    '</linearGradient>'+
+    // Highlight radial superior (especular metalico)
+    '<radialGradient id="'+uid+'_highlight" cx="32%" cy="22%" r="55%">'+
+      '<stop offset="0" stop-color="rgba(255,255,255,.85)"/>'+
+      '<stop offset="0.4" stop-color="rgba(255,255,255,.25)"/>'+
+      '<stop offset="1" stop-color="rgba(255,255,255,0)"/>'+
+    '</radialGradient>'+
+    // Glow externo na base
     '<radialGradient id="'+uid+'_glow" cx="50%" cy="100%" r="80%">'+
-      '<stop offset="0" stop-color="'+(isSupreme?'#a855f7':tier.color)+'" stop-opacity=".55"/>'+
+      '<stop offset="0" stop-color="'+(isSupreme?'#a855f7':tier.color)+'" stop-opacity=".65"/>'+
       '<stop offset="1" stop-color="'+(isSupreme?'#a855f7':tier.color)+'" stop-opacity="0"/>'+
     '</radialGradient>'+
+    // Rim shine (borda iluminada no topo)
+    '<linearGradient id="'+uid+'_rim" x1="0" y1="0" x2="0" y2="1">'+
+      '<stop offset="0" stop-color="rgba(255,255,255,.45)"/>'+
+      '<stop offset="0.4" stop-color="rgba(255,255,255,0)"/>'+
+    '</linearGradient>'+
+    // Sombra interna gradiente vertical
+    '<linearGradient id="'+uid+'_shadow" x1="0" y1="0.5" x2="0" y2="1">'+
+      '<stop offset="0" stop-color="rgba(0,0,0,0)"/>'+
+      '<stop offset="1" stop-color="rgba(0,0,0,.35)"/>'+
+    '</linearGradient>'+
     '</defs>';
   const glowBg = '<ellipse cx="30" cy="62" rx="22" ry="6" fill="url(#'+uid+'_glow)"/>';
 
@@ -5095,8 +5110,14 @@ function rankShieldSVG(tier){
 
   // Tier 1-5: Shield shapes (Ferro/Bronze/Prata/Ouro/Platina)
   if (tier.idx <= 5) {
-    shape = '<path d="M30 6 L52 14 V30 C52 46 42 58 30 64 C18 58 8 46 8 30 V14 Z" fill="url(#'+uid+'_main)" stroke="rgba(0,0,0,.25)" stroke-width="1.2"/>'+
-            '<path d="M30 6 L52 14 V30 C52 34 51 38 49 41 L30 30 Z" fill="url(#'+uid+'_shine)" opacity=".75"/>';
+    const shieldPath = 'M30 6 L52 14 V30 C52 46 42 58 30 64 C18 58 8 46 8 30 V14 Z';
+    shape = '<path d="'+shieldPath+'" fill="url(#'+uid+'_main)" stroke="rgba(0,0,0,.4)" stroke-width="1.3" stroke-linejoin="round"/>'+
+            // Sombra interna na base
+            '<path d="'+shieldPath+'" fill="url(#'+uid+'_shadow)"/>'+
+            // Highlight especular
+            '<path d="'+shieldPath+'" fill="url(#'+uid+'_highlight)"/>'+
+            // Rim shine na borda superior
+            '<path d="M30 6 L52 14 V20 C52 22 51 24 49 25 L30 14 L11 25 C9 24 8 22 8 20 V14 Z" fill="url(#'+uid+'_rim)" opacity=".8"/>';
     if (tier.idx === 1) emblem = '<path d="M22 28 L30 22 L38 28 L35 40 L25 40 Z" fill="rgba(255,255,255,.45)"/>';
     else if (tier.idx === 2) emblem = '<path d="M30 22 L36 28 V40 H24 V28 Z" fill="rgba(255,255,255,.55)"/><path d="M30 22 V40" stroke="rgba(0,0,0,.25)" stroke-width="1"/>';
     else if (tier.idx === 3) emblem = '<circle cx="30" cy="32" r="7" fill="rgba(255,255,255,.65)"/><circle cx="30" cy="32" r="3" fill="rgba(255,255,255,.9)"/>';
@@ -5105,19 +5126,42 @@ function rankShieldSVG(tier){
   }
   // Tier 6-8: Cut gems (Esmeralda/Safira/Rubi)
   else if (tier.idx <= 8) {
-    shape = '<path d="M30 8 L48 22 L42 56 L18 56 L12 22 Z" fill="url(#'+uid+'_main)" stroke="rgba(0,0,0,.3)" stroke-width="1.2"/>'+
-            '<path d="M30 8 L48 22 L30 32 Z" fill="rgba(255,255,255,.35)"/>'+
-            '<path d="M12 22 L30 32 L18 56 Z" fill="rgba(0,0,0,.15)"/>'+
-            '<path d="M30 8 L30 32" stroke="rgba(255,255,255,.25)" stroke-width=".8"/>'+
-            '<path d="M30 32 L42 56" stroke="rgba(0,0,0,.2)" stroke-width=".8"/>'+
-            '<path d="M30 32 L18 56" stroke="rgba(0,0,0,.2)" stroke-width=".8"/>';
+    // Gema lapidada com 5 facetas pra realismo
+    shape = '<path d="M30 8 L48 22 L42 58 L18 58 L12 22 Z" fill="url(#'+uid+'_main)" stroke="rgba(0,0,0,.4)" stroke-width="1.3" stroke-linejoin="round"/>'+
+            // Faceta superior esquerda (highlight forte)
+            '<path d="M30 8 L12 22 L30 32 Z" fill="rgba(255,255,255,.4)"/>'+
+            // Faceta superior direita
+            '<path d="M30 8 L48 22 L30 32 Z" fill="rgba(255,255,255,.18)"/>'+
+            // Faceta inferior esquerda (sombra)
+            '<path d="M12 22 L30 32 L18 58 Z" fill="rgba(0,0,0,.22)"/>'+
+            // Faceta inferior direita (sombra mais escura)
+            '<path d="M48 22 L30 32 L42 58 Z" fill="rgba(0,0,0,.32)"/>'+
+            // Linhas de divisão das facetas
+            '<path d="M30 8 L30 32" stroke="rgba(255,255,255,.35)" stroke-width=".7"/>'+
+            '<path d="M12 22 L30 32" stroke="rgba(255,255,255,.18)" stroke-width=".7"/>'+
+            '<path d="M48 22 L30 32" stroke="rgba(255,255,255,.12)" stroke-width=".7"/>'+
+            '<path d="M30 32 L42 58" stroke="rgba(0,0,0,.25)" stroke-width=".7"/>'+
+            '<path d="M30 32 L18 58" stroke="rgba(0,0,0,.2)" stroke-width=".7"/>'+
+            // Sparkle pequeno no topo
+            '<circle cx="22" cy="20" r="2.5" fill="rgba(255,255,255,.7)"/>'+
+            '<circle cx="22" cy="20" r="1" fill="rgba(255,255,255,.95)"/>';
   }
   // Tier 9: Diamond
   else if (tier.idx === 9) {
-    shape = '<path d="M30 8 L52 26 L30 64 L8 26 Z" fill="url(#'+uid+'_main)" stroke="rgba(0,0,0,.3)" stroke-width="1.2"/>'+
-            '<path d="M30 8 L52 26 L30 26 Z" fill="rgba(255,255,255,.45)"/>'+
-            '<path d="M8 26 L30 26 L30 8 Z" fill="rgba(255,255,255,.25)"/>'+
-            '<path d="M30 26 L52 26 L30 64 Z" fill="rgba(0,0,0,.15)"/>';
+    shape = '<path d="M30 8 L52 26 L30 64 L8 26 Z" fill="url(#'+uid+'_main)" stroke="rgba(0,0,0,.35)" stroke-width="1.4" stroke-linejoin="round"/>'+
+            // Faceta topo direita (brilho forte)
+            '<path d="M30 8 L52 26 L30 26 Z" fill="rgba(255,255,255,.55)"/>'+
+            // Faceta topo esquerda
+            '<path d="M8 26 L30 26 L30 8 Z" fill="rgba(255,255,255,.3)"/>'+
+            // Faceta inferior direita (sombra)
+            '<path d="M30 26 L52 26 L30 64 Z" fill="rgba(0,0,0,.2)"/>'+
+            // Faceta inferior esquerda
+            '<path d="M30 26 L8 26 L30 64 Z" fill="rgba(0,0,0,.08)"/>'+
+            // Centro divisor
+            '<path d="M8 26 L52 26" stroke="rgba(255,255,255,.4)" stroke-width=".8"/>'+
+            // Sparkles
+            '<circle cx="20" cy="20" r="1.8" fill="rgba(255,255,255,.85)"/>'+
+            '<circle cx="40" cy="14" r="1.2" fill="rgba(255,255,255,.7)"/>';
   }
   // Tier 10: Crown (Mestre)
   else if (tier.idx === 10) {
@@ -5356,6 +5400,198 @@ function rankUserInitials(name){
   return (parts[0][0] + parts[parts.length-1][0]).toUpperCase();
 }
 
+// 👑 Banner do Campeão do Mês (sempre puxa do leaderboard mensal)
+function renderRankChampion(){
+  const banner = document.getElementById('rankChampionBanner');
+  if (!banner) return;
+  // Tenta achar o Top 1 do mês — pode ser dado real ou mock
+  const monthData = _rankRealUsersMonth || (_rankPeriod === 'all' ? null : null);
+  if (!monthData || !monthData.length){ banner.style.display = 'none'; return; }
+  const top1 = monthData.slice().sort((a, b) => b.profit - a.profit)[0];
+  if (!top1 || top1.profit <= 0){ banner.style.display = 'none'; return; }
+  banner.style.display = 'flex';
+  document.getElementById('rankChampionName').textContent = top1.name;
+  document.getElementById('rankChampionProfit').textContent = rankFormatValue(top1.profit);
+  const { current } = rankComputeCurrent(top1.profit);
+  document.getElementById('rankChampionShield').innerHTML = rankShieldSVG(current);
+}
+
+// 🎯 Card "Sua posição" hero
+function renderRankMyPos(youProfit, currentTier){
+  const card = document.getElementById('rankMyPosCard');
+  if (!card) return;
+  let youName = (localStorage.getItem('bancapro-user-name')||'').trim() || 'Você';
+  const source = (_rankPeriod === 'all') ? _rankRealUsers : _rankRealUsersMonth;
+  const board_users = rankBuildLeaderboard(youProfit, youName, source);
+  const yourPos = board_users.findIndex(u => u.isYou) + 1;
+  const elig = rankComputeEligibility();
+
+  // Não-elegível: mostra card no estado "locked" com onde estaria
+  card.className = 'rank-mypos';
+  card.style.display = 'block';
+
+  let displayPos = yourPos;
+  let isInList = yourPos > 0;
+  if (!isInList){
+    const realRanked = board_users.filter(u => !u.isYou);
+    displayPos = realRanked.filter(u => u.profit >= youProfit).length + 1;
+    card.classList.add('is-locked');
+  }
+  if (yourPos === 1) card.classList.add('is-top');
+
+  document.getElementById('rankMyPosNum').textContent = '#' + displayPos;
+  document.getElementById('rankMyPosName').textContent = youName;
+  document.getElementById('rankMyPosTier').textContent = currentTier.name;
+  document.getElementById('rankMyPosShield').innerHTML = rankShieldSVG(currentTier);
+  document.getElementById('rankMyPosProfit').textContent = rankFormatValue(youProfit);
+
+  // Delta vs sessao anterior
+  const deltaEl = document.getElementById('rankMyPosDelta');
+  if (deltaEl){
+    const cache = rankReadPositionCache(_rankPeriod);
+    const prev = cache[youName];
+    if (prev && prev !== displayPos){
+      if (prev > displayPos){ deltaEl.className = 'rank-mypos-delta is-up'; deltaEl.textContent = '▲ ' + (prev - displayPos) + ' posição' + (prev - displayPos > 1 ? 'es' : ''); }
+      else { deltaEl.className = 'rank-mypos-delta is-down'; deltaEl.textContent = '▼ ' + (displayPos - prev) + ' posição' + (displayPos - prev > 1 ? 'es' : ''); }
+    } else if (prev === displayPos){
+      deltaEl.className = 'rank-mypos-delta is-same'; deltaEl.textContent = '— manteve';
+    } else {
+      deltaEl.textContent = '';
+    }
+  }
+
+  // Texto + progresso pra ultrapassar próximo
+  const progEl = document.getElementById('rankMyPosProgressLabel');
+  const fillEl = document.getElementById('rankMyPosProgressFill');
+  if (displayPos === 1){
+    if (progEl) progEl.innerHTML = '🏆 <b>Você está no topo do ranking!</b> Continue lucrando pra manter a posição.';
+    if (fillEl) fillEl.style.width = '100%';
+  } else {
+    const ahead = isInList ? board_users[yourPos - 2] : board_users[displayPos - 2];
+    if (ahead){
+      const diff = ahead.profit - youProfit;
+      if (progEl) progEl.innerHTML = 'Faltam <b>'+rankFormatValue(diff)+'</b> pra ultrapassar <span class="ahead">'+ahead.name+'</span> no <b>#'+(displayPos - 1)+'</b>';
+      // Progresso: quanto do gap entre eu e o próximo já cobri (relativo ao gap com o de baixo)
+      let pct = 0;
+      if (isInList && board_users[yourPos]){
+        const below = board_users[yourPos];
+        const span = ahead.profit - below.profit;
+        if (span > 0) pct = Math.min(100, Math.max(5, ((youProfit - below.profit) / span) * 100));
+        else pct = 50;
+      } else {
+        pct = 30;
+      }
+      if (fillEl) fillEl.style.width = pct + '%';
+    } else {
+      if (progEl) progEl.textContent = 'Continue registrando suas transações pra subir.';
+      if (fillEl) fillEl.style.width = '50%';
+    }
+  }
+}
+
+// SVG premium das medalhas (Top 1/2/3) — disco metálico + fita + estrela central
+function rankMedalSVG(rank){
+  const palettes = {
+    1: {
+      ribL: '#6d78ff', ribR: '#9a5cff',
+      discTop: '#fef9c3', discMain: '#fbbf24', discMid: '#f59e0b', discDark: '#7c2d12',
+      shine: '#fefce8', glow: 'rgba(251,191,36,.7)'
+    },
+    2: {
+      ribL: '#3b4456', ribR: '#64748b',
+      discTop: '#ffffff', discMain: '#e5e7eb', discMid: '#94a3b8', discDark: '#334155',
+      shine: '#f8fafc', glow: 'rgba(203,213,225,.55)'
+    },
+    3: {
+      ribL: '#7c2d12', ribR: '#92400e',
+      discTop: '#fed7aa', discMain: '#e6934a', discMid: '#cd7f32', discDark: '#5b1d05',
+      shine: '#fef3c7', glow: 'rgba(230,147,74,.55)'
+    }
+  };
+  const p = palettes[rank] || palettes[3];
+  const uid = 'med'+rank+'_'+Math.random().toString(36).slice(2,8);
+  return '<svg viewBox="0 0 80 110" xmlns="http://www.w3.org/2000/svg">'+
+    '<defs>'+
+      '<linearGradient id="'+uid+'_ribL" x1="0" y1="0" x2="0" y2="1">'+
+        '<stop offset="0" stop-color="'+p.ribL+'"/>'+
+        '<stop offset="1" stop-color="'+p.ribL+'" stop-opacity=".5"/>'+
+      '</linearGradient>'+
+      '<linearGradient id="'+uid+'_ribR" x1="0" y1="0" x2="0" y2="1">'+
+        '<stop offset="0" stop-color="'+p.ribR+'"/>'+
+        '<stop offset="1" stop-color="'+p.ribR+'" stop-opacity=".5"/>'+
+      '</linearGradient>'+
+      '<radialGradient id="'+uid+'_disc" cx="35%" cy="28%" r="75%">'+
+        '<stop offset="0" stop-color="'+p.discTop+'"/>'+
+        '<stop offset="0.4" stop-color="'+p.discMain+'"/>'+
+        '<stop offset="0.85" stop-color="'+p.discMid+'"/>'+
+        '<stop offset="1" stop-color="'+p.discDark+'"/>'+
+      '</radialGradient>'+
+      '<radialGradient id="'+uid+'_glow" cx="50%" cy="50%" r="50%">'+
+        '<stop offset="0" stop-color="'+p.glow+'"/>'+
+        '<stop offset="1" stop-color="'+p.glow+'" stop-opacity="0"/>'+
+      '</radialGradient>'+
+    '</defs>'+
+    // Halo glow atrás
+    '<ellipse cx="40" cy="72" rx="40" ry="38" fill="url(#'+uid+'_glow)"/>'+
+    // Fita esquerda
+    '<path d="M10 0 L30 0 L42 40 L30 44 Z" fill="url(#'+uid+'_ribL)" stroke="rgba(0,0,0,.3)" stroke-width=".6" stroke-linejoin="round"/>'+
+    // Fita direita
+    '<path d="M70 0 L50 0 L38 40 L50 44 Z" fill="url(#'+uid+'_ribR)" stroke="rgba(0,0,0,.3)" stroke-width=".6" stroke-linejoin="round"/>'+
+    // Dobra central (sombra)
+    '<path d="M30 0 L50 0 L46 22 L34 22 Z" fill="rgba(0,0,0,.32)"/>'+
+    // Highlights nas fitas
+    '<path d="M12 2 L20 2 L28 32" stroke="rgba(255,255,255,.22)" stroke-width="1.4" fill="none" stroke-linecap="round"/>'+
+    '<path d="M68 2 L60 2 L52 32" stroke="rgba(255,255,255,.22)" stroke-width="1.4" fill="none" stroke-linecap="round"/>'+
+    // Anel externo (sombra metalica)
+    '<circle cx="40" cy="72" r="30" fill="'+p.discDark+'"/>'+
+    // Disco principal
+    '<circle cx="40" cy="72" r="28" fill="url(#'+uid+'_disc)"/>'+
+    // Anel interno
+    '<circle cx="40" cy="72" r="23" fill="none" stroke="'+p.discDark+'" stroke-width=".8" opacity=".55"/>'+
+    // Reflexo superior arqueado
+    '<path d="M22 64 Q40 50 58 64" stroke="'+p.shine+'" stroke-width="2.5" fill="none" opacity=".65" stroke-linecap="round"/>'+
+    // Estrela central
+    '<path d="M40 60 L43.2 70 L53.5 70.2 L45.2 76.4 L48.4 86.4 L40 80.5 L31.6 86.4 L34.8 76.4 L26.5 70.2 L36.8 70 Z" fill="'+p.shine+'" stroke="'+p.discDark+'" stroke-width=".5" stroke-linejoin="round"/>'+
+    // Detalhe central da estrela
+    '<circle cx="40" cy="73" r="2.2" fill="'+p.discDark+'" opacity=".45"/>'+
+    '</svg>';
+}
+
+// 🥇🥈🥉 Pódio Top 3
+function renderRankPodium(youProfit){
+  const podiumWrap = document.getElementById('rankPodium');
+  if (!podiumWrap) return;
+  let youName = (localStorage.getItem('bancapro-user-name')||'').trim() || 'Você';
+  const source = (_rankPeriod === 'all') ? _rankRealUsers : _rankRealUsersMonth;
+  const board_users = rankBuildLeaderboard(youProfit, youName, source);
+  if (board_users.length < 3){ podiumWrap.style.display = 'none'; return; }
+  podiumWrap.style.display = 'grid';
+  const top3 = board_users.slice(0, 3);
+
+  const proBadge = '<span class="rank-podium-pro" title="Pro"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="podProGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3ba9f5"/><stop offset="1" stop-color="#0f7dc6"/></linearGradient></defs><path fill="url(#podProGrad)" d="M22.25 12c0-1.43-.88-2.67-2.19-3.34.46-1.39.2-2.9-.81-3.91s-2.52-1.27-3.91-.81c-.66-1.31-1.91-2.19-3.34-2.19s-2.67.88-3.33 2.19c-1.4-.46-2.91-.2-3.92.81S3.48 7.27 3.94 8.66C2.63 9.33 1.75 10.57 1.75 12s.88 2.66 2.19 3.34c-.46 1.39-.2 2.9.81 3.91s2.52 1.26 3.91.81c.67 1.31 1.91 2.19 3.34 2.19s2.68-.88 3.34-2.19c1.39.45 2.9.2 3.91-.81s1.27-2.52.81-3.91c1.31-.68 2.19-1.91 2.19-3.34z"/><path d="M9.64 13.06l-2.06-2.06-1.42 1.41 3.48 3.48 6.86-6.86-1.42-1.42z" fill="#fff"/></svg></span>';
+  const labels = { 1:'1º LUGAR', 2:'2º LUGAR', 3:'3º LUGAR' };
+
+  [1,2,3].forEach(rank => {
+    const u = top3[rank - 1];
+    const slot = document.getElementById('rankPodium' + rank);
+    if (!slot) return;
+    const { current } = rankComputeCurrent(u.profit);
+    const youCls = u.isYou ? 'is-you' : '';
+    slot.className = 'rank-podium-slot rank-podium-' + rank + ' ' + youCls;
+    slot.innerHTML =
+      '<div class="rank-podium-medal">'+rankMedalSVG(rank)+'</div>'+
+      '<div class="rank-podium-rank">'+labels[rank]+'</div>'+
+      '<div class="rank-podium-shield rank-shield">'+rankShieldSVG(current)+'</div>'+
+      '<div class="rank-podium-name">'+u.name+(u.isPro ? proBadge : '')+'</div>'+
+      '<div class="rank-podium-tier-name">'+current.name+'</div>'+
+      '<div class="rank-podium-profit">'+rankFormatValue(u.profit)+'</div>';
+  });
+}
+
+function rankPodiumClick(rank){
+  /* Reservado pra futuro: abrir perfil do top X */
+}
+
 function rankRenderBoard(youProfit){
   const board = document.getElementById('rankBoard');
   const foot = document.getElementById('rankBoardFoot');
@@ -5369,7 +5605,8 @@ function rankRenderBoard(youProfit){
     else if (typeof CURRENT_USER !== 'undefined' && CURRENT_USER && CURRENT_USER.name) youName = CURRENT_USER.name;
   } catch(e){}
 
-  const board_users = rankBuildLeaderboard(youProfit, youName, _rankRealUsers);
+  const source = (_rankPeriod === 'month') ? _rankRealUsersMonth : _rankRealUsers;
+  const board_users = rankBuildLeaderboard(youProfit, youName, source);
   const yourPos = board_users.findIndex(u => u.isYou) + 1;
   const isYouInList = yourPos > 0;
   const total = board_users.length;
@@ -5382,11 +5619,16 @@ function rankRenderBoard(youProfit){
     }
   }
 
-  // Mostra top 10 + (se você está fora do top 10) divider + sua linha + 2 acima/abaixo
-  const top = board_users.slice(0, 10);
+  // Pega cache de posições anteriores pra computar ▲/▼
+  const posCache = rankReadPositionCache(_rankPeriod);
+  const newPositions = {};
+  board_users.forEach((u, i) => { newPositions[u.name] = i + 1; });
+
+  // Lista mostra do #4 em diante (top 3 já tá no pódio); top 10 visível + sua vizinhança se >10
+  const top = board_users.slice(3, 10); // skip top 3
   const rows = [];
   for (let i = 0; i < top.length; i++){
-    rows.push({ user: top[i], pos: i + 1 });
+    rows.push({ user: top[i], pos: i + 4 });
   }
   if (yourPos > 10){
     rows.push({ divider: true });
@@ -5415,49 +5657,49 @@ function rankRenderBoard(youProfit){
     if (r.divider) return '<div class="rank-row-divider">· · ·</div>';
     const u = r.user;
     const { current } = rankComputeCurrent(u.profit);
-    const podiumCls = r.pos === 1 ? 'is-podium-1' : r.pos === 2 ? 'is-podium-2' : r.pos === 3 ? 'is-podium-3' : '';
     const youCls = u.isYou ? 'is-you' : '';
     const proCls = u.isPro ? 'is-pro' : '';
     const initials = rankUserInitials(u.name);
     const proBadge = u.isPro ? proBadgeHTML : '';
-    return '<div class="rank-row '+podiumCls+' '+youCls+' '+proCls+'">'+
+    // Position delta ▲/▼ (vs sessão anterior)
+    const prevPos = posCache[u.name];
+    let deltaHtml = '';
+    if (prevPos && prevPos !== r.pos){
+      if (prevPos > r.pos){
+        deltaHtml = '<span class="rank-row-delta is-up" title="Subiu '+(prevPos - r.pos)+' posições">▲ '+(prevPos - r.pos)+'</span>';
+      } else {
+        deltaHtml = '<span class="rank-row-delta is-down" title="Caiu '+(r.pos - prevPos)+' posições">▼ '+(r.pos - prevPos)+'</span>';
+      }
+    }
+    return '<div class="rank-row '+youCls+' '+proCls+'">'+
       '<div class="rank-row-pos">#'+r.pos+'</div>'+
       '<div class="rank-row-avatar">'+initials+'</div>'+
-      '<div class="rank-row-name">'+u.name+proBadge+(u.isYou ? '<b>VOCÊ</b>' : '')+'</div>'+
+      '<div class="rank-row-name">'+u.name+proBadge+(u.isYou ? '<b>VOCÊ</b>' : '')+deltaHtml+'</div>'+
       '<div class="rank-row-tier"><span class="rank-shield">'+rankShieldSVG(current)+'</span><span class="rank-row-tier-name">'+current.name+'</span></div>'+
       '<div class="rank-row-profit">'+rankFormatValue(u.profit)+'</div>'+
     '</div>';
   }).join('');
 
+  // Atualiza titulo da lista
+  const listTitle = document.getElementById('rankListTitle');
+  if (listTitle){
+    listTitle.textContent = board_users.length > 3 ? 'Demais classificados' : 'Classificação completa';
+  }
+
+  // Salva cache de posições pra próxima visita comparar
+  rankWritePositionCache(_rankPeriod, newPositions);
+
+  // Foot: só mostra mensagem de bloqueio se não elegível (Sua posição card já cobre o resto)
   if (foot){
-    // Lógica: o RPC é a fonte de verdade. Se eu apareço na lista, sou elegível (por atividade OU por Pro).
     if (isYouInList){
-      const ahead = yourPos > 1 ? board_users[yourPos - 2] : null;
-      const diff = ahead ? ahead.profit - youProfit : 0;
-      foot.innerHTML = ahead
-        ? 'Faltam <b>'+rankFormatValue(diff)+'</b> pra ultrapassar <b>'+ahead.name+'</b> no #'+(yourPos-1)+'.'
-        : '<b>Você está no topo do ranking.</b>';
+      foot.innerHTML = '';
     } else {
       const elig = rankComputeEligibility();
       const missing = [];
       if (elig.txCount < RANK_ELIGIBILITY.minTx) missing.push('<b>'+(RANK_ELIGIBILITY.minTx - elig.txCount)+' transações</b>');
       if (elig.distinctDays < RANK_ELIGIBILITY.minActiveDays) missing.push('<b>'+(RANK_ELIGIBILITY.minActiveDays - elig.distinctDays)+' dias de atividade</b>');
-      foot.innerHTML = '🔒 Pra entrar no ranking global faltam: ' + missing.join(' · ') +
+      foot.innerHTML = '🔒 Pra entrar na temporada faltam: ' + missing.join(' · ') +
         ' <br/><span style="color:#5a657f">— ou assine o <b style="color:#a282ff">Pro</b> e apareça imediatamente</span>';
-
-      // Linha do user — igual aos outros cards, indica onde ele está
-      // Usa >= pra empates ficarem ANTES do user (ex: se tem 2 users com R$ 0 nas pos #6 e #7, user com R$ 0 vai pra #8)
-      const realRanked = board_users.filter(u => !u.isYou);
-      const wouldBePos = realRanked.filter(u => u.profit >= youProfit).length + 1;
-      const { current: youTier } = rankComputeCurrent(youProfit);
-      const youInitials = rankUserInitials(youName);
-      foot.innerHTML += '<div class="rank-row is-you" style="margin-top:12px">'+
-        '<div class="rank-row-pos">#'+wouldBePos+'</div>'+
-        '<div class="rank-row-avatar">'+youInitials+'</div>'+
-        '<div class="rank-row-name">'+youName+'<b>VOCÊ</b></div>'+
-        '<div class="rank-row-tier"><span class="rank-shield">'+rankShieldSVG(youTier)+'</span><span class="rank-row-tier-name">'+youTier.name+'</span></div>'+
-        '<div class="rank-row-profit">'+rankFormatValue(youProfit)+'</div>'+
-      '</div>';
     }
   }
 }
@@ -5465,8 +5707,12 @@ function rankRenderBoard(youProfit){
 function renderUserRanking(){
   const sec = document.getElementById('sec-ranking');
   if (!sec) return;
+  updateRankTabCountdown();
+  // Lucro depende do periodo (Geral = sempre / Mes = so transacoes do mes atual)
   let profit = 0;
-  if (typeof transactions !== 'undefined' && Array.isArray(transactions)){
+  if (_rankPeriod === 'month'){
+    profit = rankComputeMonthProfit();
+  } else if (typeof transactions !== 'undefined' && Array.isArray(transactions)){
     for (let i = 0; i < transactions.length; i++){
       const t = transactions[i];
       const v = Number(t.value) || 0;
@@ -5527,8 +5773,22 @@ function renderUserRanking(){
 
   // Leaderboard — render imediato com cache (ou mock), depois busca real e re-pinta
   rankRenderBoard(count);
-  rankFetchLeaderboard().then(real => {
-    if (real && real.length > 0){ _rankRealUsers = real; rankRenderBoard(count); }
+  renderRankPodium(count);
+  renderRankMyPos(count, current);
+  renderRankChampion();
+  // Hoje/Semana fazem fallback pra Mes ate ter RPC proprio
+  let fetcher;
+  if (_rankPeriod === 'all') fetcher = rankFetchLeaderboard;
+  else fetcher = rankFetchLeaderboardMonth; // 'today','week','month' caem aqui
+  fetcher().then(real => {
+    if (real && real.length > 0){
+      if (_rankPeriod === 'all') _rankRealUsers = real;
+      else _rankRealUsersMonth = real;
+      rankRenderBoard(count);
+      renderRankPodium(count);
+      renderRankMyPos(count, current);
+      renderRankChampion();
+    }
   });
   rankStartLivePolling();
 
@@ -5543,9 +5803,11 @@ function renderUserRanking(){
       const fillBg = t.color === 'gradient'
         ? 'linear-gradient(180deg,#ec4899 0%,#a855f7 50%,#3b82f6 100%)'
         : 'linear-gradient(180deg,'+t.g1+' 0%,'+t.color+' 60%,'+t.g2+' 100%)';
-      return '<div class="rank-tier-bar '+(isCurrent?'is-current ':'')+(isLocked?'is-locked':'')+'" style="--ticon:'+iconColor+'">'+
+      const shineDelay = ((t.idx * 0.3) % 4).toFixed(1) + 's';
+      const tooltip = t.name + ' · ' + rankFormatMin(t.min) + (t.desc ? ' — ' + t.desc.split('.')[0] : '');
+      return '<div class="rank-tier-bar '+(isCurrent?'is-current ':'')+(isLocked?'is-locked':'')+'" style="--ticon:'+iconColor+';--shine-delay:'+shineDelay+'" title="'+tooltip.replace(/"/g,'&quot;')+'">'+
         '<div class="rank-tier-label">'+t.name+'</div>'+
-        '<div class="rank-tier-icon">'+rankShieldSVG(t)+'</div>'+
+        '<div class="rank-tier-icon-badge"><div class="rank-tier-icon">'+rankShieldSVG(t)+'</div></div>'+
         '<div class="rank-tier-tube"><div class="rank-tier-fill" style="height:'+heightPct+'%;background:'+fillBg+'"></div></div>'+
         '<div class="rank-tier-num">'+String(t.idx).padStart(2,'0')+'</div>'+
         '<div class="rank-tier-mintag">MIN. LUCRO</div>'+
@@ -5554,14 +5816,99 @@ function renderUserRanking(){
     }).join('');
   }
 
-  // Atualiza o card de ranking no Dashboard
-  rankRenderDashCard(count, current, board_users);
+  // Atualiza o card de ranking no Dashboard (build leaderboard local pra ele)
+  var _yName = (localStorage.getItem('bancapro-user-name')||'').trim() || 'Você';
+  var _dashBoard = rankBuildLeaderboard(count, _yName, _rankRealUsers);
+  rankRenderDashCard(count, current, _dashBoard);
 
   // Atualiza streak no topbar (visivel em todas as abas)
   updateTopbarStreak();
 
   // Detecta se o user subiu de tier desde a ultima visita
   detectTierUp(current);
+}
+
+// ─── Ranking — periodos ───
+// 'today' e 'week' atualmente fazem fallback pra 'month' no backend
+// (interface preparada — quando o RPC existir, plug and play)
+let _rankPeriod = 'month'; // 'today' / 'week' / 'month' / 'all' — Mês como default
+let _rankRealUsersMonth = null;
+
+function switchRankPeriod(period){
+  _rankPeriod = period;
+  ['Today','Week','Month','All'].forEach(suf => {
+    const el = document.getElementById('rankTab' + suf);
+    if (el) el.classList.toggle('is-active', period === suf.toLowerCase());
+  });
+  const sub = document.getElementById('rankSeasonSub');
+  if (sub){
+    if (period === 'all') sub.textContent = 'Geral · Todos os tempos';
+    else if (period === 'month') sub.textContent = 'Corrida mensal — reset em ' + rankCountdownToMonthEnd().replace('reseta em ','');
+    else if (period === 'week') sub.textContent = 'Top da semana — janela de 7 dias';
+    else if (period === 'today') sub.textContent = 'Top de hoje — dia corrente';
+  }
+  if (typeof renderUserRanking === 'function') renderUserRanking();
+}
+
+function rankCountdownToMonthEnd(){
+  const now = new Date();
+  const end = new Date(now.getFullYear(), now.getMonth() + 1, 1, 0, 0, 0);
+  const diff = end.getTime() - now.getTime();
+  const days = Math.ceil(diff / 86400000);
+  const hours = Math.floor((diff % 86400000) / 3600000);
+  if (days <= 0) return hours + 'h';
+  if (days === 1) return '1 dia';
+  return days + ' dias';
+}
+
+function updateRankTabCountdown(){
+  if (_rankPeriod === 'month'){
+    const sub = document.getElementById('rankSeasonSub');
+    if (sub) sub.textContent = 'Corrida mensal — reset em ' + rankCountdownToMonthEnd();
+  }
+}
+
+// Filtra transações pra mês atual (usado quando o ranking mensal precisa do meu lucro)
+function rankComputeMonthProfit(){
+  if (typeof transactions === 'undefined' || !Array.isArray(transactions)) return 0;
+  const now = new Date();
+  const ym = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0');
+  let profit = 0;
+  for (let i = 0; i < transactions.length; i++){
+    const t = transactions[i];
+    if (!t.date || !String(t.date).startsWith(ym)) continue;
+    const v = Number(t.value) || 0;
+    if (t.type === 'income') profit += v;
+    else if (t.type === 'expense') profit -= v;
+  }
+  return Math.max(0, Math.round(profit));
+}
+
+// Cache de posições anteriores pra detectar ▲/▼ subiu/caiu
+function rankReadPositionCache(period){
+  try {
+    const raw = localStorage.getItem('bancapro-rank-positions-' + period);
+    return raw ? JSON.parse(raw) : {};
+  } catch(e){ return {}; }
+}
+function rankWritePositionCache(period, positions){
+  try { localStorage.setItem('bancapro-rank-positions-' + period, JSON.stringify(positions)); } catch(e){}
+}
+
+// Tenta buscar leaderboard mensal do Supabase (RPC get_leaderboard_monthly)
+async function rankFetchLeaderboardMonth(){
+  try {
+    const sb = (typeof getSb === 'function') ? getSb() : null;
+    if (!sb) return null;
+    const { data, error } = await sb.rpc('get_leaderboard_monthly');
+    if (error){ console.warn('rankFetchLeaderboardMonth', error.message); return null; }
+    if (!data || !data.length) return [];
+    return data.map(r => ({
+      name: r.display_name || 'Apostador',
+      profit: Number(r.profit) || 0,
+      isPro: !!r.is_pro
+    }));
+  } catch(e){ console.warn('rankFetchLeaderboardMonth', e); return null; }
 }
 
 // Atualiza o chip de streak no topbar (visível em todas as abas)
