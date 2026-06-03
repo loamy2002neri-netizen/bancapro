@@ -1008,6 +1008,7 @@ try {
           if(tab==='methods' && typeof renderMethodsRanking==='function') setTimeout(renderMethodsRanking,150);
           if(tab==='transactions' && typeof renderAllTransactions==='function') setTimeout(renderAllTransactions,200);
           if(tab==='reports' && typeof initReportCharts==='function') setTimeout(initReportCharts,200);
+          if(tab==='ranking' && typeof renderRanking==='function') setTimeout(renderRanking,200);
         }catch(e){}
         var now=new Date();
         function tAt(h,m){var d=new Date(now);d.setHours(h,m,0,0);return d.getTime();}
@@ -1098,12 +1099,13 @@ function goTo(section, el) {
       if(n.textContent.toLowerCase().includes(section.toLowerCase())) n.classList.add('active');
     });
   }
-  const labels = {dashboard:'Dashboard',methods:'Métodos',transactions:'Transações',accounts:'Contas Depositadas',recharge:'Assinatura',reports:'Relatórios',goals:'Metas',compare:'Comparativo',calculadora:'Calculadora',anotacoes:'Anotações',settings:'Configurações',admin:'Admin',afiliado:'Minhas Indicações',afiliados:'Afiliados'};
+  const labels = {dashboard:'Dashboard',methods:'Métodos',transactions:'Transações',accounts:'Contas Depositadas',recharge:'Assinatura',reports:'Relatórios',goals:'Metas',compare:'Comparativo',calculadora:'Calculadora',anotacoes:'Anotações',ranking:'Ranking',settings:'Configurações',admin:'Admin',afiliado:'Minhas Indicações',afiliados:'Afiliados'};
   var _bc = document.getElementById('breadcrumb'); if(_bc) _bc.textContent = labels[section] || section;
   closeSidebar();
   if(section === 'reports') setTimeout(initReportCharts, 100);
   if(section === 'compare') setTimeout(initCompareChart, 100);
   if(section === 'methods') setTimeout(initMethodEvolution, 100);
+  if(section === 'ranking') setTimeout(function(){ if(typeof renderRanking==='function') renderRanking(); }, 60);
   if(section === 'recharge') setTimeout(updateTrialBanner, 50);
   if(section === 'settings') { setTimeout(renderSubscriptionCard, 50); setTimeout(applyAvatar, 50); }
   if(section === 'admin') setTimeout(() => { renderAdminStats(); renderAdminUsers(); renderAdminErrors(); }, 50);
@@ -4907,4 +4909,384 @@ async function notesDelete(id){
   notesSave();
   notesRender();
   if(typeof showToast==='function') showToast('Anotação excluída.','info');
+}
+
+// ═══════════════════════════════════════════════════════════════
+// RANKING
+// ═══════════════════════════════════════════════════════════════
+const RANK_TIERS = [
+  { idx:1,  name:'Ferro',     min:0,        color:'#7a8290', g1:'#9aa3b0', g2:'#5f6775', desc:'Iniciante. Cada real lucrado é um passo na sua jornada.' },
+  { idx:2,  name:'Bronze',    min:1000,     color:'#cd7f32', g1:'#e6934a', g2:'#9a5e26', desc:'Você já saiu do zero. O primeiro milhar de lucro está na conta.' },
+  { idx:3,  name:'Prata',     min:3000,     color:'#c0c0c0', g1:'#e8e8e8', g2:'#8d8d8d', desc:'Apostador consistente. Seu lucro já está acima da média.' },
+  { idx:4,  name:'Ouro',      min:5000,     color:'#ffb700', g1:'#ffd45e', g2:'#c98e00', desc:'Apostador disciplinado. Você opera com método e resultado.' },
+  { idx:5,  name:'Platina',   min:10000,    color:'#a3e6e1', g1:'#c8f5f2', g2:'#6fc6c0', desc:'Veterano. Cinco dígitos de lucro. Você domina a gestão da banca.' },
+  { idx:6,  name:'Esmeralda', min:20000,    color:'#10b981', g1:'#34d399', g2:'#047857', desc:'Estrategista. Suas decisões são baseadas em dados, e o lucro mostra.' },
+  { idx:7,  name:'Safira',    min:50000,    color:'#3b82f6', g1:'#60a5fa', g2:'#1d4ed8', desc:'Apostador profissional. Meio centena de mil em lucro acumulado.' },
+  { idx:8,  name:'Rubi',      min:75000,    color:'#e11d48', g1:'#f43f5e', g2:'#9f1239', desc:'Top 30%. Poucos apostadores chegam neste patamar de lucro.' },
+  { idx:9,  name:'Diamante',  min:100000,   color:'#cbd5e1', g1:'#ffffff', g2:'#94a3b8', desc:'Elite. Seis dígitos de lucro acumulado. Sua gestão é referência.' },
+  { idx:10, name:'Mestre',    min:150000,   color:'#a855f7', g1:'#c084fc', g2:'#7e22ce', desc:'Mestre da banca. Disciplina e lucro em altíssimo nível.' },
+  { idx:11, name:'Elite',     min:250000,   color:'#06b6d4', g1:'#22d3ee', g2:'#0e7490', desc:'Top 5%. Você está entre os melhores apostadores.' },
+  { idx:12, name:'Lendário',  min:500000,   color:'#f97316', g1:'#fb923c', g2:'#c2410c', desc:'Lendário. Meio milhão de reais em lucro acumulado.' },
+  { idx:13, name:'Imortal',   min:700000,   color:'#8b5cf6', g1:'#a78bfa', g2:'#6d28d9', desc:'Status raro. Pouquíssimos apostadores chegam aqui.' },
+  { idx:14, name:'Supremo',   min:850000,   color:'gradient',g1:'#ec4899', g2:'#3b82f6', desc:'Status supremo. A um passo do milhão em lucro acumulado.' },
+  { idx:15, name:'Apex',      min:1000000,  color:'#facc15', g1:'#fde047', g2:'#a16207', desc:'O topo absoluto. R$ 1 milhão em lucro acumulado. Você é o melhor.' }
+];
+
+function rankFormatMin(n){
+  if (n === 0) return 'R$ 0';
+  if (n >= 1000000){
+    const m = n / 1000000;
+    const str = m === Math.floor(m) ? String(m) : m.toFixed(1).replace('.',',');
+    return 'R$ ' + str + 'M+';
+  }
+  if (n >= 1000){
+    const k = n / 1000;
+    const str = k >= 10 ? String(Math.round(k)) : k.toFixed(1).replace('.0','').replace('.',',');
+    return 'R$ ' + str + 'k+';
+  }
+  return 'R$ ' + n + '+';
+}
+function rankFormatValue(n){
+  if (n < 1000) return 'R$ ' + n.toFixed(0);
+  return 'R$ ' + n.toLocaleString('pt-BR', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+}
+
+function rankShieldSVG(tier){
+  const uid = 'rk'+tier.idx+'_'+Math.random().toString(36).slice(2,8);
+  const g1 = tier.g1, g2 = tier.g2;
+  const isSupreme = tier.color === 'gradient';
+  const mainStops = isSupreme
+    ? '<stop offset="0" stop-color="#ec4899"/><stop offset="0.4" stop-color="#a855f7"/><stop offset="0.75" stop-color="#3b82f6"/><stop offset="1" stop-color="#22d3ee"/>'
+    : '<stop offset="0" stop-color="'+g1+'"/><stop offset="0.55" stop-color="'+tier.color+'"/><stop offset="1" stop-color="'+g2+'"/>';
+  const defs = '<defs>'+
+    '<linearGradient id="'+uid+'_main" x1="0" y1="0" x2="0" y2="1">'+mainStops+'</linearGradient>'+
+    '<linearGradient id="'+uid+'_shine" x1="0" y1="0" x2="0" y2="1">'+
+      '<stop offset="0" stop-color="rgba(255,255,255,.55)"/><stop offset="1" stop-color="rgba(255,255,255,0)"/>'+
+    '</linearGradient>'+
+    '<radialGradient id="'+uid+'_glow" cx="50%" cy="100%" r="80%">'+
+      '<stop offset="0" stop-color="'+(isSupreme?'#a855f7':tier.color)+'" stop-opacity=".55"/>'+
+      '<stop offset="1" stop-color="'+(isSupreme?'#a855f7':tier.color)+'" stop-opacity="0"/>'+
+    '</radialGradient>'+
+    '</defs>';
+  const glowBg = '<ellipse cx="30" cy="62" rx="22" ry="6" fill="url(#'+uid+'_glow)"/>';
+
+  let shape = '', emblem = '';
+
+  // Tier 1-5: Shield shapes (Ferro/Bronze/Prata/Ouro/Platina)
+  if (tier.idx <= 5) {
+    shape = '<path d="M30 6 L52 14 V30 C52 46 42 58 30 64 C18 58 8 46 8 30 V14 Z" fill="url(#'+uid+'_main)" stroke="rgba(0,0,0,.25)" stroke-width="1.2"/>'+
+            '<path d="M30 6 L52 14 V30 C52 34 51 38 49 41 L30 30 Z" fill="url(#'+uid+'_shine)" opacity=".75"/>';
+    if (tier.idx === 1) emblem = '<path d="M22 28 L30 22 L38 28 L35 40 L25 40 Z" fill="rgba(255,255,255,.45)"/>';
+    else if (tier.idx === 2) emblem = '<path d="M30 22 L36 28 V40 H24 V28 Z" fill="rgba(255,255,255,.55)"/><path d="M30 22 V40" stroke="rgba(0,0,0,.25)" stroke-width="1"/>';
+    else if (tier.idx === 3) emblem = '<circle cx="30" cy="32" r="7" fill="rgba(255,255,255,.65)"/><circle cx="30" cy="32" r="3" fill="rgba(255,255,255,.9)"/>';
+    else if (tier.idx === 4) emblem = '<path d="M30 22 L33 30 L41 30 L34.5 35 L37 43 L30 38 L23 43 L25.5 35 L19 30 L27 30 Z" fill="rgba(255,255,255,.9)"/>';
+    else emblem = '<path d="M22 32 Q30 22 38 32 Q34 38 30 38 Q26 38 22 32 Z" fill="rgba(255,255,255,.7)"/><circle cx="30" cy="32" r="2" fill="rgba(255,255,255,.95)"/>';
+  }
+  // Tier 6-8: Cut gems (Esmeralda/Safira/Rubi)
+  else if (tier.idx <= 8) {
+    shape = '<path d="M30 8 L48 22 L42 56 L18 56 L12 22 Z" fill="url(#'+uid+'_main)" stroke="rgba(0,0,0,.3)" stroke-width="1.2"/>'+
+            '<path d="M30 8 L48 22 L30 32 Z" fill="rgba(255,255,255,.35)"/>'+
+            '<path d="M12 22 L30 32 L18 56 Z" fill="rgba(0,0,0,.15)"/>'+
+            '<path d="M30 8 L30 32" stroke="rgba(255,255,255,.25)" stroke-width=".8"/>'+
+            '<path d="M30 32 L42 56" stroke="rgba(0,0,0,.2)" stroke-width=".8"/>'+
+            '<path d="M30 32 L18 56" stroke="rgba(0,0,0,.2)" stroke-width=".8"/>';
+  }
+  // Tier 9: Diamond
+  else if (tier.idx === 9) {
+    shape = '<path d="M30 8 L52 26 L30 64 L8 26 Z" fill="url(#'+uid+'_main)" stroke="rgba(0,0,0,.3)" stroke-width="1.2"/>'+
+            '<path d="M30 8 L52 26 L30 26 Z" fill="rgba(255,255,255,.45)"/>'+
+            '<path d="M8 26 L30 26 L30 8 Z" fill="rgba(255,255,255,.25)"/>'+
+            '<path d="M30 26 L52 26 L30 64 Z" fill="rgba(0,0,0,.15)"/>';
+  }
+  // Tier 10: Crown (Mestre)
+  else if (tier.idx === 10) {
+    shape = '<path d="M30 6 L52 14 V30 C52 46 42 58 30 64 C18 58 8 46 8 30 V14 Z" fill="url(#'+uid+'_main)" stroke="rgba(0,0,0,.3)" stroke-width="1.2"/>'+
+            '<path d="M30 6 L52 14 V30 C52 34 51 38 49 41 L30 30 Z" fill="url(#'+uid+'_shine)" opacity=".5"/>';
+    emblem = '<path d="M18 28 L22 36 L30 22 L38 36 L42 28 L40 44 L20 44 Z" fill="rgba(255,255,255,.92)" stroke="rgba(0,0,0,.2)" stroke-width=".5"/>'+
+             '<circle cx="22" cy="36" r="1.6" fill="'+tier.color+'"/>'+
+             '<circle cx="30" cy="22" r="1.6" fill="'+tier.color+'"/>'+
+             '<circle cx="38" cy="36" r="1.6" fill="'+tier.color+'"/>';
+  }
+  // Tier 11: Lightning (Elite)
+  else if (tier.idx === 11) {
+    shape = '<circle cx="30" cy="34" r="26" fill="url(#'+uid+'_main)" stroke="rgba(0,0,0,.3)" stroke-width="1.2"/>'+
+            '<path d="M10 22 Q30 8 50 22 Q42 28 30 28 Q18 28 10 22 Z" fill="url(#'+uid+'_shine)" opacity=".55"/>';
+    emblem = '<path d="M33 18 L22 36 L29 36 L26 50 L40 30 L32 30 L37 18 Z" fill="rgba(255,255,255,.95)" stroke="rgba(0,0,0,.18)" stroke-width=".5"/>';
+  }
+  // Tier 12: Flame (Lendário)
+  else if (tier.idx === 12) {
+    shape = '<path d="M30 8 C44 18 48 30 44 42 C42 54 36 62 30 64 C24 62 18 54 16 42 C12 30 16 18 30 8 Z" fill="url(#'+uid+'_main)" stroke="rgba(0,0,0,.3)" stroke-width="1.2"/>';
+    emblem = '<path d="M30 22 C36 28 38 36 35 44 C34 50 31 54 30 56 C29 54 26 50 25 44 C22 36 24 28 30 22 Z" fill="rgba(255,255,255,.85)"/>'+
+             '<path d="M30 32 C32 36 33 40 32 44 C31 47 30 49 30 50 C30 49 29 47 28 44 C27 40 28 36 30 32 Z" fill="'+tier.color+'"/>';
+  }
+  // Tier 13: Eye (Imortal)
+  else if (tier.idx === 13) {
+    shape = '<path d="M30 6 L52 14 V30 C52 46 42 58 30 64 C18 58 8 46 8 30 V14 Z" fill="url(#'+uid+'_main)" stroke="rgba(0,0,0,.3)" stroke-width="1.2"/>'+
+            '<path d="M30 6 L52 14 V30 C52 34 51 38 49 41 L30 30 Z" fill="url(#'+uid+'_shine)" opacity=".55"/>';
+    emblem = '<path d="M14 34 Q30 22 46 34 Q30 46 14 34 Z" fill="rgba(255,255,255,.95)"/>'+
+             '<circle cx="30" cy="34" r="6" fill="'+tier.color+'"/>'+
+             '<circle cx="30" cy="34" r="2.5" fill="#000"/>';
+  }
+  // Tier 14: Rainbow gradient (Supremo)
+  else if (tier.idx === 14) {
+    shape = '<rect x="6" y="10" width="48" height="52" rx="6" fill="url(#'+uid+'_main)" stroke="rgba(255,255,255,.25)" stroke-width="1.4"/>'+
+            '<rect x="9" y="13" width="42" height="14" rx="3" fill="rgba(255,255,255,.25)"/>'+
+            '<rect x="9" y="46" width="42" height="13" rx="3" fill="rgba(0,0,0,.18)"/>';
+    emblem = '<path d="M30 22 L34 30 L42 30 L36 35 L38 43 L30 38 L22 43 L24 35 L18 30 L26 30 Z" fill="rgba(255,255,255,.95)"/>';
+  }
+  // Tier 15: Apex Star (dark frame, gold star)
+  else {
+    shape = '<rect x="6" y="8" width="48" height="56" rx="6" fill="#0a0e1d" stroke="url(#'+uid+'_main)" stroke-width="2"/>'+
+            '<rect x="10" y="12" width="40" height="48" rx="4" fill="rgba(250,204,21,.08)"/>';
+    emblem = '<path d="M30 18 L34 28 L45 29 L37 36 L40 47 L30 41 L20 47 L23 36 L15 29 L26 28 Z" fill="url(#'+uid+'_main)" stroke="rgba(0,0,0,.3)" stroke-width=".5"/>';
+  }
+
+  return '<svg viewBox="0 0 60 70" xmlns="http://www.w3.org/2000/svg">'+defs+glowBg+shape+emblem+'</svg>';
+}
+
+function rankComputeCurrent(count){
+  let current = RANK_TIERS[0];
+  for (let i = 0; i < RANK_TIERS.length; i++){
+    if (count >= RANK_TIERS[i].min) current = RANK_TIERS[i];
+  }
+  const next = RANK_TIERS[current.idx] || null; // tier idx is 1-based, next is at array[current.idx]
+  return { current, next };
+}
+
+// Leaderboard global — lista mockada (até backend Supabase ter view de lucro por usuário)
+const RANK_MOCK_USERS = [
+  { name: 'Carlos M.',  profit: 1247380 },
+  { name: 'Felipe G.',  profit: 932150  },
+  { name: 'Rafael S.',  profit: 716420  },
+  { name: 'Bruno T.',   profit: 642180  },
+  { name: 'Lucas P.',   profit: 558900  },
+  { name: 'Mateus L.',  profit: 489300  },
+  { name: 'Vinícius R.',profit: 422150  },
+  { name: 'Pedro H.',   profit: 380420  },
+  { name: 'Diego A.',   profit: 318750  },
+  { name: 'Thiago F.',  profit: 274100  },
+  { name: 'Caio B.',    profit: 226880  },
+  { name: 'Igor V.',    profit: 198450  },
+  { name: 'Marcelo D.', profit: 172300  },
+  { name: 'Anderson Q.',profit: 148720  },
+  { name: 'Henrique J.',profit: 132100  },
+  { name: 'Eduardo M.', profit: 109840  },
+  { name: 'Gabriel R.', profit: 89320   },
+  { name: 'Rodrigo S.', profit: 74180   },
+  { name: 'Fernando V.',profit: 62450   },
+  { name: 'André N.',   profit: 51230   },
+  { name: 'Leonardo F.',profit: 42890   },
+  { name: 'Daniel O.',  profit: 35610   },
+  { name: 'Renato P.',  profit: 28740   },
+  { name: 'Gustavo M.', profit: 22150   },
+  { name: 'Vitor C.',   profit: 17320   },
+  { name: 'Felipe O.',  profit: 13680   },
+  { name: 'Murilo K.',  profit: 9420    },
+  { name: 'Ricardo L.', profit: 6850    },
+  { name: 'Otávio R.',  profit: 4120    },
+  { name: 'Samuel A.',  profit: 2380    }
+];
+
+function rankBuildLeaderboard(youProfit, youName, source){
+  const me = { name: youName || 'Você', profit: youProfit, isYou: true };
+  const base = (source && source.length) ? source : RANK_MOCK_USERS;
+  const all = base.map(u => Object.assign({ isYou: false }, u));
+  // Se o usuário já está no leaderboard (mesmo nome), atualiza pra "você"; senão adiciona
+  const existing = all.findIndex(u => (u.name||'').toLowerCase() === (youName||'').toLowerCase());
+  if (existing >= 0) { all[existing] = me; }
+  else { all.push(me); }
+  all.sort((a, b) => b.profit - a.profit);
+  return all;
+}
+
+// Busca leaderboard real do Supabase (cai pro mock se a tabela não existir)
+let _rankRealUsers = null;
+async function rankFetchLeaderboard(){
+  try {
+    const sb = (typeof getSb === 'function') ? getSb() : null;
+    if (!sb) return null;
+    const { data, error } = await sb.from('leaderboard')
+      .select('display_name, profit')
+      .order('profit', { ascending: false })
+      .limit(200);
+    if (error) { console.warn('rankFetchLeaderboard', error.message); return null; }
+    if (!data || !data.length) return [];
+    return data.map(r => ({ name: r.display_name || 'Apostador', profit: Number(r.profit) || 0 }));
+  } catch(e) { console.warn('rankFetchLeaderboard', e); return null; }
+}
+
+// Empurra a entrada do user atual pra tabela leaderboard
+async function rankPushMyEntry(profit){
+  try {
+    const sb = (typeof getSb === 'function') ? getSb() : null;
+    if (!sb || typeof currentUserId === 'undefined' || !currentUserId) return;
+    const name = (localStorage.getItem('bancapro-user-name')||'').trim()
+      || ((localStorage.getItem('bancapro-user-email')||'').split('@')[0])
+      || 'Apostador';
+    await sb.from('leaderboard').upsert({
+      user_id: currentUserId,
+      display_name: name,
+      profit: Math.max(0, Math.round(profit)),
+      updated_at: new Date().toISOString()
+    }, { onConflict: 'user_id' });
+  } catch(e) { /* tabela pode não existir ainda */ }
+}
+
+function rankUserInitials(name){
+  if (!name) return '?';
+  const parts = name.trim().split(/\s+/);
+  if (parts.length === 1) return parts[0].slice(0,2).toUpperCase();
+  return (parts[0][0] + parts[parts.length-1][0]).toUpperCase();
+}
+
+function rankRenderBoard(youProfit){
+  const board = document.getElementById('rankBoard');
+  const foot = document.getElementById('rankBoardFoot');
+  const meta = document.getElementById('rankGlobalMeta');
+  if (!board) return;
+
+  let youName = 'Você';
+  try {
+    const localName = (localStorage.getItem('bancapro-user-name')||'').trim();
+    if (localName) youName = localName;
+    else if (typeof CURRENT_USER !== 'undefined' && CURRENT_USER && CURRENT_USER.name) youName = CURRENT_USER.name;
+  } catch(e){}
+
+  const board_users = rankBuildLeaderboard(youProfit, youName, _rankRealUsers);
+  const yourPos = board_users.findIndex(u => u.isYou) + 1;
+  const total = board_users.length;
+
+  if (meta) meta.innerHTML = '<b>'+total.toLocaleString('pt-BR')+'</b> apostadores · Sua posição <b>#'+yourPos+'</b>';
+
+  // Mostra top 10 + (se você está fora do top 10) divider + sua linha + 2 acima/abaixo
+  const top = board_users.slice(0, 10);
+  const rows = [];
+  for (let i = 0; i < top.length; i++){
+    rows.push({ user: top[i], pos: i + 1 });
+  }
+  if (yourPos > 10){
+    rows.push({ divider: true });
+    const start = Math.max(10, yourPos - 3);
+    const end = Math.min(total, yourPos + 2);
+    for (let i = start; i < end; i++){
+      rows.push({ user: board_users[i], pos: i + 1 });
+    }
+  }
+
+  board.innerHTML = rows.map(r => {
+    if (r.divider) return '<div class="rank-row-divider">· · ·</div>';
+    const u = r.user;
+    const { current } = rankComputeCurrent(u.profit);
+    const podiumCls = r.pos === 1 ? 'is-podium-1' : r.pos === 2 ? 'is-podium-2' : r.pos === 3 ? 'is-podium-3' : '';
+    const youCls = u.isYou ? 'is-you' : '';
+    const initials = rankUserInitials(u.name);
+    return '<div class="rank-row '+podiumCls+' '+youCls+'">'+
+      '<div class="rank-row-pos">#'+r.pos+'</div>'+
+      '<div class="rank-row-avatar">'+initials+'</div>'+
+      '<div class="rank-row-name">'+u.name+(u.isYou ? '<b>VOCÊ</b>' : '')+'</div>'+
+      '<div class="rank-row-tier"><span class="rank-shield">'+rankShieldSVG(current)+'</span><span class="rank-row-tier-name">'+current.name+'</span></div>'+
+      '<div class="rank-row-profit">'+rankFormatValue(u.profit)+'</div>'+
+    '</div>';
+  }).join('');
+
+  if (foot){
+    const ahead = yourPos > 1 ? board_users[yourPos - 2] : null;
+    const diff = ahead ? ahead.profit - youProfit : 0;
+    foot.innerHTML = ahead
+      ? 'Faltam <b>'+rankFormatValue(diff)+'</b> pra ultrapassar <b>'+ahead.name+'</b> no #'+(yourPos-1)+'.'
+      : '<b>Você está no topo do ranking.</b>';
+  }
+}
+
+function renderRanking(){
+  const sec = document.getElementById('sec-ranking');
+  if (!sec) return;
+  let profit = 0;
+  if (typeof transactions !== 'undefined' && Array.isArray(transactions)){
+    for (let i = 0; i < transactions.length; i++){
+      const t = transactions[i];
+      const v = Number(t.value) || 0;
+      if (t.type === 'income') profit += v;
+      else if (t.type === 'expense') profit -= v;
+    }
+  }
+  const count = Math.max(0, Math.round(profit));
+  const { current, next } = rankComputeCurrent(count);
+
+  // Current rank card
+  const setText = (id, v) => { const e = document.getElementById(id); if (e) e.textContent = v; };
+  const setHTML = (id, v) => { const e = document.getElementById(id); if (e) e.innerHTML = v; };
+
+  const idxEl = document.getElementById('rankCurrentIdx');
+  if (idxEl) idxEl.innerHTML = '<b>T'+current.idx+' · '+current.idx+'/15</b>';
+  setText('rankCurrentName', current.name);
+  setText('rankCurrentCount', rankFormatValue(count));
+  setHTML('rankShieldCurrent', rankShieldSVG(current));
+  setHTML('rankShieldBottom', rankShieldSVG(current));
+  setHTML('rankShieldHead', rankShieldSVG(current));
+  setText('rankHeadName', current.name);
+  setText('rankBottomName', current.name);
+  setText('rankBottomDesc', current.desc);
+  setText('rankBottomPos', current.idx);
+  setText('rankBottomMin', rankFormatValue(current.min));
+
+  if (next){
+    setText('rankNextName', next.name);
+    setText('rankNextRemaining', rankFormatValue(Math.max(0, next.min - count)));
+    setText('rankCurrentMin', rankFormatValue(current.min));
+    setText('rankNextMin', rankFormatValue(next.min));
+    const span = next.min - current.min;
+    const pct = span > 0 ? Math.min(100, Math.max(0, ((count - current.min) / span) * 100)) : 100;
+    setText('rankCurrentPct', pct.toFixed(1) + '%');
+    const fill = document.getElementById('rankProgressFill');
+    if (fill) fill.style.width = pct + '%';
+    setText('rankBottomNext', next.name);
+  } else {
+    setText('rankNextName', 'Topo');
+    setText('rankNextRemaining', 'R$ 0');
+    setText('rankCurrentPct', '100%');
+    const fill = document.getElementById('rankProgressFill');
+    if (fill) fill.style.width = '100%';
+    setText('rankBottomNext', '—');
+  }
+
+  // Próximos níveis (current + 2 next)
+  const upcoming = [];
+  for (let i = current.idx; i < Math.min(current.idx + 3, 15); i++) upcoming.push(RANK_TIERS[i]);
+  const listEl = document.getElementById('rankNextList');
+  if (listEl){
+    listEl.innerHTML = upcoming.map(t =>
+      '<div class="rank-next-item"><span class="rank-shield rank-shield-xs">'+rankShieldSVG(t)+'</span>'+
+      '<div><div class="rni-name">'+t.name+'</div><div class="rni-min">'+rankFormatMin(t.min)+'</div></div></div>'
+    ).join('');
+  }
+
+  // Leaderboard — empurra entrada e busca real (cai pro mock se a tabela não existir)
+  rankPushMyEntry(count);
+  rankRenderBoard(count);
+  rankFetchLeaderboard().then(real => {
+    if (real && real.length > 0){ _rankRealUsers = real; rankRenderBoard(count); }
+  });
+
+  // 15 tier bars
+  const barsEl = document.getElementById('rankBars');
+  if (barsEl){
+    barsEl.innerHTML = RANK_TIERS.map(t => {
+      const isCurrent = t.idx === current.idx;
+      const isLocked = t.idx > current.idx;
+      const heightPct = 22 + Math.pow(t.idx / 15, 1.4) * 76;
+      const iconColor = t.color === 'gradient' ? '#a855f7' : t.color;
+      const fillBg = t.color === 'gradient'
+        ? 'linear-gradient(180deg,#ec4899 0%,#a855f7 50%,#3b82f6 100%)'
+        : 'linear-gradient(180deg,'+t.g1+' 0%,'+t.color+' 60%,'+t.g2+' 100%)';
+      return '<div class="rank-tier-bar '+(isCurrent?'is-current ':'')+(isLocked?'is-locked':'')+'" style="--ticon:'+iconColor+'">'+
+        '<div class="rank-tier-label">'+t.name+'</div>'+
+        '<div class="rank-tier-icon">'+rankShieldSVG(t)+'</div>'+
+        '<div class="rank-tier-tube"><div class="rank-tier-fill" style="height:'+heightPct+'%;background:'+fillBg+'"></div></div>'+
+        '<div class="rank-tier-num">'+String(t.idx).padStart(2,'0')+'</div>'+
+        '<div class="rank-tier-mintag">MIN. LUCRO</div>'+
+        '<div class="rank-tier-min">'+rankFormatMin(t.min)+'</div>'+
+      '</div>';
+    }).join('');
+  }
 }

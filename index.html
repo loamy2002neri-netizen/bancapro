@@ -18,7 +18,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
-<link rel="stylesheet" href="style.css?v=43"/>
+<link rel="stylesheet" href="style.css?v=48"/>
 </head>
 <body>
 
@@ -409,6 +409,7 @@
       <div class="nav-item" onclick="goTo('compare',this)"><span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M3 20V14M9 20V10M15 20V6M21 20V8"/></svg></span>Comparativo</div>
       <div class="nav-item" onclick="goTo('calculadora',this)"><span class="nav-icon"><svg viewBox="0 0 24 24"><rect x="4" y="2" width="16" height="20" rx="2"/><rect x="7" y="5" width="10" height="3"/><circle cx="8" cy="13" r="0.8" fill="currentColor" stroke="none"/><circle cx="12" cy="13" r="0.8" fill="currentColor" stroke="none"/><circle cx="16" cy="13" r="0.8" fill="currentColor" stroke="none"/><circle cx="8" cy="17" r="0.8" fill="currentColor" stroke="none"/><circle cx="12" cy="17" r="0.8" fill="currentColor" stroke="none"/><circle cx="16" cy="17" r="0.8" fill="currentColor" stroke="none"/></svg></span>Calculadora</div>
       <div class="nav-item" onclick="goTo('anotacoes',this)"><span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M5 3h12a2 2 0 012 2v14a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2zM8 8h8M8 12h8M8 16h5"/></svg></span>Anotações</div>
+      <div class="nav-item" onclick="goTo('ranking',this)"><span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M12 2l8 4v6c0 5-3.5 9-8 10-4.5-1-8-5-8-10V6l8-4z"/><path d="M8 11l3 3 5-5"/></svg></span>Ranking</div>
     </div>
 
     <div class="sidebar-section">
@@ -1454,6 +1455,89 @@
         </div>
       </div>
 
+      <!-- ═══ RANKING ═══ -->
+      <div class="section" id="sec-ranking">
+        <div class="page-header"><div class="page-title">Ranking</div><div class="page-subtitle">Seu progresso baseado no lucro acumulado</div></div>
+
+        <!-- Ranking global card -->
+        <div class="rank-top-card">
+          <div class="rank-top-head">
+            <div class="rank-top-icon"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l8 4v6c0 5-3.5 9-8 10-4.5-1-8-5-8-10V6l8-4z"/></svg></div>
+            <div style="flex:1">
+              <div class="rank-top-title">Ranking global de apostadores</div>
+              <div class="rank-top-sub">Os maiores lucros acumulados na plataforma</div>
+            </div>
+            <div class="rank-top-meta" id="rankGlobalMeta">— de — apostadores</div>
+          </div>
+          <div class="rank-board" id="rankBoard"></div>
+          <div class="rank-board-foot" id="rankBoardFoot"></div>
+        </div>
+
+        <!-- Seu progresso -->
+        <div class="rank-section-label">SEU PROGRESSO</div>
+        <div class="rank-headline">Ranking.</div>
+        <div class="rank-headline-sub">Seu posicionamento atual baseado no lucro acumulado. Quanto mais você lucra, mais você sobe.</div>
+
+        <div class="rank-current-card">
+          <div class="rank-current-head">
+            <div class="rank-shield rank-shield-lg" id="rankShieldCurrent"></div>
+            <div class="rank-current-info">
+              <div class="rank-current-tag">RANK ATUAL · <span id="rankCurrentIdx">T1 · 1/15</span></div>
+              <div class="rank-current-name" id="rankCurrentName">Ferro</div>
+              <div class="rank-current-meta"><span id="rankCurrentCount">R$ 0</span> de lucro acumulado</div>
+            </div>
+          </div>
+          <div class="rank-progress-row">
+            <div class="rank-progress-label">Próximo: <b id="rankNextName">Bronze</b></div>
+            <div class="rank-progress-remaining">faltam <span id="rankNextRemaining">50</span></div>
+          </div>
+          <div class="rank-progress-bar"><div class="rank-progress-fill" id="rankProgressFill" style="width:0%"></div></div>
+          <div class="rank-progress-range">
+            <span id="rankCurrentMin">R$ 0</span>
+            <span id="rankCurrentPct">0.0%</span>
+            <span id="rankNextMin">R$ 500</span>
+          </div>
+          <div class="rank-current-foot">
+            <div class="rank-foot-label">PRÓXIMOS NÍVEIS</div>
+            <div class="rank-next-list" id="rankNextList"></div>
+          </div>
+        </div>
+
+        <!-- Todos os tiers -->
+        <div class="rank-section-label">TODOS OS TIERS</div>
+        <div class="rank-headline">O caminho completo.</div>
+
+        <div class="rank-tiers-card">
+          <div class="rank-tiers-head">
+            <div>
+              <div class="rank-tiers-title">Sistema de Ranks</div>
+              <div class="rank-tiers-sub">15 NÍVEIS · ELOS · MMR COMPETITIVO</div>
+            </div>
+            <div class="rank-tiers-current">
+              <div class="rank-tiers-current-label">SEU RANK ATUAL <span class="rank-pill-voce">VOCÊ</span></div>
+              <div class="rank-tiers-current-name"><span class="rank-shield rank-shield-sm" id="rankShieldHead"></span><span id="rankHeadName">Ferro</span></div>
+            </div>
+          </div>
+          <div class="rank-tier-bars-wrap"><div class="rank-tier-bars" id="rankBars"></div></div>
+        </div>
+
+        <!-- Bottom rank card -->
+        <div class="rank-bottom-card">
+          <div class="rank-bottom-left">
+            <div class="rank-shield rank-shield-md" id="rankShieldBottom"></div>
+            <div>
+              <div class="rank-bottom-name"><span id="rankBottomName">Ferro</span> <span class="rank-pill-voce">VOCÊ</span></div>
+              <div class="rank-bottom-desc" id="rankBottomDesc">Iniciante. Cada aposta registrada é um passo na sua jornada.</div>
+            </div>
+          </div>
+          <div class="rank-bottom-stats">
+            <div><div class="rbs-label">POSIÇÃO</div><div class="rbs-value">Top <span id="rankBottomPos">1</span> de 15</div></div>
+            <div><div class="rbs-label">PRÓXIMO</div><div class="rbs-value" id="rankBottomNext">Bronze</div></div>
+            <div><div class="rbs-label">MÍNIMO</div><div class="rbs-value" id="rankBottomMin">R$ 0</div></div>
+          </div>
+        </div>
+      </div>
+
     </div><!-- /page-content -->
   </main>
 </div><!-- /app -->
@@ -1485,6 +1569,6 @@
 </div>
 
 <script src="config.js?v=9" defer></script>
-<script src="script.js?v=71" defer></script>
+<script src="script.js?v=79" defer></script>
 </body>
 </html>
