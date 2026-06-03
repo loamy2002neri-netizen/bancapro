@@ -5110,6 +5110,48 @@ const RANK_ELIGIBILITY = {
   minProfit: 1
 };
 
+// Calcula o streak (dias consecutivos com transação registrada)
+function rankComputeStreak(){
+  const txs = (typeof transactions !== 'undefined' && Array.isArray(transactions)) ? transactions : [];
+  const dates = Array.from(new Set(txs.map(t => t.date).filter(Boolean))).sort();
+  if (dates.length === 0) return { current: 0, atRisk: false, longest: 0 };
+
+  function dStr(d){ return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
+  const today = dStr(new Date());
+  const yest = new Date(); yest.setDate(yest.getDate() - 1);
+  const yestStr = dStr(yest);
+
+  const last = dates[dates.length - 1];
+
+  // Streak quebrado: última transação é antes de ontem
+  if (last < yestStr) return { current: 0, atRisk: false, longest: 0 };
+
+  const atRisk = last === yestStr; // ainda não registrou hoje — em risco
+
+  // Conta dias consecutivos voltando do último
+  let current = 1;
+  let prev = new Date(last);
+  for (let i = dates.length - 2; i >= 0; i--){
+    const this_d = new Date(dates[i]);
+    const diff = Math.round((prev.getTime() - this_d.getTime()) / 86400000);
+    if (diff === 1){ current++; prev = this_d; }
+    else if (diff === 0){ /* mesma data, skip */ }
+    else break;
+  }
+
+  // Também calcula o maior streak histórico (pra mostrar "recorde")
+  let longest = 1, run = 1;
+  for (let i = 1; i < dates.length; i++){
+    const a = new Date(dates[i-1]);
+    const b = new Date(dates[i]);
+    const d = Math.round((b.getTime() - a.getTime()) / 86400000);
+    if (d === 1) run++;
+    else if (d > 1) run = 1;
+    if (run > longest) longest = run;
+  }
+  return { current, atRisk, longest };
+}
+
 function rankComputeEligibility(){
   const txs = (typeof transactions !== 'undefined' && Array.isArray(transactions)) ? transactions : [];
   const txCount = txs.length;
@@ -5457,6 +5499,21 @@ function rankRenderDashCard(profit, currentTier, board_users){
   // Ícone do tier atual
   const tierIcon = rankShieldSVG(currentTier);
   document.getElementById('dashRankIcon').innerHTML = tierIcon;
+
+  // Streak — só mostra se tiver pelo menos 1 dia de atividade
+  const streak = rankComputeStreak();
+  const streakEl = document.getElementById('dashStreak');
+  if (streakEl){
+    if (streak.current > 0){
+      streakEl.style.display = 'flex';
+      streakEl.className = 'dash-streak' + (streak.atRisk ? ' is-at-risk' : '') + (streak.current >= 7 ? ' is-record' : '');
+      document.getElementById('dashStreakNum').textContent = streak.current;
+      document.getElementById('dashStreakLabel').textContent = streak.current === 1 ? 'dia' : 'dias seguidos';
+      document.getElementById('dashStreakFlame').textContent = streak.atRisk ? '⚠️' : (streak.current >= 30 ? '👑' : streak.current >= 7 ? '🔥' : '🔥');
+    } else {
+      streakEl.style.display = 'none';
+    }
+  }
 
   if (me && myPos > 0){
     // User ranqueado

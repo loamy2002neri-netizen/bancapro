@@ -1847,7 +1847,22 @@ html { -webkit-text-size-adjust:100%; text-size-adjust:100%; }
   .dash-rank-main .pro-mini-badge svg{width:100%;height:100%}
   .dash-rank-sub{font-size:13px;color:#aeb8d6;letter-spacing:-.1px}
   .dash-rank-sub b{color:#a282ff;font-weight:700}
-  .dash-rank-right{position:relative;z-index:1;flex-shrink:0}
+  .dash-rank-right{position:relative;z-index:1;flex-shrink:0;display:flex;align-items:center;gap:14px}
+  .dash-streak{display:flex;align-items:center;gap:10px;padding:9px 14px;background:linear-gradient(135deg,rgba(251,146,60,.14),rgba(220,38,38,.06));border:1px solid rgba(251,146,60,.32);border-radius:11px;box-shadow:0 4px 12px rgba(251,146,60,.12)}
+  .dash-streak-flame{font-size:24px;line-height:1;filter:drop-shadow(0 2px 4px rgba(251,146,60,.45));animation:streakFlame 2.5s ease-in-out infinite}
+  @keyframes streakFlame{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-2px) scale(1.08)}}
+  .dash-streak-info{display:flex;flex-direction:column;align-items:flex-start;line-height:1.1}
+  .dash-streak-num{font-size:18px;font-weight:800;color:#fb923c;letter-spacing:-.3px;font-variant-numeric:tabular-nums}
+  .dash-streak-label{font-size:10px;font-weight:700;color:#cdd5ea;letter-spacing:.4px;text-transform:uppercase;margin-top:2px}
+  .dash-streak.is-at-risk{background:linear-gradient(135deg,rgba(245,158,11,.14),rgba(220,38,38,.10));border-color:rgba(245,158,11,.45);box-shadow:0 4px 12px rgba(245,158,11,.18),0 0 0 1px rgba(245,158,11,.2)}
+  .dash-streak.is-at-risk .dash-streak-num{color:#fbbf24}
+  .dash-streak.is-at-risk .dash-streak-label{color:#fcd34d}
+  .dash-streak.is-record .dash-streak-num{color:#facc15;text-shadow:0 0 12px rgba(250,204,21,.4)}
+  @media (max-width:560px){
+    .dash-rank-right{flex-direction:column-reverse;width:100%;gap:10px}
+    .dash-streak{align-self:stretch;justify-content:center;padding:8px 14px}
+    .dash-streak-num{font-size:16px}
+  }
   .dash-rank-cta{display:inline-flex;align-items:center;gap:8px;padding:10px 18px;background:rgba(124,92,255,.12);border:1px solid rgba(124,92,255,.3);border-radius:10px;font-size:13px;font-weight:700;color:#c4b5fd;letter-spacing:.2px;transition:all .2s}
   .dash-rank-card:hover .dash-rank-cta{background:rgba(124,92,255,.22);color:#fff}
   .dash-rank-arrow{transition:transform .25s}
