@@ -5462,7 +5462,7 @@ function renderRankMyPos(youProfit, currentTier){
   const card = document.getElementById('rankMyPosCard');
   if (!card) return;
   let youName = (localStorage.getItem('bancapro-user-name')||'').trim() || 'Você';
-  const source = (_rankPeriod === 'all') ? _rankRealUsers : _rankRealUsersMonth;
+  const source = rankRealUsersForPeriod();
   const board_users = rankBuildLeaderboard(youProfit, youName, source);
   const yourPos = board_users.findIndex(u => u.isYou) + 1;
   const elig = rankComputeEligibility();
@@ -5541,7 +5541,7 @@ function renderRankPodium(youProfit){
   const podiumWrap = document.getElementById('rankPodium');
   if (!podiumWrap) return;
   let youName = (localStorage.getItem('bancapro-user-name')||'').trim() || 'Você';
-  const source = (_rankPeriod === 'all') ? _rankRealUsers : _rankRealUsersMonth;
+  const source = rankRealUsersForPeriod();
   const board_users = rankBuildLeaderboard(youProfit, youName, source);
   if (board_users.length < 3){ podiumWrap.style.display = 'none'; return; }
   podiumWrap.style.display = 'grid';
@@ -5595,7 +5595,7 @@ function rankRenderBoard(youProfit){
     else if (typeof CURRENT_USER !== 'undefined' && CURRENT_USER && CURRENT_USER.name) youName = CURRENT_USER.name;
   } catch(e){}
 
-  const source = (_rankPeriod === 'month') ? _rankRealUsersMonth : _rankRealUsers;
+  const source = rankRealUsersForPeriod();
   const board_users = rankBuildLeaderboard(youProfit, youName, source);
   const yourPos = board_users.findIndex(u => u.isYou) + 1;
   const isYouInList = yourPos > 0;
@@ -5698,10 +5698,14 @@ function renderUserRanking(){
   const sec = document.getElementById('sec-ranking');
   if (!sec) return;
   updateRankTabCountdown();
-  // Lucro depende do periodo (Geral = sempre / Mes = so transacoes do mes atual)
+  // Lucro depende do periodo (Geral = sempre / Mes/Semana/Hoje = janela filtrada)
   let profit = 0;
   if (_rankPeriod === 'month'){
     profit = rankComputeMonthProfit();
+  } else if (_rankPeriod === 'today'){
+    profit = rankComputeTodayProfit();
+  } else if (_rankPeriod === 'week'){
+    profit = rankComputeWeekProfit();
   } else if (typeof transactions !== 'undefined' && Array.isArray(transactions)){
     for (let i = 0; i < transactions.length; i++){
       const t = transactions[i];
@@ -5766,18 +5770,26 @@ function renderUserRanking(){
   renderRankPodium(count);
   renderRankMyPos(count, current);
   renderRankChampion();
-  // Hoje/Semana fazem fallback pra Mes ate ter RPC proprio
+  // Cada periodo tem seu fetcher e cache proprios
   let fetcher;
   if (_rankPeriod === 'all') fetcher = rankFetchLeaderboard;
-  else fetcher = rankFetchLeaderboardMonth; // 'today','week','month' caem aqui
+  else if (_rankPeriod === 'today') fetcher = rankFetchLeaderboardToday;
+  else if (_rankPeriod === 'week') fetcher = rankFetchLeaderboardWeek;
+  else fetcher = rankFetchLeaderboardMonth;
+  const periodAtFetch = _rankPeriod;
   fetcher().then(real => {
     if (real && real.length > 0){
-      if (_rankPeriod === 'all') _rankRealUsers = real;
+      if (periodAtFetch === 'all') _rankRealUsers = real;
+      else if (periodAtFetch === 'today') _rankRealUsersToday = real;
+      else if (periodAtFetch === 'week') _rankRealUsersWeek = real;
       else _rankRealUsersMonth = real;
-      rankRenderBoard(count);
-      renderRankPodium(count);
-      renderRankMyPos(count, current);
-      renderRankChampion();
+      // So re-renderiza se o usuario ainda esta vendo o mesmo periodo
+      if (_rankPeriod === periodAtFetch){
+        rankRenderBoard(count);
+        renderRankPodium(count);
+        renderRankMyPos(count, current);
+        renderRankChampion();
+      }
     }
   });
   rankStartLivePolling();
@@ -5832,11 +5844,18 @@ function renderUserRanking(){
 // (interface preparada — quando o RPC existir, plug and play)
 let _rankPeriod = 'month'; // 'today' / 'week' / 'month' / 'all' — Mês como default
 let _rankRealUsersMonth = null;
+let _rankRealUsersToday = null;
+let _rankRealUsersWeek = null;
+
+// Helper: pega o cache real do periodo atual
+function rankRealUsersForPeriod(){
+  if (_rankPeriod === 'all') return _rankRealUsers;
+  if (_rankPeriod === 'today') return _rankRealUsersToday;
+  if (_rankPeriod === 'week') return _rankRealUsersWeek;
+  return _rankRealUsersMonth;
+}
 
 function switchRankPeriod(period){
-  // Hoje/Semana ainda nao tem RPC proprio no Supabase — redireciona pra Mes
-  // pra nao mostrar dados mensais com rotulo errado
-  if (period === 'today' || period === 'week') period = 'month';
   _rankPeriod = period;
   ['Today','Week','Month','All'].forEach(suf => {
     const el = document.getElementById('rankTab' + suf);
@@ -5886,6 +5905,40 @@ function rankComputeMonthProfit(){
   return Math.max(0, Math.round(profit));
 }
 
+// Filtra transacoes do dia corrente (YYYY-MM-DD)
+function rankComputeTodayProfit(){
+  if (typeof transactions === 'undefined' || !Array.isArray(transactions)) return 0;
+  const now = new Date();
+  const ymd = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0') + '-' + String(now.getDate()).padStart(2, '0');
+  let profit = 0;
+  for (let i = 0; i < transactions.length; i++){
+    const t = transactions[i];
+    if (!t.date || String(t.date).slice(0,10) !== ymd) continue;
+    const v = Number(t.value) || 0;
+    if (t.type === 'income') profit += v;
+    else if (t.type === 'expense') profit -= v;
+  }
+  return Math.max(0, Math.round(profit));
+}
+
+// Filtra transacoes dos ultimos 7 dias (hoje inclusive)
+function rankComputeWeekProfit(){
+  if (typeof transactions === 'undefined' || !Array.isArray(transactions)) return 0;
+  const now = new Date();
+  const cutoff = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 6, 0, 0, 0).getTime();
+  let profit = 0;
+  for (let i = 0; i < transactions.length; i++){
+    const t = transactions[i];
+    if (!t.date) continue;
+    const tDate = new Date(String(t.date).slice(0,10) + 'T00:00:00').getTime();
+    if (isNaN(tDate) || tDate < cutoff) continue;
+    const v = Number(t.value) || 0;
+    if (t.type === 'income') profit += v;
+    else if (t.type === 'expense') profit -= v;
+  }
+  return Math.max(0, Math.round(profit));
+}
+
 // Cache de posições anteriores pra detectar ▲/▼ subiu/caiu
 function rankReadPositionCache(period){
   try {
@@ -5916,6 +5969,52 @@ async function rankFetchLeaderboardMonth(){
     }));
   } catch(e){
     if (!_monthRpcWarned){ console.warn('rankFetchLeaderboardMonth', e); _monthRpcWarned = true; }
+    return null;
+  }
+}
+
+// Leaderboard de hoje (RPC get_leaderboard_today — soma transacoes do dia corrente)
+let _todayRpcWarned = false;
+async function rankFetchLeaderboardToday(){
+  try {
+    const sb = (typeof getSb === 'function') ? getSb() : null;
+    if (!sb) return null;
+    const { data, error } = await sb.rpc('get_leaderboard_today');
+    if (error){
+      if (!_todayRpcWarned){ console.warn('rankFetchLeaderboardToday', error.message); _todayRpcWarned = true; }
+      return null;
+    }
+    if (!data || !data.length) return [];
+    return data.map(r => ({
+      name: r.display_name || 'Apostador',
+      profit: Number(r.profit) || 0,
+      isPro: !!r.is_pro
+    }));
+  } catch(e){
+    if (!_todayRpcWarned){ console.warn('rankFetchLeaderboardToday', e); _todayRpcWarned = true; }
+    return null;
+  }
+}
+
+// Leaderboard da semana (RPC get_leaderboard_weekly — soma ultimos 7 dias)
+let _weekRpcWarned = false;
+async function rankFetchLeaderboardWeek(){
+  try {
+    const sb = (typeof getSb === 'function') ? getSb() : null;
+    if (!sb) return null;
+    const { data, error } = await sb.rpc('get_leaderboard_weekly');
+    if (error){
+      if (!_weekRpcWarned){ console.warn('rankFetchLeaderboardWeek', error.message); _weekRpcWarned = true; }
+      return null;
+    }
+    if (!data || !data.length) return [];
+    return data.map(r => ({
+      name: r.display_name || 'Apostador',
+      profit: Number(r.profit) || 0,
+      isPro: !!r.is_pro
+    }));
+  } catch(e){
+    if (!_weekRpcWarned){ console.warn('rankFetchLeaderboardWeek', e); _weekRpcWarned = true; }
     return null;
   }
 }
