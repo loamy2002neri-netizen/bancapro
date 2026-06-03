@@ -1117,6 +1117,7 @@ function goTo(section, el) {
   if(section === 'compare') setTimeout(initCompareChart, 100);
   if(section === 'methods') setTimeout(initMethodEvolution, 100);
   if(section === 'ranking') setTimeout(function(){ if(typeof renderUserRanking==='function') renderUserRanking(); }, 60);
+  else if(typeof rankStopLivePolling === 'function') rankStopLivePolling(); // para polling ao sair da aba ranking
   if(section === 'recharge') setTimeout(updateTrialBanner, 50);
   if(section === 'settings') { setTimeout(renderSubscriptionCard, 50); setTimeout(applyAvatar, 50); }
   if(section === 'admin') setTimeout(() => { renderAdminStats(); renderAdminUsers(); renderAdminErrors(); }, 50);
@@ -5294,8 +5295,9 @@ function rankRenderBoard(youProfit){
         ' <br/><span style="color:#5a657f">— ou assine o <b style="color:#a282ff">Pro</b> e apareça imediatamente</span>';
 
       // Linha do user — igual aos outros cards, indica onde ele está
+      // Usa >= pra empates ficarem ANTES do user (ex: se tem 2 users com R$ 0 nas pos #6 e #7, user com R$ 0 vai pra #8)
       const realRanked = board_users.filter(u => !u.isYou);
-      const wouldBePos = realRanked.filter(u => u.profit > youProfit).length + 1;
+      const wouldBePos = realRanked.filter(u => u.profit >= youProfit).length + 1;
       const { current: youTier } = rankComputeCurrent(youProfit);
       const youInitials = rankUserInitials(youName);
       foot.innerHTML += '<div class="rank-row is-you" style="margin-top:12px">'+
