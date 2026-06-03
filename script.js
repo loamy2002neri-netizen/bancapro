@@ -3432,6 +3432,9 @@ function loadProfile() {
         }
       } catch(e){}
     }
+    // Re-aplica foto do avatar (se houver) — pullUserData limpou e re-aplicou o localStorage,
+    // mas applyAvatar do DOMContentLoaded rodou antes de o avatar voltar da nuvem
+    if (typeof applyAvatar === 'function') applyAvatar();
   } catch(e) {}
 }
 function setAccent(color, color2, el) {
