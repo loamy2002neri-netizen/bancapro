@@ -5895,19 +5895,26 @@ function rankWritePositionCache(period, positions){
 }
 
 // Tenta buscar leaderboard mensal do Supabase (RPC get_leaderboard_monthly)
+let _monthRpcWarned = false;
 async function rankFetchLeaderboardMonth(){
   try {
     const sb = (typeof getSb === 'function') ? getSb() : null;
     if (!sb) return null;
     const { data, error } = await sb.rpc('get_leaderboard_monthly');
-    if (error){ console.warn('rankFetchLeaderboardMonth', error.message); return null; }
+    if (error){
+      if (!_monthRpcWarned){ console.warn('rankFetchLeaderboardMonth', error.message); _monthRpcWarned = true; }
+      return null;
+    }
     if (!data || !data.length) return [];
     return data.map(r => ({
       name: r.display_name || 'Apostador',
       profit: Number(r.profit) || 0,
       isPro: !!r.is_pro
     }));
-  } catch(e){ console.warn('rankFetchLeaderboardMonth', e); return null; }
+  } catch(e){
+    if (!_monthRpcWarned){ console.warn('rankFetchLeaderboardMonth', e); _monthRpcWarned = true; }
+    return null;
+  }
 }
 
 // Atualiza o chip de streak no topbar (visível em todas as abas)
@@ -5926,6 +5933,9 @@ function updateTopbarStreak(){
 }
 
 // Detecta tier-up: se o tier atual for maior que o ultimo cacheado, mostra celebração
+// Flag de sessão: primeira chamada apenas sincroniza o cache (silent), evitando
+// modal disparar no load inicial quando o cache local está desatualizado
+let _tierUpSessionStarted = false;
 function detectTierUp(currentTier){
   if (!currentTier) return;
   // Skip em demo mode — demo nao representa progressao real do usuario
@@ -5935,12 +5945,24 @@ function detectTierUp(currentTier){
   try {
     const lastIdxRaw = localStorage.getItem('bancapro-last-tier-idx');
     const lastIdx = lastIdxRaw ? parseInt(lastIdxRaw, 10) : 0;
+
+    // Primeira chamada da sessão: silent sync (não mostra modal)
+    // Isso evita o modal disparar no load quando o cache estiver desatualizado
+    // (ex: user logou em outro device e o tier cresceu antes desta sessão)
+    if (!_tierUpSessionStarted){
+      _tierUpSessionStarted = true;
+      if (currentTier.idx !== lastIdx){
+        localStorage.setItem('bancapro-last-tier-idx', String(currentTier.idx));
+      }
+      return;
+    }
+
+    // Chamadas seguintes na mesma sessão — agora sim, modal real quando user sobe
     if (currentTier.idx > lastIdx){
-      // Subiu de tier — mostra a celebração (skip primeiro carregamento se nunca teve)
-      if (lastIdxRaw) showTierUpModal(currentTier);
+      showTierUpModal(currentTier);
       localStorage.setItem('bancapro-last-tier-idx', String(currentTier.idx));
     } else if (currentTier.idx < lastIdx){
-      // Caiu (raro mas pode acontecer com correção de lucro) — só atualiza cache
+      // Caiu (raro, ex: correção de lucro) — só atualiza cache
       localStorage.setItem('bancapro-last-tier-idx', String(currentTier.idx));
     }
   } catch(e){}
