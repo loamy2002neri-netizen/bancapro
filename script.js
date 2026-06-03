@@ -1118,6 +1118,7 @@ function goTo(section, el) {
   if(section === 'methods') setTimeout(initMethodEvolution, 100);
   if(section === 'ranking') setTimeout(function(){ if(typeof renderUserRanking==='function') renderUserRanking(); }, 60);
   else if(typeof rankStopLivePolling === 'function') rankStopLivePolling(); // para polling ao sair da aba ranking
+  if(section === 'dashboard') setTimeout(function(){ if(typeof rankUpdateDashCard==='function') rankUpdateDashCard(); }, 100);
   if(section === 'recharge') setTimeout(updateTrialBanner, 50);
   if(section === 'settings') { setTimeout(renderSubscriptionCard, 50); setTimeout(applyAvatar, 50); }
   if(section === 'admin') setTimeout(() => { renderAdminStats(); renderAdminUsers(); renderAdminErrors(); }, 50);
@@ -1784,6 +1785,7 @@ function recomputeAll() {
   // 5) Cards de método + ranking
   renderMethodCards();
   renderRanking();
+  if (typeof rankUpdateDashCard === 'function') rankUpdateDashCard();
   // 6) Gráficos do Dashboard que dependem das transações
   if(typeof buildMethodCategoryChart === 'function') buildMethodCategoryChart();
   if(typeof buildDashboardPieChart === 'function') buildDashboardPieChart();
@@ -5401,5 +5403,89 @@ function renderUserRanking(){
         '<div class="rank-tier-min">'+rankFormatMin(t.min)+'</div>'+
       '</div>';
     }).join('');
+  }
+
+  // Atualiza o card de ranking no Dashboard
+  rankRenderDashCard(count, current, board_users);
+}
+
+// Wrapper assíncrono — busca o leaderboard e renderiza o card do Dashboard
+async function rankUpdateDashCard(){
+  if (!document.getElementById('dashRankCard')) return;
+  let profit = 0;
+  if (typeof transactions !== 'undefined' && Array.isArray(transactions)){
+    for (let i = 0; i < transactions.length; i++){
+      const t = transactions[i];
+      const v = Number(t.value) || 0;
+      if (t.type === 'income') profit += v;
+      else if (t.type === 'expense') profit -= v;
+    }
+  }
+  const count = Math.max(0, Math.round(profit));
+  const { current } = rankComputeCurrent(count);
+  const real = await rankFetchLeaderboard();
+  if (real && real.length > 0) _rankRealUsers = real;
+  let youName = (localStorage.getItem('bancapro-user-name')||'').trim() || 'Você';
+  const board_users = rankBuildLeaderboard(count, youName, _rankRealUsers);
+  rankRenderDashCard(count, current, board_users);
+}
+
+// Card do Dashboard — mostra "Você está em #X" puxando user pra abrir Ranking
+function rankRenderDashCard(profit, currentTier, board_users){
+  const card = document.getElementById('dashRankCard');
+  if (!card) return;
+
+  const youName = (localStorage.getItem('bancapro-user-name')||'').trim() || 'Você';
+  const elig = rankComputeEligibility();
+
+  // Tenta achar minha entrada no leaderboard
+  const me = board_users ? board_users.find(u => u.isYou) : null;
+  const myPos = me ? board_users.findIndex(u => u.isYou) + 1 : 0;
+  const totalRanked = board_users ? board_users.length : 0;
+  const isPro = me ? !!me.isPro : !!window._isProSubscriber;
+
+  // Limpa classes
+  card.className = 'dash-rank-card';
+  card.style.display = 'flex';
+
+  const proSvg = '<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">'+
+    '<defs><linearGradient id="dashProGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3ba9f5"/><stop offset="1" stop-color="#0f7dc6"/></linearGradient></defs>'+
+    '<path fill="url(#dashProGrad)" d="M22.25 12c0-1.43-.88-2.67-2.19-3.34.46-1.39.2-2.9-.81-3.91s-2.52-1.27-3.91-.81c-.66-1.31-1.91-2.19-3.34-2.19s-2.67.88-3.33 2.19c-1.4-.46-2.91-.2-3.92.81S3.48 7.27 3.94 8.66C2.63 9.33 1.75 10.57 1.75 12s.88 2.66 2.19 3.34c-.46 1.39-.2 2.9.81 3.91s2.52 1.26 3.91.81c.67 1.31 1.91 2.19 3.34 2.19s2.68-.88 3.34-2.19c1.39.45 2.9.2 3.91-.81s1.27-2.52.81-3.91c1.31-.68 2.19-1.91 2.19-3.34z"/>'+
+    '<path d="M9.64 13.06l-2.06-2.06-1.42 1.41 3.48 3.48 6.86-6.86-1.42-1.42z" fill="#fff"/></svg>';
+  const proBadge = isPro ? '<span class="pro-mini-badge">'+proSvg+'</span>' : '';
+
+  // Ícone do tier atual
+  const tierIcon = rankShieldSVG(currentTier);
+  document.getElementById('dashRankIcon').innerHTML = tierIcon;
+
+  if (me && myPos > 0){
+    // User ranqueado
+    if (myPos <= 3) card.classList.add('is-podium');
+    if (isPro) card.classList.add('is-pro');
+    document.getElementById('dashRankTag').textContent = 'SUA POSIÇÃO NO RANKING';
+    document.getElementById('dashRankMain').innerHTML = 'Você está em <b>#'+myPos+'</b> de '+totalRanked+ proBadge;
+    if (myPos === 1){
+      document.getElementById('dashRankSub').innerHTML = '🏆 Topo do ranking. Continue lucrando pra manter a posição.';
+    } else {
+      const ahead = board_users[myPos - 2];
+      const diff = ahead ? ahead.profit - profit : 0;
+      document.getElementById('dashRankSub').innerHTML = 'Faltam <b>'+rankFormatValue(diff)+'</b> pra ultrapassar <b>'+ahead.name+'</b>';
+    }
+  } else if (elig.eligible){
+    // Elegível mas ainda não carregou — raro
+    document.getElementById('dashRankTag').textContent = 'RANKING GLOBAL';
+    document.getElementById('dashRankMain').innerHTML = 'Você está no ranking' + proBadge;
+    document.getElementById('dashRankSub').textContent = 'Veja sua posição completa →';
+  } else {
+    // Bloqueado
+    card.classList.add('is-locked');
+    document.getElementById('dashRankTag').textContent = 'RANKING GLOBAL';
+    const realRanked = board_users ? board_users.filter(u => !u.isYou) : [];
+    const wouldBePos = realRanked.filter(u => u.profit >= profit).length + 1;
+    document.getElementById('dashRankMain').innerHTML = 'Você estaria em <b>#'+wouldBePos+'</b>' + proBadge;
+    const missing = [];
+    if (elig.txCount < RANK_ELIGIBILITY.minTx) missing.push((RANK_ELIGIBILITY.minTx - elig.txCount)+' transações');
+    if (elig.distinctDays < RANK_ELIGIBILITY.minActiveDays) missing.push((RANK_ELIGIBILITY.minActiveDays - elig.distinctDays)+' dias de atividade');
+    document.getElementById('dashRankSub').innerHTML = '🔒 Faltam <b>'+missing.join(' · ')+'</b> pra entrar';
   }
 }

@@ -18,7 +18,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
-<link rel="stylesheet" href="style.css?v=48"/>
+<link rel="stylesheet" href="style.css?v=49"/>
 </head>
 <body>
 
@@ -567,6 +567,21 @@
           <!-- Canvas: altura fixa via container pai — evita recalculo ao trocar filtro -->
           <div id="mainChartWrap" style="position:relative;width:100%;height:400px;overflow:hidden">
             <canvas id="mainChart" width="800" height="400" style="display:block;width:100%!important;height:100%!important"></canvas>
+          </div>
+        </div>
+
+        <!-- DASHBOARD RANK CARD — engloba a posição no ranking global pra puxar pra aba Ranking -->
+        <div class="dash-rank-card" id="dashRankCard" onclick="goTo('ranking')" style="display:none">
+          <div class="dash-rank-left">
+            <div class="dash-rank-icon" id="dashRankIcon"></div>
+            <div class="dash-rank-info">
+              <div class="dash-rank-tag" id="dashRankTag">SUA POSIÇÃO NO RANKING</div>
+              <div class="dash-rank-main" id="dashRankMain">—</div>
+              <div class="dash-rank-sub" id="dashRankSub">—</div>
+            </div>
+          </div>
+          <div class="dash-rank-right">
+            <div class="dash-rank-cta">Ver ranking <span class="dash-rank-arrow">→</span></div>
           </div>
         </div>
 
@@ -1569,6 +1584,6 @@
 </div>
 
 <script src="config.js?v=9" defer></script>
-<script src="script.js?v=90" defer></script>
+<script src="script.js?v=91" defer></script>
 </body>
 </html>

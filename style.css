@@ -1831,6 +1831,46 @@ html { -webkit-text-size-adjust:100%; text-size-adjust:100%; }
     .rank-bottom-stats{gap:18px;width:100%}
     .rank-bottom-stats > div{flex:1;min-width:80px}
   }
+  /* ═══ DASHBOARD RANK CARD — puxa user pra aba Ranking ═══ */
+  .dash-rank-card{position:relative;display:flex;justify-content:space-between;align-items:center;gap:20px;margin-top:20px;padding:18px 24px;background:linear-gradient(135deg,rgba(124,92,255,.10) 0%,rgba(124,92,255,.04) 50%,rgba(15,20,40,.6) 100%);border:1px solid rgba(124,92,255,.22);border-radius:16px;cursor:pointer;transition:all .25s cubic-bezier(.4,0,.2,1);overflow:hidden}
+  .dash-rank-card::before{content:"";position:absolute;inset:-1px;border-radius:16px;padding:1px;background:linear-gradient(135deg,rgba(124,92,255,.45),transparent 50%,rgba(124,92,255,.25));-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;pointer-events:none}
+  .dash-rank-card::after{content:"";position:absolute;right:-60px;top:50%;transform:translateY(-50%);width:200px;height:200px;background:radial-gradient(circle,rgba(124,92,255,.15),transparent 70%);pointer-events:none}
+  .dash-rank-card:hover{transform:translateY(-2px);box-shadow:0 16px 36px rgba(124,92,255,.18);border-color:rgba(124,92,255,.4)}
+  .dash-rank-left{display:flex;align-items:center;gap:18px;flex:1;min-width:0;position:relative;z-index:1}
+  .dash-rank-icon{width:54px;height:54px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+  .dash-rank-icon svg{width:100%;height:100%;filter:drop-shadow(0 6px 14px rgba(0,0,0,.4))}
+  .dash-rank-info{flex:1;min-width:0}
+  .dash-rank-tag{font-size:10.5px;font-weight:800;color:#a282ff;letter-spacing:1.8px;margin-bottom:5px;text-transform:uppercase}
+  .dash-rank-main{font-size:22px;font-weight:800;color:#fff;letter-spacing:-.5px;line-height:1.15;margin-bottom:4px;display:flex;align-items:center;gap:10px}
+  .dash-rank-main b{color:#facc15;font-weight:900}
+  .dash-rank-main .pro-mini-badge{display:inline-flex;width:22px;height:22px;flex-shrink:0}
+  .dash-rank-main .pro-mini-badge svg{width:100%;height:100%}
+  .dash-rank-sub{font-size:13px;color:#aeb8d6;letter-spacing:-.1px}
+  .dash-rank-sub b{color:#a282ff;font-weight:700}
+  .dash-rank-right{position:relative;z-index:1;flex-shrink:0}
+  .dash-rank-cta{display:inline-flex;align-items:center;gap:8px;padding:10px 18px;background:rgba(124,92,255,.12);border:1px solid rgba(124,92,255,.3);border-radius:10px;font-size:13px;font-weight:700;color:#c4b5fd;letter-spacing:.2px;transition:all .2s}
+  .dash-rank-card:hover .dash-rank-cta{background:rgba(124,92,255,.22);color:#fff}
+  .dash-rank-arrow{transition:transform .25s}
+  .dash-rank-card:hover .dash-rank-arrow{transform:translateX(4px)}
+
+  /* Variantes */
+  .dash-rank-card.is-pro{background:linear-gradient(135deg,rgba(29,155,240,.10) 0%,rgba(124,92,255,.06) 50%,rgba(15,20,40,.6) 100%);border-color:rgba(29,155,240,.28)}
+  .dash-rank-card.is-pro::before{background:linear-gradient(135deg,rgba(29,155,240,.5),transparent 50%,rgba(124,92,255,.3))}
+  .dash-rank-card.is-podium .dash-rank-main b{color:#facc15}
+  .dash-rank-card.is-locked{background:linear-gradient(135deg,rgba(124,92,255,.06) 0%,rgba(255,255,255,.02) 50%,rgba(15,20,40,.4) 100%);border-color:rgba(124,92,255,.15)}
+
+  @media (max-width:560px){
+    .dash-rank-card{padding:14px 14px;gap:10px;flex-direction:column;align-items:stretch}
+    .dash-rank-left{gap:12px;width:100%}
+    .dash-rank-icon{width:42px;height:42px}
+    .dash-rank-tag{font-size:9.5px;letter-spacing:1.5px;margin-bottom:4px}
+    .dash-rank-main{font-size:17px;flex-wrap:wrap;line-height:1.25;gap:6px}
+    .dash-rank-main .pro-mini-badge{width:18px;height:18px}
+    .dash-rank-sub{font-size:12px;line-height:1.4}
+    .dash-rank-right{width:100%}
+    .dash-rank-cta{display:flex;justify-content:center;width:100%;padding:9px 14px;font-size:12.5px}
+  }
+
   @media (max-width:560px){
     /* Linha do ranking compactada pra mobile */
     .rank-row{grid-template-columns:30px 30px 1fr auto auto;padding:10px 12px;gap:9px}
