@@ -5099,9 +5099,11 @@ const RANK_MOCK_USERS = [
 ];
 
 // Critérios pra entrar no ranking global (mantidos em sync com o RPC get_leaderboard)
+// minActiveDays:5 alinhado com o trial de 7 dias — força engajamento até o meio do trial
+// (FOMO no momento de decisão de assinar) e filtra contas-laranja automaticamente
 const RANK_ELIGIBILITY = {
   minTx: 10,
-  minActiveDays: 2,
+  minActiveDays: 5,
   minAccountDays: 1,
   minProfit: 1
 };
