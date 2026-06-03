@@ -5099,37 +5099,17 @@ function rankBuildLeaderboard(youProfit, youName, source){
   return all;
 }
 
-// Busca leaderboard real do Supabase (cai pro mock se a tabela não existir)
+// Busca leaderboard real do Supabase via RPC get_leaderboard (computa lucro de todos os usuários da user_data)
 let _rankRealUsers = null;
 async function rankFetchLeaderboard(){
   try {
     const sb = (typeof getSb === 'function') ? getSb() : null;
     if (!sb) return null;
-    const { data, error } = await sb.from('leaderboard')
-      .select('display_name, profit')
-      .order('profit', { ascending: false })
-      .limit(200);
+    const { data, error } = await sb.rpc('get_leaderboard');
     if (error) { console.warn('rankFetchLeaderboard', error.message); return null; }
     if (!data || !data.length) return [];
     return data.map(r => ({ name: r.display_name || 'Apostador', profit: Number(r.profit) || 0 }));
   } catch(e) { console.warn('rankFetchLeaderboard', e); return null; }
-}
-
-// Empurra a entrada do user atual pra tabela leaderboard
-async function rankPushMyEntry(profit){
-  try {
-    const sb = (typeof getSb === 'function') ? getSb() : null;
-    if (!sb || typeof currentUserId === 'undefined' || !currentUserId) return;
-    const name = (localStorage.getItem('bancapro-user-name')||'').trim()
-      || ((localStorage.getItem('bancapro-user-email')||'').split('@')[0])
-      || 'Apostador';
-    await sb.from('leaderboard').upsert({
-      user_id: currentUserId,
-      display_name: name,
-      profit: Math.max(0, Math.round(profit)),
-      updated_at: new Date().toISOString()
-    }, { onConflict: 'user_id' });
-  } catch(e) { /* tabela pode não existir ainda */ }
 }
 
 function rankUserInitials(name){
@@ -5261,8 +5241,7 @@ function renderRanking(){
     ).join('');
   }
 
-  // Leaderboard — empurra entrada e busca real (cai pro mock se a tabela não existir)
-  rankPushMyEntry(count);
+  // Leaderboard — render imediato com mock, depois substitui pelo real do Supabase
   rankRenderBoard(count);
   rankFetchLeaderboard().then(real => {
     if (real && real.length > 0){ _rankRealUsers = real; rankRenderBoard(count); }
