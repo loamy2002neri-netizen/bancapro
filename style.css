@@ -1693,7 +1693,14 @@ html { -webkit-text-size-adjust:100%; text-size-adjust:100%; }
   .rank-row-avatar{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,#1f2748,#0e1226);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:#fff;border:1.5px solid rgba(255,255,255,.08);overflow:hidden}
   .rank-row-avatar img{width:100%;height:100%;object-fit:cover}
   .rank-row-name{font-size:14px;font-weight:700;color:#fff;letter-spacing:-.2px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-  .rank-row-name b{font-size:9.5px;font-weight:800;color:#fff;background:linear-gradient(135deg,#7c5cff,#a282ff);padding:2px 7px;border-radius:5px;margin-left:8px;letter-spacing:1.2px;vertical-align:middle}
+  .rank-row .rank-row-name b,.rank-board-foot .rank-row .rank-row-name b{display:inline-block;font-size:10.5px;font-weight:800;color:#fff;background:linear-gradient(135deg,#7c5cff,#a282ff);padding:3px 10px;border-radius:6px;margin-left:10px;letter-spacing:1.4px;vertical-align:middle;text-transform:uppercase;line-height:1.4;white-space:nowrap;box-shadow:0 2px 8px rgba(124,92,255,.4),inset 0 1px 0 rgba(255,255,255,.15);font-family:"Plus Jakarta Sans","Segoe UI",sans-serif}
+  /* Badge Pro — usuários assinantes (estilo verificado azul) */
+  .rank-pro-badge{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;margin-left:8px;vertical-align:middle;position:relative;flex-shrink:0;filter:drop-shadow(0 2px 4px rgba(29,155,240,.45))}
+  .rank-pro-badge svg{width:100%;height:100%;display:block}
+  .rank-pro-badge::before{content:"";position:absolute;inset:-3px;border-radius:50%;background:radial-gradient(circle,rgba(29,155,240,.45),transparent 70%);z-index:-1;animation:proPulse 2.4s ease-in-out infinite}
+  @keyframes proPulse{0%,100%{opacity:.5;transform:scale(1)}50%{opacity:1;transform:scale(1.2)}}
+  .rank-row.is-pro{background:linear-gradient(135deg,rgba(29,155,240,.04),rgba(124,92,255,.02));border-color:rgba(29,155,240,.14)}
+  .rank-row.is-pro:hover{border-color:rgba(29,155,240,.28)}
   .rank-row-tier{display:flex;align-items:center;gap:8px}
   .rank-row-tier .rank-shield{width:22px;height:26px;flex-shrink:0}
   .rank-row-tier .rank-shield svg{filter:none}
@@ -1703,8 +1710,20 @@ html { -webkit-text-size-adjust:100%; text-size-adjust:100%; }
   .rank-row.is-you .rank-row-profit{color:#a282ff}
   .rank-row-divider{height:10px;display:flex;align-items:center;justify-content:center;color:#5a657f;font-size:14px;letter-spacing:4px;padding:4px 0}
 
-  .rank-board-foot{display:flex;justify-content:space-between;align-items:center;padding:14px 16px 4px;font-size:11.5px;color:#7d87a4;border-top:1px solid rgba(255,255,255,.04);margin-top:8px}
+  .rank-board-foot{display:block;padding:14px 16px 4px;font-size:11.5px;color:#7d87a4;border-top:1px solid rgba(255,255,255,.04);margin-top:8px;line-height:1.5}
   .rank-board-foot b{color:#a282ff;font-weight:800}
+
+  /* Preview row — mostra onde o user estaria se passasse nos critérios */
+  .rank-preview-wrap{margin-top:14px;padding-top:14px;border-top:1px dashed rgba(124,92,255,.18);position:relative}
+  .rank-preview-label{display:flex;align-items:center;gap:10px;font-size:10.5px;font-weight:800;color:#a282ff;letter-spacing:1.8px;margin-bottom:10px;text-transform:uppercase}
+  .rank-preview-label::before{content:"";width:18px;height:2px;background:linear-gradient(90deg,#a282ff,transparent);border-radius:2px}
+  .rank-row.rank-row-preview{background:linear-gradient(135deg,rgba(124,92,255,.05),rgba(255,255,255,.01));border:1px dashed rgba(124,92,255,.32);position:relative;opacity:.92}
+  .rank-row.rank-row-preview::after{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:linear-gradient(180deg,#7c5cff,#a282ff);border-radius:12px 0 0 12px}
+  .rank-row.rank-row-preview .rank-row-name{color:#cdd5ea}
+  .rank-row.rank-row-preview .rank-row-profit{color:#a282ff}
+  .rank-row.rank-row-preview .rank-row-pos{color:#a282ff}
+  .rank-preview-hint{font-size:11px;color:#7d87a4;text-align:center;margin-top:10px;font-style:italic;line-height:1.5}
+  .rank-preview-hint b{color:#a282ff;font-weight:700;font-style:normal}
 
   /* Section labels */
   .rank-section-label{font-size:11px;font-weight:700;color:#a282ff;letter-spacing:2px;margin:6px 0 14px;display:flex;align-items:center;gap:12px;text-transform:uppercase}

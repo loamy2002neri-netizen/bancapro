@@ -5104,7 +5104,6 @@ const RANK_MOCK_USERS = [
 const RANK_ELIGIBILITY = {
   minTx: 10,
   minActiveDays: 2,
-  minAccountDays: 1,
   minProfit: 1
 };
 
@@ -5118,32 +5117,18 @@ function rankComputeEligibility(){
     if (txs[i].type === 'income') profit += v;
     else if (txs[i].type === 'expense') profit -= v;
   }
-  // tenta inferir tempo de conta a partir da menor data de transação OU do localStorage user-created-at
-  let accountDays = 999;
-  try {
-    const createdRaw = localStorage.getItem('bancapro-user-created-at');
-    if (createdRaw) {
-      const created = new Date(createdRaw);
-      if (!isNaN(created)) accountDays = Math.floor((Date.now() - created.getTime()) / 86400000);
-    } else if (txs.length){
-      const minDate = txs.map(t => t.date).filter(Boolean).sort()[0];
-      if (minDate){
-        const d = new Date(minDate);
-        if (!isNaN(d)) accountDays = Math.floor((Date.now() - d.getTime()) / 86400000);
-      }
-    }
-  } catch(e){}
   return {
-    txCount, distinctDays, profit: Math.max(0, profit), accountDays,
+    txCount, distinctDays, profit: Math.max(0, profit),
     eligible: txCount >= RANK_ELIGIBILITY.minTx
       && distinctDays >= RANK_ELIGIBILITY.minActiveDays
-      && accountDays >= RANK_ELIGIBILITY.minAccountDays
       && profit >= RANK_ELIGIBILITY.minProfit
   };
 }
 
 function rankBuildLeaderboard(youProfit, youName, source){
-  const me = { name: youName || 'Você', profit: youProfit, isYou: true };
+  // MOCK temporário: mock-marca "Você" como Pro pra demo (vai virar checkSubscription real)
+  const youIsPro = !!(new URLSearchParams(location.search).get('demo')) || (typeof checkAccess === 'function' && window._isProSubscriber);
+  const me = { name: youName || 'Você', profit: youProfit, isYou: true, isPro: youIsPro };
   const base = (source && source.length) ? source : RANK_MOCK_USERS;
   const all = base.map(u => Object.assign({ isYou: false }, u));
   // Só insere "você" no ranking se passa nos critérios de elegibilidade
@@ -5200,7 +5185,12 @@ async function rankFetchLeaderboard(){
     const { data, error } = await sb.rpc('get_leaderboard');
     if (error) { console.warn('rankFetchLeaderboard', error.message); return null; }
     if (!data || !data.length) return [];
-    return data.map(r => ({ name: r.display_name || 'Apostador', profit: Number(r.profit) || 0 }));
+    // MOCK temporário: top 3 do ranking aparecem como Pro (pra você validar o visual antes de plugar na tabela subscribers)
+    return data.map((r, idx) => ({
+      name: r.display_name || 'Apostador',
+      profit: Number(r.profit) || 0,
+      isPro: (typeof r.is_pro === 'boolean') ? r.is_pro : (idx < 3)
+    }));
   } catch(e) { console.warn('rankFetchLeaderboard', e); return null; }
 }
 
@@ -5252,17 +5242,33 @@ function rankRenderBoard(youProfit){
     }
   }
 
+  const proBadgeHTML = '<span class="rank-pro-badge" title="Assinante Pro">'+
+    '<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">'+
+      '<defs>'+
+        '<linearGradient id="proBadgeGrad" x1="0" y1="0" x2="0" y2="1">'+
+          '<stop offset="0" stop-color="#3ba9f5"/>'+
+          '<stop offset="0.5" stop-color="#1d9bf0"/>'+
+          '<stop offset="1" stop-color="#0f7dc6"/>'+
+        '</linearGradient>'+
+      '</defs>'+
+      '<path fill="url(#proBadgeGrad)" stroke="rgba(0,0,0,.12)" stroke-width=".4" d="M22.25 12c0-1.43-.88-2.67-2.19-3.34.46-1.39.2-2.9-.81-3.91s-2.52-1.27-3.91-.81c-.66-1.31-1.91-2.19-3.34-2.19s-2.67.88-3.33 2.19c-1.4-.46-2.91-.2-3.92.81S3.48 7.27 3.94 8.66C2.63 9.33 1.75 10.57 1.75 12s.88 2.66 2.19 3.34c-.46 1.39-.2 2.9.81 3.91s2.52 1.26 3.91.81c.67 1.31 1.91 2.19 3.34 2.19s2.68-.88 3.34-2.19c1.39.45 2.9.2 3.91-.81s1.27-2.52.81-3.91c1.31-.68 2.19-1.91 2.19-3.34z"/>'+
+      '<path d="M9.64 13.06l-2.06-2.06-1.42 1.41 3.48 3.48 6.86-6.86-1.42-1.42z" fill="#fff"/>'+
+    '</svg>'+
+  '</span>';
+
   board.innerHTML = rows.map(r => {
     if (r.divider) return '<div class="rank-row-divider">· · ·</div>';
     const u = r.user;
     const { current } = rankComputeCurrent(u.profit);
     const podiumCls = r.pos === 1 ? 'is-podium-1' : r.pos === 2 ? 'is-podium-2' : r.pos === 3 ? 'is-podium-3' : '';
     const youCls = u.isYou ? 'is-you' : '';
+    const proCls = u.isPro ? 'is-pro' : '';
     const initials = rankUserInitials(u.name);
-    return '<div class="rank-row '+podiumCls+' '+youCls+'">'+
+    const proBadge = u.isPro ? proBadgeHTML : '';
+    return '<div class="rank-row '+podiumCls+' '+youCls+' '+proCls+'">'+
       '<div class="rank-row-pos">#'+r.pos+'</div>'+
       '<div class="rank-row-avatar">'+initials+'</div>'+
-      '<div class="rank-row-name">'+u.name+(u.isYou ? '<b>VOCÊ</b>' : '')+'</div>'+
+      '<div class="rank-row-name">'+u.name+proBadge+(u.isYou ? '<b>VOCÊ</b>' : '')+'</div>'+
       '<div class="rank-row-tier"><span class="rank-shield">'+rankShieldSVG(current)+'</span><span class="rank-row-tier-name">'+current.name+'</span></div>'+
       '<div class="rank-row-profit">'+rankFormatValue(u.profit)+'</div>'+
     '</div>';
@@ -5274,9 +5280,22 @@ function rankRenderBoard(youProfit){
       const missing = [];
       if (elig.txCount < RANK_ELIGIBILITY.minTx) missing.push('<b>'+(RANK_ELIGIBILITY.minTx - elig.txCount)+' transações</b>');
       if (elig.distinctDays < RANK_ELIGIBILITY.minActiveDays) missing.push('<b>'+(RANK_ELIGIBILITY.minActiveDays - elig.distinctDays)+' dias de atividade</b>');
-      if (elig.accountDays < RANK_ELIGIBILITY.minAccountDays) missing.push('<b>'+(RANK_ELIGIBILITY.minAccountDays - elig.accountDays)+' dias de conta</b>');
-      if (elig.profit < RANK_ELIGIBILITY.minProfit) missing.push('<b>R$ '+(RANK_ELIGIBILITY.minProfit - elig.profit).toFixed(0)+' de lucro</b>');
+      // Lucro intencionalmente omitido da mensagem: dizer "falta R$ 1 de lucro" incentivaria
+      // o usuário a registrar transação fake. O filtro continua ativo no back.
       foot.innerHTML = '🔒 Pra entrar no ranking global faltam: ' + missing.join(' · ');
+
+      // Linha do user — igual aos outros cards, só que ele está bloqueado (mensagem acima já indica)
+      const realRanked = board_users.filter(u => !u.isYou);
+      const wouldBePos = realRanked.filter(u => u.profit > youProfit).length + 1;
+      const { current: youTier } = rankComputeCurrent(youProfit);
+      const youInitials = rankUserInitials(youName);
+      foot.innerHTML += '<div class="rank-row is-you" style="margin-top:12px">'+
+        '<div class="rank-row-pos">#'+wouldBePos+'</div>'+
+        '<div class="rank-row-avatar">'+youInitials+'</div>'+
+        '<div class="rank-row-name">'+youName+'<b>VOCÊ</b></div>'+
+        '<div class="rank-row-tier"><span class="rank-shield">'+rankShieldSVG(youTier)+'</span><span class="rank-row-tier-name">'+youTier.name+'</span></div>'+
+        '<div class="rank-row-profit">'+rankFormatValue(youProfit)+'</div>'+
+      '</div>';
     } else if (isYouInList){
       const ahead = yourPos > 1 ? board_users[yourPos - 2] : null;
       const diff = ahead ? ahead.profit - youProfit : 0;
