@@ -461,7 +461,12 @@
       if (nameEl) nameEl.textContent = name || 'Apostador';
       if (avEl) avEl.textContent = name ? name.charAt(0).toUpperCase() : '';
       var OWNERS = ['loamy2002neri@gmail.com', 'loamy69zzz@gmail.com'];
-      if (roleEl) roleEl.textContent = (email && OWNERS.indexOf(email) >= 0) ? 'Administrador' : 'Apostador';
+      var planLabel = localStorage.getItem('bancapro-plan-label') || '';
+      if (roleEl){
+        if (planLabel) roleEl.textContent = planLabel;
+        else if (email && OWNERS.indexOf(email) >= 0) roleEl.textContent = 'Administrador';
+        else roleEl.textContent = 'Free';
+      }
       // Mostra "Minhas Indicacoes" se ja foi confirmado afiliado em sessao anterior
       if (localStorage.getItem('bancapro-is-affiliate') === '1'){
         var af = document.getElementById('navAfiliado');

@@ -272,6 +272,8 @@ async function enterApp(user) {
     const allowed = await checkAccess(user);
     if (allowed) hidePaywall(); else showPaywall();
   } catch(e) { hidePaywall(); }
+  // Atualiza o label do plano no sidebar (Free/Trial/Plus/Pro/Administrador)
+  try { cachePlanLabel(user); } catch(e){}
   // Menu Admin/Afiliados só para o dono
   try {
     const isOwner = OWNER_EMAILS.includes((user.email || '').toLowerCase());
@@ -300,6 +302,42 @@ async function enterApp(user) {
 
 // ─── Controle de acesso por assinatura ───
 const OWNER_EMAILS = ['loamy2002neri@gmail.com', 'loamy69zzz@gmail.com']; // nunca bloqueado (dono)
+
+// Cacheia o label do plano (Free/Trial/Plus/Pro/Administrador) pra exibir no sidebar
+// instantaneamente no proximo reload via hydrateSidebar (sem flash de "Apostador")
+async function cachePlanLabel(user){
+  try {
+    const email = (user && user.email || '').toLowerCase();
+    if (!email) return;
+    let label = 'Free';
+
+    if (OWNER_EMAILS.includes(email)){
+      label = 'Administrador';
+    } else {
+      const sb = getSb();
+      if (sb){
+        try {
+          const { data } = await sb.from('subscribers').select('status,plan,valid_until')
+            .eq('email', email).maybeSingle();
+          const naoExpirou = !data || !data.valid_until || new Date(data.valid_until).getTime() > Date.now();
+          if (data && data.status === 'active' && naoExpirou){
+            const planName = data.plan || '';
+            label = /anual|annual|yearly/i.test(planName) ? 'Pro' : 'Plus';
+          }
+        } catch(e){}
+      }
+      // Fallback pro Trial se ainda tá nos 7 dias iniciais
+      if (label === 'Free' && user && user.created_at){
+        const end = new Date(new Date(user.created_at).getTime() + TRIAL_DAYS * 86400000);
+        if (end.getTime() > Date.now()) label = 'Trial';
+      }
+    }
+
+    try { localStorage.setItem('bancapro-plan-label', label); } catch(e){}
+    const roleEl = document.getElementById('sidebarUserRole');
+    if (roleEl) roleEl.textContent = label;
+  } catch(e){}
+}
 
 async function hasActiveSubscription(email) {
   const sb = getSb();
