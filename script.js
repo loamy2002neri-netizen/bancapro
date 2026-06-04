@@ -5608,7 +5608,17 @@ function rankNormalizeName(n){
 }
 
 function rankBuildLeaderboard(youProfit, youName, source){
-  const base = (source && source.length) ? source : RANK_MOCK_USERS;
+  // Mock so eh usado quando NAO ha Supabase (modo local de demo)
+  // Se Supabase esta conectado, source [] eh resposta valida = ninguem ainda
+  const hasSb = (typeof getSb === 'function') && !!getSb();
+  let base;
+  if (Array.isArray(source)){
+    base = source; // RPC respondeu (mesmo vazio) — usa o que veio
+  } else if (!hasSb){
+    base = RANK_MOCK_USERS; // local dev sem backend — mock visual
+  } else {
+    base = []; // ha Supabase mas cache ainda nao populou — vazio temporario
+  }
   const all = base.map(u => Object.assign({ isYou: false }, u));
 
   const youNameNorm = rankNormalizeName(youName);
@@ -5897,6 +5907,21 @@ function rankRenderBoard(youProfit){
     '</svg>'+
   '</span>';
 
+  // Estado vazio: ninguem qualificou na janela atual ainda
+  if (board_users.length === 0){
+    const periodLabel = (_rankPeriod === 'today' ? 'hoje' :
+                         _rankPeriod === 'week'  ? 'esta semana' :
+                         _rankPeriod === 'month' ? 'este mês' : 'no geral');
+    board.innerHTML =
+      '<div class="rank-empty-state">' +
+        '<div class="rank-empty-icon">🏆</div>' +
+        '<div class="rank-empty-title">Ninguém entrou no ranking '+periodLabel+' ainda</div>' +
+        '<div class="rank-empty-sub">Seja o primeiro: lucre R$ 1+ na janela e cumpra os critérios.</div>' +
+      '</div>';
+    if (meta) meta.innerHTML = 'Ranking vazio ' + periodLabel;
+    return;
+  }
+
   board.innerHTML = rows.map(r => {
     if (r.divider) return '<div class="rank-row-divider">· · ·</div>';
     const u = r.user;
@@ -6032,12 +6057,12 @@ function renderUserRanking(){
   else fetcher = rankFetchLeaderboardMonth;
   const periodAtFetch = _rankPeriod;
   fetcher().then(real => {
-    if (real && real.length > 0){
+    // Atualiza o cache MESMO se vier [] — ai a UI mostra vazio em vez de mock
+    if (Array.isArray(real)){
       if (periodAtFetch === 'all') _rankRealUsers = real;
       else if (periodAtFetch === 'today') _rankRealUsersToday = real;
       else if (periodAtFetch === 'week') _rankRealUsersWeek = real;
       else _rankRealUsersMonth = real;
-      // So re-renderiza se o usuario ainda esta vendo o mesmo periodo
       if (_rankPeriod === periodAtFetch){
         rankRenderBoard(count);
         renderRankPodium(count);
