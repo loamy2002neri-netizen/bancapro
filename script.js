@@ -6107,8 +6107,7 @@ function rankRenderBoard(youProfit){
     '</div>';
   }).join('');
 
-  // Atualiza titulo da lista
-  const listTitle = document.getElementById('rankListTitle');
+  // Atualiza texto do titulo (visibilidade ja tratada acima)
   if (listTitle){
     listTitle.textContent = board_users.length > 3 ? 'Demais classificados' : 'Classificação completa';
   }
