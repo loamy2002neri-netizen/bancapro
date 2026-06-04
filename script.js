@@ -642,30 +642,13 @@ function _affReferralsHtml(data) {
 }
 
 // ── Tier system pro usuario comum (10% a 35% por nivel) ──
-const AFF_TIERS = [
-  { key:'bronze',   name:'Bronze',   min:1,  max:2,  rate:10 },
-  { key:'prata',    name:'Prata',    min:3,  max:4,  rate:15 },
-  { key:'ouro',     name:'Ouro',     min:5,  max:9,  rate:20 },
-  { key:'diamante', name:'Diamante', min:10, max:19, rate:25 },
-  { key:'elite',    name:'Elite',    min:20, max:49, rate:30 },
-  { key:'partner',  name:'Partner',  min:50, max:Infinity, rate:35 }
-];
+// Modelo simplificado: 30% pra todos os usuarios comuns, 50% pra VIP
+const AFF_RATE_COMMON = 30;
+const AFF_RATE_VIP    = 50;
 
+// Mantida pra compat (codigo legado pode chamar)
 function affComputeTier(activeCount){
-  activeCount = Number(activeCount) || 0;
-  if (activeCount <= 0) {
-    return { tier:null, next:AFF_TIERS[0], rate:0, progress:0 };
-  }
-  let tier = null;
-  for (const t of AFF_TIERS){
-    if (activeCount >= t.min && activeCount <= t.max){ tier = t; break; }
-  }
-  if (!tier) tier = AFF_TIERS[AFF_TIERS.length - 1];
-  const next = AFF_TIERS.find(t => t.min > activeCount) || null;
-  const progress = next
-    ? Math.min(100, (activeCount / next.min) * 100)
-    : 100;
-  return { tier, next, rate:tier.rate, progress };
+  return { tier:null, next:null, rate:AFF_RATE_COMMON, progress:100 };
 }
 
 function affUpdateTierCard(activeCount, isVip){
@@ -675,12 +658,32 @@ function affUpdateTierCard(activeCount, isVip){
   const nameEl   = document.getElementById('affTierName');
   const rateEl   = document.getElementById('affTierRate');
   const progress = document.getElementById('affTierProgress');
-  const nextEl   = document.getElementById('affTierNext');
-  const currCt   = document.getElementById('affTierCurrentCount');
-  const targCt   = document.getElementById('affTierTargetCount');
-  const fillEl   = document.getElementById('affTierFill');
   const footEl   = document.getElementById('affTierFoot');
   const howFoot  = document.getElementById('affHowFoot');
+  const heroImg  = document.getElementById('affHeroImg');
+  const tiersCard = document.querySelector('.aff-tiers-card');
+
+  // Modelo simplificado: sempre visual premium (borda roxa).
+  // Esconde barra de progresso e tabela de niveis pra todos.
+  card.classList.add('is-vip'); // sempre purple border
+  if (progress) progress.style.display = 'none';
+  if (tiersCard) tiersCard.style.display = 'none';
+
+  if (isVip){
+    if (heroImg) heroImg.src = 'brand/icones%20afiliados/06_partner.png';
+    if (eyebrow) eyebrow.textContent = 'Plano especial';
+    if (nameEl)  nameEl.textContent  = 'Afiliado VIP';
+    if (rateEl)  rateEl.textContent  = 'Comissão especial: 50% recorrente';
+    if (howFoot) howFoot.textContent = 'Você possui uma comissão especial de 50% recorrente em suas indicações ativas.';
+  } else {
+    if (heroImg) heroImg.src = 'brand/icones%20afiliados/06_partner.png';
+    if (eyebrow) eyebrow.textContent = 'Programa de indicação';
+    if (nameEl)  nameEl.textContent  = 'Afiliado';
+    if (rateEl)  rateEl.textContent  = '30% de comissão recorrente';
+    if (howFoot) howFoot.textContent = 'Você ganha 30% recorrente em cada indicação ativa, todo mês enquanto continuar assinante.';
+  }
+  return;
+  /* Codigo antigo de tiers preservado abaixo (nao executa por causa do return) */
 
   // Nota sobre VIP no rodape da tabela so aparece pra VIPs (usuario comum nao precisa saber que existe)
   const tiersFoot = document.getElementById('affTiersFoot');
@@ -803,11 +806,12 @@ async function renderMyAffiliatePanel() {
 
   var totalReferrals = stats?.total_referrals || 0;
   var activeCount    = stats?.active_paid || 0;
-  var pctReal        = stats?.current_commission_pct || 10;
   var pendingBal     = Number(stats?.pending_balance || 0);
   var availableBal   = Number(stats?.available_balance || 0);
   var paidBal        = Number(stats?.paid_balance || 0);
   var isVipReal      = !!stats?.is_vip || isVip;
+  // Comissao fixa: 30% pra comum, 50% pra VIP
+  var pctReal        = isVipReal ? AFF_RATE_VIP : AFF_RATE_COMMON;
 
   // Codigo / link: usa o do VIP se tiver, senao deriva do email
   var code = isVipReal && a ? a.code : affDeriveCodeFromEmail(myEmail);
