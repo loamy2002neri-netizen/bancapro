@@ -18,7 +18,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
-<link rel="stylesheet" href="style.css?v=104"/>
+<link rel="stylesheet" href="style.css?v=108"/>
 </head>
 <body>
 
@@ -1841,6 +1841,33 @@
       </div>
 
     </div><!-- /page-content -->
+
+    <!-- ═══ BOTTOM TAB BAR (MOBILE — feel like a native app) ═══ -->
+    <!-- Aparece apenas em <=960px via CSS. Hamburger fica escondido nesse range. -->
+    <nav class="mobile-tabbar" id="mobileTabbar" aria-label="Navegação principal">
+      <button class="mt-item" data-tab="dashboard" onclick="mobileNav('dashboard')" aria-label="Dashboard">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12l9-9 9 9"/><path d="M5 10v10h14V10"/></svg>
+        <span>Início</span>
+      </button>
+      <button class="mt-item" data-tab="ranking" onclick="mobileNav('ranking')" aria-label="Ranking">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M8 21h8M12 17v4M7 4h10v6a5 5 0 01-10 0V4z"/><path d="M5 6H3a2 2 0 002 4M19 6h2a2 2 0 01-2 4"/></svg>
+        <span>Ranking</span>
+      </button>
+      <button class="mt-fab" onclick="openTxModal()" aria-label="Nova transação">
+        <span class="mt-fab-inner">
+          <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+        </span>
+      </button>
+      <button class="mt-item" data-tab="afiliado" onclick="mobileNav('afiliado')" aria-label="Indicações">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"/><path d="M2 21c1-4 4-6 7-6s6 2 7 6"/><circle cx="17" cy="7" r="2.5"/><path d="M22 15c-.5-2-2-3.5-4-3.5"/></svg>
+        <span>Indicar</span>
+      </button>
+      <button class="mt-item" data-tab="more" onclick="mobileNavMore()" aria-label="Mais opções">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/></svg>
+        <span>Mais</span>
+      </button>
+    </nav>
+
   </main>
 </div><!-- /app -->
 <!-- PAYWALL — bloqueio para quem não é assinante (trial expirado) -->
@@ -2108,6 +2135,6 @@
 </div>
 
 <script src="config.js?v=9" defer></script>
-<script src="script.js?v=140" defer></script>
+<script src="script.js?v=142" defer></script>
 </body>
 </html>

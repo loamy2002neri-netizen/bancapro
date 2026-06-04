@@ -1696,7 +1696,96 @@ function goTo(section, el) {
   if(section === 'afiliado')  setTimeout(renderMyAffiliatePanel, 50);
   if(section === 'calculadora') setTimeout(calcInit, 50);
   if(section === 'anotacoes') setTimeout(notesInit, 50);
+  // Sincroniza o estado ativo da bottom tab bar mobile
+  if (typeof updateMobileTabActive === 'function') setTimeout(updateMobileTabActive, 30);
 }
+
+// ══════════════════════════════════════════════
+//  MOBILE NAV — Bottom Tab Bar + "Mais" Action Sheet
+//  Faz a versao mobile sentir como app nativo.
+//  Mapeia atalhos da tabbar pras secoes internas, mantem o estado ativo.
+// ══════════════════════════════════════════════
+function mobileNav(tab){
+  // Mapeia label da tab pra secao real do app
+  var map = {
+    dashboard: 'dashboard',
+    ranking:   'ranking',
+    afiliado:  'afiliado',
+    transactions: 'transactions',
+    methods:    'methods',
+    accounts:   'accounts',
+    settings:   'settings',
+    anotacoes:  'anotacoes',
+    goals:      'goals',
+    reports:    'reports',
+    compare:    'compare',
+    calc:       'calculadora',
+    afiliados:  'afiliados',
+    admin:      'admin',
+    recharge:   'recharge'
+  };
+  var sec = map[tab] || tab;
+  // Fecha sheet "Mais" se estiver aberta
+  closeMobileMoreSheet();
+  // Navega pra secao
+  if (typeof goTo === 'function') goTo(sec);
+  // Atualiza estado ativo da tabbar
+  setTimeout(updateMobileTabActive, 30);
+}
+
+function updateMobileTabActive(){
+  // Marca o item ativo da tabbar com base na secao ativa atual
+  var active = document.querySelector('.section.active');
+  var secId = active ? active.id : '';
+  var tab = '';
+  if (secId === 'sec-dashboard') tab = 'dashboard';
+  else if (secId === 'sec-ranking') tab = 'ranking';
+  else if (secId === 'sec-afiliado') tab = 'afiliado';
+  document.querySelectorAll('.mt-item').forEach(function(el){
+    if (el.getAttribute('data-tab') === tab) el.classList.add('is-active');
+    else el.classList.remove('is-active');
+  });
+}
+
+function mobileNavMore(){
+  // Garante que a sheet exista no DOM (criada lazy na 1a vez)
+  var sheet = document.getElementById('mobileMoreSheet');
+  if (!sheet){
+    sheet = document.createElement('div');
+    sheet.id = 'mobileMoreSheet';
+    sheet.className = 'mobile-more-sheet';
+    sheet.innerHTML = ''
+      + '<div class="mms-card" onclick="event.stopPropagation()">'
+      + '  <div class="mms-handle"></div>'
+      + '  <div class="mms-title">Mais opcoes</div>'
+      + '  <button class="mms-item" onclick="mobileNav(\'transactions\')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7h18M3 12h18M3 17h18"/></svg>Transacoes</button>'
+      + '  <button class="mms-item" onclick="mobileNav(\'methods\')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="M3 10h18"/></svg>Metodos</button>'
+      + '  <button class="mms-item" onclick="mobileNav(\'accounts\')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2h14a2 2 0 002-2v-2"/><path d="M16 12h5"/></svg>Contas Depositadas</button>'
+      + '  <button class="mms-item" onclick="mobileNav(\'goals\')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.5"/></svg>Metas</button>'
+      + '  <button class="mms-item" onclick="mobileNav(\'reports\')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 14l4-4 4 4 5-6"/></svg>Relatorios</button>'
+      + '  <button class="mms-item" onclick="mobileNav(\'compare\')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h7M3 12h11M3 18h6"/><path d="M17 4l4 4-4 4"/></svg>Comparativo</button>'
+      + '  <button class="mms-item" onclick="mobileNav(\'calc\')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 7h8M8 11h2M12 11h2M16 11h0M8 15h2M12 15h2M16 15h0M8 19h2M12 19h2M16 19h0"/></svg>Calculadora</button>'
+      + '  <button class="mms-item" onclick="mobileNav(\'anotacoes\')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h12l4 4v12H4z"/><path d="M16 4v4h4M8 12h8M8 16h6"/></svg>Anotacoes</button>'
+      + '  <button class="mms-item" onclick="mobileNav(\'settings\')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 00.3 1.8l.1.1a2 2 0 11-2.8 2.8l-.1-.1a1.7 1.7 0 00-1.8-.3 1.7 1.7 0 00-1 1.5V21a2 2 0 11-4 0v-.1a1.7 1.7 0 00-1-1.5 1.7 1.7 0 00-1.8.3l-.1.1a2 2 0 11-2.8-2.8l.1-.1a1.7 1.7 0 00.3-1.8 1.7 1.7 0 00-1.5-1H3a2 2 0 110-4h.1a1.7 1.7 0 001.5-1 1.7 1.7 0 00-.3-1.8l-.1-.1a2 2 0 112.8-2.8l.1.1a1.7 1.7 0 001.8.3h0a1.7 1.7 0 001-1.5V3a2 2 0 114 0v.1a1.7 1.7 0 001 1.5 1.7 1.7 0 001.8-.3l.1-.1a2 2 0 112.8 2.8l-.1.1a1.7 1.7 0 00-.3 1.8v0a1.7 1.7 0 001.5 1H21a2 2 0 110 4h-.1a1.7 1.7 0 00-1.5 1z"/></svg>Configuracoes</button>'
+      + '  <button class="mms-item mms-item-pro" onclick="mobileNav(\'recharge\')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3 6 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1z"/></svg>Assinatura</button>'
+      + '  <div class="mms-divider"></div>'
+      + '  <button class="mms-item is-danger" onclick="closeMobileMoreSheet(); if(typeof logout===\'function\') logout();"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><path d="M16 17l5-5-5-5M21 12H9"/></svg>Sair da conta</button>'
+      + '</div>';
+    sheet.addEventListener('click', closeMobileMoreSheet);
+    document.body.appendChild(sheet);
+  }
+  sheet.classList.add('is-open');
+}
+
+function closeMobileMoreSheet(){
+  var sh = document.getElementById('mobileMoreSheet');
+  if (sh) sh.classList.remove('is-open');
+}
+
+// Inicia o estado ativo da tabbar assim que o app carrega
+document.addEventListener('DOMContentLoaded', function(){
+  setTimeout(updateMobileTabActive, 200);
+});
 
 function setPeriod(p, el) {
   currentPeriod = p;

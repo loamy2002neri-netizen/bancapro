@@ -3740,3 +3740,401 @@ html { -webkit-text-size-adjust:100%; text-size-adjust:100%; }
   padding:4px 9px;border-radius:6px;
   font-style:italic;
 }
+
+/* ════════════════════════════════════════════════════════════════
+   MOBILE APP FEEL — bottom tab bar, safe-area, sticky topbar,
+   bottom sheet pra modais. Aparece apenas em <=960px.
+   Inspirado em padroes nativos iOS/Android.
+   ════════════════════════════════════════════════════════════════ */
+
+/* Esconde a tabbar no desktop */
+.mobile-tabbar{ display:none; }
+
+@media (max-width:960px){
+  /* ── Safe area pro notch e home indicator ── */
+  body{
+    /* Respira embaixo pra a tab bar nao cobrir conteudo */
+    padding-bottom: 0;
+  }
+  .main{
+    /* Reserva espaco pra tab bar + safe area inferior do home indicator */
+    padding-bottom: calc(70px + env(safe-area-inset-bottom, 0px)) !important;
+  }
+  .page-content{
+    /* Garante que conteudo nao fique embaixo da tabbar */
+    padding-bottom: 12px !important;
+  }
+
+  /* ── Topbar sticky tipo header de app ── */
+  .topbar{
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: var(--bg) !important;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    padding-top: calc(8px + env(safe-area-inset-top, 0px)) !important;
+    border-bottom: 1px solid rgba(255,255,255,.04);
+  }
+  /* Esconde hamburger (a tabbar e o menu de "Mais" substituem) */
+  .topbar .menu-btn{ display: none !important; }
+  /* Breadcrumb mais limpo — so o nome da secao */
+  .topbar-breadcrumb{
+    font-size: 16px !important;
+    font-weight: 700 !important;
+    color: var(--text) !important;
+  }
+  .topbar-breadcrumb > *:first-child{ display: none; }
+  /* Texto antes do span "Apostack /" some — fica so o nome da pagina */
+  .topbar-breadcrumb{
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  /* Botao "+ Transacao" do topo nao precisa mais — tem FAB embaixo */
+  .topbar .txbtn{ display: none !important; }
+
+  /* ── Bottom Tab Bar ── */
+  .mobile-tabbar{
+    display: flex;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    /* Glass effect tipo iOS */
+    background: rgba(11,13,21,.92);
+    backdrop-filter: blur(18px) saturate(180%);
+    -webkit-backdrop-filter: blur(18px) saturate(180%);
+    border-top: 1px solid rgba(255,255,255,.06);
+    padding: 8px 6px calc(8px + env(safe-area-inset-bottom, 0px));
+    align-items: flex-end;
+    justify-content: space-around;
+    gap: 4px;
+  }
+  .mt-item{
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    min-height: 52px;
+    background: transparent;
+    border: 0;
+    color: rgba(255,255,255,.55);
+    padding: 6px 4px;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: color .15s ease, background .15s ease, transform .12s ease;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+  }
+  .mt-item svg{
+    width: 22px; height: 22px;
+    stroke: currentColor;
+  }
+  .mt-item span{
+    font-size: 10.5px;
+    font-weight: 600;
+    letter-spacing: .1px;
+    line-height: 1;
+  }
+  .mt-item:active{ transform: scale(.92); background: rgba(255,255,255,.04); }
+  /* Estado ativo (data-tab corresponde a secao ativa) */
+  .mt-item.is-active{
+    color: var(--primary, #6366f1);
+  }
+  .mt-item.is-active svg{
+    stroke: var(--primary, #6366f1);
+    filter: drop-shadow(0 0 6px rgba(99,102,241,.4));
+  }
+
+  /* ── FAB central (Nova Transacao) ── */
+  .mt-fab{
+    flex: 0 0 auto;
+    margin-top: -22px; /* eleva acima da barra */
+    border: 0;
+    background: transparent;
+    padding: 0;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+    transition: transform .14s ease;
+  }
+  .mt-fab-inner{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 56px; height: 56px;
+    border-radius: 50%;
+    color: #fff;
+    background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+    box-shadow: 0 8px 22px rgba(99,102,241,.45), 0 2px 6px rgba(0,0,0,.35);
+    border: 3px solid var(--bg, #0b0d15);
+  }
+  .mt-fab:active{ transform: scale(.92); }
+
+  /* ── Modal Nova Transacao como bottom sheet (slide-up) ── */
+  #txModal.modal.open{
+    align-items: flex-end !important;
+  }
+  #txModal .modal-content,
+  #txModal > .modal-content,
+  #txModal [class*="modal"]:first-child{
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    border-radius: 22px 22px 0 0 !important;
+    padding-bottom: calc(20px + env(safe-area-inset-bottom, 0px)) !important;
+    animation: bottomSheetUp .28s cubic-bezier(.16,1,.3,1);
+    max-height: 92vh;
+    overflow-y: auto;
+  }
+  /* Drag handle visual no topo do bottom sheet */
+  #txModal .modal-content::before,
+  #txModal > div:first-child::before{
+    content: '';
+    display: block;
+    width: 38px; height: 4px;
+    background: rgba(255,255,255,.18);
+    border-radius: 2px;
+    margin: 6px auto 14px;
+  }
+  @keyframes bottomSheetUp{
+    from{ transform: translateY(100%); opacity: .4; }
+    to  { transform: translateY(0);    opacity: 1;  }
+  }
+
+  /* ── Tap targets minimos 44px ── */
+  .btn, .btn-primary, .btn-ghost, .form-input, .form-select,
+  .nav-item, .icon-btn, button:not(.mt-item):not(.mt-fab):not(.aff-tab-btn){
+    min-height: 44px;
+  }
+  /* Tira o highlight azul/cinza do touch */
+  button, a, .nav-item, .kpi-card, [onclick]{
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* ── Scroll snap suave em listas horizontais (filtros de periodo etc) ── */
+  .period-filter, .rank-period-tabs, .aff-tabs{
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+  }
+  .period-filter > *, .rank-period-tabs > *, .aff-tabs > *{
+    scroll-snap-align: center;
+  }
+
+  /* ── Header de cada secao mais "card-like" tipo app ── */
+  .section-title, h2, h3{
+    letter-spacing: -.2px;
+  }
+
+  /* ── Transicao suave entre secoes ── */
+  .section.active{
+    animation: appFadeIn .22s ease-out;
+  }
+  @keyframes appFadeIn{
+    from{ opacity: 0; transform: translateY(4px); }
+    to  { opacity: 1; transform: translateY(0); }
+  }
+}
+
+/* ── Action sheet "Mais" (overlay com lista de outras paginas) ── */
+.mobile-more-sheet{
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: none;
+  align-items: flex-end;
+  justify-content: center;
+  background: rgba(0,0,0,.55);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+.mobile-more-sheet.is-open{ display: flex; }
+.mobile-more-sheet .mms-card{
+  width: 100%;
+  background: #14161f;
+  border-radius: 22px 22px 0 0;
+  padding: 8px 14px calc(20px + env(safe-area-inset-bottom, 0px));
+  max-height: 80vh;
+  overflow-y: auto;
+  animation: bottomSheetUp .26s cubic-bezier(.16,1,.3,1);
+}
+.mobile-more-sheet .mms-handle{
+  width: 38px; height: 4px;
+  background: rgba(255,255,255,.18);
+  border-radius: 2px;
+  margin: 6px auto 14px;
+}
+.mobile-more-sheet .mms-title{
+  font-size: 13px; font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: .8px;
+  padding: 6px 4px 10px;
+}
+.mobile-more-sheet .mms-item{
+  display: flex; align-items: center; gap: 14px;
+  padding: 14px 10px;
+  color: var(--text);
+  font-size: 15px;
+  font-weight: 500;
+  border-radius: 12px;
+  cursor: pointer;
+  border: 0;
+  width: 100%;
+  background: transparent;
+  text-align: left;
+  -webkit-tap-highlight-color: transparent;
+}
+.mobile-more-sheet .mms-item svg{
+  width: 22px; height: 22px;
+  color: var(--text-muted);
+  stroke: currentColor;
+}
+.mobile-more-sheet .mms-item:active{ background: rgba(255,255,255,.04); }
+.mobile-more-sheet .mms-item.is-danger{ color: #ef4444; }
+.mobile-more-sheet .mms-item.is-danger svg{ color: #ef4444; }
+/* Item premium "Assinatura" — destaque sutil (ouro) pra puxar o olho */
+.mobile-more-sheet .mms-item-pro{ color: #f59e0b; }
+.mobile-more-sheet .mms-item-pro svg{ color: #f59e0b; fill: rgba(245,158,11,.15); }
+/* Divisor entre grupos da sheet */
+.mobile-more-sheet .mms-divider{
+  height: 1px;
+  background: rgba(255,255,255,.06);
+  margin: 8px 4px;
+}
+
+/* ════════════════════════════════════════════════════════════════
+   MOBILE — refinamento POR TAMANHO de tela
+   Cobre todos os celulares reais do mercado:
+   - Pro Max / Plus       (414-430px wide)  → tamanhos padrao
+   - iPhone padrao / 14   (390-414px)        → tamanhos padrao
+   - iPhone SE / S22      (360-389px)        → compacta tabbar
+   - Galaxy Fold dobrado  (<=359px)          → ainda mais compacto
+   - Landscape qualquer mobile               → reduz chrome vertical
+   ════════════════════════════════════════════════════════════════ */
+
+/* ── ≤480px — Smartphones padrao (SE, S22, iPhone Mini) ── */
+@media (max-width:480px){
+  .main{ padding-bottom: calc(64px + env(safe-area-inset-bottom, 0px)) !important; }
+  .mobile-tabbar{ padding: 6px 4px calc(6px + env(safe-area-inset-bottom, 0px)); }
+  .mt-item{ min-height: 48px; padding: 5px 2px; gap: 2px; }
+  .mt-item svg{ width: 20px; height: 20px; }
+  .mt-item span{ font-size: 10px; }
+  .mt-fab{ margin-top: -18px; }
+  .mt-fab-inner{ width: 50px; height: 50px; border-width: 2.5px; }
+  .mt-fab-inner svg{ width: 22px; height: 22px; }
+  .topbar{ padding-left: 12px !important; padding-right: 12px !important; }
+  .topbar-breadcrumb{ font-size: 15px !important; }
+  /* Bottom sheet com menos padding */
+  #txModal .modal-content,
+  #txModal > div:first-child{
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+  }
+  .mobile-more-sheet .mms-card{ padding: 6px 10px calc(16px + env(safe-area-inset-bottom, 0px)); }
+  .mobile-more-sheet .mms-item{ padding: 12px 8px; font-size: 14.5px; gap: 12px; }
+  .mobile-more-sheet .mms-item svg{ width: 20px; height: 20px; }
+}
+
+/* ── ≤360px — Telas BEM pequenas (Galaxy Fold dobrado, iPhone 5/SE 1st gen) ── */
+@media (max-width:360px){
+  .main{ padding-bottom: calc(58px + env(safe-area-inset-bottom, 0px)) !important; }
+  .mobile-tabbar{ padding: 4px 2px calc(4px + env(safe-area-inset-bottom, 0px)); }
+  .mt-item{ min-height: 44px; gap: 1px; padding: 4px 1px; }
+  .mt-item svg{ width: 18px; height: 18px; }
+  .mt-item span{ font-size: 9.5px; }
+  .mt-fab{ margin-top: -16px; }
+  .mt-fab-inner{ width: 46px; height: 46px; border-width: 2px; }
+  .mt-fab-inner svg{ width: 20px; height: 20px; }
+  .topbar-breadcrumb{ font-size: 14px !important; }
+  .mobile-more-sheet .mms-item{ padding: 11px 6px; font-size: 14px; }
+}
+
+/* ── Landscape em qualquer mobile — reduz chrome vertical ── */
+@media (max-width:960px) and (orientation:landscape) and (max-height:500px){
+  /* Tab bar mais baixa pra liberar espaco vertical */
+  .main{ padding-bottom: calc(56px + env(safe-area-inset-bottom, 0px)) !important; }
+  .mobile-tabbar{ padding: 4px 6px calc(4px + env(safe-area-inset-bottom, 0px)); }
+  .mt-item{ min-height: 42px; gap: 0; flex-direction: row; }
+  .mt-item svg{ width: 18px; height: 18px; }
+  .mt-item span{ font-size: 10.5px; margin-left: 4px; }
+  .mt-fab{ margin-top: -14px; }
+  .mt-fab-inner{ width: 44px; height: 44px; border-width: 2px; }
+  .mt-fab-inner svg{ width: 20px; height: 20px; }
+  /* Topbar mais baixa */
+  .topbar{ padding-top: calc(4px + env(safe-area-inset-top, 0px)) !important; padding-bottom: 4px !important; }
+  /* Bottom sheet ocupa mais altura mas com max */
+  #txModal .modal-content,
+  #txModal > div:first-child{ max-height: 95vh !important; }
+}
+
+/* ── Pro Max / Plus / iPhone 14 Plus (≥411px e ≤960px) — pode ser mais generoso ── */
+@media (min-width:411px) and (max-width:960px) and (orientation:portrait){
+  .mt-item span{ font-size: 11px; }
+  .mt-item svg{ width: 23px; height: 23px; }
+  .mt-fab-inner{ width: 58px; height: 58px; }
+  .mt-fab-inner svg{ width: 27px; height: 27px; }
+}
+
+/* ── Telas grandes (≥440px e ≤960px) — agrupa items no CENTRO ──
+   Em phablets/foldables/Pro Max+, items soltos parecem perdidos.
+   Padrao Instagram/Twitter/WhatsApp: mantem cluster centralizado.
+   Aqui criamos uma "ilha" interna com max-width que cresce com a tela. */
+@media (min-width:440px) and (max-width:960px){
+  .mobile-tabbar{
+    /* Container ainda ocupa 100%, mas items ficam centralizados */
+    justify-content: center !important;
+    gap: 8px;
+  }
+  .mt-item{
+    flex: 0 0 auto;
+    min-width: 76px;
+    padding: 6px 10px;
+  }
+  .mt-fab{ margin-left: 4px; margin-right: 4px; }
+}
+
+/* ── Pro Max+ (440-540) — mais espaco entre items pra respiro ── */
+@media (min-width:440px) and (max-width:540px) and (orientation:portrait){
+  .mobile-tabbar{ gap: 10px; }
+  .mt-item{ min-width: 70px; }
+  .mt-fab-inner{ width: 58px; height: 58px; }
+}
+
+/* ── Phablet/Fold aberto (541-720) — items maiores, mais respiro ── */
+@media (min-width:541px) and (max-width:720px){
+  .mobile-tabbar{ gap: 14px; padding: 10px 8px calc(10px + env(safe-area-inset-bottom, 0px)); }
+  .mt-item{ min-width: 82px; padding: 8px 12px; }
+  .mt-item svg{ width: 24px; height: 24px; }
+  .mt-item span{ font-size: 11.5px; }
+  .mt-fab{ margin-top: -24px; margin-left: 8px; margin-right: 8px; }
+  .mt-fab-inner{ width: 62px; height: 62px; }
+  .mt-fab-inner svg{ width: 28px; height: 28px; }
+  /* Bottom sheet com max-width pra nao esticar absurdo */
+  #txModal.modal.open{ align-items: flex-end !important; justify-content: center !important; }
+  #txModal .modal-content,
+  #txModal > div:first-child{
+    max-width: 560px !important;
+    border-radius: 22px 22px 0 0 !important;
+  }
+  /* Action sheet "Mais" tambem com max-width */
+  .mobile-more-sheet .mms-card{ max-width: 560px; border-radius: 22px 22px 0 0; }
+}
+
+/* ── Tablets pequenos (721-960) — items distribuidos mas com max-width ── */
+@media (min-width:721px) and (max-width:960px){
+  .mobile-tabbar{ gap: 18px; padding: 12px 12px calc(12px + env(safe-area-inset-bottom, 0px)); }
+  .mt-item{ min-width: 90px; padding: 8px 14px; }
+  .mt-item svg{ width: 25px; height: 25px; }
+  .mt-item span{ font-size: 12px; }
+  .mt-fab{ margin-top: -26px; }
+  .mt-fab-inner{ width: 64px; height: 64px; }
+  .mt-fab-inner svg{ width: 28px; height: 28px; }
+  #txModal .modal-content,
+  #txModal > div:first-child{ max-width: 600px !important; }
+  .mobile-more-sheet .mms-card{ max-width: 600px; }
+}
