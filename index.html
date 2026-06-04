@@ -1072,20 +1072,20 @@
             </div>
           </div>
         </div>
-        <div class="chart-card">
+        <div class="chart-card" data-card="rep-evo">
           <div class="chart-header"><div><div class="chart-title">Receita vs Despesas vs Lucro</div><div class="chart-subtitle">Evolução mensal completa</div></div></div>
           <div id="reportChartWrap" style="position:relative;width:100%;height:320px">
             <canvas id="reportChart"></canvas>
           </div>
         </div>
         <div class="chart-grid">
-          <div class="chart-card">
+          <div class="chart-card" data-card="rep-despesas">
             <div class="chart-header"><div class="chart-title">Distribuição de Despesas</div></div>
             <div id="expenseChartWrap" style="position:relative;width:100%;height:280px;display:flex;align-items:center;justify-content:center">
               <canvas id="expenseChart" style="max-width:260px;max-height:260px"></canvas>
             </div>
           </div>
-          <div class="chart-card">
+          <div class="chart-card" data-card="rep-lucro">
             <div class="chart-header">
               <div>
                 <div class="chart-title">Distribuição de Lucro</div>
@@ -1127,7 +1127,7 @@
           <button class="trial-ending-note-cta" onclick="subscribeNow('mensal')">Desbloquear Pro →</button>
         </div>
         <div class="page-header"><div class="page-title">Comparação Mensal</div><div class="page-subtitle" id="compareSubtitle">Mês anterior vs mês atual</div></div>
-        <div class="kpi-grid">
+        <div class="kpi-grid" data-card="cmp-kpis">
           <div class="kpi-card" style="--card-color:var(--green)">
             <div class="kpi-label">Receita</div>
             <div class="kpi-value" id="cmpReceitaValue">—</div>
@@ -1154,13 +1154,13 @@
           </div>
         </div>
         <div id="compareAutoBanner" style="display:none;align-items:center;gap:8px;padding:10px 14px;background:rgba(99,102,241,0.08);border:1px solid rgba(99,102,241,0.18);border-radius:10px;font-size:12.5px;color:var(--text-secondary);margin-bottom:14px"></div>
-        <div class="chart-card">
+        <div class="chart-card" data-card="cmp-chart">
           <div class="chart-header"><div class="chart-title">Comparativo por Método</div></div>
           <div id="compareChartWrap" style="position:relative;width:100%;height:300px">
             <canvas id="compareChart"></canvas>
           </div>
         </div>
-        <div class="form-card">
+        <div class="form-card" data-card="cmp-detail">
           <div class="form-card-title" style="display:flex;align-items:center;justify-content:space-between;gap:8px">
             <span>Análise Detalhada por Método</span>
             <button class="btn-ghost" style="padding:6px 14px;font-size:12px" onclick="openMethodsCompareModal()">Editar métodos</button>
@@ -2146,6 +2146,6 @@
 </div>
 
 <script src="config.js?v=9" defer></script>
-<script src="script.js?v=150" defer></script>
+<script src="script.js?v=151" defer></script>
 </body>
 </html>

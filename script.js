@@ -1762,6 +1762,52 @@ var CARDS_CATALOG = [
       icon: '<path d="M3 17l6-6 4 4 8-9"/>',
       accent: '#10b981'
     }
+  ]},
+  { section: 'Relatórios', sectionIcon: 'chart', items: [
+    {
+      key: 'rep-evo',
+      title: 'Receita vs Despesas vs Lucro',
+      desc: 'Evolução mensal completa em gráfico de linha',
+      icon: '<path d="M3 3v18h18"/><path d="M7 14l4-4 4 4 5-6"/>',
+      accent: '#3b82f6'
+    },
+    {
+      key: 'rep-despesas',
+      title: 'Distribuição de Despesas',
+      desc: 'Donut com % de despesas por método',
+      icon: '<circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 019 9"/>',
+      accent: '#ef4444'
+    },
+    {
+      key: 'rep-lucro',
+      title: 'Distribuição de Lucro',
+      desc: 'Donut com % de lucro por método',
+      icon: '<circle cx="12" cy="12" r="9"/><path d="M3 12a9 9 0 0118 0"/>',
+      accent: '#f59e0b'
+    }
+  ]},
+  { section: 'Comparativo', sectionIcon: 'compare', items: [
+    {
+      key: 'cmp-kpis',
+      title: 'KPIs Comparativos',
+      desc: 'Receita, Lucro, Despesas e ROI mês a mês',
+      icon: '<rect x="3" y="12" width="4" height="8" rx="1"/><rect x="10" y="6" width="4" height="14" rx="1"/><rect x="17" y="3" width="4" height="17" rx="1"/>',
+      accent: '#22d3ee'
+    },
+    {
+      key: 'cmp-chart',
+      title: 'Comparativo por Método',
+      desc: 'Gráfico de barras mês anterior vs atual',
+      icon: '<path d="M3 6h7M3 12h11M3 18h6"/><path d="M17 4l4 4-4 4"/>',
+      accent: '#a78bfa'
+    },
+    {
+      key: 'cmp-detail',
+      title: 'Análise Detalhada',
+      desc: 'Lista expandida com barras por método',
+      icon: '<path d="M4 6h16M4 12h16M4 18h10"/>',
+      accent: '#ec4899'
+    }
   ]}
 ];
 
