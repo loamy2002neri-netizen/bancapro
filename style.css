@@ -4155,6 +4155,11 @@ html { -webkit-text-size-adjust:100%; text-size-adjust:100%; }
   margin-bottom: 4px;
 }
 
+/* Sidebar item "Personalizar" — accent roxo igual ao Mais sheet */
+.nav-item.nav-personalizar{ color: #a78bfa; font-weight: 600; }
+.nav-item.nav-personalizar .nav-icon svg{ color: #a78bfa; fill: rgba(167,139,250,.08); }
+.nav-item.nav-personalizar:hover{ background: rgba(167,139,250,.08); }
+
 /* Hero card no topo da aba Personalizar */
 .cust-hero{
   display: flex; align-items: center; gap: 16px;
