@@ -3156,9 +3156,9 @@ function updateTrialStickyBanner(){
   if (daysEl) daysEl.textContent = left;
   if (txtEl){
     if (left === 0){
-      txtEl.innerHTML = '⚠️ <b>Seu trial acabou.</b> Assine pra recuperar acesso completo';
+      txtEl.innerHTML = '<b>Seu trial acabou.</b> Assine para recuperar acesso completo';
     } else if (left === 1){
-      txtEl.innerHTML = '⏰ Último dia do trial — <b>assine antes que expire</b>';
+      txtEl.innerHTML = 'Último dia do trial — <b>assine antes que expire</b>';
     } else {
       txtEl.innerHTML = 'Seu trial termina em <b><span id="trialStickyDays">'+left+' dias</span></b>';
     }
