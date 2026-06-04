@@ -1678,7 +1678,7 @@ function goTo(section, el) {
       if(n.textContent.toLowerCase().includes(section.toLowerCase())) n.classList.add('active');
     });
   }
-  const labels = {dashboard:'Dashboard',methods:'Métodos',transactions:'Transações',accounts:'Contas Depositadas',recharge:'Assinatura',reports:'Relatórios',goals:'Metas',compare:'Comparativo',calculadora:'Calculadora',anotacoes:'Anotações',ranking:'Ranking',settings:'Configurações',admin:'Admin',afiliado:'Minhas Indicações',afiliados:'Afiliados'};
+  const labels = {dashboard:'Dashboard',methods:'Métodos',transactions:'Transações',accounts:'Contas Depositadas',recharge:'Assinatura',reports:'Relatórios',goals:'Metas',compare:'Comparativo',calculadora:'Calculadora',anotacoes:'Anotações',ranking:'Ranking',settings:'Configurações',admin:'Admin',afiliado:'Minhas Indicações',afiliados:'Afiliados',personalizar:'Personalizar'};
   var _bc = document.getElementById('breadcrumb'); if(_bc) _bc.textContent = labels[section] || section;
   closeSidebar();
   if(section === 'reports') setTimeout(initReportCharts, 100);
@@ -1689,6 +1689,7 @@ function goTo(section, el) {
   if(section === 'dashboard') setTimeout(function(){ if(typeof rankUpdateDashCard==='function') rankUpdateDashCard(); }, 100);
   if(section === 'recharge') setTimeout(updateTrialBanner, 50);
   if(section === 'settings') { setTimeout(renderSubscriptionCard, 50); setTimeout(applyAvatar, 50); }
+  if(section === 'personalizar') setTimeout(renderCardCustomizer, 50);
   if(section === 'admin') setTimeout(() => { renderAdminStats(); renderAdminUsers(); renderRankingModeration(); renderAdminErrors(); }, 50);
   // Recalcula banners/avisos do trial pra evitar duplicacao em features Pro
   setTimeout(() => { if (typeof updateAllUpgradeUI === 'function') updateAllUpgradeUI(); }, 30);
@@ -1699,6 +1700,141 @@ function goTo(section, el) {
   // Sincroniza o estado ativo da bottom tab bar mobile
   if (typeof updateMobileTabActive === 'function') setTimeout(updateMobileTabActive, 30);
 }
+
+// ══════════════════════════════════════════════
+//  CUSTOMIZAR CARDS — cada card individual pode ser escondido
+//  pelo usuario nas Configuracoes. Salvo em localStorage.
+//  Estilo widgets do iOS — voce escolhe o que aparece.
+// ══════════════════════════════════════════════
+
+// Catalogo de cards customizaveis — agrupados por secao
+// icon: SVG path | accent: cor do icone | desc: subtitulo curto
+var CARDS_CATALOG = [
+  { section: 'Dashboard', sectionIcon: 'home', items: [
+    {
+      key: 'dash-stats',
+      title: 'Mini-stats',
+      desc: 'Receita, Lucro Hoje/7d/30d, Métodos, Transações, Metas',
+      icon: '<path d="M3 12h4l3-8 4 16 3-8h4"/>',
+      accent: '#22d3ee'
+    },
+    {
+      key: 'dash-rank',
+      title: 'Sua posição no Ranking',
+      desc: 'Card com sua colocação atual e streak',
+      icon: '<path d="M8 21h8M12 17v4M7 4h10v6a5 5 0 01-10 0V4z"/>',
+      accent: '#f59e0b'
+    },
+    {
+      key: 'dash-evo',
+      title: 'Evolução Financeira',
+      desc: 'Gráfico principal de saldo/lucro ao longo do tempo',
+      icon: '<path d="M3 17l6-6 4 4 8-9"/><path d="M14 6h7v7"/>',
+      accent: '#6366f1'
+    },
+    {
+      key: 'dash-categoria',
+      title: 'Por Categoria',
+      desc: 'Gráfico de barras comparando métodos',
+      icon: '<path d="M4 21V8M10 21V4M16 21V12M22 21H2"/>',
+      accent: '#ec4899'
+    }
+  ]},
+  { section: 'Métodos', sectionIcon: 'briefcase', items: [
+    {
+      key: 'met-ranking',
+      title: 'Ranking de Métodos',
+      desc: 'Top métodos mais lucrativos do mês',
+      icon: '<path d="M8 21h8M12 17v4M7 4h10v6a5 5 0 01-10 0V4z"/>',
+      accent: '#fbbf24'
+    },
+    {
+      key: 'met-evo',
+      title: 'Evolução por Método',
+      desc: 'Gráfico de cada método ao longo dos meses',
+      icon: '<path d="M3 17l6-6 4 4 8-9"/>',
+      accent: '#10b981'
+    }
+  ]}
+];
+
+function getHiddenCards(){
+  try {
+    var raw = localStorage.getItem('bancapro-hidden-cards');
+    return raw ? JSON.parse(raw) : [];
+  } catch(e){ return []; }
+}
+function setHiddenCards(list){
+  try { localStorage.setItem('bancapro-hidden-cards', JSON.stringify(list)); } catch(e){}
+}
+function isCardHidden(key){
+  return getHiddenCards().indexOf(key) >= 0;
+}
+function applyCardVisibility(){
+  var hidden = getHiddenCards();
+  // Mostra todos primeiro
+  document.querySelectorAll('[data-card]').forEach(function(el){
+    el.classList.remove('card-hidden');
+  });
+  // Esconde os que estao na lista
+  hidden.forEach(function(key){
+    document.querySelectorAll('[data-card="' + key + '"]').forEach(function(el){
+      el.classList.add('card-hidden');
+    });
+  });
+}
+function toggleCardVisibility(key){
+  var hidden = getHiddenCards();
+  var idx = hidden.indexOf(key);
+  var willBeOn = idx >= 0; // se estava hidden, vai ficar ON
+  if (idx >= 0) hidden.splice(idx, 1);
+  else hidden.push(key);
+  setHiddenCards(hidden);
+  applyCardVisibility();
+  // Atualiza o switch + card parent visual
+  var sw = document.querySelector('[data-card-toggle="' + key + '"]');
+  if (sw){
+    sw.classList.toggle('is-on', willBeOn);
+    var card = sw.closest('.cust-card');
+    if (card){
+      card.classList.toggle('is-on', willBeOn);
+      card.classList.toggle('is-off', !willBeOn);
+    }
+  }
+  if (typeof showToast === 'function'){
+    showToast(willBeOn ? 'Card mostrado' : 'Card escondido', 'info');
+  }
+}
+function renderCardCustomizer(){
+  var container = document.getElementById('cardCustomizerList');
+  if (!container) return;
+  var hidden = getHiddenCards();
+  var html = '';
+  CARDS_CATALOG.forEach(function(group){
+    // Header da secao com pill
+    html += '<div class="cust-section">'
+          + '  <div class="cust-section-pill">' + group.section + '</div>'
+          + '</div>';
+    // Cards individuais
+    group.items.forEach(function(it){
+      var isOn = hidden.indexOf(it.key) < 0;
+      html += '<div class="cust-card ' + (isOn ? 'is-on' : 'is-off') + '" onclick="toggleCardVisibility(\'' + it.key + '\')">'
+            + '  <div class="cust-card-icon" style="background:' + it.accent + '20;color:' + it.accent + '">'
+            + '    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' + it.icon + '</svg>'
+            + '  </div>'
+            + '  <div class="cust-card-text">'
+            + '    <div class="cust-card-title">' + it.title + '</div>'
+            + '    <div class="cust-card-desc">' + it.desc + '</div>'
+            + '  </div>'
+            + '  <div class="cust-switch ' + (isOn ? 'is-on' : '') + '" data-card-toggle="' + it.key + '"></div>'
+            + '</div>';
+    });
+  });
+  container.innerHTML = html;
+}
+// Aplica visibilidade ao carregar
+document.addEventListener('DOMContentLoaded', applyCardVisibility);
+if (document.readyState !== 'loading') applyCardVisibility();
 
 // ══════════════════════════════════════════════
 //  MOBILE NAV — Bottom Tab Bar + "Mais" Action Sheet
@@ -1722,7 +1858,8 @@ function mobileNav(tab){
     calc:       'calculadora',
     afiliados:  'afiliados',
     admin:      'admin',
-    recharge:   'recharge'
+    recharge:   'recharge',
+    personalizar: 'personalizar'
   };
   var sec = map[tab] || tab;
   // Fecha sheet "Mais" se estiver aberta
@@ -1767,6 +1904,7 @@ function mobileNavMore(){
       + '  <button class="mms-item" onclick="mobileNav(\'calc\')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 7h8M8 11h2M12 11h2M16 11h0M8 15h2M12 15h2M16 15h0M8 19h2M12 19h2M16 19h0"/></svg>Calculadora</button>'
       + '  <button class="mms-item" onclick="mobileNav(\'anotacoes\')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h12l4 4v12H4z"/><path d="M16 4v4h4M8 12h8M8 16h6"/></svg>Anotacoes</button>'
       + '  <button class="mms-item" onclick="mobileNav(\'settings\')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 00.3 1.8l.1.1a2 2 0 11-2.8 2.8l-.1-.1a1.7 1.7 0 00-1.8-.3 1.7 1.7 0 00-1 1.5V21a2 2 0 11-4 0v-.1a1.7 1.7 0 00-1-1.5 1.7 1.7 0 00-1.8.3l-.1.1a2 2 0 11-2.8-2.8l.1-.1a1.7 1.7 0 00.3-1.8 1.7 1.7 0 00-1.5-1H3a2 2 0 110-4h.1a1.7 1.7 0 001.5-1 1.7 1.7 0 00-.3-1.8l-.1-.1a2 2 0 112.8-2.8l.1.1a1.7 1.7 0 001.8.3h0a1.7 1.7 0 001-1.5V3a2 2 0 114 0v.1a1.7 1.7 0 001 1.5 1.7 1.7 0 001.8-.3l.1-.1a2 2 0 112.8 2.8l-.1.1a1.7 1.7 0 00-.3 1.8v0a1.7 1.7 0 001.5 1H21a2 2 0 110 4h-.1a1.7 1.7 0 00-1.5 1z"/></svg>Configuracoes</button>'
+      + '  <button class="mms-item mms-item-accent" onclick="mobileNav(\'personalizar\')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l2.4 4.8L20 9l-4 4 .9 5.5L12 16l-4.9 2.5L8 13 4 9l5.6-1.2z"/></svg>Personalizar</button>'
       + '  <button class="mms-item mms-item-pro" onclick="mobileNav(\'recharge\')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3 6 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1z"/></svg>Assinatura</button>'
       + '  <div class="mms-divider"></div>'
       + '  <button class="mms-item is-danger" onclick="closeMobileMoreSheet(); if(typeof logout===\'function\') logout();"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><path d="M16 17l5-5-5-5M21 12H9"/></svg>Sair da conta</button>'

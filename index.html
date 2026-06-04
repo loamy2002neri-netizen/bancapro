@@ -18,7 +18,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
-<link rel="stylesheet" href="style.css?v=108"/>
+<link rel="stylesheet" href="style.css?v=113"/>
 </head>
 <body>
 
@@ -621,7 +621,7 @@
         </div>
 
         <!-- SECONDARY KPIs -->
-        <div class="stat-row">
+        <div class="stat-row" data-card="dash-stats">
           <div class="stat-chip"><div class="stat-chip-label">Receita Total</div><div class="stat-chip-value" id="statReceitaTotal">R$ 24.360</div></div>
           <div class="stat-chip"><div class="stat-chip-label">Lucro Hoje</div><div class="stat-chip-value" id="statLucroHoje" style="color:var(--green)">+R$ 840</div></div>
           <div class="stat-chip"><div class="stat-chip-label">Lucro 7 dias</div><div class="stat-chip-value" id="statLucroSemanal" style="color:var(--green)">+R$ 4.120</div></div>
@@ -632,7 +632,7 @@
         </div>
 
         <!-- MAIN CHART -->
-        <div class="chart-card" style="overflow:hidden;padding:24px;margin-bottom:20px">
+        <div class="chart-card" data-card="dash-evo" style="overflow:hidden;padding:24px;margin-bottom:20px">
 
           <!-- Header: título + legenda -->
           <div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:14px">
@@ -672,7 +672,7 @@
         </div>
 
         <!-- DASHBOARD RANK CARD — engloba a posição no ranking global pra puxar pra aba Ranking -->
-        <div class="dash-rank-card" id="dashRankCard" onclick="goTo('ranking')" style="display:none">
+        <div class="dash-rank-card" id="dashRankCard" data-card="dash-rank" onclick="goTo('ranking')" style="display:none">
           <div class="dash-rank-left">
             <div class="dash-rank-icon" id="dashRankIcon"></div>
             <div class="dash-rank-info">
@@ -718,7 +718,7 @@
         <div class="chart-grid" style="margin-top:20px">
 
           <!-- BARRA: 65% -->
-          <div class="chart-card">
+          <div class="chart-card" data-card="dash-categoria">
             <div class="chart-header">
               <div>
                 <div class="chart-title">Por Categoria</div>
@@ -794,16 +794,16 @@
         </div>
 
         <!-- RANKING -->
-        <div class="ranking-card">
+        <div class="ranking-card" data-card="met-ranking">
           <div style="font-size:15px;font-weight:700;margin-bottom:12px">Ranking — Métodos Mais Lucrativos</div>
           <div id="rankingList"></div>
         </div>
 
         <!-- METHOD CARDS -->
-        <div class="methods-grid" id="methodCardsGrid"></div>
+        <div class="methods-grid" id="methodCardsGrid" data-card="met-grid"></div>
 
         <!-- METHOD CHART — ampliado (500px desktop / 340px mobile) -->
-        <div class="chart-card" style="padding:20px;margin-top:16px">
+        <div class="chart-card" data-card="met-evo" style="padding:20px;margin-top:16px">
           <div class="chart-header" style="margin-bottom:12px">
             <div><div class="chart-title" style="font-size:15px;font-weight:600">Evolução por Método — Últimos 6 Meses</div></div>
           </div>
@@ -1724,6 +1724,31 @@
         </div>
       </div>
 
+      <!-- ═══ PERSONALIZAR ═══ -->
+      <div class="section" id="sec-personalizar">
+        <div class="page-header">
+          <div class="page-title">
+            <span style="display:inline-flex;align-items:center;gap:10px">
+              <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="color:var(--accent,#6366f1)"><path d="M12 3l2.4 4.8L20 9l-4 4 .9 5.5L12 16l-4.9 2.5L8 13 4 9l5.6-1.2z"/></svg>
+              Personalizar
+            </span>
+          </div>
+          <div class="page-subtitle">Deixe o app do seu jeito — escolha o que aparece em cada tela</div>
+        </div>
+
+        <div class="cust-hero">
+          <div class="cust-hero-icon">
+            <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg>
+          </div>
+          <div class="cust-hero-text">
+            <div class="cust-hero-title">Widgets do seu jeito</div>
+            <div class="cust-hero-desc">Toque pra ligar/desligar qualquer card. Suas escolhas ficam salvas no aparelho.</div>
+          </div>
+        </div>
+
+        <div id="cardCustomizerList" class="cust-list"></div>
+      </div>
+
       <!-- ═══ ANOTAÇÕES ═══ -->
       <div class="section" id="sec-anotacoes">
         <div class="page-header" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
@@ -2135,6 +2160,6 @@
 </div>
 
 <script src="config.js?v=9" defer></script>
-<script src="script.js?v=142" defer></script>
+<script src="script.js?v=147" defer></script>
 </body>
 </html>
