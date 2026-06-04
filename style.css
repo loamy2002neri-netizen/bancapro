@@ -1329,8 +1329,45 @@
     }
     /* Other secondary charts also smaller on mobile */
     #methodChartWrap, #methodEvolutionWrap {
-      max-height:240px !important;
+      max-height:260px !important;
     }
+    /* Chart.js legend mais compacta no mobile (Evolucao por Metodo) */
+    .chart-card canvas + .chartjs-legend,
+    .chart-card .chart-legend-area {
+      font-size:11px !important;
+    }
+    /* Inputs de data nao crescem absurdos no mobile */
+    .form-input[type="date"] {
+      height:38px !important;
+      padding:8px 10px !important;
+      font-size:13px !important;
+    }
+    .form-input, .form-select { padding:10px 12px; font-size:13.5px; }
+    .form-label { font-size:11.5px; margin-bottom:4px; }
+    .form-group { margin-bottom:10px; }
+    .form-row { gap:10px; }
+    /* Botoes Filtrar / Limpar compactos */
+    .filters-card .btn-primary, .filters-card .btn-ghost {
+      padding:8px 16px !important; font-size:13px !important;
+    }
+    /* Calculadora KPI cards mais compactos */
+    .calc-summary, .calc-result-grid { gap:8px !important; }
+    .calc-kpi, .calc-result-card {
+      padding:14px 12px !important;
+    }
+    .calc-kpi-label, .calc-result-label {
+      font-size:10px !important; letter-spacing:.8px !important;
+    }
+    .calc-kpi-value, .calc-result-value {
+      font-size:18px !important; margin:4px 0 !important;
+    }
+    .calc-kpi-sub, .calc-result-sub {
+      font-size:11px !important; line-height:1.3;
+    }
+    /* Modal "Nova Transação" mais compacto */
+    .modal-content { padding:18px !important; }
+    .modal-title { font-size:17px !important; }
+    .modal-sub { font-size:12px !important; margin-bottom:14px !important; }
     /* Cards de dashboard secundarios mais compactos */
     .dash-rank-card{padding:14px;border-radius:12px}
     .dash-streak{padding:10px 12px;border-radius:10px}

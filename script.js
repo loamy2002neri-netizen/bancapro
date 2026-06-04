@@ -5193,6 +5193,12 @@ function initMethodEvolution() {
   // Detectar se tem alguma data — caso vazio, mostrar mensagem amigável depois
   const hasData = datasets.some(ds => ds.data.some(v => v !== 0));
 
+  // Mobile (<960px): legend mais compacta pra nao ocupar mais espaco que o grafico
+  const isMobile = window.innerWidth < 960;
+  const legendCfg = isMobile
+    ? { font:{size:10}, padding:6, boxWidth:8, boxHeight:8 }
+    : { font:{size:12}, padding:14, boxWidth:11, boxHeight:11 };
+
   methodEvolutionInstance = new Chart(canvas.getContext('2d'), {
     type:'line',
     data:{ labels, datasets },
@@ -5202,8 +5208,8 @@ function initMethodEvolution() {
       layout:{padding:{top:6,right:10,left:0,bottom:0}},
       plugins:{
         legend:{
-          display:true, position:'top', align:'end',
-          labels:{color:getChartColors().text, font:{size:12}, padding:14, boxWidth:11, boxHeight:11, usePointStyle:true, pointStyle:'circle'}
+          display:true, position:'top', align:isMobile?'center':'end',
+          labels:{color:getChartColors().text, ...legendCfg, usePointStyle:true, pointStyle:'circle'}
         },
         tooltip:{
           backgroundColor:getChartColors().tooltipBg, borderColor:getChartColors().tooltipBorder, borderWidth:1, padding:12,
@@ -5226,7 +5232,7 @@ function initMethodEvolution() {
       overlay = document.createElement('div');
       overlay.className = 'evo-empty-overlay';
       overlay.style.cssText = 'position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgba(15,23,42,0.6);backdrop-filter:blur(2px);border-radius:14px;pointer-events:none;text-align:center;padding:20px';
-      overlay.innerHTML = '<div style="font-size:36px;margin-bottom:8px">📊</div><div style="font-size:14px;font-weight:600;color:var(--text-secondary)">Sem dados nos últimos 6 meses</div><div style="font-size:12px;color:var(--text-muted);margin-top:4px">Adicione transações para ver a evolução por método</div>';
+      overlay.innerHTML = '<div style="width:48px;height:48px;border-radius:12px;background:rgba(124,92,255,.12);border:1px solid rgba(124,92,255,.32);display:flex;align-items:center;justify-content:center;margin-bottom:10px;color:#a78bfa"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 20h18M7 20V12M12 20V8M17 20v-6"/></svg></div><div style="font-size:14px;font-weight:600;color:var(--text-secondary)">Sem dados nos últimos 6 meses</div><div style="font-size:12px;color:var(--text-muted);margin-top:4px">Adicione transações para ver a evolução por método</div>';
       wrap.style.position = 'relative';
       wrap.appendChild(overlay);
     }
