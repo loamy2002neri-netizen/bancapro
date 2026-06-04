@@ -3290,17 +3290,85 @@ function updateProSectionWarnings(){
   notes.forEach(n => n.style.display = '');
 }
 
-// Modal de upsell Pro premium (quando Free clica em feature Pro)
-const PRO_UPSELL_TITLES = {
-  reports:     'Relatórios é exclusivo para assinantes Pro',
-  compare:     'Comparativo é exclusivo para assinantes Pro',
-  calculadora: 'Calculadora é exclusiva para assinantes Pro'
+// Modal de upsell Pro (estilo Canva — preview da feature bloqueada)
+const PRO_UPSELL_DATA = {
+  reports: {
+    title: 'Desbloqueie Relatórios avançados',
+    sub: 'Análises detalhadas de performance por período, método e estratégia. Veja gráficos, distribuição de despesas e ROI por método.',
+    preview: `<svg viewBox="0 0 320 140" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <defs><linearGradient id="upsRep" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#a78bfa" stop-opacity=".95"/><stop offset="1" stop-color="#7c5cff" stop-opacity=".4"/></linearGradient></defs>
+      <rect x="30" y="80" width="32" height="50" rx="3" fill="url(#upsRep)"/>
+      <rect x="74" y="55" width="32" height="75" rx="3" fill="url(#upsRep)"/>
+      <rect x="118" y="35" width="32" height="95" rx="3" fill="url(#upsRep)"/>
+      <rect x="162" y="60" width="32" height="70" rx="3" fill="url(#upsRep)"/>
+      <rect x="206" y="20" width="32" height="110" rx="3" fill="url(#upsRep)"/>
+      <rect x="250" y="45" width="32" height="85" rx="3" fill="url(#upsRep)"/>
+      <line x1="20" y1="130" x2="300" y2="130" stroke="rgba(255,255,255,.15)" stroke-width="1"/>
+      <circle cx="270" cy="30" r="3" fill="#34d399"/><circle cx="270" cy="30" r="6" fill="#34d399" fill-opacity=".3"/>
+    </svg>`
+  },
+  compare: {
+    title: 'Desbloqueie o Comparativo mensal',
+    sub: 'Compare meses lado a lado para identificar tendências, ajustar estratégias e ver sua evolução real ao longo do tempo.',
+    preview: `<svg viewBox="0 0 320 140" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="upsC1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#a78bfa"/><stop offset="1" stop-color="#7c5cff" stop-opacity=".4"/></linearGradient>
+        <linearGradient id="upsC2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#34d399"/><stop offset="1" stop-color="#10b981" stop-opacity=".4"/></linearGradient>
+      </defs>
+      <rect x="50" y="60" width="50" height="70" rx="4" fill="url(#upsC1)"/>
+      <rect x="110" y="35" width="50" height="95" rx="4" fill="url(#upsC2)"/>
+      <rect x="180" y="80" width="50" height="50" rx="4" fill="url(#upsC1)"/>
+      <rect x="240" y="50" width="50" height="80" rx="4" fill="url(#upsC2)"/>
+      <line x1="40" y1="130" x2="300" y2="130" stroke="rgba(255,255,255,.15)" stroke-width="1"/>
+      <text x="75" y="22" fill="rgba(255,255,255,.55)" font-size="9" font-family="system-ui">Mai</text>
+      <text x="135" y="22" fill="#34d399" font-size="9" font-family="system-ui" font-weight="700">Jun ↑</text>
+      <text x="205" y="22" fill="rgba(255,255,255,.55)" font-size="9" font-family="system-ui">Jul</text>
+      <text x="265" y="22" fill="#34d399" font-size="9" font-family="system-ui" font-weight="700">Ago</text>
+    </svg>`
+  },
+  calculadora: {
+    title: 'Desbloqueie a Calculadora Pro',
+    sub: 'Surebet, stake ideal, ROI, breakeven e simulações de cenários para apostar com matemática do seu lado, não no instinto.',
+    preview: `<svg viewBox="0 0 320 140" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <defs><linearGradient id="upsCalc" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#a78bfa" stop-opacity=".2"/><stop offset="1" stop-color="#7c5cff" stop-opacity=".05"/></linearGradient></defs>
+      <rect x="80" y="14" width="160" height="112" rx="10" fill="url(#upsCalc)" stroke="rgba(167,139,250,.42)" stroke-width="1"/>
+      <rect x="90" y="22" width="140" height="24" rx="4" fill="rgba(255,255,255,.08)"/>
+      <text x="218" y="40" fill="#34d399" font-size="13" font-family="system-ui" font-weight="700" text-anchor="end">R$ 2.847,50</text>
+      <text x="98" y="40" fill="rgba(255,255,255,.45)" font-size="9" font-family="system-ui">ROI esperado</text>
+      <g fill="rgba(255,255,255,.08)">
+        <rect x="92" y="56" width="32" height="28" rx="4"/>
+        <rect x="128" y="56" width="32" height="28" rx="4"/>
+        <rect x="164" y="56" width="32" height="28" rx="4"/>
+        <rect x="200" y="56" width="22" height="28" rx="4"/>
+        <rect x="92" y="88" width="32" height="28" rx="4"/>
+        <rect x="128" y="88" width="32" height="28" rx="4"/>
+        <rect x="164" y="88" width="32" height="28" rx="4"/>
+      </g>
+      <rect x="200" y="88" width="22" height="28" rx="4" fill="#7c5cff"/>
+      <g fill="rgba(255,255,255,.55)" font-size="11" font-family="system-ui" text-anchor="middle">
+        <text x="108" y="74">7</text><text x="144" y="74">8</text><text x="180" y="74">9</text>
+        <text x="108" y="106">4</text><text x="144" y="106">5</text><text x="180" y="106">6</text>
+      </g>
+      <text x="211" y="74" fill="rgba(255,255,255,.55)" font-size="11" font-family="system-ui" text-anchor="middle">÷</text>
+      <text x="211" y="106" fill="#fff" font-size="11" font-family="system-ui" text-anchor="middle" font-weight="700">=</text>
+    </svg>`
+  }
 };
+
 function openProUpsellModal(section){
   const el = document.getElementById('proUpsellModal');
   if (!el) return;
-  const titleEl = document.getElementById('proUpsellTitle');
-  if (titleEl) titleEl.textContent = PRO_UPSELL_TITLES[section] || 'Esta tela é exclusiva para assinantes Pro';
+  const data = PRO_UPSELL_DATA[section] || PRO_UPSELL_DATA.reports;
+  const titleEl = document.getElementById('upsellTitle');
+  const subEl = document.getElementById('upsellSub');
+  const previewEl = document.getElementById('upsellPreviewContent');
+  if (titleEl) titleEl.textContent = data.title;
+  if (subEl) subEl.textContent = data.sub;
+  if (previewEl) previewEl.innerHTML = data.preview;
+  // Destaca o extra correspondente
+  el.querySelectorAll('.upsell-extra').forEach(x => {
+    x.classList.toggle('is-current', x.getAttribute('data-extra') === section);
+  });
   el.classList.add('open');
   el.style.display = 'flex';
 }

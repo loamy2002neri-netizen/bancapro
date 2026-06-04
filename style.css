@@ -3109,3 +3109,167 @@ html { -webkit-text-size-adjust:100%; text-size-adjust:100%; }
   .paywall-plans{grid-template-columns:1fr;padding:20px 16px 12px;gap:12px}
   .paywall-guarantee{margin:0 16px 14px;font-size:11.5px}
 }
+
+/* ═══════════════════════════════════════════
+   PRO UPSELL MODAL v2 — estilo Canva
+   ═══════════════════════════════════════════ */
+.pro-upsell-canva{
+  max-width:480px !important;padding:0 !important;border-radius:18px !important;
+  background:linear-gradient(180deg,#161827 0%,#0e101a 100%) !important;
+  border:1px solid rgba(139,92,246,.28) !important;
+  overflow:hidden !important;position:relative !important;
+}
+.pro-upsell-canva .pro-upsell-close{z-index:5}
+.upsell-preview{
+  position:relative;width:100%;height:170px;
+  background:radial-gradient(ellipse 100% 80% at 50% 100%,rgba(139,92,246,.22),transparent 70%),linear-gradient(180deg,#1a1d2e,#13141f);
+  border-bottom:1px solid rgba(255,255,255,.04);
+  overflow:hidden;
+}
+.upsell-preview-content{
+  position:absolute;inset:0;
+  display:flex;align-items:center;justify-content:center;
+  padding:18px;
+  filter:blur(.5px);
+  opacity:.65;
+}
+.upsell-preview-content svg{width:100%;height:100%;max-width:320px;display:block}
+.upsell-preview-lock{
+  position:absolute;inset:0;
+  display:flex;align-items:center;justify-content:center;
+  background:radial-gradient(circle at center,rgba(20,24,40,.55) 0%,rgba(20,24,40,.85) 70%);
+  z-index:2;
+}
+.upsell-lock-icon{
+  width:54px;height:54px;border-radius:14px;
+  background:linear-gradient(135deg,rgba(139,92,246,.4),rgba(99,102,241,.2));
+  border:1.5px solid rgba(167,139,250,.6);
+  display:flex;align-items:center;justify-content:center;
+  color:#fff;
+  box-shadow:0 14px 32px rgba(139,92,246,.42),0 0 36px rgba(139,92,246,.28);
+  animation:upsellLockPulse 2.4s ease-in-out infinite;
+}
+.upsell-lock-icon svg{width:26px;height:26px}
+@keyframes upsellLockPulse{
+  0%,100%{transform:scale(1);box-shadow:0 14px 32px rgba(139,92,246,.42),0 0 36px rgba(139,92,246,.28)}
+  50%{transform:scale(1.04);box-shadow:0 18px 38px rgba(139,92,246,.55),0 0 48px rgba(139,92,246,.4)}
+}
+
+.upsell-body{padding:22px 24px 22px}
+.upsell-pro-badge{
+  display:inline-flex;align-items:center;gap:5px;
+  font-size:10px;font-weight:800;letter-spacing:1.6px;
+  background:linear-gradient(90deg,#7c5cff,#a282ff);
+  color:#fff;padding:5px 11px;border-radius:6px;margin-bottom:14px;
+  box-shadow:0 4px 14px rgba(124,92,255,.32);
+}
+.upsell-title{
+  font-size:21px;font-weight:800;line-height:1.25;
+  color:#fff;margin:0 0 6px;letter-spacing:-.3px;
+}
+.upsell-sub{
+  font-size:13px;color:var(--text-secondary);
+  line-height:1.55;margin:0 0 22px;
+}
+
+/* Grid de extras (outras features Pro) */
+.upsell-extras{margin-bottom:20px}
+.upsell-extras-label{
+  font-size:10.5px;font-weight:700;letter-spacing:1.4px;
+  text-transform:uppercase;color:var(--text-muted);
+  margin-bottom:10px;
+}
+.upsell-extras-grid{
+  display:grid;grid-template-columns:repeat(4,1fr);gap:8px;
+}
+.upsell-extra{
+  display:flex;flex-direction:column;align-items:center;gap:6px;
+  padding:12px 6px;
+  background:rgba(255,255,255,.025);
+  border:1px solid rgba(255,255,255,.06);
+  border-radius:9px;
+  color:var(--text-muted);
+  transition:all .2s ease;
+}
+.upsell-extra svg{width:18px;height:18px;color:#a78bfa;opacity:.85}
+.upsell-extra span{
+  font-size:10px;font-weight:600;text-align:center;line-height:1.2;
+}
+.upsell-extra.is-current{
+  background:rgba(139,92,246,.12);
+  border-color:rgba(139,92,246,.45);
+  color:#fff;
+}
+.upsell-extra.is-current svg{opacity:1;color:#c9b8ff}
+.upsell-extra.is-current::after{
+  content:'';display:block;width:6px;height:6px;border-radius:50%;
+  background:#10b981;margin-top:-4px;
+  box-shadow:0 0 8px rgba(16,185,129,.6);
+}
+
+/* Plans (botoes de assinar) */
+.upsell-plans{display:flex;flex-direction:column;gap:8px;margin-bottom:14px}
+.upsell-plan{
+  position:relative;
+  display:flex;align-items:center;gap:12px;
+  width:100%;padding:14px 16px;
+  border-radius:11px;cursor:pointer;
+  transition:all .18s ease;
+}
+.upsell-plan svg{flex-shrink:0;color:inherit}
+.upsell-plan-info{flex:1;text-align:left;display:flex;flex-direction:column;gap:2px}
+.upsell-plan-name{
+  font-size:12px;font-weight:700;letter-spacing:.3px;
+  text-transform:uppercase;
+}
+.upsell-plan-price{
+  font-size:16px;font-weight:800;color:#fff;
+}
+.upsell-plan-price span{
+  font-size:11.5px;font-weight:500;
+  color:var(--text-muted);margin-left:4px;
+}
+.upsell-plan-plus{
+  background:rgba(255,255,255,.04);
+  border:1px solid rgba(139,92,246,.32);
+  color:#c9b8ff;
+}
+.upsell-plan-plus:hover{
+  background:rgba(139,92,246,.1);
+  border-color:rgba(139,92,246,.55);
+}
+.upsell-plan-pro{
+  background:linear-gradient(135deg,#7c5cff,#a282ff);
+  border:1px solid rgba(139,92,246,.6);
+  color:#fff;
+  box-shadow:0 8px 24px rgba(124,92,255,.36);
+}
+.upsell-plan-pro:hover{
+  background:linear-gradient(135deg,#8b6cff,#b095ff);
+  box-shadow:0 12px 32px rgba(124,92,255,.5);
+  transform:translateY(-1px);
+}
+.upsell-plan-pro .upsell-plan-name{color:rgba(255,255,255,.82)}
+.upsell-plan-pro .upsell-plan-price span{color:rgba(255,255,255,.72)}
+.upsell-plan-tag{
+  position:absolute;top:-7px;right:14px;
+  font-size:9px;font-weight:800;letter-spacing:1px;
+  background:linear-gradient(90deg,#10b981,#059669);
+  color:#fff;padding:3px 8px;border-radius:5px;
+  box-shadow:0 4px 10px rgba(16,185,129,.32);
+}
+
+.upsell-trust{
+  display:flex;align-items:center;gap:7px;justify-content:center;
+  font-size:11px;color:var(--text-muted);
+  letter-spacing:.2px;
+}
+.upsell-trust svg{color:#34d399;opacity:.85}
+
+@media (max-width:480px){
+  .pro-upsell-canva{max-width:96vw !important}
+  .upsell-preview{height:140px}
+  .upsell-body{padding:18px 18px 18px}
+  .upsell-title{font-size:19px}
+  .upsell-extras-grid{grid-template-columns:repeat(2,1fr)}
+}

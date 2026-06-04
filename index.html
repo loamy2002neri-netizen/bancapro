@@ -18,7 +18,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
-<link rel="stylesheet" href="style.css?v=86"/>
+<link rel="stylesheet" href="style.css?v=87"/>
 </head>
 <body>
 
@@ -1775,45 +1775,78 @@
   </div>
 </div>
 
-<!-- Pro Upsell Modal (premium, mostrado quando Free clica em feature Pro) -->
+<!-- Pro Upsell Modal — estilo Canva (mostrado quando Free clica em feature Pro) -->
 <div id="proUpsellModal" class="pro-upsell-overlay" style="display:none" onclick="closeProUpsellModal(event)">
-  <div class="pro-upsell-card" onclick="event.stopPropagation()">
-    <button class="pro-upsell-close" onclick="closeProUpsellModal()" aria-label="Fechar">×</button>
-    <div class="pro-upsell-badge">RECURSO PRO</div>
-    <div class="pro-upsell-title" id="proUpsellTitle">Esta tela é exclusiva para assinantes Pro</div>
-    <div class="pro-upsell-sub">Desbloqueie todas as ferramentas avançadas e leve sua banca para o próximo nível.</div>
+  <div class="pro-upsell-card pro-upsell-canva" onclick="event.stopPropagation()">
+    <button class="pro-upsell-close" onclick="closeProUpsellModal()" aria-label="Fechar"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
 
-    <div class="pro-upsell-benefits">
-      <div class="pro-upsell-benefit">
-        <div class="pro-upsell-benefit-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 20h18M7 20V12M12 20V8M17 20v-6"/></svg></div>
-        <div><b>Relatórios avançados</b><div class="pro-upsell-benefit-sub">Análises detalhadas de performance por período, método e estratégia</div></div>
-      </div>
-      <div class="pro-upsell-benefit">
-        <div class="pro-upsell-benefit-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 8-8M14 7h7v7"/></svg></div>
-        <div><b>Comparativo mensal</b><div class="pro-upsell-benefit-sub">Evolução lado a lado para identificar tendências e ajustar estratégias</div></div>
-      </div>
-      <div class="pro-upsell-benefit">
-        <div class="pro-upsell-benefit-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2"/><rect x="7" y="5" width="10" height="3"/><circle cx="8" cy="13" r="0.8" fill="currentColor" stroke="none"/><circle cx="12" cy="13" r="0.8" fill="currentColor" stroke="none"/><circle cx="16" cy="13" r="0.8" fill="currentColor" stroke="none"/><circle cx="8" cy="17" r="0.8" fill="currentColor" stroke="none"/><circle cx="12" cy="17" r="0.8" fill="currentColor" stroke="none"/><circle cx="16" cy="17" r="0.8" fill="currentColor" stroke="none"/></svg></div>
-        <div><b>Calculadora profissional</b><div class="pro-upsell-benefit-sub">ROI, stake ideal, breakeven e simulações de cenários</div></div>
-      </div>
-      <div class="pro-upsell-benefit">
-        <div class="pro-upsell-benefit-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l8 4v6c0 5-3.5 9-8 10-4.5-1-8-5-8-10V6l8-4z"/><path d="M8 11l3 3 5-5"/></svg></div>
-        <div><b>Ranking e moderação</b><div class="pro-upsell-benefit-sub">Apareça direto no ranking e tenha acesso à moderação</div></div>
+    <!-- Preview da feature bloqueada -->
+    <div class="upsell-preview" id="upsellPreview">
+      <div class="upsell-preview-content" id="upsellPreviewContent"></div>
+      <div class="upsell-preview-lock">
+        <div class="upsell-lock-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="4" y="11" width="16" height="11" rx="2"/>
+            <path d="M8 11V7a4 4 0 018 0v4"/>
+          </svg>
+        </div>
       </div>
     </div>
 
-    <div class="pro-upsell-cta-row">
-      <button class="pro-upsell-cta primary" onclick="subscribeNow('mensal')">
-        <span class="pro-upsell-cta-label">Plus mensal</span>
-        <span class="pro-upsell-cta-price">R$ 24,90<span class="pro-upsell-cta-period">/mês</span></span>
-      </button>
-      <button class="pro-upsell-cta gold" onclick="subscribeNow('anual')">
-        <span class="pro-upsell-cta-tag">ECONOMIZA 33%</span>
-        <span class="pro-upsell-cta-label">Pro anual</span>
-        <span class="pro-upsell-cta-price">R$ 199<span class="pro-upsell-cta-period">/ano</span></span>
-      </button>
+    <div class="upsell-body">
+      <div class="upsell-pro-badge">
+        <svg viewBox="0 0 24 24" width="11" height="11" fill="currentColor"><path d="M2 8l4 12h12l4-12-6 4-4-8-4 8z"/></svg>
+        RECURSO PRO
+      </div>
+
+      <h1 class="upsell-title" id="upsellTitle">Desbloqueie Relatórios avançados</h1>
+      <p class="upsell-sub" id="upsellSub">Análises detalhadas de performance por período, método e estratégia.</p>
+
+      <div class="upsell-extras">
+        <div class="upsell-extras-label">Você também desbloqueia</div>
+        <div class="upsell-extras-grid">
+          <div class="upsell-extra" data-extra="reports">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 20h18M7 20V12M12 20V8M17 20v-6"/></svg>
+            <span>Relatórios</span>
+          </div>
+          <div class="upsell-extra" data-extra="compare">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 8-8M14 7h7v7"/></svg>
+            <span>Comparativo</span>
+          </div>
+          <div class="upsell-extra" data-extra="calculadora">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2"/><rect x="7" y="5" width="10" height="3"/><circle cx="8" cy="13" r="0.8" fill="currentColor" stroke="none"/><circle cx="12" cy="13" r="0.8" fill="currentColor" stroke="none"/><circle cx="16" cy="13" r="0.8" fill="currentColor" stroke="none"/></svg>
+            <span>Calculadora</span>
+          </div>
+          <div class="upsell-extra" data-extra="ranking">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l8 4v6c0 5-3.5 9-8 10-4.5-1-8-5-8-10V6l8-4z"/><path d="M8 11l3 3 5-5"/></svg>
+            <span>Ranking direto</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="upsell-plans">
+        <button class="upsell-plan upsell-plan-plus" onclick="subscribeNow('mensal')">
+          <div class="upsell-plan-info">
+            <div class="upsell-plan-name">Plus mensal</div>
+            <div class="upsell-plan-price">R$ 24,90<span>/mês</span></div>
+          </div>
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+        </button>
+        <button class="upsell-plan upsell-plan-pro" onclick="subscribeNow('anual')">
+          <div class="upsell-plan-tag">ECONOMIZA 33%</div>
+          <div class="upsell-plan-info">
+            <div class="upsell-plan-name">Pro anual</div>
+            <div class="upsell-plan-price">R$ 199<span>/ano · poupa R$ 99</span></div>
+          </div>
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+        </button>
+      </div>
+
+      <div class="upsell-trust">
+        <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l8 4v6c0 5-3.5 9-8 10-4.5-1-8-5-8-10V6l8-4z"/><path d="M8 11l3 3 5-5"/></svg>
+        Cancele quando quiser · Sem fidelidade · Suporte direto
+      </div>
     </div>
-    <div class="pro-upsell-foot">Cancele quando quiser · Sem fidelidade · Suporte direto</div>
   </div>
 </div>
 
@@ -1966,6 +1999,6 @@
 </div>
 
 <script src="config.js?v=9" defer></script>
-<script src="script.js?v=127" defer></script>
+<script src="script.js?v=128" defer></script>
 </body>
 </html>
