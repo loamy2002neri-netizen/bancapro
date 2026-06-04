@@ -336,6 +336,7 @@ async function cachePlanLabel(user){
     try { localStorage.setItem('bancapro-plan-label', label); } catch(e){}
     const roleEl = document.getElementById('sidebarUserRole');
     if (roleEl) roleEl.textContent = label;
+    try { if (typeof updateAllUpgradeUI === 'function') updateAllUpgradeUI(); } catch(e){}
   } catch(e){}
 }
 
@@ -1255,6 +1256,14 @@ function setPeriod(p, el) {
   el.classList.add('active');
   // Filtra transações de acordo com o período e atualiza os 4 KPIs
   applyPeriodToKPIs(p);
+  // Sincroniza o filtro do grafico (Evolucao Financeira) com o do topo
+  try {
+    const evoMode = { day:'today', week:'7d', month:'30d', year:'yearly' }[p];
+    if (evoMode){
+      const btn = document.querySelector('.evo-btn[data-mode="'+evoMode+'"]');
+      if (btn && typeof setEvoMode === 'function') setEvoMode(evoMode, btn);
+    }
+  } catch(e){}
 }
 
 function applyPeriodToKPIs(p) {
@@ -1299,15 +1308,21 @@ function applyPeriodToKPIs(p) {
   setTextSafe('kpi-despesas', fmtBRL(despesas));
   setTextSafe('kpi-roi',      roi.toFixed(1)+'%');
 
-  // Atualiza subtítulos pra contexto
+  // Atualiza subtítulos pra contexto (texto adaptado ao periodo)
+  const periodSuffix = {
+    'day':   { lucro:'Lucro hoje',                  desp:'Despesas hoje',                  roi:'Retorno médio hoje'         },
+    'week':  { lucro:'Lucro nos últimos 7 dias',    desp:'Despesas nos últimos 7 dias',    roi:'Retorno médio em 7 dias'    },
+    'month': { lucro:'Lucro nos últimos 30 dias',   desp:'Despesas nos últimos 30 dias',   roi:'Retorno médio em 30 dias'   },
+    'year':  { lucro:'Lucro no ano atual',          desp:'Despesas no ano atual',          roi:'Retorno médio no ano atual' }
+  }[p] || { lucro:'Lucro nos últimos 30 dias', desp:'Despesas nos últimos 30 dias', roi:'Retorno médio em 30 dias' };
   const subSaldo = document.getElementById('kpi-saldo-sub');
-  if(subSaldo) subSaldo.textContent = (SALDO_BASE > 0 ? 'Banca: ' + fmtBRL(SALDO_BASE) + ' · saldo atual' : 'Saldo atual da banca');
+  if(subSaldo) subSaldo.textContent = (SALDO_BASE > 0 ? 'Banca: ' + fmtBRL(SALDO_BASE) : 'Saldo atual da banca');
   const subLucro = document.getElementById('kpi-lucro-sub');
-  if(subLucro) subLucro.textContent = periodLabel;
+  if(subLucro) subLucro.textContent = periodSuffix.lucro;
   const subDespesas = document.getElementById('kpi-despesas-sub');
-  if(subDespesas) subDespesas.textContent = periodLabel;
+  if(subDespesas) subDespesas.textContent = periodSuffix.desp;
   const subRoi = document.getElementById('kpi-roi-sub');
-  if(subRoi) subRoi.textContent = (SALDO_BASE > 0 ? 'sobre a banca · ' : '') + periodLabel;
+  if(subRoi) subRoi.textContent = periodSuffix.roi;
 }
 
 // ══════════════════════════════════════════════
@@ -3079,6 +3094,96 @@ function loadTrialState() {
   return new Date(start);
 }
 
+// ═══════════════════════════════════════════
+//  TRIAL STICKY BANNER + UPGRADE NAV + PRO LOCK
+// ═══════════════════════════════════════════
+const PRO_LOCKED_SECTIONS = ['reports','compare','calculadora'];
+
+function getCurrentPlanLabel(){
+  try { return localStorage.getItem('bancapro-plan-label') || 'Free'; } catch(e){ return 'Free'; }
+}
+
+function isPaidPlan(label){
+  return label === 'Plus' || label === 'Pro' || label === 'Administrador';
+}
+
+function updateTrialStickyBanner(){
+  const el = document.getElementById('trialStickyBanner');
+  if (!el) return;
+  const label = getCurrentPlanLabel();
+  if (label !== 'Trial'){ el.classList.remove('show'); return; }
+  // Calcula dias restantes
+  let start = null;
+  try { start = localStorage.getItem('bancapro-trial-start'); } catch(e){}
+  if (!start){
+    try {
+      const user = currentAuthUser;
+      if (user && user.created_at) start = user.created_at;
+    } catch(e){}
+  }
+  if (!start){ start = new Date().toISOString(); try { localStorage.setItem('bancapro-trial-start', start); } catch(e){} }
+  const startDate = new Date(start);
+  const msPerDay = 86400000;
+  const elapsed = Math.floor((Date.now() - startDate.getTime()) / msPerDay);
+  const left = Math.max(TRIAL_DAYS - elapsed, 0);
+  const daysEl = document.getElementById('trialStickyDays');
+  const txtEl  = document.getElementById('trialStickyText');
+  const tailEl = document.getElementById('trialStickyTail');
+  if (daysEl) daysEl.textContent = left;
+  if (txtEl){
+    if (left === 0){
+      txtEl.innerHTML = '⚠️ <b>Seu trial acabou.</b> Assine pra recuperar acesso completo';
+    } else if (left === 1){
+      txtEl.innerHTML = '⏰ Último dia do trial — <b>assine antes que expire</b>';
+    } else {
+      txtEl.innerHTML = 'Seu trial termina em <b><span id="trialStickyDays">'+left+' dias</span></b>';
+    }
+  }
+  if (tailEl && left > 1) tailEl.style.display = '';
+  el.classList.add('show');
+}
+
+function trialBannerClick(){
+  if (typeof subscribeNow === 'function') subscribeNow('mensal');
+  else if (typeof showPaywall === 'function') showPaywall();
+}
+
+function updateUpgradeProNav(){
+  const el = document.getElementById('navUpgradePro');
+  if (!el) return;
+  const label = getCurrentPlanLabel();
+  el.style.display = isPaidPlan(label) ? 'none' : '';
+}
+
+function upgradeNavClick(ev){
+  if (ev && ev.preventDefault) ev.preventDefault();
+  if (typeof subscribeNow === 'function') subscribeNow('mensal');
+  else if (typeof showPaywall === 'function') showPaywall();
+}
+
+function updateProLockNavs(){
+  const label = getCurrentPlanLabel();
+  // Trial e pagos veem normal; so Free pos-trial ve cadeado
+  const showLock = (label === 'Free');
+  PRO_LOCKED_SECTIONS.forEach(sec => {
+    const items = document.querySelectorAll('.nav-item[onclick*="goTo(\''+sec+'\'"]');
+    items.forEach(it => {
+      if (showLock) it.classList.add('is-pro-locked');
+      else it.classList.remove('is-pro-locked');
+    });
+  });
+}
+
+function updateAllUpgradeUI(){
+  try { updateTrialStickyBanner(); } catch(e){}
+  try { updateUpgradeProNav(); } catch(e){}
+  try { updateProLockNavs(); } catch(e){}
+}
+
+// Roda a cada minuto pra atualizar dias do trial sem precisar reload
+setInterval(updateAllUpgradeUI, 60000);
+document.addEventListener('DOMContentLoaded', () => setTimeout(updateAllUpgradeUI, 800));
+
 function updateTrialBanner() {
   const startEl = document.getElementById('trialDaysLeft');
   if(!startEl) return; // não estamos na seção
@@ -3816,7 +3921,7 @@ function buildEvoDatasetFor(mode, fromDate, toDate) {
 }
 
 let mainChartInstance = null;
-let currentEvoMode = 'today';
+let currentEvoMode = '30d';
 
 function buildEvoChart(mode, fromDate, toDate) {
   const w = window.innerWidth;

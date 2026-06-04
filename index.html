@@ -18,7 +18,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
-<link rel="stylesheet" href="style.css?v=70"/>
+<link rel="stylesheet" href="style.css?v=75"/>
 </head>
 <body>
 
@@ -414,6 +414,7 @@
 
     <div class="sidebar-section">
       <div class="sidebar-section-label">Sistema</div>
+      <div class="nav-item nav-upgrade-pro" id="navUpgradePro" onclick="upgradeNavClick(event)" style="display:none"><span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M12 2l2.5 6.5L21 9l-5 4.5L17.5 21 12 17.5 6.5 21 8 13.5 3 9l6.5-.5L12 2z" fill="currentColor" stroke="none"/></svg></span>Upgrade Pro<span class="upgrade-arrow">→</span></div>
       <div class="nav-item" onclick="goTo('settings',this)"><span class="nav-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 01-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg></span>Configurações</div>
       <div class="nav-item" id="navAfiliado" onclick="goTo('afiliado',this)" style="display:none"><span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg></span>Minhas Indicações</div>
       <div class="nav-item" id="navAdmin" onclick="goTo('admin',this)" style="display:none"><span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M12 2l8 4v6c0 5-3.5 9-8 10-4.5-1-8-5-8-10V6l8-4z"/><path d="M9 12l2 2 4-4"/></svg></span>Admin</div>
@@ -499,18 +500,28 @@
     <!-- PAGE CONTENT -->
     <div class="page-content">
 
+      <!-- TRIAL STICKY BANNER (visivel so durante trial, fora pra Pro/Admin) -->
+      <div class="trial-sticky-banner" id="trialStickyBanner" onclick="trialBannerClick()">
+        <span class="trial-sticky-banner-icon">🔥</span>
+        <div class="trial-sticky-banner-text">
+          <span id="trialStickyText">Seu trial termina em <b><span id="trialStickyDays">7</span> dias</b></span>
+          <span style="opacity:.92;font-weight:600;display:none" id="trialStickyTail"> · Assine para manter seu ranking, métricas e relatórios</span>
+        </div>
+        <button class="trial-sticky-banner-cta" onclick="event.stopPropagation();trialBannerClick()">Desbloquear Pro →</button>
+      </div>
+
       <!-- ═══ DASHBOARD ═══ -->
       <div class="section active" id="sec-dashboard">
         <div class="page-header">
           <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
             <div>
               <div class="page-title">Dashboard Financeiro</div>
-              <div class="page-subtitle">Visão completa da sua banca em tempo real</div>
+              <div class="page-subtitle">Visão completa da sua banca, resultados e performance em tempo real</div>
             </div>
             <div class="period-tabs">
               <div class="period-tab" onclick="setPeriod('day',this)">Hoje</div>
-              <div class="period-tab" onclick="setPeriod('week',this)">Semana</div>
-              <div class="period-tab active" onclick="setPeriod('month',this)">Mês</div>
+              <div class="period-tab" onclick="setPeriod('week',this)">7 dias</div>
+              <div class="period-tab active" onclick="setPeriod('month',this)">30 dias</div>
               <div class="period-tab" onclick="setPeriod('year',this)">Ano</div>
             </div>
           </div>
@@ -523,28 +534,28 @@
             <div class="kpi-label">Saldo Total</div>
             <div class="kpi-value" id="kpi-saldo">R$ 0</div>
             <div class="kpi-change neutral" id="kpi-saldo-change">—</div>
-            <div class="kpi-sub" id="kpi-saldo-sub">Mês atual</div>
+            <div class="kpi-sub" id="kpi-saldo-sub">Saldo atual da banca</div>
             <div class="kpi-bg-icon">💰</div>
           </div>
           <div class="kpi-card" style="--card-color:var(--green)">
             <div class="kpi-label">Lucro</div>
             <div class="kpi-value" id="kpi-lucro">R$ 0</div>
             <div class="kpi-change neutral" id="kpi-lucro-change">—</div>
-            <div class="kpi-sub" id="kpi-lucro-sub">Mês atual</div>
+            <div class="kpi-sub" id="kpi-lucro-sub">Lucro nos últimos 30 dias</div>
             <div class="kpi-bg-icon">📈</div>
           </div>
           <div class="kpi-card" style="--card-color:var(--red)">
             <div class="kpi-label">Despesas</div>
             <div class="kpi-value" id="kpi-despesas">R$ 0</div>
             <div class="kpi-change neutral" id="kpi-despesas-change">—</div>
-            <div class="kpi-sub" id="kpi-despesas-sub">Mês atual</div>
+            <div class="kpi-sub" id="kpi-despesas-sub">Despesas nos últimos 30 dias</div>
             <div class="kpi-bg-icon">💸</div>
           </div>
           <div class="kpi-card" style="--card-color:var(--yellow)">
             <div class="kpi-label">ROI Médio</div>
             <div class="kpi-value" id="kpi-roi">0%</div>
             <div class="kpi-change neutral" id="kpi-roi-change">—</div>
-            <div class="kpi-sub" id="kpi-roi-sub">Mês atual</div>
+            <div class="kpi-sub" id="kpi-roi-sub">Retorno médio em 30 dias</div>
             <div class="kpi-bg-icon">🏆</div>
           </div>
         </div>
@@ -553,11 +564,11 @@
         <div class="stat-row">
           <div class="stat-chip"><div class="stat-chip-label">Receita Total</div><div class="stat-chip-value" id="statReceitaTotal">R$ 24.360</div></div>
           <div class="stat-chip"><div class="stat-chip-label">Lucro Hoje</div><div class="stat-chip-value" id="statLucroHoje" style="color:var(--green)">+R$ 840</div></div>
-          <div class="stat-chip"><div class="stat-chip-label">Lucro Semanal</div><div class="stat-chip-value" id="statLucroSemanal" style="color:var(--green)">+R$ 4.120</div></div>
-          <div class="stat-chip"><div class="stat-chip-label">Lucro Mensal</div><div class="stat-chip-value" id="statLucroMensal" style="color:var(--green)">+R$ 16.840</div></div>
+          <div class="stat-chip"><div class="stat-chip-label">Lucro 7 dias</div><div class="stat-chip-value" id="statLucroSemanal" style="color:var(--green)">+R$ 4.120</div></div>
+          <div class="stat-chip"><div class="stat-chip-label">Lucro 30 dias</div><div class="stat-chip-value" id="statLucroMensal" style="color:var(--green)">+R$ 16.840</div></div>
           <div class="stat-chip"><div class="stat-chip-label">Métodos Ativos</div><div class="stat-chip-value" id="statMetodosAtivos">6 / 6</div></div>
           <div class="stat-chip"><div class="stat-chip-label">Transações</div><div class="stat-chip-value" id="statTransacoes">247</div></div>
-          <div class="stat-chip"><div class="stat-chip-label">Metas Atingidas</div><div class="stat-chip-value" id="statMetasAtingidas" style="color:var(--green)">4 / 5</div></div>
+          <div class="stat-chip"><div class="stat-chip-label">Metas</div><div class="stat-chip-value" id="statMetasAtingidas" style="color:var(--green)">4 de 5</div></div>
         </div>
 
         <!-- MAIN CHART -->
@@ -568,23 +579,20 @@
             <div>
               <div class="chart-title" style="font-size:14px">Evolução Financeira</div>
               <div class="chart-subtitle" id="evoSubtitle">Mensal — Jan a Dez 2026</div>
-              <div id="evoAxisNote" style="display:none;font-size:11px;color:#f59e0b;margin-top:4px;font-weight:600">Lucro/Despesa fora da escala — veja os KPIs acima</div>
+              <div id="evoAxisNote" style="display:none;font-size:11px;color:#c69458;margin-top:4px;font-weight:500;opacity:.85">Lucro e despesas aparecem nos indicadores acima</div>
             </div>
             <div class="chart-legend" style="gap:14px">
               <div class="legend-item"><div class="legend-dot" style="background:#6366f1"></div>Saldo</div>
-              <div class="legend-item"><div class="legend-dot" style="background:#10b981"></div>Lucro</div>
-              <div class="legend-item"><div class="legend-dot" style="background:#f43f5e"></div>Despesas</div>
-              <div class="legend-item"><div class="legend-dot" style="background:#f59e0b"></div>Receita</div>
             </div>
           </div>
 
           <!-- Filtros de período -->
           <div class="evo-filters" style="display:flex;align-items:center;gap:6px;margin-bottom:14px;flex-wrap:wrap">
             <div class="evo-btn-group" style="display:flex;gap:4px;background:var(--bg-secondary);border:1px solid var(--border);border-radius:8px;padding:3px">
-              <button class="evo-btn active" data-mode="today"  onclick="setEvoMode('today',this)">Hoje</button>
-              <button class="evo-btn"        data-mode="7d"     onclick="setEvoMode('7d',this)">7 Dias</button>
-              <button class="evo-btn"        data-mode="30d"    onclick="setEvoMode('30d',this)">30 Dias</button>
-              <button class="evo-btn"        data-mode="yearly"  onclick="setEvoMode('yearly',this)">Anual</button>
+              <button class="evo-btn"        data-mode="today"  onclick="setEvoMode('today',this)">Hoje</button>
+              <button class="evo-btn"        data-mode="7d"     onclick="setEvoMode('7d',this)">7 dias</button>
+              <button class="evo-btn active" data-mode="30d"    onclick="setEvoMode('30d',this)">30 dias</button>
+              <button class="evo-btn"        data-mode="yearly"  onclick="setEvoMode('yearly',this)">Ano</button>
               <button class="evo-btn"        data-mode="custom" onclick="setEvoMode('custom',this)">Personalizado</button>
             </div>
             <!-- Date range (aparece só no modo custom) -->
@@ -1695,6 +1703,6 @@
 </div>
 
 <script src="config.js?v=9" defer></script>
-<script src="script.js?v=113" defer></script>
+<script src="script.js?v=116" defer></script>
 </body>
 </html>
