@@ -1958,10 +1958,8 @@ html { -webkit-text-size-adjust:100%; text-size-adjust:100%; }
   .rank-pill-voce{font-size:9.5px;font-weight:800;color:#fff;background:linear-gradient(135deg,#7c5cff,#a282ff);padding:3px 8px;border-radius:6px;letter-spacing:1.3px;box-shadow:0 4px 10px rgba(124,92,255,.35)}
 
   /* ═══ TIER BARS — Premium Gaming Progression ═══ */
-  .rank-tier-bars-wrap{position:relative;padding:42px 4px 18px;background:radial-gradient(ellipse 110% 80% at 50% 100%,rgba(124,92,255,.12) 0%,rgba(124,92,255,.03) 40%,transparent 70%),radial-gradient(ellipse 60% 50% at 50% 0%,rgba(255,255,255,.025),transparent 70%);border-radius:14px;overflow-x:auto;overflow-y:hidden;scrollbar-width:thin;scrollbar-color:rgba(124,92,255,.3) transparent}
-  .rank-tier-bars-wrap::-webkit-scrollbar{height:6px}
-  .rank-tier-bars-wrap::-webkit-scrollbar-track{background:rgba(255,255,255,.02);border-radius:3px}
-  .rank-tier-bars-wrap::-webkit-scrollbar-thumb{background:linear-gradient(90deg,#7c5cff,#a282ff);border-radius:3px}
+  .rank-tier-bars-wrap{position:relative;padding:42px 4px 18px;background:radial-gradient(ellipse 110% 80% at 50% 100%,rgba(124,92,255,.12) 0%,rgba(124,92,255,.03) 40%,transparent 70%),radial-gradient(ellipse 60% 50% at 50% 0%,rgba(255,255,255,.025),transparent 70%);border-radius:14px;overflow-x:auto;overflow-y:hidden;scrollbar-width:none;-ms-overflow-style:none}
+  .rank-tier-bars-wrap::-webkit-scrollbar{display:none;height:0;width:0}
   .rank-tier-bars{display:grid;grid-template-columns:repeat(15,minmax(58px,1fr));gap:8px;align-items:end;min-height:320px;position:relative;z-index:1;padding-bottom:18px;min-width:fit-content}
   /* Trilho horizontal logo abaixo dos valores R$ — base da jornada */
   .rank-tier-bars::before{content:"";position:absolute;left:1.5%;right:1.5%;bottom:0;height:1.5px;background:linear-gradient(90deg,rgba(124,92,255,.08),rgba(124,92,255,.28) 50%,rgba(250,204,21,.32));border-radius:99px;z-index:0;box-shadow:0 0 14px rgba(124,92,255,.18)}
