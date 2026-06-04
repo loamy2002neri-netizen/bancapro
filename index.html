@@ -18,7 +18,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
-<link rel="stylesheet" href="style.css?v=82"/>
+<link rel="stylesheet" href="style.css?v=83"/>
 </head>
 <body>
 
@@ -1817,14 +1817,45 @@
   </div>
 </div>
 
-<div id="paywallOverlay" class="paywall-overlay" style="display:none">
-  <div class="paywall-card">
-    <div class="paywall-emoji"><svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></div>
-    <div class="paywall-title">Seu acesso expirou</div>
-    <div class="paywall-sub">Seu período grátis terminou. Assine o Apostack para continuar usando o painel completo.</div>
-    <button class="btn-primary" style="margin-bottom:10px" onclick="subscribeNow()">Assinar Plus · R$ 24,90/mês</button>
-    <button class="btn-primary" onclick="subscribeNow('anual')">Assinar Pro · R$ 199/ano</button>
-    <div class="paywall-foot">Já assinou? <a onclick="location.reload()">Atualizar</a> &nbsp;·&nbsp; <a onclick="logout()">Sair</a></div>
+<div id="paywallOverlay" class="paywall-overlay-premium" style="display:none">
+  <div class="paywall-card-premium">
+    <div class="paywall-badge">TRIAL ENCERRADO</div>
+    <div class="paywall-title">Seu trial acabou — volte com tudo desbloqueado</div>
+    <div class="paywall-sub">Os 7 dias de teste expiraram. Assine agora para manter ranking, métricas, relatórios e tudo que você já estava usando.</div>
+
+    <div class="paywall-benefits">
+      <div class="paywall-benefit">
+        <div class="paywall-benefit-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 20h18M7 20V12M12 20V8M17 20v-6"/></svg></div>
+        <div><b>Relatórios avançados</b><div class="paywall-benefit-sub">Análises detalhadas de performance por período, método e estratégia</div></div>
+      </div>
+      <div class="paywall-benefit">
+        <div class="paywall-benefit-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 8-8M14 7h7v7"/></svg></div>
+        <div><b>Comparativo mensal</b><div class="paywall-benefit-sub">Evolução lado a lado para identificar tendências e ajustar estratégias</div></div>
+      </div>
+      <div class="paywall-benefit">
+        <div class="paywall-benefit-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l8 4v6c0 5-3.5 9-8 10-4.5-1-8-5-8-10V6l8-4z"/><path d="M8 11l3 3 5-5"/></svg></div>
+        <div><b>Ranking e moderação</b><div class="paywall-benefit-sub">Apareça direto no ranking e tenha acesso a todas as features Pro</div></div>
+      </div>
+    </div>
+
+    <div class="paywall-cta-row">
+      <button class="paywall-cta primary" onclick="subscribeNow('mensal')">
+        <span class="paywall-cta-label">Plus mensal</span>
+        <span class="paywall-cta-price">R$ 24,90<span class="paywall-cta-period">/mês</span></span>
+      </button>
+      <button class="paywall-cta gold" onclick="subscribeNow('anual')">
+        <span class="paywall-cta-tag">ECONOMIZA 33%</span>
+        <span class="paywall-cta-label">Pro anual</span>
+        <span class="paywall-cta-price">R$ 199<span class="paywall-cta-period">/ano</span></span>
+      </button>
+    </div>
+    <div class="paywall-foot-premium">
+      <span>Cancele quando quiser · Sem fidelidade</span>
+      <span class="paywall-foot-sep">·</span>
+      <a onclick="location.reload()">Já assinei, atualizar</a>
+      <span class="paywall-foot-sep">·</span>
+      <a onclick="logout()">Sair</a>
+    </div>
   </div>
 </div>
 
@@ -1860,6 +1891,6 @@
 </div>
 
 <script src="config.js?v=9" defer></script>
-<script src="script.js?v=125" defer></script>
+<script src="script.js?v=126" defer></script>
 </body>
 </html>

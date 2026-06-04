@@ -371,6 +371,36 @@ async function checkAccess(user) {
 function showPaywall() { const el = document.getElementById('paywallOverlay'); if (el) el.style.display = 'flex'; }
 function hidePaywall() { const el = document.getElementById('paywallOverlay'); if (el) el.style.display = 'none'; }
 
+// Re-checagem de acesso durante a sessao (alem do enterApp inicial)
+// Pega usuario do Supabase ou cache local, verifica se ainda pode acessar
+let _lastAccessCheck = 0;
+async function recheckAccess(){
+  // Throttle: nao roda mais do que 1x por 30s
+  const now = Date.now();
+  if (now - _lastAccessCheck < 30000) return;
+  _lastAccessCheck = now;
+  try {
+    if (!currentAuthUser) return;
+    const allowed = await checkAccess(currentAuthUser);
+    if (!allowed){
+      showPaywall();
+    }
+  } catch(e){}
+}
+
+// Hook na navegacao (depois do goTo executar): re-valida
+const _origGoToForRecheck = window.goTo;
+if (typeof _origGoToForRecheck === 'function'){
+  window.goTo = function(){
+    const r = _origGoToForRecheck.apply(this, arguments);
+    setTimeout(recheckAccess, 100);
+    return r;
+  };
+}
+
+// Quando a aba volta ao foco (usuario voltou ao app depois de horas)
+window.addEventListener('focus', () => { recheckAccess(); });
+
 // Painel do dono: métricas agregadas (via função get_owner_stats no Supabase)
 async function renderAdminStats() {
   const el = document.getElementById('adminStats');
