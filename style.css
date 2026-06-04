@@ -1316,6 +1316,21 @@
     .trial-sticky-banner-text{font-size:11px;line-height:1.35}
     .trial-sticky-banner-cta{font-size:10px;padding:4px 9px}
     .trial-sticky-banner-icon svg{width:12px;height:12px}
+    /* Pie chart "Distribuição de Lucro" compacto pra nao ficar gigante */
+    #pieChartWrap {
+      width:100% !important; max-width:200px !important;
+      height:180px !important; margin:0 auto !important;
+      padding:0 !important;
+      display:flex; align-items:center; justify-content:center;
+    }
+    #pieChart {
+      width:auto !important; height:auto !important;
+      max-width:180px !important; max-height:180px !important;
+    }
+    /* Other secondary charts also smaller on mobile */
+    #methodChartWrap, #methodEvolutionWrap {
+      max-height:240px !important;
+    }
     /* Cards de dashboard secundarios mais compactos */
     .dash-rank-card{padding:14px;border-radius:12px}
     .dash-streak{padding:10px 12px;border-radius:10px}
