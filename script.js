@@ -1749,6 +1749,13 @@ var CARDS_CATALOG = [
       accent: '#fbbf24'
     },
     {
+      key: 'met-grid',
+      title: 'Cards de Métodos',
+      desc: 'Cards individuais de cada método (Surebet, Delay, Freebet...)',
+      icon: '<rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/>',
+      accent: '#a78bfa'
+    },
+    {
       key: 'met-evo',
       title: 'Evolução por Método',
       desc: 'Gráfico de cada método ao longo dos meses',
