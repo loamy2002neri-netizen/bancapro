@@ -735,20 +735,6 @@
             </div>
           </div>
 
-          <!-- DONUT: 35% -->
-          <div class="chart-card">
-            <div class="chart-header">
-              <div>
-                <div class="chart-title">Distribuição de Lucro</div>
-                <div class="chart-subtitle">% de lucro por método</div>
-              </div>
-            </div>
-            <!-- Wrapper com altura fixa em px — garante renderização do donut -->
-            <div id="pieChartWrap" style="position:relative;width:100%;height:260px;display:flex;align-items:center;justify-content:center">
-              <canvas id="pieChart" width="240" height="240" style="display:block"></canvas>
-            </div>
-          </div>
-
         </div>
 
         <!-- ALERTS -->
@@ -1105,9 +1091,14 @@
             </div>
           </div>
           <div class="chart-card">
-            <div class="chart-header"><div class="chart-title">ROI por Método</div></div>
-            <div id="roiChartWrap" style="position:relative;width:100%;height:280px">
-              <canvas id="roiChart"></canvas>
+            <div class="chart-header">
+              <div>
+                <div class="chart-title">Distribuição de Lucro</div>
+                <div class="chart-subtitle">% de lucro por método</div>
+              </div>
+            </div>
+            <div id="pieChartWrap" style="position:relative;width:100%;height:280px;display:flex;align-items:center;justify-content:center">
+              <canvas id="pieChart" width="240" height="240" style="display:block"></canvas>
             </div>
           </div>
         </div>
@@ -2160,6 +2151,6 @@
 </div>
 
 <script src="config.js?v=9" defer></script>
-<script src="script.js?v=147" defer></script>
+<script src="script.js?v=148" defer></script>
 </body>
 </html>

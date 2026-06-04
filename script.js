@@ -5210,6 +5210,11 @@ function getMonthAggregatesFromTx() {
 }
 
 function buildReportCharts() {
+  // Distribuicao de Lucro (donut) — agora no Relatorios.
+  // A canvas #pieChart foi MOVIDA do dashboard pra ca, entao precisamos
+  // chamar a builder ao abrir Relatorios.
+  if (typeof buildDashboardPieChart === 'function') buildDashboardPieChart();
+
   // 1) LINE CHART — Receita vs Despesas vs Lucro mês a mês
   const aggregates = getMonthAggregatesFromTx();
   const months = Object.keys(aggregates).sort();
@@ -5298,49 +5303,8 @@ function buildReportCharts() {
     }
   }
 
-  // 3) BAR — ROI por método
-  const roiData = METHODS_CATALOG
-    .map(m => ({name:m.name, roi: Math.round(getMethodStats(m.name).roi)}))
-    .sort((a,b) => b.roi - a.roi);
-
-  const roiCanvas = document.getElementById('roiChart');
-  if(roiCanvas) {
-    if(reportRoiChart) reportRoiChart.destroy();
-    reportRoiChart = new Chart(roiCanvas.getContext('2d'), {
-      type:'bar',
-      data:{
-        labels: roiData.map(x=>x.name),
-        datasets:[{data: roiData.map(x=>x.roi), backgroundColor:d=>d.raw<0?'rgba(244,63,94,0.7)':'rgba(99,102,241,0.7)', borderRadius:6, maxBarThickness:38, categoryPercentage:0.75, barPercentage:0.85}]
-      },
-      options:{
-        ...chartDefaults, responsive:true, maintainAspectRatio:false,
-        layout:{padding:{top:24,right:6,left:0,bottom:0}},
-        plugins:{legend:{display:false}, tooltip:{callbacks:{label:c=>' ROI: '+c.raw+'%'}}},
-        scales:{
-          x:{...(chartDefaults.scales&&chartDefaults.scales.x), ticks:{...((chartDefaults.scales&&chartDefaults.scales.x&&chartDefaults.scales.x.ticks)||{}), color:getChartColors().text}},
-          y:{...(chartDefaults.scales&&chartDefaults.scales.y), ticks:{...((chartDefaults.scales&&chartDefaults.scales.y&&chartDefaults.scales.y.ticks)||{}), color:getChartColors().text, callback:v=>v+'%'}}
-        }
-      },
-      plugins:[{
-        id:'roiValueLabels',
-        afterDatasetsDraw(chart){
-          const {ctx} = chart;
-          const meta = chart.getDatasetMeta(0);
-          const isDark = !document.documentElement.classList.contains('light');
-          ctx.save();
-          ctx.font = '600 11px Inter, system-ui, sans-serif';
-          ctx.textAlign = 'center'; ctx.textBaseline = 'bottom';
-          meta.data.forEach((bar,i)=>{
-            const v = chart.data.datasets[0].data[i];
-            ctx.fillStyle = v < 0 ? '#f43f5e' : (isDark ? '#cbd5e1' : '#475569');
-            const y = v >= 0 ? bar.y - 6 : bar.y + 14;
-            ctx.fillText(v + '%', bar.x, y);
-          });
-          ctx.restore();
-        }
-      }]
-    });
-  }
+  // ROI por Metodo removido (a pedido do user). Distribuicao de Lucro
+  // assume o lugar dele no chart-grid do Relatorios.
 }
 
 function initReportCharts() { buildReportCharts(); }
