@@ -3273,3 +3273,120 @@ html { -webkit-text-size-adjust:100%; text-size-adjust:100%; }
   .upsell-title{font-size:19px}
   .upsell-extras-grid{grid-template-columns:repeat(2,1fr)}
 }
+
+/* ═══════════════════════════════════════════
+   GERENCIAR ASSINATURA — estilo Notion
+   ═══════════════════════════════════════════ */
+.sub-mgmt-card{padding:0 !important;overflow:hidden}
+.sub-mgmt-card > .form-card-title{
+  padding:18px 22px 16px;margin:0;
+  border-bottom:1px solid var(--border);
+  font-size:13px !important;
+}
+#subscriptionCard{padding:22px 22px 20px;display:block !important;background:none !important;border:none !important}
+
+.sub-mgmt-head{
+  display:flex;align-items:flex-start;justify-content:space-between;gap:16px;
+  margin-bottom:22px;
+}
+.sub-mgmt-head-left{display:flex;flex-direction:column;gap:4px;min-width:0}
+.sub-mgmt-plan{
+  font-size:20px;font-weight:700;color:var(--text);
+  letter-spacing:-.3px;line-height:1.2;
+}
+.sub-mgmt-price{
+  font-size:13px;color:var(--text-muted);
+  font-weight:500;letter-spacing:.1px;
+}
+.sub-mgmt-status{
+  display:inline-flex;align-items:center;gap:6px;
+  font-size:11.5px;font-weight:700;letter-spacing:.3px;
+  padding:5px 11px;border-radius:6px;
+  white-space:nowrap;
+}
+.sub-mgmt-status-dot{
+  width:6px;height:6px;border-radius:50%;
+  box-shadow:0 0 8px currentColor;
+}
+.sub-mgmt-status-active{background:rgba(16,185,129,.12);color:#34d399;border:1px solid rgba(16,185,129,.32)}
+.sub-mgmt-status-active .sub-mgmt-status-dot{background:#10b981}
+.sub-mgmt-status-trial{background:rgba(247,147,30,.12);color:#f7931e;border:1px solid rgba(247,147,30,.32)}
+.sub-mgmt-status-trial .sub-mgmt-status-dot{background:#f7931e}
+.sub-mgmt-status-inactive{background:rgba(239,68,68,.1);color:#f87171;border:1px solid rgba(239,68,68,.28)}
+.sub-mgmt-status-inactive .sub-mgmt-status-dot{background:#ef4444}
+.sub-mgmt-status-owner{background:rgba(139,92,246,.14);color:#c9b8ff;border:1px solid rgba(139,92,246,.4)}
+.sub-mgmt-status-owner .sub-mgmt-status-dot{background:#a78bfa}
+
+.sub-mgmt-rows{display:flex;flex-direction:column;gap:0;margin-bottom:6px}
+.sub-mgmt-row{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:11px 0;border-bottom:1px solid var(--border);
+  font-size:13px;
+}
+.sub-mgmt-row:last-child{border-bottom:none}
+.sub-mgmt-row-k{color:var(--text-muted);font-weight:500}
+.sub-mgmt-row-v{color:var(--text);font-weight:600;letter-spacing:.1px}
+.sub-mgmt-row-v.is-warning{color:#f7931e}
+.sub-mgmt-row-v.sub-mgmt-row-muted{color:var(--text-secondary);font-weight:500}
+
+.sub-mgmt-divider{
+  height:1px;background:var(--border);
+  margin:18px 0;
+}
+
+.sub-mgmt-features{margin-bottom:20px}
+.sub-mgmt-features-label{
+  font-size:10.5px;font-weight:700;letter-spacing:1.5px;
+  text-transform:uppercase;color:var(--text-muted);
+  margin-bottom:12px;
+}
+.sub-mgmt-features-list{
+  list-style:none;padding:0;margin:0;
+  display:flex;flex-direction:column;gap:8px;
+}
+.sub-mgmt-features-list li{
+  display:flex;align-items:flex-start;gap:9px;
+  font-size:13px;color:var(--text);
+  line-height:1.45;
+}
+.sub-mgmt-features-list li svg{
+  color:#10b981;flex-shrink:0;margin-top:3px;
+}
+
+.sub-mgmt-empty{
+  font-size:13px;color:var(--text-secondary);
+  line-height:1.55;margin:0 0 18px;
+}
+
+.sub-mgmt-actions{
+  display:flex;flex-wrap:wrap;gap:8px;
+  padding-top:4px;
+}
+.sub-mgmt-btn{
+  padding:9px 16px;
+  font-size:12.5px;font-weight:600;letter-spacing:.2px;
+  border-radius:8px;cursor:pointer;
+  transition:all .15s ease;
+  display:inline-flex;align-items:center;justify-content:center;
+}
+.sub-mgmt-btn.primary{
+  background:var(--text);color:var(--bg);
+  border:1px solid var(--text);
+}
+.sub-mgmt-btn.primary:hover{
+  background:var(--text-secondary);border-color:var(--text-secondary);
+}
+.sub-mgmt-btn.ghost{
+  background:transparent;color:var(--text-secondary);
+  border:1px solid var(--border);
+}
+.sub-mgmt-btn.ghost:hover{
+  background:var(--bg-secondary);color:var(--text);
+  border-color:var(--text-muted);
+}
+
+@media (max-width:640px){
+  .sub-mgmt-head{flex-direction:column;gap:10px}
+  .sub-mgmt-plan{font-size:18px}
+  .sub-mgmt-row{font-size:12.5px}
+}

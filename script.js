@@ -1029,26 +1029,105 @@ async function renderSubscriptionCard() {
   const daysLeft = validUntil ? Math.max(0, Math.ceil((validUntil.getTime() - Date.now()) / 86400000)) : null;
   const validStr = validUntil ? validUntil.toLocaleDateString('pt-BR') : '—';
 
+  // Detalhes do plano em estilo Notion (clean, info-dense)
+  const isAnnual = /anual|annual|yearly/i.test(planName);
+  const isOwner = planName === 'Acesso de Dono';
+
+  // Features incluidas (Notion-style "What's included")
+  const planFeatures = isOwner ? [
+    'Acesso total e permanente',
+    'Todas as funcionalidades Pro',
+    'Painel de moderação e admin',
+    'Conta vitalícia da plataforma'
+  ] : (isActive ? (isAnnual ? [
+    'Tudo do Plus, sem limite',
+    'Badge azul Pro no ranking',
+    'Aparece direto nas 4 abas (sem critérios)',
+    'Suporte prioritário direto',
+    'Acesso antecipado a novos recursos'
+  ] : [
+    'Dashboard completo em tempo real',
+    'Relatórios e Comparativo mensal',
+    'Calculadora profissional',
+    'Ranking entre apostadores',
+    'Sincronização entre dispositivos'
+  ]) : [
+    '7 dias para explorar tudo',
+    'Acesso a todas as features Pro',
+    'Sem cobrança automática',
+    'Cancele a qualquer momento'
+  ]);
+
   if (isActive || isTrial) {
-    const dotColor = isActive ? 'var(--green)' : 'var(--accent)';
-    const statusTxt = isActive ? 'Ativo' : 'Trial ativo';
-    const dl = daysLeft != null ? `${daysLeft} ${daysLeft === 1 ? 'dia' : 'dias'}` : '—';
+    const statusTxt = isOwner ? 'Vitalício' : (isActive ? 'Ativo' : 'Trial ativo');
+    const statusVariant = isOwner ? 'owner' : (isActive ? 'active' : 'trial');
+    const dl = daysLeft != null ? `${daysLeft} ${daysLeft === 1 ? 'dia' : 'dias'}` : '∞';
+    const renewLabel = isOwner ? 'Acesso permanente' : (isActive ? 'Próxima cobrança' : 'Trial encerra em');
+    const renewValue = isOwner ? '—' : validStr;
+    const pricePerPeriod = isOwner ? 'Grátis' : (isActive ? (isAnnual ? 'R$ 199,00 / ano' : 'R$ 24,90 / mês') : 'Em teste');
+
+    const ctaPrimary = isTrial
+      ? '<button class="sub-mgmt-btn primary" onclick="goTo(\'recharge\')">Assinar agora</button>'
+      : (isOwner ? '' : '<button class="sub-mgmt-btn primary" onclick="goTo(\'recharge\')">Mudar plano</button>');
+    const ctaSecondary = isOwner ? '' : '<button class="sub-mgmt-btn ghost" onclick="goTo(\'recharge\')">Histórico e fatura</button>';
+
     el.innerHTML = `
-      <div class="sub-plan-name">${escapeHtml(planName)}</div>
-      <div class="sub-status-line"><span class="sub-dot" style="background:${dotColor}"></span><span style="color:${dotColor};font-weight:600">${statusTxt}</span></div>
-      <div class="sub-grid">
-        <div><div class="sub-k">Status</div><div class="sub-v">${isActive ? 'Active' : 'Trial'}</div></div>
-        <div><div class="sub-k">Válido até</div><div class="sub-v">${validStr}</div></div>
-        <div><div class="sub-k">Dias restantes</div><div class="sub-v" style="color:${daysLeft != null && daysLeft <= 3 ? 'var(--red)' : 'var(--text-primary)'}">${dl}</div></div>
+      <div class="sub-mgmt-head">
+        <div class="sub-mgmt-head-left">
+          <div class="sub-mgmt-plan">${escapeHtml(planName)}</div>
+          <div class="sub-mgmt-price">${pricePerPeriod}</div>
+        </div>
+        <div class="sub-mgmt-status sub-mgmt-status-${statusVariant}">
+          <span class="sub-mgmt-status-dot"></span>${statusTxt}
+        </div>
       </div>
-      <button class="${isTrial ? 'btn-primary' : 'btn-ghost'}" style="margin-top:16px;width:auto;padding:9px 18px" onclick="goTo('recharge')">${isTrial ? 'Assinar agora →' : 'Ver planos / gerenciar'}</button>
+
+      <div class="sub-mgmt-rows">
+        <div class="sub-mgmt-row">
+          <span class="sub-mgmt-row-k">${renewLabel}</span>
+          <span class="sub-mgmt-row-v">${renewValue}</span>
+        </div>
+        <div class="sub-mgmt-row">
+          <span class="sub-mgmt-row-k">Tempo restante</span>
+          <span class="sub-mgmt-row-v ${daysLeft != null && daysLeft <= 3 && !isOwner ? 'is-warning' : ''}">${dl}</span>
+        </div>
+        <div class="sub-mgmt-row">
+          <span class="sub-mgmt-row-k">Método de pagamento</span>
+          <span class="sub-mgmt-row-v sub-mgmt-row-muted">${isOwner ? '—' : (isActive ? 'Kirvano · Pix/Cartão' : 'Nenhum')}</span>
+        </div>
+      </div>
+
+      <div class="sub-mgmt-divider"></div>
+
+      <div class="sub-mgmt-features">
+        <div class="sub-mgmt-features-label">O que está incluso</div>
+        <ul class="sub-mgmt-features-list">
+          ${planFeatures.map(f => `<li><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg><span>${escapeHtml(f)}</span></li>`).join('')}
+        </ul>
+      </div>
+
+      ${(ctaPrimary || ctaSecondary) ? `<div class="sub-mgmt-actions">${ctaPrimary}${ctaSecondary}</div>` : ''}
     `;
   } else {
     el.innerHTML = `
-      <div class="sub-plan-name">Sem assinatura ativa</div>
-      <div class="sub-status-line"><span class="sub-dot" style="background:var(--red)"></span><span style="color:var(--red);font-weight:600">Inativo</span></div>
-      <p style="font-size:13px;color:var(--text-secondary);margin:10px 0 4px;line-height:1.5">Seu período acabou. Assine para liberar o painel completo.</p>
-      <button class="btn-primary" style="margin-top:8px;width:auto;padding:9px 18px" onclick="goTo('recharge')">Assinar agora →</button>
+      <div class="sub-mgmt-head">
+        <div class="sub-mgmt-head-left">
+          <div class="sub-mgmt-plan">Sem assinatura ativa</div>
+          <div class="sub-mgmt-price">Seu período de teste expirou</div>
+        </div>
+        <div class="sub-mgmt-status sub-mgmt-status-inactive">
+          <span class="sub-mgmt-status-dot"></span>Inativo
+        </div>
+      </div>
+
+      <div class="sub-mgmt-divider"></div>
+
+      <p class="sub-mgmt-empty">Assine o Plus ou Pro para recuperar acesso completo às métricas, ranking e relatórios que você usava no trial.</p>
+
+      <div class="sub-mgmt-actions">
+        <button class="sub-mgmt-btn primary" onclick="goTo('recharge')">Ver planos</button>
+        <button class="sub-mgmt-btn ghost" onclick="logout()">Sair da conta</button>
+      </div>
     `;
   }
 }
