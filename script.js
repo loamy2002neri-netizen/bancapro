@@ -5999,11 +5999,12 @@ function rankRenderBoard(youProfit){
   const newPositions = {};
   board_users.forEach((u, i) => { newPositions[u.name] = i + 1; });
 
-  // Lista mostra do #4 em diante (top 3 já tá no pódio); top 10 visível + sua vizinhança se >10
-  const top = board_users.slice(3, 10); // skip top 3
+  // Lista comeca apos o podio (se houver). Podio exige 3+; com <3 mostra tudo na lista
+  const skipCount = board_users.length >= 3 ? 3 : 0;
+  const top = board_users.slice(skipCount, 10);
   const rows = [];
   for (let i = 0; i < top.length; i++){
-    rows.push({ user: top[i], pos: i + 4 });
+    rows.push({ user: top[i], pos: i + skipCount + 1 });
   }
   if (yourPos > 10){
     rows.push({ divider: true });
@@ -6029,18 +6030,45 @@ function rankRenderBoard(youProfit){
   '</span>';
 
   // Estado vazio: ninguem qualificou na janela atual ainda
+  const periodLabel = (_rankPeriod === 'today' ? 'hoje' :
+                       _rankPeriod === 'week'  ? 'esta semana' :
+                       _rankPeriod === 'month' ? 'este mês' : 'no geral');
   if (board_users.length === 0){
-    const periodLabel = (_rankPeriod === 'today' ? 'hoje' :
-                         _rankPeriod === 'week'  ? 'esta semana' :
-                         _rankPeriod === 'month' ? 'este mês' : 'no geral');
+    // Mensagem adaptada: Pro ja elegivel ve "Voce ainda nao lucrou X" / Free ve "Ninguem ainda"
+    const elig = rankComputeEligibility();
+    let titleTxt, subTxt;
+    if (elig.isPro){
+      titleTxt = 'Você ainda não lucrou ' + periodLabel;
+      subTxt = 'Lucre R$ 1+ na janela e seu nome aparece direto no ranking.';
+    } else if (elig.eligible){
+      titleTxt = 'Ninguém entrou no ranking ' + periodLabel + ' ainda';
+      subTxt = 'Seja o primeiro: lucre R$ 1+ na janela.';
+    } else {
+      titleTxt = 'Ninguém entrou no ranking ' + periodLabel + ' ainda';
+      subTxt = 'Seja o primeiro: lucre R$ 1+ na janela e cumpra os critérios de atividade.';
+    }
     board.innerHTML =
       '<div class="rank-empty-state">' +
         '<div class="rank-empty-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l8 4v6c0 5-3.5 9-8 10-4.5-1-8-5-8-10V6l8-4z"/><path d="M8 11l3 3 5-5"/></svg></div>' +
-        '<div class="rank-empty-title">Ninguém entrou no ranking '+periodLabel+' ainda</div>' +
-        '<div class="rank-empty-sub">Seja o primeiro: lucre R$ 1+ na janela e cumpra os critérios.</div>' +
+        '<div class="rank-empty-title">'+titleTxt+'</div>' +
+        '<div class="rank-empty-sub">'+subTxt+'</div>' +
       '</div>';
+    const listWrap = document.getElementById('rankListWrap');
+    if (listWrap) listWrap.style.display = '';
+    const listTitle = document.getElementById('rankListTitle');
+    if (listTitle) listTitle.style.display = 'none';
     if (meta) meta.innerHTML = 'Ranking vazio ' + periodLabel;
     return;
+  }
+
+  // Se ha 1-3 usuarios: tudo cabe no podio, lista nao mostra nada
+  // entao escondemos o titulo "Classificacao completa" pra nao parecer bug
+  const listWrap = document.getElementById('rankListWrap');
+  const listTitle = document.getElementById('rankListTitle');
+  if (board_users.length <= 3){
+    if (listTitle) listTitle.style.display = 'none';
+  } else {
+    if (listTitle) listTitle.style.display = '';
   }
 
   board.innerHTML = rows.map(r => {
