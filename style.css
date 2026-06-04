@@ -539,11 +539,14 @@
   /* ── METHODS GRID — 6 cards em fileira única (versão ampliada) ── */
   .methods-grid {
     display:grid;
-    grid-template-columns:repeat(6,minmax(0,1fr));
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
     gap:12px;
     margin-bottom:16px;
     width:100%;
-    overflow:hidden;
+  }
+  /* Em telas largas (24"+), nao deixa explodir alem de 6 colunas */
+  @media (min-width:1600px) {
+    .methods-grid { grid-template-columns:repeat(6,minmax(0,1fr)); }
   }
   .method-card {
     background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius);
@@ -556,16 +559,20 @@
     content:''; position:absolute; bottom:0; left:0; right:0; height:3px;
     background:linear-gradient(90deg,var(--m-color),var(--m-color2,var(--m-color)));
   }
-  .method-header { display:flex; align-items:center; justify-content:space-between; gap:6px; margin-bottom:12px; }
-  .method-name { font-size:14px; font-weight:600; min-width:0; flex:1; }
+  .method-header {
+    display:flex; align-items:flex-start; justify-content:space-between;
+    gap:8px; margin-bottom:12px; flex-wrap:wrap;
+  }
+  .method-name { font-size:14px; font-weight:600; min-width:0; flex:1; line-height:1.25; word-break:break-word; }
   .method-badge {
-    font-size:11px; font-weight:600; padding:2px 8px; border-radius:6px;
-    background:rgba(99,102,241,0.12); color:var(--accent); white-space:nowrap; flex-shrink:0;
+    font-size:10.5px; font-weight:600; padding:2px 7px; border-radius:6px;
+    background:rgba(99,102,241,0.12); color:var(--accent);
+    white-space:nowrap; flex-shrink:0; align-self:flex-start;
   }
   .method-badge.warn { background:rgba(244,63,94,0.12); color:var(--red); }
-  .method-stats { display:grid; grid-template-columns:1fr 1fr; gap:10px 8px; margin-bottom:12px; }
-  .method-stat-label { font-size:11px; color:var(--text-muted); margin-bottom:2px; line-height:1.2; }
-  .method-stat-value { font-size:16px; font-weight:700; line-height:1.25; }
+  .method-stats { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:12px; }
+  .method-stat-label { font-size:10.5px; color:var(--text-muted); margin-bottom:2px; line-height:1.2; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .method-stat-value { font-size:14.5px; font-weight:700; line-height:1.25; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
   .method-stat-value.green { color:var(--green); }
   .method-stat-value.red { color:var(--red); }
   .method-roi-bar { background:var(--bg-secondary); border-radius:3px; height:6px; margin-bottom:8px; overflow:hidden; }
