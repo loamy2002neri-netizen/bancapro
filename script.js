@@ -274,6 +274,8 @@ async function enterApp(user) {
   } catch(e) { hidePaywall(); }
   // Atualiza o label do plano no sidebar (Free/Trial/Plus/Pro/Administrador)
   try { cachePlanLabel(user); } catch(e){}
+  // Onboarding: mostra welcome modal na 1a visita autenticada
+  try { if (typeof maybeShowWelcome === 'function') maybeShowWelcome(); } catch(e){}
   // Menu Admin/Afiliados só para o dono
   try {
     const isOwner = OWNER_EMAILS.includes((user.email || '').toLowerCase());
@@ -3252,7 +3254,126 @@ function updateAllUpgradeUI(){
   try { updateUpgradeProNav(); } catch(e){}
   try { updateProLockNavs(); } catch(e){}
   try { updateProSectionWarnings(); } catch(e){}
+  try { updateOnboardingCard(); } catch(e){}
 }
+
+// ═══════════════════════════════════════════
+//  WELCOME MODAL + ONBOARDING CHECKLIST
+// ═══════════════════════════════════════════
+function openWelcomeModal(){
+  const el = document.getElementById('welcomeModal');
+  if (!el) return;
+  el.classList.add('open');
+  el.style.display = 'flex';
+}
+function closeWelcomeModal(ev){
+  if (ev && ev.target && ev.target.id !== 'welcomeModal' && ev.type === 'click' && ev.currentTarget?.id !== 'welcomeModal') return;
+  const el = document.getElementById('welcomeModal');
+  if (!el) return;
+  el.classList.remove('open');
+  el.style.display = 'none';
+  try { localStorage.setItem('bancapro-welcome-seen', '1'); } catch(e){}
+}
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape'){
+    const el = document.getElementById('welcomeModal');
+    if (el && el.style.display !== 'none') closeWelcomeModal();
+  }
+});
+
+// Mostra o welcome 1x na 1a visita autenticada
+function maybeShowWelcome(){
+  try {
+    if (localStorage.getItem('bancapro-welcome-seen') === '1') return;
+    // So mostra se ja tiver email (= logado)
+    const email = (localStorage.getItem('bancapro-user-email')||'').trim();
+    if (!email) return;
+    // Delay pequeno pra UI hidratar
+    setTimeout(openWelcomeModal, 1200);
+  } catch(e){}
+}
+
+// Onboarding checklist: detecta progresso e mostra/esconde
+function getOnboardingProgress(){
+  const done = {};
+  try {
+    // Banca inicial definida
+    const banca = parseFloat(localStorage.getItem('bancapro-saldo-base') || '0');
+    if (banca > 0) done.banca = true;
+    // Pelo menos 1 metodo cadastrado
+    const methods = JSON.parse(localStorage.getItem('bancapro-methods') || '[]');
+    if (Array.isArray(methods) && methods.length > 0) done.metodo = true;
+    // Pelo menos 1 transacao
+    const txs = JSON.parse(localStorage.getItem('bancapro-transactions') || '[]');
+    if (Array.isArray(txs) && txs.length > 0) done.transacao = true;
+    // Pelo menos 1 meta
+    const goals = JSON.parse(localStorage.getItem('bancapro-goals') || '[]');
+    if (Array.isArray(goals) && goals.length > 0) done.meta = true;
+    // Visitou Ranking
+    if (localStorage.getItem('bancapro-visited-ranking') === '1') done.ranking = true;
+  } catch(e){}
+  return done;
+}
+
+function updateOnboardingCard(){
+  const card = document.getElementById('onboardingCard');
+  if (!card) return;
+  // Se usuario ja dispensou, nao mostra mais
+  try {
+    if (localStorage.getItem('bancapro-onboarding-dismissed') === '1'){
+      card.style.display = 'none';
+      return;
+    }
+  } catch(e){}
+  const done = getOnboardingProgress();
+  const totalSteps = 5;
+  const doneCount = Object.keys(done).length;
+  // Se ja completou tudo, esconde automaticamente
+  if (doneCount >= totalSteps){ card.style.display = 'none'; return; }
+  card.style.display = '';
+  // Marca steps concluidos
+  card.querySelectorAll('.onboarding-step').forEach(step => {
+    const k = step.getAttribute('data-step');
+    if (done[k]) step.classList.add('is-done');
+    else step.classList.remove('is-done');
+  });
+  // Atualiza subtitulo com progresso
+  const sub = document.getElementById('onboardingProgress');
+  if (sub){
+    if (doneCount === 0) sub.textContent = 'Complete pra começar a tirar valor do Apostack';
+    else sub.textContent = doneCount + ' de ' + totalSteps + ' completos · continue pra liberar tudo';
+  }
+}
+
+function dismissOnboarding(){
+  try { localStorage.setItem('bancapro-onboarding-dismissed', '1'); } catch(e){}
+  const card = document.getElementById('onboardingCard');
+  if (card) card.style.display = 'none';
+}
+
+function onboardingGo(step){
+  // Roteador dos passos do checklist
+  switch(step){
+    case 'banca': goTo('settings'); setTimeout(() => { const b = document.querySelector('[onclick*="openSaldoInicialModal"]'); if (b) b.click(); }, 350); break;
+    case 'metodo': goTo('methods'); break;
+    case 'transacao': openTxModal(); break;
+    case 'meta': goTo('goals'); break;
+    case 'ranking': goTo('ranking'); try { localStorage.setItem('bancapro-visited-ranking', '1'); } catch(e){} break;
+  }
+}
+
+// Quando entra no Ranking, marca como visitado pro checklist
+(function hookRankingVisit(){
+  const orig = window.goTo;
+  if (typeof orig === 'function'){
+    window.goTo = function(section, el){
+      if (section === 'ranking'){
+        try { localStorage.setItem('bancapro-visited-ranking', '1'); } catch(e){}
+      }
+      return orig.apply(this, arguments);
+    };
+  }
+})();
 
 // Roda a cada minuto pra atualizar dias do trial sem precisar reload
 setInterval(updateAllUpgradeUI, 60000);
@@ -5914,7 +6035,7 @@ function rankRenderBoard(youProfit){
                          _rankPeriod === 'month' ? 'este mês' : 'no geral');
     board.innerHTML =
       '<div class="rank-empty-state">' +
-        '<div class="rank-empty-icon">🏆</div>' +
+        '<div class="rank-empty-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l8 4v6c0 5-3.5 9-8 10-4.5-1-8-5-8-10V6l8-4z"/><path d="M8 11l3 3 5-5"/></svg></div>' +
         '<div class="rank-empty-title">Ninguém entrou no ranking '+periodLabel+' ainda</div>' +
         '<div class="rank-empty-sub">Seja o primeiro: lucre R$ 1+ na janela e cumpra os critérios.</div>' +
       '</div>';

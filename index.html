@@ -18,7 +18,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
-<link rel="stylesheet" href="style.css?v=80"/>
+<link rel="stylesheet" href="style.css?v=82"/>
 </head>
 <body>
 
@@ -502,7 +502,7 @@
 
       <!-- TRIAL STICKY BANNER (visivel so durante trial, fora pra Pro/Admin) -->
       <div class="trial-sticky-banner" id="trialStickyBanner" onclick="trialBannerClick()">
-        <span class="trial-sticky-banner-icon">🔥</span>
+        <span class="trial-sticky-banner-icon"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></span>
         <div class="trial-sticky-banner-text">
           <span id="trialStickyText">Seu trial termina em <b><span id="trialStickyDays">7</span> dias</b></span>
           <span style="opacity:.92;font-weight:600;display:none" id="trialStickyTail"> · Assine para manter seu ranking, métricas e relatórios</span>
@@ -512,6 +512,66 @@
 
       <!-- ═══ DASHBOARD ═══ -->
       <div class="section active" id="sec-dashboard">
+
+        <!-- Checklist "Primeiros passos" (visivel pra novos usuarios) -->
+        <div class="onboarding-card" id="onboardingCard" style="display:none">
+          <button class="onboarding-close" onclick="dismissOnboarding()" aria-label="Dispensar"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
+          <div class="onboarding-head">
+            <div class="onboarding-head-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M9 11l3 3L22 4"/>
+                <path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/>
+              </svg>
+            </div>
+            <div>
+              <div class="onboarding-title">Primeiros passos</div>
+              <div class="onboarding-sub" id="onboardingProgress">Complete para começar a tirar valor do Apostack</div>
+            </div>
+          </div>
+          <div class="onboarding-steps">
+            <div class="onboarding-step" data-step="banca" onclick="onboardingGo('banca')">
+              <div class="onboarding-check"></div>
+              <div class="onboarding-step-text">
+                <b>Defina sua banca inicial</b>
+                <span>Em Configurações, registre quanto você tem hoje</span>
+              </div>
+              <div class="onboarding-arrow"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg></div>
+            </div>
+            <div class="onboarding-step" data-step="metodo" onclick="onboardingGo('metodo')">
+              <div class="onboarding-check"></div>
+              <div class="onboarding-step-text">
+                <b>Adicione seu primeiro método</b>
+                <span>Bet365, Sportingbet, Betano… registre as casas que você usa</span>
+              </div>
+              <div class="onboarding-arrow"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg></div>
+            </div>
+            <div class="onboarding-step" data-step="transacao" onclick="onboardingGo('transacao')">
+              <div class="onboarding-check"></div>
+              <div class="onboarding-step-text">
+                <b>Lance sua primeira transação</b>
+                <span>Botão "+ Transação" no topo. Registre uma entrada ou ganho</span>
+              </div>
+              <div class="onboarding-arrow"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg></div>
+            </div>
+            <div class="onboarding-step" data-step="meta" onclick="onboardingGo('meta')">
+              <div class="onboarding-check"></div>
+              <div class="onboarding-step-text">
+                <b>Defina uma meta mensal</b>
+                <span>Tenha um alvo claro para acompanhar evolução</span>
+              </div>
+              <div class="onboarding-arrow"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg></div>
+            </div>
+            <div class="onboarding-step" data-step="ranking" onclick="onboardingGo('ranking')">
+              <div class="onboarding-check"></div>
+              <div class="onboarding-step-text">
+                <b>Confira seu rank atual</b>
+                <span>Veja em que tier você está e quanto falta para o próximo</span>
+              </div>
+              <div class="onboarding-arrow"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg></div>
+            </div>
+          </div>
+        </div>
+
         <div class="page-header">
           <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
             <div>
@@ -1018,7 +1078,7 @@
       <!-- ═══ RELATÓRIOS ═══ -->
       <div class="section" id="sec-reports">
         <div class="trial-ending-note" data-pro-warning style="display:none">
-          <span class="trial-ending-note-icon">⏰</span>
+          <span class="trial-ending-note-icon"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></span>
           <div class="trial-ending-note-text">Você perde acesso a <b>Relatórios</b> em <b><span class="trialEndingDays">2</span> dias</b> se não assinar</div>
           <button class="trial-ending-note-cta" onclick="subscribeNow('mensal')">Desbloquear Pro →</button>
         </div>
@@ -1076,7 +1136,7 @@
       <!-- ═══ COMPARATIVO ═══ -->
       <div class="section" id="sec-compare">
         <div class="trial-ending-note" data-pro-warning style="display:none">
-          <span class="trial-ending-note-icon">⏰</span>
+          <span class="trial-ending-note-icon"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></span>
           <div class="trial-ending-note-text">Você perde acesso a <b>Comparativo</b> em <b><span class="trialEndingDays">2</span> dias</b> se não assinar</div>
           <button class="trial-ending-note-cta" onclick="subscribeNow('mensal')">Desbloquear Pro →</button>
         </div>
@@ -1422,7 +1482,7 @@
       <!-- ═══ CALCULADORA ═══ -->
       <div class="section" id="sec-calculadora">
         <div class="trial-ending-note" data-pro-warning style="display:none">
-          <span class="trial-ending-note-icon">⏰</span>
+          <span class="trial-ending-note-icon"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></span>
           <div class="trial-ending-note-text">Você perde acesso a <b>Calculadora</b> em <b><span class="trialEndingDays">2</span> dias</b> se não assinar</div>
           <button class="trial-ending-note-cta" onclick="subscribeNow('mensal')">Desbloquear Pro →</button>
         </div>
@@ -1675,6 +1735,46 @@
   </main>
 </div><!-- /app -->
 <!-- PAYWALL — bloqueio para quem não é assinante (trial expirado) -->
+<!-- Welcome Modal (primeira visita do usuário) -->
+<div id="welcomeModal" class="welcome-overlay" style="display:none" onclick="closeWelcomeModal(event)">
+  <div class="welcome-card" onclick="event.stopPropagation()">
+    <button class="welcome-close" onclick="closeWelcomeModal()" aria-label="Fechar"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
+    <div class="welcome-hero-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 2l2.4 7.4H22l-6.2 4.6L18 21l-6-4.6L6 21l2.2-7L2 9.4h7.6L12 2z"/>
+      </svg>
+    </div>
+    <div class="welcome-title">Bem-vindo ao Apostack</div>
+    <div class="welcome-sub">Você tem <b>7 dias de Pro grátis</b> para explorar tudo. Veja o que dá para fazer:</div>
+
+    <div class="welcome-features">
+      <div class="welcome-feat">
+        <div class="welcome-feat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7h13a4 4 0 014 4v6a2 2 0 01-2 2H5a2 2 0 01-2-2V7z"/><path d="M16 12h3M3 7l2-3h11l2 3"/></svg></div>
+        <div><b>Registre transações em segundos</b><div class="welcome-feat-sub">Entradas, despesas e ganhos por método. Saldo atualiza em tempo real.</div></div>
+      </div>
+      <div class="welcome-feat">
+        <div class="welcome-feat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 20h18M7 20V12M12 20V8M17 20v-6"/></svg></div>
+        <div><b>Dashboard inteligente</b><div class="welcome-feat-sub">Saldo, lucro, ROI e evolução em tempo real. Filtros de período no topo.</div></div>
+      </div>
+      <div class="welcome-feat">
+        <div class="welcome-feat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l8 4v6c0 5-3.5 9-8 10-4.5-1-8-5-8-10V6l8-4z"/><path d="M8 11l3 3 5-5"/></svg></div>
+        <div><b>Ranking entre apostadores</b><div class="welcome-feat-sub">Compita em Hoje, Semana, Mês e Geral. Suba de tier (Ferro → Apex).</div></div>
+      </div>
+      <div class="welcome-feat">
+        <div class="welcome-feat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 8-8M14 7h7v7"/></svg></div>
+        <div><b>Relatórios e Calculadora Pro</b><div class="welcome-feat-sub">Análises detalhadas por método, surebet, stake ideal e simulações.</div></div>
+      </div>
+      <div class="welcome-feat">
+        <div class="welcome-feat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.5" fill="currentColor" stroke="none"/></svg></div>
+        <div><b>Metas personalizadas</b><div class="welcome-feat-sub">Defina objetivos mensais e acompanhe seu progresso ao longo do mês.</div></div>
+      </div>
+    </div>
+
+    <button class="welcome-cta" onclick="closeWelcomeModal()">Começar agora <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="margin-left:6px;vertical-align:-2px"><path d="M5 12h14M13 5l7 7-7 7"/></svg></button>
+    <div class="welcome-foot">Dica: comece registrando sua <b>banca inicial</b> em Configurações</div>
+  </div>
+</div>
+
 <!-- Pro Upsell Modal (premium, mostrado quando Free clica em feature Pro) -->
 <div id="proUpsellModal" class="pro-upsell-overlay" style="display:none" onclick="closeProUpsellModal(event)">
   <div class="pro-upsell-card" onclick="event.stopPropagation()">
@@ -1685,20 +1785,20 @@
 
     <div class="pro-upsell-benefits">
       <div class="pro-upsell-benefit">
-        <div class="pro-upsell-benefit-icon">📊</div>
+        <div class="pro-upsell-benefit-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 20h18M7 20V12M12 20V8M17 20v-6"/></svg></div>
         <div><b>Relatórios avançados</b><div class="pro-upsell-benefit-sub">Análises detalhadas de performance por período, método e estratégia</div></div>
       </div>
       <div class="pro-upsell-benefit">
-        <div class="pro-upsell-benefit-icon">📈</div>
+        <div class="pro-upsell-benefit-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 8-8M14 7h7v7"/></svg></div>
         <div><b>Comparativo mensal</b><div class="pro-upsell-benefit-sub">Evolução lado a lado para identificar tendências e ajustar estratégias</div></div>
       </div>
       <div class="pro-upsell-benefit">
-        <div class="pro-upsell-benefit-icon">🧮</div>
+        <div class="pro-upsell-benefit-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2"/><rect x="7" y="5" width="10" height="3"/><circle cx="8" cy="13" r="0.8" fill="currentColor" stroke="none"/><circle cx="12" cy="13" r="0.8" fill="currentColor" stroke="none"/><circle cx="16" cy="13" r="0.8" fill="currentColor" stroke="none"/><circle cx="8" cy="17" r="0.8" fill="currentColor" stroke="none"/><circle cx="12" cy="17" r="0.8" fill="currentColor" stroke="none"/><circle cx="16" cy="17" r="0.8" fill="currentColor" stroke="none"/></svg></div>
         <div><b>Calculadora profissional</b><div class="pro-upsell-benefit-sub">ROI, stake ideal, breakeven e simulações de cenários</div></div>
       </div>
       <div class="pro-upsell-benefit">
-        <div class="pro-upsell-benefit-icon">🏆</div>
-        <div><b>Ranking e moderação</b><div class="pro-upsell-benefit-sub">Aparece direto no ranking e tem acesso à moderação</div></div>
+        <div class="pro-upsell-benefit-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l8 4v6c0 5-3.5 9-8 10-4.5-1-8-5-8-10V6l8-4z"/><path d="M8 11l3 3 5-5"/></svg></div>
+        <div><b>Ranking e moderação</b><div class="pro-upsell-benefit-sub">Apareça direto no ranking e tenha acesso à moderação</div></div>
       </div>
     </div>
 
@@ -1760,6 +1860,6 @@
 </div>
 
 <script src="config.js?v=9" defer></script>
-<script src="script.js?v=119" defer></script>
+<script src="script.js?v=121" defer></script>
 </body>
 </html>
