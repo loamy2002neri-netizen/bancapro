@@ -3297,18 +3297,27 @@ function maybeShowWelcome(){
 function getOnboardingProgress(){
   const done = {};
   try {
-    // Banca inicial definida
-    const banca = parseFloat(localStorage.getItem('bancapro-saldo-base') || '0');
+    // Banca inicial definida (chave real: bancapro-saldo-inicial)
+    const banca = parseFloat(localStorage.getItem('bancapro-saldo-inicial') || '0');
     if (banca > 0) done.banca = true;
-    // Pelo menos 1 metodo cadastrado
-    const methods = JSON.parse(localStorage.getItem('bancapro-methods') || '[]');
-    if (Array.isArray(methods) && methods.length > 0) done.metodo = true;
-    // Pelo menos 1 transacao
-    const txs = JSON.parse(localStorage.getItem('bancapro-transactions') || '[]');
+    // Pelo menos 1 metodo cadastrado (chave real: bancapro-methods-catalog)
+    let methods = [];
+    try { methods = JSON.parse(localStorage.getItem('bancapro-methods-catalog') || '[]'); } catch(e){}
+    if (!Array.isArray(methods) || methods.length === 0){
+      try { methods = JSON.parse(localStorage.getItem('bancapro-methods-compare') || '[]'); } catch(e){}
+    }
+    // Tambem aceita se ha transacoes (ja indica que tem metodo cadastrado)
+    if ((Array.isArray(methods) && methods.length > 0) || (typeof transactions !== 'undefined' && Array.isArray(transactions) && transactions.length > 0)) done.metodo = true;
+    // Pelo menos 1 transacao (memoria global + fallback localStorage)
+    let txs = [];
+    if (typeof transactions !== 'undefined' && Array.isArray(transactions)) txs = transactions;
+    else { try { txs = JSON.parse(localStorage.getItem('bancapro-transactions') || '[]'); } catch(e){} }
     if (Array.isArray(txs) && txs.length > 0) done.transacao = true;
     // Pelo menos 1 meta
-    const goals = JSON.parse(localStorage.getItem('bancapro-goals') || '[]');
-    if (Array.isArray(goals) && goals.length > 0) done.meta = true;
+    let goalsList = [];
+    if (typeof goals !== 'undefined' && Array.isArray(goals)) goalsList = goals;
+    else { try { goalsList = JSON.parse(localStorage.getItem('bancapro-goals') || '[]'); } catch(e){} }
+    if (Array.isArray(goalsList) && goalsList.length > 0) done.meta = true;
     // Visitou Ranking
     if (localStorage.getItem('bancapro-visited-ranking') === '1') done.ranking = true;
   } catch(e){}
