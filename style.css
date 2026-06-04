@@ -1963,10 +1963,7 @@ html { -webkit-text-size-adjust:100%; text-size-adjust:100%; }
   .rank-tier-bars-wrap::-webkit-scrollbar-track{background:rgba(255,255,255,.02);border-radius:3px}
   .rank-tier-bars-wrap::-webkit-scrollbar-thumb{background:linear-gradient(90deg,#7c5cff,#a282ff);border-radius:3px}
   .rank-tier-bars{display:grid;grid-template-columns:repeat(15,minmax(58px,1fr));gap:8px;align-items:end;min-height:320px;position:relative;z-index:1;padding-bottom:8px;min-width:fit-content}
-  /* Track horizontal conectando os ranks (jornada de progressão) */
-  .rank-tier-bars::before{content:"";position:absolute;left:5%;right:5%;bottom:78px;height:2px;background:linear-gradient(90deg,rgba(124,92,255,.05),rgba(124,92,255,.22) 50%,rgba(250,204,21,.25));border-radius:99px;z-index:0;box-shadow:0 0 16px rgba(124,92,255,.15)}
-  .rank-tier-bars::after{content:"";position:absolute;left:5%;right:5%;bottom:78px;height:2px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.4),transparent);border-radius:99px;z-index:0;animation:tierTrackShine 3.5s ease-in-out infinite}
-  @keyframes tierTrackShine{0%{transform:translateX(-100%)}100%{transform:translateX(100%)}}
+  /* (linha decorativa horizontal removida — atrapalhava a leitura das barras) */
 
   .rank-tier-bar{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;padding-top:38px;transition:transform .3s cubic-bezier(.4,0,.2,1);cursor:default}
   .rank-tier-bar:hover{transform:translateY(-4px)}
