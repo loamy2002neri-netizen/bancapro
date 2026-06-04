@@ -686,10 +686,32 @@ function affUpdateTierCard(activeCount, isVip){
 
 // ── Helper: deriva codigo de indicacao do email pra usuario comum ──
 function affDeriveCodeFromEmail(email){
-  if (!email) return 'USER';
-  // Pega primeira parte do email, deixa caps, remove caracteres especiais
-  const local = email.split('@')[0] || 'USER';
-  return local.replace(/[^a-zA-Z0-9]/g, '').toUpperCase().slice(0, 12) || 'USER';
+  // Codigo anonimo determinKstico no formato "refuser" + 6 caracteres.
+  // Por que: muita gente nao se cadastra quando ve o codigo de outra pessoa
+  // (ex: LOAMYZZZ69 expoe o email do indicador). Codigo neutro tipo "refuser4a9c2f"
+  // gera curiosidade sem expor identidade.
+  // Determinismo: usa o user_id (UUID do Supabase) quando disponivel — sempre o mesmo,
+  // facil de replicar no SQL (right(replace(uid::text,'-',''), 6)).
+  // Fallback (modo local sem auth): hash do email.
+  var uid = '';
+  try { uid = (window.currentAuthUser && window.currentAuthUser.id) || ''; } catch(e){}
+  if (uid){
+    var raw = String(uid).replace(/-/g, '').toLowerCase();
+    if (raw.length >= 6) return 'refuser' + raw.slice(-6);
+  }
+  // Fallback: hash determinKstico do email (djb2 + sdbm em base36)
+  if (!email) return 'refuser000000';
+  var s = String(email).trim().toLowerCase();
+  var h1 = 5381, h2 = 52711;
+  for (var i = 0; i < s.length; i++){
+    var c = s.charCodeAt(i);
+    h1 = ((h1 << 5) + h1 + c) >>> 0;
+    h2 = ((h2 << 5) - h2 + c) >>> 0;
+  }
+  var combined = (h1 ^ (h2 << 1)) >>> 0;
+  var hash = combined.toString(36);
+  if (hash.length < 6) hash = (h2.toString(36) + hash).slice(0, 6);
+  return 'refuser' + hash.slice(0, 6);
 }
 
 // ── Afiliado: painel próprio ("Minhas Indicações") — agora pra TODOS ──
@@ -999,7 +1021,8 @@ async function recordReferralIfAny(user) {
     if(!ref || !user || !user.email) return;
     var sb=getSb(); if(!sb) return;
     var newEmail = (user.email||'').toLowerCase();
-    var code = ref.toUpperCase().trim();
+    // Normaliza pra lowercase — o novo formato "refuser..." eh case-insensitive
+    var code = ref.trim().toLowerCase();
 
     // Resolve o codigo -> email do indicador (via RPC criada no Supabase)
     var referrerEmail = null;
@@ -2256,9 +2279,17 @@ function saveTransaction() {
   const type = document.getElementById('txType').value;
   const method = document.getElementById('txMethod').value;
   const desc = document.getElementById('txDesc').value || (type==='income'?'Entrada':'Despesa');
-  transactions.unshift({id:Date.now(), date:dateVal, desc, method, type, value:val});
+  // created_at = momento real em que a transacao foi cadastrada (NAO eh o tx.date, que pode ser backdated)
+  // Usado pelo ranking HOJE pra evitar que tx backdated (date=ontem, registrada hoje) vaze pro topo de hoje.
+  const nowIso = isoDateLocal();
+  transactions.unshift({id:Date.now(), date:dateVal, desc, method, type, value:val, created_at:nowIso});
   closeTxModal();
-  showToast(`${type==='income'?'Entrada':'Despesa'} de R$${val.toFixed(2)} registrada!`, type==='income'?'success':'info');
+  // Avisa o usuario quando ele backdata pra outro dia — explica que NAO conta pro HOJE
+  if (dateVal !== nowIso){
+    showToast(`Registrada com data de ${dateVal.split('-').reverse().join('/')} — nao conta no ranking de Hoje`, 'info');
+  } else {
+    showToast(`${type==='income'?'Entrada':'Despesa'} de R$${val.toFixed(2)} registrada!`, type==='income'?'success':'info');
+  }
   document.getElementById('txValue').value='';
   document.getElementById('txDesc').value='';
   recomputeAll();
@@ -6829,6 +6860,8 @@ function rankComputeMonthProfit(){
 }
 
 // Filtra transacoes do dia corrente (YYYY-MM-DD)
+// Anti-backdate: se a tx tem created_at, exige que TAMBEM seja de hoje.
+// Caso contrario alguem podia adicionar tx hoje com data=ontem e contar no ranking de hoje (e vice-versa).
 function rankComputeTodayProfit(){
   if (typeof transactions === 'undefined' || !Array.isArray(transactions)) return 0;
   const now = new Date();
@@ -6837,6 +6870,8 @@ function rankComputeTodayProfit(){
   for (let i = 0; i < transactions.length; i++){
     const t = transactions[i];
     if (!t.date || String(t.date).slice(0,10) !== ymd) continue;
+    // Se tem created_at, exige que tambem caia em HOJE (anti-backdate)
+    if (t.created_at && String(t.created_at).slice(0,10) !== ymd) continue;
     const v = Number(t.value) || 0;
     if (t.type === 'income') profit += v;
     else if (t.type === 'expense') profit -= v;
