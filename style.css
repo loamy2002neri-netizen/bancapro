@@ -3550,3 +3550,151 @@ html { -webkit-text-size-adjust:100%; text-size-adjust:100%; }
   .sub-mgmt-plan{font-size:18px}
   .sub-mgmt-row{font-size:12.5px}
 }
+
+/* ═══════════════════════════════════════════
+   MINHAS INDICACOES — sistema de niveis
+   ═══════════════════════════════════════════ */
+.aff-tier-card{
+  position:relative;
+  margin-bottom:16px;
+  padding:22px 24px;
+  background:linear-gradient(135deg,#171c30 0%,#0e1220 100%);
+  border:1px solid rgba(247,147,30,.28);
+  border-radius:14px;
+  overflow:hidden;
+  display:grid;
+  grid-template-columns:auto 1fr;
+  gap:24px;
+  align-items:center;
+}
+.aff-tier-card.is-vip{ border-color:rgba(124,92,255,.45); }
+.aff-tier-glow{
+  position:absolute;top:-150px;right:-100px;
+  width:400px;height:400px;
+  background:radial-gradient(circle,rgba(247,147,30,.18) 0%,transparent 60%);
+  pointer-events:none;z-index:0;
+}
+.aff-tier-card.is-vip .aff-tier-glow{
+  background:radial-gradient(circle,rgba(124,92,255,.22) 0%,transparent 60%);
+}
+.aff-tier-left{ display:flex;align-items:center;gap:16px;position:relative;z-index:1; }
+.aff-tier-medal{ width:80px;height:80px;flex-shrink:0;display:flex;align-items:center;justify-content:center; }
+.aff-tier-medal svg, .aff-tier-medal img{ width:100%;height:100%;display:block;object-fit:contain; }
+.aff-badge-hero{ filter:drop-shadow(0 10px 24px rgba(0,0,0,.55)); }
+.aff-tier-card.is-vip .aff-badge-hero{ filter:drop-shadow(0 10px 28px rgba(124,92,255,.5)); }
+.aff-tier-info{ min-width:0; }
+.aff-tier-eyebrow{ font-size:10.5px;font-weight:700;letter-spacing:1.4px;text-transform:uppercase;color:var(--text-muted);margin-bottom:4px; }
+.aff-tier-name{ font-size:22px;font-weight:800;color:#fff;letter-spacing:-.4px;line-height:1.1; }
+.aff-tier-rate{ font-size:13px;color:#f7931e;font-weight:600;margin-top:3px; }
+.aff-tier-card.is-vip .aff-tier-rate{ color:#a78bfa; }
+.aff-tier-progress{ position:relative;z-index:1;min-width:0; }
+.aff-tier-progress-head{ display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;font-size:12px; }
+.aff-tier-progress-next{ color:var(--text-secondary);font-weight:600; }
+.aff-tier-progress-count{ color:var(--text-secondary);font-weight:600; }
+.aff-tier-progress-count b{ color:#fff;font-weight:800; }
+.aff-tier-progress-bar{
+  height:8px;border-radius:4px;
+  background:rgba(255,255,255,.06);
+  overflow:hidden;
+}
+.aff-tier-progress-fill{
+  height:100%;border-radius:4px;
+  background:linear-gradient(90deg,#f7931e,#ffb800);
+  transition:width .6s cubic-bezier(.4,0,.2,1);
+}
+.aff-tier-card.is-vip .aff-tier-progress-fill{
+  background:linear-gradient(90deg,#7c5cff,#a78bfa);
+}
+.aff-tier-progress-foot{ margin-top:8px;font-size:12px;color:var(--text-muted);line-height:1.4; }
+.aff-tier-progress-foot b{ color:#fff;font-weight:700; }
+.aff-tier-progress.is-max .aff-tier-progress-foot{ color:#34d399; }
+.aff-tier-progress.is-max .aff-tier-progress-foot b{ color:#34d399; }
+
+/* Tabela de niveis (referencia) */
+.aff-tiers-card{ padding:20px 22px; }
+.aff-tiers-intro{ font-size:13px;color:var(--text-secondary);line-height:1.55;margin-bottom:16px; }
+.aff-tiers-grid{ display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:14px; }
+.aff-tier-row{
+  display:grid;grid-template-columns:auto 1fr auto auto;align-items:center;gap:12px;
+  padding:12px 14px;
+  background:rgba(255,255,255,.025);
+  border:1px solid var(--border);
+  border-radius:10px;
+  transition:all .15s ease;
+}
+.aff-tier-row.is-current{
+  background:rgba(247,147,30,.08);
+  border-color:rgba(247,147,30,.32);
+  box-shadow:0 4px 16px rgba(247,147,30,.08);
+}
+.aff-tier-row-medal{
+  width:42px;height:42px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+}
+.aff-badge-png{
+  width:100%;height:100%;display:block;object-fit:contain;
+  filter:drop-shadow(0 3px 6px rgba(0,0,0,.45));
+  transition:transform .2s ease;
+}
+.aff-tier-row:hover .aff-badge-png{ transform:scale(1.08) rotate(-2deg); }
+.aff-tier-row.is-current .aff-badge-png{ filter:drop-shadow(0 4px 14px rgba(247,147,30,.55)); }
+.aff-tier-row-name{ font-size:13.5px;font-weight:700;color:#fff;letter-spacing:-.2px; }
+.aff-tier-row-range{ font-size:11.5px;color:var(--text-muted);font-weight:500; }
+.aff-tier-row-rate{ font-size:15px;font-weight:800;color:#f7931e;letter-spacing:-.3px;min-width:40px;text-align:right; }
+.aff-tier-row.is-current .aff-tier-row-rate{ color:#ffd95c; }
+.aff-tiers-foot{
+  font-size:12px;color:var(--text-muted);text-align:center;
+  padding-top:14px;border-top:1px solid var(--border);
+  line-height:1.5;
+}
+.aff-tiers-foot b{ color:#a78bfa;font-weight:700; }
+
+/* Como funciona (steps) */
+.aff-how-card{ padding:20px 22px; }
+.aff-how-steps{ display:flex;flex-direction:column;gap:14px;margin-bottom:14px; }
+.aff-how-step{ display:flex;gap:14px;align-items:flex-start; }
+.aff-how-step-num{
+  flex-shrink:0;width:30px;height:30px;border-radius:8px;
+  background:linear-gradient(135deg,#7c5cff,#a78bfa);
+  display:flex;align-items:center;justify-content:center;
+  font-size:14px;font-weight:800;color:#fff;
+  box-shadow:0 4px 12px rgba(124,92,255,.32);
+}
+.aff-how-step-text{ flex:1;min-width:0; }
+.aff-how-step-text b{ display:block;font-size:13.5px;font-weight:700;color:#fff;margin-bottom:2px; }
+.aff-how-step-text span{ display:block;font-size:12.5px;color:var(--text-secondary);line-height:1.5; }
+.aff-how-foot{
+  padding:11px 14px;
+  background:rgba(124,92,255,.08);
+  border:1px solid rgba(124,92,255,.25);
+  border-radius:9px;
+  font-size:12.5px;color:var(--text-secondary);line-height:1.5;text-align:center;
+}
+.aff-how-warning{
+  display:flex;align-items:flex-start;gap:10px;
+  margin:14px 0;padding:12px 14px;
+  background:rgba(247,147,30,.08);
+  border:1px solid rgba(247,147,30,.32);
+  border-radius:9px;
+}
+.aff-how-warning-icon{
+  width:30px;height:30px;border-radius:8px;
+  background:linear-gradient(135deg,rgba(247,147,30,.22),rgba(255,184,0,.1));
+  border:1px solid rgba(247,147,30,.42);
+  color:#ffb44a;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+}
+.aff-how-warning-text{
+  flex:1;font-size:12.5px;color:var(--text-secondary);line-height:1.55;
+}
+.aff-how-warning-text b{color:#ffb44a;font-weight:700;}
+
+@media (max-width:768px){
+  .aff-tier-card{ grid-template-columns:1fr;gap:18px;padding:18px 18px; }
+  .aff-tier-left{ gap:12px; }
+  .aff-tier-medal{ width:46px;height:46px; }
+  .aff-tier-name{ font-size:19px; }
+  .aff-tiers-grid{ grid-template-columns:1fr; }
+  .aff-tier-row{ padding:10px 12px;gap:10px; }
+  .aff-tier-row-rate{ font-size:14px; }
+}

@@ -18,7 +18,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
-<link rel="stylesheet" href="style.css?v=99"/>
+<link rel="stylesheet" href="style.css?v=103"/>
 </head>
 <body>
 
@@ -1404,7 +1404,30 @@
 
       <!-- ═══ MINHAS INDICAÇÕES (AFILIADO) ═══ -->
       <div class="section" id="sec-afiliado">
-        <div class="page-header"><div class="page-title">Minhas Indicações</div><div class="page-subtitle">Divulgue seu link e acompanhe seus ganhos</div></div>
+        <div class="page-header"><div class="page-title">Minhas Indicações</div><div class="page-subtitle">Divulgue seu link, acompanhe seus indicados e ganhe comissão recorrente com assinaturas ativas.</div></div>
+
+        <!-- ═══ CARD DE NÍVEL — sistema novo ═══ -->
+        <div class="aff-tier-card" id="affTierCard">
+          <div class="aff-tier-glow"></div>
+          <div class="aff-tier-left">
+            <div class="aff-tier-medal" id="affTierMedal">
+              <img id="affHeroImg" class="aff-badge-png aff-badge-hero" src="brand/icones%20afiliados/01_bronze.png" alt=""/>
+            </div>
+            <div class="aff-tier-info">
+              <div class="aff-tier-eyebrow" id="affTierEyebrow">Nível atual</div>
+              <div class="aff-tier-name" id="affTierName">Bronze</div>
+              <div class="aff-tier-rate" id="affTierRate">10% de comissão recorrente</div>
+            </div>
+          </div>
+          <div class="aff-tier-progress" id="affTierProgress">
+            <div class="aff-tier-progress-head">
+              <span class="aff-tier-progress-next" id="affTierNext">Próximo: Prata</span>
+              <span class="aff-tier-progress-count"><b id="affTierCurrentCount">0</b>/<span id="affTierTargetCount">3</span></span>
+            </div>
+            <div class="aff-tier-progress-bar"><div class="aff-tier-progress-fill" id="affTierFill" style="width:0%"></div></div>
+            <div class="aff-tier-progress-foot" id="affTierFoot">Faltam <b>3 assinantes ativos</b> para desbloquear 15%</div>
+          </div>
+        </div>
 
         <!-- Carteira -->
         <div class="aff-wallet">
@@ -1418,8 +1441,8 @@
               <div class="aff-wallet-sub">o que você pode sacar agora</div>
             </div>
             <div class="aff-wallet-cta">
-              <button class="aff-wallet-btn" onclick="document.getElementById('sqCard').scrollIntoView({behavior:'smooth',block:'center'});var v=document.getElementById('sqValor');if(v){setTimeout(function(){v.focus();},300);}">Sacar agora</button>
-              <div class="aff-wallet-cta-sub">cai na sua conta via Pix</div>
+              <button class="aff-wallet-btn" id="affSacarBtn" onclick="document.getElementById('sqCard').scrollIntoView({behavior:'smooth',block:'center'});var v=document.getElementById('sqValor');if(v){setTimeout(function(){v.focus();},300);}">Solicitar saque</button>
+              <div class="aff-wallet-cta-sub">analisamos e pagamos via Pix</div>
             </div>
           </div>
         </div>
@@ -1431,7 +1454,7 @@
             <div class="aff-link-url" id="myAffLink">—</div>
             <div class="aff-link-actions">
               <button class="aff-btn aff-btn-copy" onclick="copyAffLink()">Copiar</button>
-              <button class="aff-btn aff-btn-share" onclick="shareAffLink()">📲 Compartilhar</button>
+              <button class="aff-btn aff-btn-share" onclick="shareAffLink()" style="display:inline-flex;align-items:center;gap:7px"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.59 13.51l6.83 3.98M15.41 6.51l-6.82 3.98"/></svg>Compartilhar</button>
             </div>
           </div>
           <div class="aff-link-meta">Código <b id="myAffCode">—</b> · você ganha <b id="myAffCommission">—</b> por assinante ativo, todo mês</div>
@@ -1442,8 +1465,53 @@
           <div class="kpi-card" style="--card-color:var(--accent2)"><div class="kpi-label">Indicados</div><div class="kpi-value" id="myAffIndicados">0</div><div class="kpi-sub">no total</div></div>
           <div class="kpi-card" style="--card-color:var(--green)"><div class="kpi-label">Ativos</div><div class="kpi-value" id="myAffAtivos">0</div><div class="kpi-sub">assinantes pagando</div></div>
           <div class="kpi-card" style="--card-color:var(--green)"><div class="kpi-label">Comissão/mês</div><div class="kpi-value" style="color:var(--green)" id="affEntradas">R$ 0,00</div><div class="kpi-sub">enquanto ativos</div></div>
-          <div class="kpi-card" style="--card-color:var(--yellow)"><div class="kpi-label">Pendente</div><div class="kpi-value" id="affPendente">R$ 0,00</div><div class="kpi-sub">aguardando pagamento</div></div>
+          <div class="kpi-card" style="--card-color:var(--yellow)"><div class="kpi-label">Em retenção</div><div class="kpi-value" id="affPendente">R$ 0,00</div><div class="kpi-sub">liberado após 7 dias do pagamento</div></div>
           <div class="kpi-card" style="--card-color:var(--accent)"><div class="kpi-label">Já recebido</div><div class="kpi-value" id="affSaidas">R$ 0,00</div><div class="kpi-sub">total pago até hoje</div></div>
+        </div>
+
+        <!-- ═══ NÍVEIS DE COMISSÃO ═══ -->
+        <div class="form-card aff-tiers-card" style="margin-top:16px">
+          <div class="form-card-title">Níveis de comissão</div>
+          <div class="aff-tiers-intro">Quanto mais assinantes ativos você indicar, maior será sua comissão recorrente dentro do Apostack.</div>
+          <div class="aff-tiers-grid">
+            <div class="aff-tier-row" data-tier="bronze">
+              <div class="aff-tier-row-medal"><img class="aff-badge-png" src="brand/icones%20afiliados/01_bronze.png" alt=""/></div>
+              <div class="aff-tier-row-name">Bronze</div>
+              <div class="aff-tier-row-range">1 a 2 ativos</div>
+              <div class="aff-tier-row-rate">10%</div>
+            </div>
+            <div class="aff-tier-row" data-tier="prata">
+              <div class="aff-tier-row-medal"><img class="aff-badge-png" src="brand/icones%20afiliados/02_prata.png" alt=""/></div>
+              <div class="aff-tier-row-name">Prata</div>
+              <div class="aff-tier-row-range">3 a 4 ativos</div>
+              <div class="aff-tier-row-rate">15%</div>
+            </div>
+            <div class="aff-tier-row" data-tier="ouro">
+              <div class="aff-tier-row-medal"><img class="aff-badge-png" src="brand/icones%20afiliados/03_ouro.png" alt=""/></div>
+              <div class="aff-tier-row-name">Ouro</div>
+              <div class="aff-tier-row-range">5 a 9 ativos</div>
+              <div class="aff-tier-row-rate">20%</div>
+            </div>
+            <div class="aff-tier-row" data-tier="diamante">
+              <div class="aff-tier-row-medal"><img class="aff-badge-png" src="brand/icones%20afiliados/04_diamante.png" alt=""/></div>
+              <div class="aff-tier-row-name">Diamante</div>
+              <div class="aff-tier-row-range">10 a 19 ativos</div>
+              <div class="aff-tier-row-rate">25%</div>
+            </div>
+            <div class="aff-tier-row" data-tier="elite">
+              <div class="aff-tier-row-medal"><img class="aff-badge-png" src="brand/icones%20afiliados/05_elite.png" alt=""/></div>
+              <div class="aff-tier-row-name">Elite</div>
+              <div class="aff-tier-row-range">20 a 49 ativos</div>
+              <div class="aff-tier-row-rate">30%</div>
+            </div>
+            <div class="aff-tier-row" data-tier="partner">
+              <div class="aff-tier-row-medal"><img class="aff-badge-png" src="brand/icones%20afiliados/06_partner.png" alt=""/></div>
+              <div class="aff-tier-row-name">Partner</div>
+              <div class="aff-tier-row-range">50+ ativos</div>
+              <div class="aff-tier-row-rate">35%</div>
+            </div>
+          </div>
+          <div class="aff-tiers-foot" id="affTiersFoot" style="display:none">Afiliados <b>VIP</b> possuem uma comissão especial definida pela administração.</div>
         </div>
 
         <div class="form-card" style="margin-top:16px">
@@ -1470,12 +1538,32 @@
           <div id="sqHistorico"></div>
         </div>
 
-        <div class="form-card" style="margin-top:16px">
-          <div class="form-card-title">ℹ️ Como funciona</div>
-          <p style="font-size:13px;color:var(--text-secondary);line-height:1.6;margin:0">
-            Divulgue seu <b>link de indicação</b> (botão Copiar acima). Cada pessoa que entrar por ele e assinar conta como seu indicado.
-            Você ganha a comissão acima <b>todo mês</b>, enquanto a pessoa continuar assinante. O pagamento é feito por <b>Pix</b>.
-          </p>
+        <div class="form-card aff-how-card" style="margin-top:16px">
+          <div class="form-card-title">Como funciona</div>
+          <div class="aff-how-steps">
+            <div class="aff-how-step">
+              <div class="aff-how-step-num">1</div>
+              <div class="aff-how-step-text"><b>Compartilhe seu link</b><span>Mande pra quem quer organizar a banca, acompanhar métodos e ROI.</span></div>
+            </div>
+            <div class="aff-how-step">
+              <div class="aff-how-step-num">2</div>
+              <div class="aff-how-step-text"><b>A pessoa cria a conta e assina um plano</b><span>Quando o pagamento confirma, sua comissão entra em <b>retenção</b>.</span></div>
+            </div>
+            <div class="aff-how-step">
+              <div class="aff-how-step-num">3</div>
+              <div class="aff-how-step-text"><b>Após 7 dias a comissão é liberada</b><span>Esse é o prazo da Kirvano para garantia/reembolso. Passou os 7 dias, vira saldo disponível.</span></div>
+            </div>
+            <div class="aff-how-step">
+              <div class="aff-how-step-num">4</div>
+              <div class="aff-how-step-text"><b>Você recebe via Pix enquanto for assinante</b><span>Comissão recorrente todo mês — segue ativa enquanto a assinatura continuar.</span></div>
+            </div>
+          </div>
+
+          <div class="aff-how-warning">
+            <div class="aff-how-warning-icon"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg></div>
+            <div class="aff-how-warning-text"><b>Política anti-abuso:</b> se o indicado pedir reembolso, chargeback ou cancelamento dentro dos 7 dias, a comissão é cancelada automaticamente. Isso evita fraude e mantém o programa saudável.</div>
+          </div>
+          <div class="aff-how-foot" id="affHowFoot">Sua comissão aumenta conforme a quantidade de assinantes ativos indicados.</div>
         </div>
       </div>
 
@@ -1999,6 +2087,6 @@
 </div>
 
 <script src="config.js?v=9" defer></script>
-<script src="script.js?v=130" defer></script>
+<script src="script.js?v=135" defer></script>
 </body>
 </html>

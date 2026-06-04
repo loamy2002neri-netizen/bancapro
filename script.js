@@ -284,16 +284,21 @@ async function enterApp(user) {
     const navAfiliados = document.getElementById('navAfiliados');
     if (navAfiliados) navAfiliados.style.display = isOwner ? '' : 'none';
   } catch(e){}
-  // Registra a indicação (?ref) e libera o painel do afiliado, se for um
+  // Registra a indicação (?ref) e libera o painel do afiliado
+  // AGORA: Minhas Indicacoes aparece pra TODOS os usuarios logados
+  // Apenas marca se eh VIP (50% fixo) ou comum (10-35% por nivel)
   try {
     await recordReferralIfAny(user);
     const sb = getSb();
     const navAf = document.getElementById('navAfiliado');
-    if (sb && navAf) {
-      const r = await sb.rpc('get_my_affiliate');
-      const isAffiliate = !!(r.data && r.data.length);
-      navAf.style.display = isAffiliate ? '' : 'none';
-      try { localStorage.setItem('bancapro-is-affiliate', isAffiliate ? '1' : '0'); } catch(e){}
+    if (navAf) navAf.style.display = '';  // visivel pra todos
+    if (sb) {
+      try {
+        const r = await sb.rpc('get_my_affiliate');
+        const isVip = !!(r.data && r.data.length);
+        try { localStorage.setItem('bancapro-is-affiliate', isVip ? '1' : '0'); } catch(e){}
+        try { localStorage.setItem('bancapro-affiliate-vip', isVip ? '1' : '0'); } catch(e){}
+      } catch(e){}
     }
   } catch(e){}
   // Voltou do checkout? mostra "obrigado" e reconfere a assinatura
@@ -636,27 +641,228 @@ function _affReferralsHtml(data) {
   return '<div style="overflow-x:auto"><table class="admin-table"><thead><tr><th>Pessoa</th><th>Entrou em</th><th>Status</th></tr></thead><tbody>'+rows+'</tbody></table></div>';
 }
 
-// ── Afiliado: painel próprio ("Minhas Indicações") ──
-async function renderMyAffiliatePanel() {
-  var sb=getSb(); if(!sb) return;
-  try {
-    var r = await sb.rpc('get_my_affiliate');
-    if(r.error || !r.data || !r.data.length) return;
-    var a=r.data[0];
-    var link = location.origin + '/?ref=' + a.code;
-    setTextSafe('myAffCode', a.code);
-    setTextSafe('myAffLink', link);
-    setTextSafe('myAffCommission', _affMoney(a.commission));
-    setTextSafe('myAffIndicados', a.indicados);
-    setTextSafe('myAffAtivos', a.ativos);
-    setTextSafe('affEntradas', _affMoney(a.a_pagar));
-    var listEl=document.getElementById('myAffList');
-    if(listEl){
-      var rr = await sb.rpc('get_referrals', { p_code: a.code });
-      listEl.innerHTML = _affReferralsHtml(rr.data);
+// ── Tier system pro usuario comum (10% a 35% por nivel) ──
+const AFF_TIERS = [
+  { key:'bronze',   name:'Bronze',   min:1,  max:2,  rate:10 },
+  { key:'prata',    name:'Prata',    min:3,  max:4,  rate:15 },
+  { key:'ouro',     name:'Ouro',     min:5,  max:9,  rate:20 },
+  { key:'diamante', name:'Diamante', min:10, max:19, rate:25 },
+  { key:'elite',    name:'Elite',    min:20, max:49, rate:30 },
+  { key:'partner',  name:'Partner',  min:50, max:Infinity, rate:35 }
+];
+
+function affComputeTier(activeCount){
+  activeCount = Number(activeCount) || 0;
+  if (activeCount <= 0) {
+    return { tier:null, next:AFF_TIERS[0], rate:0, progress:0 };
+  }
+  let tier = null;
+  for (const t of AFF_TIERS){
+    if (activeCount >= t.min && activeCount <= t.max){ tier = t; break; }
+  }
+  if (!tier) tier = AFF_TIERS[AFF_TIERS.length - 1];
+  const next = AFF_TIERS.find(t => t.min > activeCount) || null;
+  const progress = next
+    ? Math.min(100, (activeCount / next.min) * 100)
+    : 100;
+  return { tier, next, rate:tier.rate, progress };
+}
+
+function affUpdateTierCard(activeCount, isVip){
+  const card = document.getElementById('affTierCard');
+  if (!card) return;
+  const eyebrow  = document.getElementById('affTierEyebrow');
+  const nameEl   = document.getElementById('affTierName');
+  const rateEl   = document.getElementById('affTierRate');
+  const progress = document.getElementById('affTierProgress');
+  const nextEl   = document.getElementById('affTierNext');
+  const currCt   = document.getElementById('affTierCurrentCount');
+  const targCt   = document.getElementById('affTierTargetCount');
+  const fillEl   = document.getElementById('affTierFill');
+  const footEl   = document.getElementById('affTierFoot');
+  const howFoot  = document.getElementById('affHowFoot');
+
+  // Nota sobre VIP no rodape da tabela so aparece pra VIPs (usuario comum nao precisa saber que existe)
+  const tiersFoot = document.getElementById('affTiersFoot');
+  if (tiersFoot) tiersFoot.style.display = isVip ? '' : 'none';
+
+  // Hero medal: troca o PNG conforme o tier
+  const heroImg = document.getElementById('affHeroImg');
+  const tierPngMap = {
+    bronze:   'brand/icones%20afiliados/01_bronze.png',
+    prata:    'brand/icones%20afiliados/02_prata.png',
+    ouro:     'brand/icones%20afiliados/03_ouro.png',
+    diamante: 'brand/icones%20afiliados/04_diamante.png',
+    elite:    'brand/icones%20afiliados/05_elite.png',
+    partner:  'brand/icones%20afiliados/06_partner.png'
+  };
+
+  if (isVip){
+    card.classList.add('is-vip');
+    if (heroImg) heroImg.src = tierPngMap.partner; // VIP usa o icone Partner
+    if (eyebrow) eyebrow.textContent = 'Plano especial';
+    if (nameEl)  nameEl.textContent  = 'Afiliado VIP';
+    if (rateEl)  rateEl.textContent  = 'Comissão especial: 50% recorrente';
+    if (progress) progress.style.display = 'none';
+    if (howFoot) howFoot.textContent = 'Você possui uma comissão especial de 50% recorrente em suas indicações ativas.';
+    return;
+  }
+
+  card.classList.remove('is-vip');
+  if (progress) progress.style.display = '';
+  if (howFoot) howFoot.textContent = 'Sua comissão aumenta conforme a quantidade de assinantes ativos indicados.';
+
+  const t = affComputeTier(activeCount);
+  // Troca o PNG do hero medal conforme o tier
+  if (heroImg){
+    const tierKey = t.tier ? t.tier.key : 'bronze';
+    heroImg.src = tierPngMap[tierKey];
+  }
+  if (!t.tier){
+    // Sem ativos ainda
+    if (eyebrow) eyebrow.textContent = 'Comece agora';
+    if (nameEl)  nameEl.textContent  = 'Sem nível ainda';
+    if (rateEl)  rateEl.textContent  = 'Indique 1 assinante para entrar no Bronze (10%)';
+    if (nextEl)  nextEl.textContent  = 'Próximo: Bronze';
+    if (currCt)  currCt.textContent  = '0';
+    if (targCt)  targCt.textContent  = '1';
+    if (fillEl)  fillEl.style.width  = '0%';
+    if (footEl)  footEl.innerHTML    = 'Falta <b>1 assinante ativo</b> para desbloquear 10%';
+    if (progress) progress.classList.remove('is-max');
+  } else {
+    if (eyebrow) eyebrow.textContent = 'Nível atual';
+    if (nameEl)  nameEl.textContent  = t.tier.name;
+    if (rateEl)  rateEl.textContent  = t.rate + '% de comissão recorrente';
+    if (t.next){
+      if (nextEl)  nextEl.textContent  = 'Próximo: ' + t.next.name;
+      if (currCt)  currCt.textContent  = activeCount;
+      if (targCt)  targCt.textContent  = t.next.min;
+      if (fillEl)  fillEl.style.width  = t.progress + '%';
+      const falta = t.next.min - activeCount;
+      if (footEl)  footEl.innerHTML    = 'Faltam <b>' + falta + ' assinante' + (falta>1?'s':'') + ' ativo' + (falta>1?'s':'') + '</b> para desbloquear ' + t.next.rate + '%';
+      if (progress) progress.classList.remove('is-max');
+    } else {
+      if (nextEl)  nextEl.textContent  = 'Nível máximo';
+      if (currCt)  currCt.textContent  = activeCount;
+      if (targCt)  targCt.textContent  = '∞';
+      if (fillEl)  fillEl.style.width  = '100%';
+      if (footEl)  footEl.innerHTML    = 'Você já está no <b>maior nível disponível</b>';
+      if (progress) progress.classList.add('is-max');
     }
-    renderMyWithdrawals(a.a_pagar);
-  } catch(e){}
+  }
+
+  // Destaca a linha do tier atual na tabela de niveis
+  const allRows = document.querySelectorAll('.aff-tier-row');
+  allRows.forEach(r => r.classList.remove('is-current'));
+  if (t.tier){
+    const cur = document.querySelector('.aff-tier-row[data-tier="'+t.tier.key+'"]');
+    if (cur) cur.classList.add('is-current');
+  }
+}
+
+// ── Helper: deriva codigo de indicacao do email pra usuario comum ──
+function affDeriveCodeFromEmail(email){
+  if (!email) return 'USER';
+  // Pega primeira parte do email, deixa caps, remove caracteres especiais
+  const local = email.split('@')[0] || 'USER';
+  return local.replace(/[^a-zA-Z0-9]/g, '').toUpperCase().slice(0, 12) || 'USER';
+}
+
+// ── Afiliado: painel próprio ("Minhas Indicações") — agora pra TODOS ──
+async function renderMyAffiliatePanel() {
+  var sb = getSb();
+  var isVip = false;
+  var a = null;
+
+  // Tenta buscar dados de afiliado VIP
+  if (sb){
+    try {
+      var r = await sb.rpc('get_my_affiliate');
+      if (!r.error && r.data && r.data.length){
+        a = r.data[0];
+        isVip = true;
+      }
+    } catch(e){}
+  }
+
+  // Se eh VIP: usa dados do RPC (comissao fixa 50%)
+  // Se eh usuario comum: gera codigo do email + zera contadores
+  // Resolve email do usuario logado
+  var myEmail = '';
+  try { myEmail = (currentAuthUser && currentAuthUser.email) || localStorage.getItem('bancapro-user-email') || ''; } catch(e){}
+  myEmail = (myEmail || '').toLowerCase();
+
+  // Pega stats reais via RPC nova
+  var stats = null;
+  if (sb && myEmail){
+    try {
+      var s = await sb.rpc('get_my_referral_stats', { p_email: myEmail });
+      if (!s.error && s.data && s.data.length) stats = s.data[0];
+    } catch(e){}
+  }
+
+  var totalReferrals = stats?.total_referrals || 0;
+  var activeCount    = stats?.active_paid || 0;
+  var pctReal        = stats?.current_commission_pct || 10;
+  var pendingBal     = Number(stats?.pending_balance || 0);
+  var availableBal   = Number(stats?.available_balance || 0);
+  var paidBal        = Number(stats?.paid_balance || 0);
+  var isVipReal      = !!stats?.is_vip || isVip;
+
+  // Codigo / link: usa o do VIP se tiver, senao deriva do email
+  var code = isVipReal && a ? a.code : affDeriveCodeFromEmail(myEmail);
+  var link = location.origin + '/?ref=' + code;
+
+  // Comissao mensal estimada (apenas display): nao temos MRR per-referred ainda; usa pendente como proxy
+  var monthlyEstimate = pendingBal;
+
+  setTextSafe('myAffCode', code);
+  setTextSafe('myAffLink', link);
+  setTextSafe('myAffCommission', (isVipReal ? 'comissão especial de 50%' : pctReal + '%'));
+  setTextSafe('myAffIndicados', totalReferrals);
+  setTextSafe('myAffAtivos', activeCount);
+  setTextSafe('affEntradas', _affMoney(monthlyEstimate));
+  setTextSafe('affPendente', _affMoney(pendingBal));
+  setTextSafe('affSaldo', _affMoney(availableBal));
+  setTextSafe('affSaidas', _affMoney(paidBal));
+
+  affUpdateTierCard(activeCount, isVipReal);
+
+  // Lista de indicados via RPC nova
+  var listEl = document.getElementById('myAffList');
+  if (listEl){
+    try {
+      var rr = await sb.rpc('get_my_referrals_list', { p_email: myEmail });
+      var rows = rr.data || [];
+      if (!rows.length){
+        listEl.innerHTML = '<div class="empty-state-sub" style="text-align:center;padding:24px 0">Você ainda não tem indicados.<br/>Compartilhe seu link e comece a ganhar comissão recorrente.</div>';
+      } else {
+        var html = rows.map(function(r){
+          var dt = r.created_at ? new Date(r.created_at).toLocaleDateString('pt-BR') : '—';
+          var st = r.is_active_paid
+            ? '<span style="color:var(--green);font-weight:600">Ativo</span>'
+            : '<span style="color:var(--text-muted);font-weight:600">Cadastrado</span>';
+          var last = r.last_payment_at ? new Date(r.last_payment_at).toLocaleDateString('pt-BR') : '—';
+          var maskEmail = String(r.referred_email||'').replace(/^(.{2}).*?@/, '$1***@');
+          return '<tr>'+
+            '<td data-label="Pessoa">'+escapeHtml(r.referred_name || maskEmail)+'</td>'+
+            '<td data-label="Email">'+escapeHtml(maskEmail)+'</td>'+
+            '<td data-label="Entrou">'+dt+'</td>'+
+            '<td data-label="Status">'+st+'</td>'+
+            '<td data-label="Comissão" style="text-align:right;font-weight:700">'+_affMoney(r.total_commission||0)+'</td>'+
+            '<td data-label="Último pagamento" style="color:var(--text-muted);font-size:12px">'+last+'</td>'+
+          '</tr>';
+        }).join('');
+        listEl.innerHTML = '<div style="overflow-x:auto"><table class="admin-table">'+
+          '<thead><tr><th>Pessoa</th><th>Email</th><th>Entrou</th><th>Status</th><th style="text-align:right">Comissão</th><th>Último pagamento</th></tr></thead>'+
+          '<tbody>'+html+'</tbody></table></div>';
+      }
+    } catch(e){
+      listEl.innerHTML = '<div class="empty-state-sub">Erro ao carregar.</div>';
+    }
+  }
+
+  renderMyWithdrawals(availableBal);
 }
 
 // ── Afiliado: saque de comissão ──
@@ -756,7 +962,29 @@ async function recordReferralIfAny(user) {
     var ref=null; try { ref=localStorage.getItem('bancapro-ref'); } catch(e){}
     if(!ref || !user || !user.email) return;
     var sb=getSb(); if(!sb) return;
-    await sb.from('referrals').upsert({ email: (user.email||'').toLowerCase(), ref: ref.toUpperCase() }, { onConflict:'email', ignoreDuplicates:true });
+    var newEmail = (user.email||'').toLowerCase();
+    var code = ref.toUpperCase().trim();
+
+    // Resolve o codigo -> email do indicador (via RPC criada no Supabase)
+    var referrerEmail = null;
+    try {
+      var r = await sb.rpc('resolve_referral_code', { p_code: code });
+      if (r.data) referrerEmail = String(r.data).toLowerCase();
+    } catch(e){}
+
+    // Antifraude: nao permite autoindicacao
+    if (referrerEmail && referrerEmail === newEmail) return;
+
+    // Salva com schema completo + mantem compat com schema antigo (email, ref)
+    var row = {
+      email: newEmail,
+      ref: code,
+      referred_email: newEmail,
+      referral_code: code
+    };
+    if (referrerEmail) row.referrer_email = referrerEmail;
+
+    await sb.from('referrals').upsert(row, { onConflict:'referred_email', ignoreDuplicates:true });
   } catch(e){}
 }
 
