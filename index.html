@@ -18,7 +18,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
-<link rel="stylesheet" href="style.css?v=83"/>
+<link rel="stylesheet" href="style.css?v=84"/>
 </head>
 <body>
 
@@ -1819,43 +1819,84 @@
 
 <div id="paywallOverlay" class="paywall-overlay-premium" style="display:none">
   <div class="paywall-card-premium">
-    <div class="paywall-badge">TRIAL ENCERRADO</div>
-    <div class="paywall-title">Seu trial acabou — volte com tudo desbloqueado</div>
-    <div class="paywall-sub">Os 7 dias de teste expiraram. Assine agora para manter ranking, métricas, relatórios e tudo que você já estava usando.</div>
 
-    <div class="paywall-benefits">
-      <div class="paywall-benefit">
-        <div class="paywall-benefit-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 20h18M7 20V12M12 20V8M17 20v-6"/></svg></div>
-        <div><b>Relatórios avançados</b><div class="paywall-benefit-sub">Análises detalhadas de performance por período, método e estratégia</div></div>
+    <div class="paywall-glow"></div>
+
+    <div class="paywall-hero">
+      <div class="paywall-hero-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 2l2.4 7.4H22l-6.2 4.6L18 21l-6-4.6L6 21l2.2-7L2 9.4h7.6L12 2z"/>
+        </svg>
       </div>
-      <div class="paywall-benefit">
-        <div class="paywall-benefit-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 8-8M14 7h7v7"/></svg></div>
-        <div><b>Comparativo mensal</b><div class="paywall-benefit-sub">Evolução lado a lado para identificar tendências e ajustar estratégias</div></div>
-      </div>
-      <div class="paywall-benefit">
-        <div class="paywall-benefit-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l8 4v6c0 5-3.5 9-8 10-4.5-1-8-5-8-10V6l8-4z"/><path d="M8 11l3 3 5-5"/></svg></div>
-        <div><b>Ranking e moderação</b><div class="paywall-benefit-sub">Apareça direto no ranking e tenha acesso a todas as features Pro</div></div>
-      </div>
+      <div class="paywall-badge">TRIAL ENCERRADO · 7 DIAS COMPLETOS</div>
+      <h1 class="paywall-title">Continue lucrando com dados<br/><span class="paywall-title-accent">no nível Pro</span></h1>
+      <p class="paywall-sub">Você já registrou suas transações e viu o impacto. Assine para manter o ranking, os relatórios, a calculadora e tudo que você acabou de experimentar.</p>
     </div>
 
-    <div class="paywall-cta-row">
-      <button class="paywall-cta primary" onclick="subscribeNow('mensal')">
-        <span class="paywall-cta-label">Plus mensal</span>
-        <span class="paywall-cta-price">R$ 24,90<span class="paywall-cta-period">/mês</span></span>
-      </button>
-      <button class="paywall-cta gold" onclick="subscribeNow('anual')">
-        <span class="paywall-cta-tag">ECONOMIZA 33%</span>
-        <span class="paywall-cta-label">Pro anual</span>
-        <span class="paywall-cta-price">R$ 199<span class="paywall-cta-period">/ano</span></span>
-      </button>
+    <div class="paywall-stats">
+      <div class="paywall-stat"><div class="paywall-stat-num">7</div><div class="paywall-stat-lbl">dias de teste</div></div>
+      <div class="paywall-stat-sep"></div>
+      <div class="paywall-stat"><div class="paywall-stat-num">15</div><div class="paywall-stat-lbl">tiers do ranking</div></div>
+      <div class="paywall-stat-sep"></div>
+      <div class="paywall-stat"><div class="paywall-stat-num">∞</div><div class="paywall-stat-lbl">transações</div></div>
     </div>
+
+    <div class="paywall-plans">
+
+      <div class="paywall-plan">
+        <div class="paywall-plan-head">
+          <div class="paywall-plan-name">Plus</div>
+          <div class="paywall-plan-tag">MENSAL</div>
+        </div>
+        <div class="paywall-plan-price">
+          <span class="paywall-plan-currency">R$</span><span class="paywall-plan-value">24,90</span><span class="paywall-plan-period">/mês</span>
+        </div>
+        <div class="paywall-plan-equiv">≈ R$ 0,83 por dia</div>
+        <ul class="paywall-plan-features">
+          <li><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg> Dashboard completo em tempo real</li>
+          <li><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg> Relatórios e Comparativo mensal</li>
+          <li><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg> Calculadora profissional (stake, ROI, surebet)</li>
+          <li><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg> Ranking entre todos os apostadores</li>
+          <li><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg> Metas e histórico ilimitados</li>
+          <li><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg> Sincronização entre dispositivos</li>
+        </ul>
+        <button class="paywall-plan-cta" onclick="subscribeNow('mensal')">Assinar Plus<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="margin-left:6px"><path d="M5 12h14M13 5l7 7-7 7"/></svg></button>
+      </div>
+
+      <div class="paywall-plan paywall-plan-featured">
+        <div class="paywall-plan-ribbon">MELHOR CUSTO · ECONOMIZA 33%</div>
+        <div class="paywall-plan-head">
+          <div class="paywall-plan-name">Pro</div>
+          <div class="paywall-plan-tag">ANUAL</div>
+        </div>
+        <div class="paywall-plan-price">
+          <span class="paywall-plan-currency">R$</span><span class="paywall-plan-value">199</span><span class="paywall-plan-period">/ano</span>
+        </div>
+        <div class="paywall-plan-equiv">≈ R$ 16,58 por mês · poupa <b>R$ 99/ano</b></div>
+        <ul class="paywall-plan-features">
+          <li><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg> <b>Tudo do Plus, mais:</b></li>
+          <li><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg> Badge azul "Pro" no ranking</li>
+          <li><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg> Aparece direto nas 4 abas (sem critérios)</li>
+          <li><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg> Suporte prioritário direto</li>
+          <li><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg> 2 meses grátis vs mensal</li>
+          <li><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg> Acesso antecipado a novos recursos</li>
+        </ul>
+        <button class="paywall-plan-cta paywall-plan-cta-featured" onclick="subscribeNow('anual')">Assinar Pro<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="margin-left:6px"><path d="M5 12h14M13 5l7 7-7 7"/></svg></button>
+      </div>
+
+    </div>
+
+    <div class="paywall-guarantee">
+      <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l8 4v6c0 5-3.5 9-8 10-4.5-1-8-5-8-10V6l8-4z"/><path d="M8 11l3 3 5-5"/></svg>
+      <span><b>Cancele quando quiser.</b> Sem fidelidade, sem taxa de saída. Pagamento 100% seguro via Kirvano.</span>
+    </div>
+
     <div class="paywall-foot-premium">
-      <span>Cancele quando quiser · Sem fidelidade</span>
-      <span class="paywall-foot-sep">·</span>
       <a onclick="location.reload()">Já assinei, atualizar</a>
       <span class="paywall-foot-sep">·</span>
-      <a onclick="logout()">Sair</a>
+      <a onclick="logout()">Sair da conta</a>
     </div>
+
   </div>
 </div>
 
