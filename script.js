@@ -910,6 +910,117 @@ async function requestWithdrawal() {
 }
 
 // ── Dono: saques solicitados ──
+// ══════════════════════════════════════════════
+//  ADMIN — Saques de afiliados (sistema com niveis)
+// ══════════════════════════════════════════════
+let _affAdminFilter = 'pending';
+
+function affAdminSwitchTab(btn, filter){
+  _affAdminFilter = filter;
+  document.querySelectorAll('.aff-tab-btn').forEach(b => b.classList.remove('is-active'));
+  if (btn) btn.classList.add('is-active');
+  renderAffWithdrawalsAdmin();
+}
+
+function _affAdminStatusBadge(st){
+  const map = {
+    pending:  ['Pendente',  'rgba(247,147,30,.15)', '#f7931e', 'rgba(247,147,30,.4)'],
+    approved: ['Aprovado',  'rgba(124,92,255,.15)', '#a78bfa', 'rgba(124,92,255,.4)'],
+    paid:     ['Pago',      'rgba(16,185,129,.15)', '#34d399', 'rgba(16,185,129,.4)'],
+    rejected: ['Rejeitado', 'rgba(239,68,68,.15)',  '#f87171', 'rgba(239,68,68,.4)'],
+    canceled: ['Cancelado', 'rgba(255,255,255,.05)','var(--text-muted)','var(--border)']
+  };
+  const m = map[st] || ['—','rgba(255,255,255,.05)','var(--text-muted)','var(--border)'];
+  return '<span style="display:inline-block;background:'+m[1]+';color:'+m[2]+';border:1px solid '+m[3]+';padding:2px 9px;border-radius:5px;font-size:10.5px;font-weight:700;letter-spacing:.5px">'+m[0]+'</span>';
+}
+
+async function renderAffWithdrawalsAdmin(){
+  const el = document.getElementById('adminAffWithdrawals');
+  if (!el) return;
+  const sb = getSb();
+  if (!sb){ el.innerHTML = '<div class="empty-state-sub">Disponível só com o banco na nuvem.</div>'; return; }
+  el.innerHTML = '<div class="empty-state-sub">Carregando…</div>';
+  try {
+    const filter = _affAdminFilter === 'all' ? null : _affAdminFilter;
+    const { data, error } = await sb.rpc('admin_list_affiliate_withdrawals', { p_status: filter });
+    if (error){ el.innerHTML = '<div class="empty-state-sub">Acesso restrito ou erro: '+(error.message||'')+'</div>'; return; }
+    if (!data || !data.length){ el.innerHTML = '<div class="empty-state-sub">Nenhum saque '+(_affAdminFilter === 'all' ? '' : _affAdminFilter)+'.</div>'; return; }
+
+    const rows = data.map(w => {
+      const dt = w.requested_at ? new Date(w.requested_at).toLocaleDateString('pt-BR') + ' às ' + new Date(w.requested_at).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}) : '—';
+      const valor = 'R$ ' + (Number(w.amount)||0).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
+      const saldo = 'R$ ' + (Number(w.available_balance)||0).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
+      const hasFunds = Number(w.available_balance) >= Number(w.amount);
+      const fundsColor = hasFunds ? '#34d399' : '#f87171';
+      const pixKey = escapeHtml(w.pix_key || '—');
+      const pixType = escapeHtml(w.pix_key_type || '—');
+      const holder = escapeHtml(w.holder_name || '—');
+      const affEmail = escapeHtml(w.affiliate_email || '');
+      const idAttr = escapeHtml(w.id);
+      const noteEsc = escapeHtml(w.admin_note || '');
+
+      let actions = '';
+      if (w.status === 'pending'){
+        actions =
+          '<button class="aff-act-btn aff-act-pay" onclick="affAdminMarkPaid(\''+idAttr+'\',\''+affEmail+'\','+w.amount+')">Marcar como pago</button>'+
+          '<button class="aff-act-btn aff-act-reject" onclick="affAdminReject(\''+idAttr+'\',\''+affEmail+'\')">Rejeitar</button>';
+      } else if (w.admin_note){
+        actions = '<div class="aff-act-note">'+noteEsc+'</div>';
+      }
+
+      return '<tr class="aff-wd-row">'+
+        '<td data-label="Solicitado">'+dt+'</td>'+
+        '<td data-label="Afiliado"><div style="font-weight:700">'+affEmail+'</div><div style="font-size:11px;color:var(--text-muted)">'+w.active_referrals+' ativo(s)</div></td>'+
+        '<td data-label="Valor"><div style="font-weight:800;font-size:15px">'+valor+'</div><div style="font-size:11px;color:'+fundsColor+'">saldo: '+saldo+'</div></td>'+
+        '<td data-label="Pix"><div style="font-weight:600">'+holder+'</div><div style="font-size:11px;color:var(--text-muted)">'+pixType+': <span style="color:var(--text);font-family:monospace">'+pixKey+'</span></div></td>'+
+        '<td data-label="Status">'+_affAdminStatusBadge(w.status)+'</td>'+
+        '<td data-label="Ações" style="text-align:right;white-space:nowrap">'+actions+'</td>'+
+      '</tr>';
+    }).join('');
+
+    el.innerHTML = '<div style="overflow-x:auto"><table class="admin-table">'+
+      '<thead><tr><th>Solicitado</th><th>Afiliado</th><th>Valor</th><th>Pix</th><th>Status</th><th style="text-align:right">Ações</th></tr></thead>'+
+      '<tbody>'+rows+'</tbody></table></div>';
+  } catch(e){
+    el.innerHTML = '<div class="empty-state-sub">Erro ao carregar.</div>';
+  }
+}
+
+async function affAdminMarkPaid(id, email, amount){
+  const valor = 'R$ ' + (Number(amount)||0).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
+  const ok = await customConfirm(
+    'Marcar como PAGO o saque de '+valor+' para '+email+'?\n\nVocê já fez o Pix? Esta ação subtrai do saldo disponível do afiliado.',
+    'Confirmar pagamento',
+    'Sim, marcar como pago'
+  );
+  if (!ok) return;
+  const sb = getSb();
+  if (!sb){ showToast('Disponível só com o banco na nuvem.','error'); return; }
+  try {
+    const r = await sb.rpc('admin_mark_withdrawal_paid', { p_id: id, p_note: null });
+    if (r.error){ showToast('Erro: '+(r.error.message||''),'error'); return; }
+    showToast('Saque marcado como pago.','success');
+    renderAffWithdrawalsAdmin();
+  } catch(e){ showToast('Erro ao processar.','error'); }
+}
+
+async function affAdminReject(id, email){
+  const reason = await customPrompt(
+    'Por que rejeitar o saque de '+email+'? (motivo será mostrado pro afiliado)',
+    'Rejeitar saque',
+    'Ex: chave Pix inválida'
+  );
+  if (!reason) return;
+  const sb = getSb();
+  if (!sb){ showToast('Disponível só com o banco na nuvem.','error'); return; }
+  try {
+    const r = await sb.rpc('admin_reject_withdrawal', { p_id: id, p_reason: reason });
+    if (r.error){ showToast('Erro: '+(r.error.message||''),'error'); return; }
+    showToast('Saque rejeitado.','info');
+    renderAffWithdrawalsAdmin();
+  } catch(e){ showToast('Erro ao processar.','error'); }
+}
+
 async function renderWithdrawalsAdmin() {
   var el=document.getElementById('adminWithdrawals'); if(!el) return;
   var sb=getSb(); if(!sb){ el.innerHTML='<div class="empty-state-sub">Disponível só com o banco na nuvem.</div>'; return; }
@@ -1633,7 +1744,7 @@ function goTo(section, el) {
   if(section === 'admin') setTimeout(() => { renderAdminStats(); renderAdminUsers(); renderRankingModeration(); renderAdminErrors(); }, 50);
   // Recalcula banners/avisos do trial pra evitar duplicacao em features Pro
   setTimeout(() => { if (typeof updateAllUpgradeUI === 'function') updateAllUpgradeUI(); }, 30);
-  if(section === 'afiliados') setTimeout(() => { renderAffiliatesAdmin(); renderWithdrawalsAdmin(); }, 50);
+  if(section === 'afiliados') setTimeout(() => { renderAffiliatesAdmin(); renderWithdrawalsAdmin(); if (typeof renderAffWithdrawalsAdmin === 'function') renderAffWithdrawalsAdmin(); }, 50);
   if(section === 'afiliado')  setTimeout(renderMyAffiliatePanel, 50);
   if(section === 'calculadora') setTimeout(calcInit, 50);
   if(section === 'anotacoes') setTimeout(notesInit, 50);

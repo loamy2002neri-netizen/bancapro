@@ -3698,3 +3698,45 @@ html { -webkit-text-size-adjust:100%; text-size-adjust:100%; }
   .aff-tier-row{ padding:10px 12px;gap:10px; }
   .aff-tier-row-rate{ font-size:14px; }
 }
+
+/* ═══════════════════════════════════════════
+   ADMIN — Saques de afiliados (sistema novo)
+   ═══════════════════════════════════════════ */
+.aff-tab-btn{
+  padding:6px 12px;font-size:11.5px;font-weight:600;
+  background:rgba(255,255,255,.04);
+  border:1px solid var(--border);
+  color:var(--text-secondary);
+  border-radius:7px;cursor:pointer;
+  transition:all .15s ease;
+}
+.aff-tab-btn:hover{background:rgba(255,255,255,.08);color:var(--text);}
+.aff-tab-btn.is-active{
+  background:rgba(124,92,255,.18);
+  border-color:rgba(124,92,255,.5);
+  color:#c9b8ff;
+}
+.aff-act-btn{
+  padding:6px 12px;margin-left:6px;
+  font-size:11.5px;font-weight:600;letter-spacing:.2px;
+  border-radius:7px;cursor:pointer;
+  transition:all .15s ease;
+}
+.aff-act-pay{
+  background:linear-gradient(135deg,#10b981,#059669);
+  color:#fff;border:1px solid rgba(16,185,129,.45);
+  box-shadow:0 4px 12px rgba(16,185,129,.22);
+}
+.aff-act-pay:hover{transform:translateY(-1px);box-shadow:0 6px 16px rgba(16,185,129,.35);}
+.aff-act-reject{
+  background:transparent;color:#f87171;
+  border:1px solid rgba(239,68,68,.4);
+}
+.aff-act-reject:hover{background:rgba(239,68,68,.1);border-color:rgba(239,68,68,.65);}
+.aff-act-note{
+  display:inline-block;
+  font-size:11px;color:var(--text-muted);
+  background:rgba(255,255,255,.03);
+  padding:4px 9px;border-radius:6px;
+  font-style:italic;
+}

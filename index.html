@@ -18,7 +18,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
-<link rel="stylesheet" href="style.css?v=103"/>
+<link rel="stylesheet" href="style.css?v=104"/>
 </head>
 <body>
 
@@ -1397,8 +1397,29 @@
         </div>
 
         <div class="form-card" style="margin-top:16px">
-          <div class="form-card-title">Saques solicitados</div>
+          <div class="form-card-title">Saques solicitados (sistema antigo)</div>
           <div id="adminWithdrawals" style="margin-top:12px;overflow-x:auto"><div class="empty-state-sub">Carregando…</div></div>
+        </div>
+
+        <!-- ═══ SAQUES DO SISTEMA NOVO DE AFILIADOS (com niveis) ═══ -->
+        <div class="form-card" style="margin-top:16px">
+          <div class="form-card-title" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
+            <span style="display:flex;align-items:center;gap:8px">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" style="color:#34d399"><path d="M21 12V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2h14a2 2 0 002-2v-3"/><path d="M16 12h.01M19 9l-3 3 3 3"/></svg>
+              Saques de afiliados (sistema com níveis)
+            </span>
+            <div style="display:flex;gap:6px">
+              <button class="aff-tab-btn is-active" data-filter="pending" onclick="affAdminSwitchTab(this,'pending')">Pendentes</button>
+              <button class="aff-tab-btn" data-filter="paid" onclick="affAdminSwitchTab(this,'paid')">Pagos</button>
+              <button class="aff-tab-btn" data-filter="rejected" onclick="affAdminSwitchTab(this,'rejected')">Rejeitados</button>
+              <button class="aff-tab-btn" data-filter="all" onclick="affAdminSwitchTab(this,'all')">Todos</button>
+            </div>
+          </div>
+          <div style="font-size:12px;color:var(--text-muted);margin:6px 0 14px;line-height:1.45">
+            Afiliado solicita saque → você confere os dados Pix → faz a transferência manualmente → marca como pago. Antes de aprovar, valide se o afiliado realmente tem saldo disponível.
+          </div>
+          <div id="adminAffWithdrawals" style="overflow-x:auto"><div class="empty-state-sub">Carregando…</div></div>
+          <div style="margin-top:12px"><button class="btn-ghost" onclick="renderAffWithdrawalsAdmin()" style="padding:8px 16px;font-size:12px">↻ Atualizar</button></div>
         </div>
       </div>
 
@@ -2087,6 +2108,6 @@
 </div>
 
 <script src="config.js?v=9" defer></script>
-<script src="script.js?v=135" defer></script>
+<script src="script.js?v=136" defer></script>
 </body>
 </html>
