@@ -368,7 +368,47 @@ async function checkAccess(user) {
   return false;
 }
 
-function showPaywall() { const el = document.getElementById('paywallOverlay'); if (el) el.style.display = 'flex'; }
+// Popula stats personalizados do trial (transacoes, tier, dias ativos)
+function populatePaywallStats(){
+  try {
+    let txCount = 0, distinctDays = 0, maxProfit = 0;
+    if (typeof transactions !== 'undefined' && Array.isArray(transactions)){
+      txCount = transactions.length;
+      const daysSet = new Set();
+      let profit = 0;
+      for (const t of transactions){
+        if (t && t.date) daysSet.add(String(t.date).slice(0,10));
+        const v = Number(t.value) || 0;
+        if (t.type === 'income') profit += v;
+        else if (t.type === 'expense') profit -= v;
+      }
+      distinctDays = daysSet.size;
+      maxProfit = Math.max(0, Math.round(profit));
+    }
+    const tier = (typeof rankComputeCurrent === 'function') ? rankComputeCurrent(maxProfit).current : null;
+    const elTx = document.getElementById('paywallStatTx');
+    const elTier = document.getElementById('paywallStatTier');
+    const elTierLbl = document.getElementById('paywallStatTierLbl');
+    const elDays = document.getElementById('paywallStatDays');
+    if (elTx) elTx.textContent = txCount > 0 ? txCount : '—';
+    if (elDays) elDays.textContent = distinctDays > 0 ? distinctDays : '—';
+    if (elTier && elTierLbl){
+      if (tier && tier.name){
+        elTier.textContent = tier.name;
+        elTier.style.fontSize = '18px';
+        elTierLbl.textContent = 'tier alcançado';
+      } else {
+        elTier.textContent = '—';
+      }
+    }
+  } catch(e){}
+}
+
+function showPaywall() {
+  const el = document.getElementById('paywallOverlay');
+  if (el) el.style.display = 'flex';
+  populatePaywallStats();
+}
 function hidePaywall() { const el = document.getElementById('paywallOverlay'); if (el) el.style.display = 'none'; }
 
 // Re-checagem de acesso durante a sessao (alem do enterApp inicial)
