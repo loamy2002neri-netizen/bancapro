@@ -714,27 +714,22 @@
           </div>
         </div>
 
-        <!-- CHART GRID -->
-        <div class="chart-grid" style="margin-top:20px">
-
-          <!-- BARRA: 65% -->
-          <div class="chart-card" data-card="dash-categoria">
-            <div class="chart-header">
-              <div>
-                <div class="chart-title">Por Categoria</div>
-                <div class="chart-subtitle">Receita comparativa por Métodos — Abr vs Mai</div>
-              </div>
-              <div class="chart-legend" style="gap:14px">
-                <div class="legend-item" style="color:#cbd5e1;font-size:13px"><div class="legend-dot" style="background:#64748b;width:10px;height:10px;border-radius:50%"></div>Abril</div>
-                <div class="legend-item" style="color:#cbd5e1;font-size:13px"><div class="legend-dot" style="background:#10b981;width:10px;height:10px;border-radius:50%"></div>Maio</div>
-              </div>
+        <!-- BARRA: agora ocupa 100% (Distribuicao de Lucro mudou pro Relatorios) -->
+        <div class="chart-card" data-card="dash-categoria" style="margin-top:20px">
+          <div class="chart-header">
+            <div>
+              <div class="chart-title">Por Categoria</div>
+              <div class="chart-subtitle">Receita comparativa por Métodos — Abr vs Mai</div>
             </div>
-            <!-- Wrapper com altura fixa em px — garante renderização do canvas -->
-            <div id="methodChartWrap" style="position:relative;width:100%;height:260px">
-              <canvas id="methodChart" width="600" height="260" style="width:100%!important;height:100%!important;display:block"></canvas>
+            <div class="chart-legend" style="gap:14px">
+              <div class="legend-item" style="color:#cbd5e1;font-size:13px"><div class="legend-dot" style="background:#64748b;width:10px;height:10px;border-radius:50%"></div>Abril</div>
+              <div class="legend-item" style="color:#cbd5e1;font-size:13px"><div class="legend-dot" style="background:#10b981;width:10px;height:10px;border-radius:50%"></div>Maio</div>
             </div>
           </div>
-
+          <!-- Wrapper com altura fixa em px — garante renderização do canvas -->
+          <div id="methodChartWrap" style="position:relative;width:100%;height:260px">
+            <canvas id="methodChart" width="600" height="260" style="width:100%!important;height:100%!important;display:block"></canvas>
+          </div>
         </div>
 
         <!-- ALERTS -->
