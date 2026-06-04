@@ -804,6 +804,81 @@ async function applyAccess(email, status, days) {
   } catch(e) { showToast('Erro ao atualizar o acesso.','error'); }
 }
 
+// ══════════════════════════════════════════════
+//  MODERACAO DO RANKING (admin: banir cheaters)
+// ══════════════════════════════════════════════
+function _rankModFmt(v){
+  return 'R$ ' + (Number(v)||0).toLocaleString('pt-BR', { minimumFractionDigits:0, maximumFractionDigits:0 });
+}
+
+async function renderRankingModeration(){
+  const el = document.getElementById('adminBanList');
+  if (!el) return;
+  const sb = getSb();
+  if (!sb){ el.innerHTML = '<div class="empty-state-sub">Disponível só com o banco na nuvem.</div>'; return; }
+  el.innerHTML = '<div class="empty-state-sub">Carregando…</div>';
+  try {
+    const { data, error } = await sb.rpc('admin_list_users_for_ranking');
+    if (error){ el.innerHTML = '<div class="empty-state-sub">Acesso restrito ou erro: '+(error.message||'')+'</div>'; return; }
+    if (!data || !data.length){ el.innerHTML = '<div class="empty-state-sub">Nenhum usuário com transações ainda.</div>'; return; }
+    const rows = data.map(u => {
+      const emailAttr = escapeHtml(u.email || '');
+      const proBadge = u.is_pro
+        ? '<span style="background:rgba(168,85,247,.18);color:#a78bfa;padding:2px 8px;border-radius:6px;font-size:10px;font-weight:700">PRO</span>'
+        : '<span style="color:var(--text-muted);font-size:10px">FREE</span>';
+      const banBadge = u.is_banned
+        ? '<span style="background:rgba(239,68,68,.18);color:#f87171;padding:2px 8px;border-radius:6px;font-size:10px;font-weight:700">BANIDO</span>'
+        : '';
+      const rowStyle = u.is_banned ? 'opacity:.55' : '';
+      const actionBtn = u.is_banned
+        ? `<button class="btn-ghost" style="padding:5px 12px;font-size:11px;color:#34d399" onclick="adminUnbanRankingUser('${emailAttr}')">✓ Desbanir</button>`
+        : `<button class="btn-ghost" style="padding:5px 12px;font-size:11px;color:#f87171" onclick="adminBanRankingUser('${emailAttr}','${escapeHtml(u.display_name||'')}')">🚫 Banir</button>`;
+      return `<tr style="${rowStyle}">
+        <td data-label="Nome">${escapeHtml(u.display_name||'—')} ${banBadge}</td>
+        <td data-label="E-mail" style="font-size:11px;color:var(--text-muted)">${escapeHtml(u.email||'—')}</td>
+        <td data-label="Plano">${proBadge}</td>
+        <td data-label="Lucro total" style="font-weight:700">${_rankModFmt(u.total_profit)}</td>
+        <td data-label="TX">${u.tx_count||0}</td>
+        <td data-label="Dias">${u.active_days||0}</td>
+        <td data-label="" style="text-align:right;white-space:nowrap">${actionBtn}</td>
+      </tr>`;
+    }).join('');
+    el.innerHTML = `<div style="overflow-x:auto"><table class="admin-table">
+      <thead><tr><th>Nome</th><th>E-mail</th><th>Plano</th><th>Lucro total</th><th>TX</th><th>Dias</th><th style="text-align:right">Ações</th></tr></thead>
+      <tbody>${rows}</tbody></table></div>`;
+  } catch(e){
+    el.innerHTML = '<div class="empty-state-sub">Erro ao carregar.</div>';
+  }
+}
+
+async function adminBanRankingUser(email, displayName){
+  const ok = await customConfirm(
+    'Banir "'+(displayName||email)+'" do ranking?\n\nEle vai sumir das 4 abas (Hoje, Semana, Mês, Geral).\nVocê pode desbanir depois.',
+    'Banir do ranking',
+    'Banir'
+  );
+  if (!ok) return;
+  const sb = getSb();
+  if (!sb){ showToast('Disponível só com o banco na nuvem.','error'); return; }
+  try {
+    const r = await sb.rpc('admin_ban_from_ranking', { p_email: email, p_reason: null });
+    if (r.error){ showToast('Erro: '+(r.error.message||'não foi possível'),'error'); return; }
+    showToast('🚫 Banido: '+(displayName||email),'info');
+    renderRankingModeration();
+  } catch(e){ showToast('Erro ao banir.','error'); }
+}
+
+async function adminUnbanRankingUser(email){
+  const sb = getSb();
+  if (!sb){ showToast('Disponível só com o banco na nuvem.','error'); return; }
+  try {
+    const r = await sb.rpc('admin_unban_from_ranking', { p_email: email });
+    if (r.error){ showToast('Erro: '+(r.error.message||'não foi possível'),'error'); return; }
+    showToast('✅ Desbanido: '+email,'success');
+    renderRankingModeration();
+  } catch(e){ showToast('Erro ao desbanir.','error'); }
+}
+
 // Painel do dono: erros recentes (via get_owner_errors no Supabase)
 async function renderAdminErrors() {
   const el = document.getElementById('adminErrors');
@@ -1167,7 +1242,7 @@ function goTo(section, el) {
   if(section === 'dashboard') setTimeout(function(){ if(typeof rankUpdateDashCard==='function') rankUpdateDashCard(); }, 100);
   if(section === 'recharge') setTimeout(updateTrialBanner, 50);
   if(section === 'settings') { setTimeout(renderSubscriptionCard, 50); setTimeout(applyAvatar, 50); }
-  if(section === 'admin') setTimeout(() => { renderAdminStats(); renderAdminUsers(); renderAdminErrors(); }, 50);
+  if(section === 'admin') setTimeout(() => { renderAdminStats(); renderAdminUsers(); renderRankingModeration(); renderAdminErrors(); }, 50);
   if(section === 'afiliados') setTimeout(() => { renderAffiliatesAdmin(); renderWithdrawalsAdmin(); }, 50);
   if(section === 'afiliado')  setTimeout(renderMyAffiliatePanel, 50);
   if(section === 'calculadora') setTimeout(calcInit, 50);

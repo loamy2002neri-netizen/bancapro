@@ -1280,6 +1280,20 @@
         </div>
 
         <div class="form-card" style="margin-top:16px">
+          <div class="form-card-title" style="display:flex;align-items:center;gap:8px">
+            🛡️ Moderação do Ranking
+            <span style="font-size:11px;color:var(--text-muted);font-weight:400">— oculta cheaters das 4 abas</span>
+          </div>
+          <div style="font-size:12px;color:var(--text-muted);margin-bottom:12px;line-height:1.5">
+            Usuários banidos somem de Hoje, Semana, Mês e Geral. Você pode desbanir a qualquer momento.
+          </div>
+          <div id="adminBanList">
+            <div class="empty-state-sub">Carregando…</div>
+          </div>
+          <div style="margin-top:12px"><button class="btn-ghost" onclick="renderRankingModeration()" style="padding:8px 16px;font-size:12px">↻ Atualizar</button></div>
+        </div>
+
+        <div class="form-card" style="margin-top:16px">
           <div class="form-card-title">🐞 Erros recentes</div>
           <div id="adminErrors">
             <div class="empty-state-sub">Carregando…</div>
@@ -1681,6 +1695,6 @@
 </div>
 
 <script src="config.js?v=9" defer></script>
-<script src="script.js?v=112" defer></script>
+<script src="script.js?v=113" defer></script>
 </body>
 </html>
