@@ -1222,6 +1222,14 @@ try {
 //  NAVIGATION
 // ══════════════════════════════════════════════
 function goTo(section, el) {
+  // Intercepta navegacao do Free pra features Pro: mostra upsell modal
+  try {
+    const label = (typeof getCurrentPlanLabel === 'function') ? getCurrentPlanLabel() : 'Free';
+    if (label === 'Free' && PRO_LOCKED_SECTIONS.indexOf(section) >= 0){
+      openProUpsellModal(section);
+      return;
+    }
+  } catch(e){}
   document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
   const sec = document.getElementById('sec-'+section);
@@ -1244,6 +1252,8 @@ function goTo(section, el) {
   if(section === 'recharge') setTimeout(updateTrialBanner, 50);
   if(section === 'settings') { setTimeout(renderSubscriptionCard, 50); setTimeout(applyAvatar, 50); }
   if(section === 'admin') setTimeout(() => { renderAdminStats(); renderAdminUsers(); renderRankingModeration(); renderAdminErrors(); }, 50);
+  // Recalcula banners/avisos do trial pra evitar duplicacao em features Pro
+  setTimeout(() => { if (typeof updateAllUpgradeUI === 'function') updateAllUpgradeUI(); }, 30);
   if(section === 'afiliados') setTimeout(() => { renderAffiliatesAdmin(); renderWithdrawalsAdmin(); }, 50);
   if(section === 'afiliado')  setTimeout(renderMyAffiliatePanel, 50);
   if(section === 'calculadora') setTimeout(calcInit, 50);
@@ -3112,6 +3122,18 @@ function updateTrialStickyBanner(){
   if (!el) return;
   const label = getCurrentPlanLabel();
   if (label !== 'Trial'){ el.classList.remove('show'); return; }
+  // Se estiver numa secao Pro com a nota inline visivel, esconde o global
+  // pra evitar dois banners dizendo o mesmo
+  try {
+    const activeSec = document.querySelector('.section.active');
+    if (activeSec){
+      const inlineNote = activeSec.querySelector('.trial-ending-note[data-pro-warning]');
+      if (inlineNote && inlineNote.style.display !== 'none'){
+        el.classList.remove('show');
+        return;
+      }
+    }
+  } catch(e){}
   // Calcula dias restantes
   let start = null;
   try { start = localStorage.getItem('bancapro-trial-start'); } catch(e){}
@@ -3174,10 +3196,62 @@ function updateProLockNavs(){
   });
 }
 
+// Trial countdown nos avisos das features Pro (so quando Trial e dias <= 2)
+function updateProSectionWarnings(){
+  const notes = document.querySelectorAll('.trial-ending-note[data-pro-warning]');
+  if (!notes.length) return;
+  const label = getCurrentPlanLabel();
+  if (label !== 'Trial'){ notes.forEach(n => n.style.display = 'none'); return; }
+  // Calcula dias restantes
+  let start = null;
+  try { start = localStorage.getItem('bancapro-trial-start'); } catch(e){}
+  if (!start){
+    try { const u = currentAuthUser; if (u && u.created_at) start = u.created_at; } catch(e){}
+  }
+  if (!start){ notes.forEach(n => n.style.display = 'none'); return; }
+  const startDate = new Date(start);
+  const elapsed = Math.floor((Date.now() - startDate.getTime()) / 86400000);
+  const left = Math.max(TRIAL_DAYS - elapsed, 0);
+  // So mostra quando faltam 2 dias ou menos
+  if (left > 2){ notes.forEach(n => n.style.display = 'none'); return; }
+  document.querySelectorAll('.trialEndingDays').forEach(s => s.textContent = left);
+  notes.forEach(n => n.style.display = '');
+}
+
+// Modal de upsell Pro premium (quando Free clica em feature Pro)
+const PRO_UPSELL_TITLES = {
+  reports:     'Relatórios é exclusivo para assinantes Pro',
+  compare:     'Comparativo é exclusivo para assinantes Pro',
+  calculadora: 'Calculadora é exclusiva para assinantes Pro'
+};
+function openProUpsellModal(section){
+  const el = document.getElementById('proUpsellModal');
+  if (!el) return;
+  const titleEl = document.getElementById('proUpsellTitle');
+  if (titleEl) titleEl.textContent = PRO_UPSELL_TITLES[section] || 'Esta tela é exclusiva para assinantes Pro';
+  el.classList.add('open');
+  el.style.display = 'flex';
+}
+function closeProUpsellModal(ev){
+  if (ev && ev.target && ev.target.id !== 'proUpsellModal' && ev.type === 'click' && ev.currentTarget?.id !== 'proUpsellModal') return;
+  const el = document.getElementById('proUpsellModal');
+  if (!el) return;
+  el.classList.remove('open');
+  el.style.display = 'none';
+}
+// Esc fecha o modal
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape'){
+    const el = document.getElementById('proUpsellModal');
+    if (el && el.style.display !== 'none') closeProUpsellModal();
+  }
+});
+
 function updateAllUpgradeUI(){
   try { updateTrialStickyBanner(); } catch(e){}
   try { updateUpgradeProNav(); } catch(e){}
   try { updateProLockNavs(); } catch(e){}
+  try { updateProSectionWarnings(); } catch(e){}
 }
 
 // Roda a cada minuto pra atualizar dias do trial sem precisar reload

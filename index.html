@@ -18,7 +18,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
-<link rel="stylesheet" href="style.css?v=75"/>
+<link rel="stylesheet" href="style.css?v=76"/>
 </head>
 <body>
 
@@ -1017,6 +1017,11 @@
 
       <!-- ═══ RELATÓRIOS ═══ -->
       <div class="section" id="sec-reports">
+        <div class="trial-ending-note" data-pro-warning style="display:none">
+          <span class="trial-ending-note-icon">⏰</span>
+          <div class="trial-ending-note-text">Você perde acesso a <b>Relatórios</b> em <b><span class="trialEndingDays">2</span> dias</b> se não assinar</div>
+          <button class="trial-ending-note-cta" onclick="subscribeNow('mensal')">Desbloquear Pro →</button>
+        </div>
         <div class="page-header">
           <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
             <div><div class="page-title">Relatórios</div><div class="page-subtitle">Análise completa da sua performance</div></div>
@@ -1070,6 +1075,11 @@
 
       <!-- ═══ COMPARATIVO ═══ -->
       <div class="section" id="sec-compare">
+        <div class="trial-ending-note" data-pro-warning style="display:none">
+          <span class="trial-ending-note-icon">⏰</span>
+          <div class="trial-ending-note-text">Você perde acesso a <b>Comparativo</b> em <b><span class="trialEndingDays">2</span> dias</b> se não assinar</div>
+          <button class="trial-ending-note-cta" onclick="subscribeNow('mensal')">Desbloquear Pro →</button>
+        </div>
         <div class="page-header"><div class="page-title">Comparação Mensal</div><div class="page-subtitle" id="compareSubtitle">Mês anterior vs mês atual</div></div>
         <div class="kpi-grid">
           <div class="kpi-card" style="--card-color:var(--green)">
@@ -1411,6 +1421,11 @@
 
       <!-- ═══ CALCULADORA ═══ -->
       <div class="section" id="sec-calculadora">
+        <div class="trial-ending-note" data-pro-warning style="display:none">
+          <span class="trial-ending-note-icon">⏰</span>
+          <div class="trial-ending-note-text">Você perde acesso a <b>Calculadora</b> em <b><span class="trialEndingDays">2</span> dias</b> se não assinar</div>
+          <button class="trial-ending-note-cta" onclick="subscribeNow('mensal')">Desbloquear Pro →</button>
+        </div>
         <div class="page-header"><div class="page-title">Calculadora</div><div class="page-subtitle">Surebet, stake e proteção de duplo</div></div>
 
         <div class="period-tabs" style="margin-bottom:18px;display:inline-flex">
@@ -1660,6 +1675,48 @@
   </main>
 </div><!-- /app -->
 <!-- PAYWALL — bloqueio para quem não é assinante (trial expirado) -->
+<!-- Pro Upsell Modal (premium, mostrado quando Free clica em feature Pro) -->
+<div id="proUpsellModal" class="pro-upsell-overlay" style="display:none" onclick="closeProUpsellModal(event)">
+  <div class="pro-upsell-card" onclick="event.stopPropagation()">
+    <button class="pro-upsell-close" onclick="closeProUpsellModal()" aria-label="Fechar">×</button>
+    <div class="pro-upsell-badge">RECURSO PRO</div>
+    <div class="pro-upsell-title" id="proUpsellTitle">Esta tela é exclusiva para assinantes Pro</div>
+    <div class="pro-upsell-sub">Desbloqueie todas as ferramentas avançadas e leve sua banca para o próximo nível.</div>
+
+    <div class="pro-upsell-benefits">
+      <div class="pro-upsell-benefit">
+        <div class="pro-upsell-benefit-icon">📊</div>
+        <div><b>Relatórios avançados</b><div class="pro-upsell-benefit-sub">Análises detalhadas de performance por período, método e estratégia</div></div>
+      </div>
+      <div class="pro-upsell-benefit">
+        <div class="pro-upsell-benefit-icon">📈</div>
+        <div><b>Comparativo mensal</b><div class="pro-upsell-benefit-sub">Evolução lado a lado para identificar tendências e ajustar estratégias</div></div>
+      </div>
+      <div class="pro-upsell-benefit">
+        <div class="pro-upsell-benefit-icon">🧮</div>
+        <div><b>Calculadora profissional</b><div class="pro-upsell-benefit-sub">ROI, stake ideal, breakeven e simulações de cenários</div></div>
+      </div>
+      <div class="pro-upsell-benefit">
+        <div class="pro-upsell-benefit-icon">🏆</div>
+        <div><b>Ranking e moderação</b><div class="pro-upsell-benefit-sub">Aparece direto no ranking e tem acesso à moderação</div></div>
+      </div>
+    </div>
+
+    <div class="pro-upsell-cta-row">
+      <button class="pro-upsell-cta primary" onclick="subscribeNow('mensal')">
+        <span class="pro-upsell-cta-label">Plus mensal</span>
+        <span class="pro-upsell-cta-price">R$ 24,90<span class="pro-upsell-cta-period">/mês</span></span>
+      </button>
+      <button class="pro-upsell-cta gold" onclick="subscribeNow('anual')">
+        <span class="pro-upsell-cta-tag">ECONOMIZA 33%</span>
+        <span class="pro-upsell-cta-label">Pro anual</span>
+        <span class="pro-upsell-cta-price">R$ 199<span class="pro-upsell-cta-period">/ano</span></span>
+      </button>
+    </div>
+    <div class="pro-upsell-foot">Cancele quando quiser · Sem fidelidade · Suporte direto</div>
+  </div>
+</div>
+
 <div id="paywallOverlay" class="paywall-overlay" style="display:none">
   <div class="paywall-card">
     <div class="paywall-emoji"><svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></div>
@@ -1703,6 +1760,6 @@
 </div>
 
 <script src="config.js?v=9" defer></script>
-<script src="script.js?v=116" defer></script>
+<script src="script.js?v=118" defer></script>
 </body>
 </html>
