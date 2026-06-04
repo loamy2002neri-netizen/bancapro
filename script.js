@@ -1758,11 +1758,19 @@ var CARDS_CATALOG = [
   ]}
 ];
 
+// Cards que ficam desligados por padrao (usuario ativa em Personalizar se quiser)
+var DEFAULT_HIDDEN_CARDS = ['dash-categoria'];
+
 function getHiddenCards(){
   try {
     var raw = localStorage.getItem('bancapro-hidden-cards');
-    return raw ? JSON.parse(raw) : [];
-  } catch(e){ return []; }
+    if (raw === null){
+      // Primeira vez do usuario — aplica os defaults
+      localStorage.setItem('bancapro-hidden-cards', JSON.stringify(DEFAULT_HIDDEN_CARDS));
+      return DEFAULT_HIDDEN_CARDS.slice();
+    }
+    return JSON.parse(raw);
+  } catch(e){ return DEFAULT_HIDDEN_CARDS.slice(); }
 }
 function setHiddenCards(list){
   try { localStorage.setItem('bancapro-hidden-cards', JSON.stringify(list)); } catch(e){}
