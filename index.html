@@ -18,7 +18,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
-<link rel="stylesheet" href="style.css?v=84"/>
+<link rel="stylesheet" href="style.css?v=85"/>
 </head>
 <body>
 
@@ -1823,10 +1823,32 @@
     <div class="paywall-glow"></div>
 
     <div class="paywall-hero">
-      <div class="paywall-hero-icon">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M12 2l2.4 7.4H22l-6.2 4.6L18 21l-6-4.6L6 21l2.2-7L2 9.4h7.6L12 2z"/>
+      <div class="paywall-hero-medal">
+        <svg viewBox="0 0 80 80" fill="none">
+          <defs>
+            <linearGradient id="medalGradOuter" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="#ffd970"/>
+              <stop offset="0.45" stop-color="#f9a826"/>
+              <stop offset="1" stop-color="#a36408"/>
+            </linearGradient>
+            <linearGradient id="medalGradInner" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="#f5b73c"/>
+              <stop offset="1" stop-color="#7a4408"/>
+            </linearGradient>
+            <linearGradient id="starGrad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="#fff3b8"/>
+              <stop offset="0.5" stop-color="#ffc94f"/>
+              <stop offset="1" stop-color="#e89914"/>
+            </linearGradient>
+          </defs>
+          <path d="M40 4 L70 22 L70 58 L40 76 L10 58 L10 22 Z" fill="url(#medalGradOuter)" stroke="rgba(0,0,0,.18)" stroke-width="0.5"/>
+          <path d="M40 11 L63 25 L63 55 L40 69 L17 55 L17 25 Z" fill="url(#medalGradInner)"/>
+          <path d="M40 23 L44.8 36.8 L59 36.8 L47.6 45.4 L52.4 59 L40 50.4 L27.6 59 L32.4 45.4 L21 36.8 L35.2 36.8 Z" fill="url(#starGrad)" stroke="rgba(80,40,0,.35)" stroke-width=".5"/>
         </svg>
+        <div class="paywall-hero-sparkle paywall-hero-sparkle-1"></div>
+        <div class="paywall-hero-sparkle paywall-hero-sparkle-2"></div>
+        <div class="paywall-hero-sparkle paywall-hero-sparkle-3"></div>
+        <div class="paywall-hero-sparkle paywall-hero-sparkle-4"></div>
       </div>
       <div class="paywall-badge">TRIAL ENCERRADO · 7 DIAS COMPLETOS</div>
       <h1 class="paywall-title">Continue lucrando com dados<br/><span class="paywall-title-accent">no nível Pro</span></h1>
@@ -1834,11 +1856,20 @@
     </div>
 
     <div class="paywall-stats">
-      <div class="paywall-stat"><div class="paywall-stat-num">7</div><div class="paywall-stat-lbl">dias de teste</div></div>
+      <div class="paywall-stat">
+        <div class="paywall-stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 9h18M8 3v4M16 3v4"/></svg></div>
+        <div class="paywall-stat-body"><div class="paywall-stat-num">7</div><div class="paywall-stat-lbl">dias de teste</div></div>
+      </div>
       <div class="paywall-stat-sep"></div>
-      <div class="paywall-stat"><div class="paywall-stat-num">15</div><div class="paywall-stat-lbl">tiers do ranking</div></div>
+      <div class="paywall-stat">
+        <div class="paywall-stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M7 4h10v3a5 5 0 01-10 0V4z"/><path d="M5 4H3v2a3 3 0 003 3M19 4h2v2a3 3 0 01-3 3M12 14v4M8 20h8"/></svg></div>
+        <div class="paywall-stat-body"><div class="paywall-stat-num">15</div><div class="paywall-stat-lbl">tiers do ranking</div></div>
+      </div>
       <div class="paywall-stat-sep"></div>
-      <div class="paywall-stat"><div class="paywall-stat-num">∞</div><div class="paywall-stat-lbl">transações</div></div>
+      <div class="paywall-stat">
+        <div class="paywall-stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M18.6 8.4a4.5 4.5 0 00-6.4 0L6.4 14.6a4.5 4.5 0 11-6.4-6.4M5.4 15.6a4.5 4.5 0 006.4 0l5.8-5.8a4.5 4.5 0 116.4 6.4" transform="translate(0,0)"/></svg></div>
+        <div class="paywall-stat-body"><div class="paywall-stat-num">∞</div><div class="paywall-stat-lbl">transações</div></div>
+      </div>
     </div>
 
     <div class="paywall-plans">
@@ -1864,7 +1895,7 @@
       </div>
 
       <div class="paywall-plan paywall-plan-featured">
-        <div class="paywall-plan-ribbon">MELHOR CUSTO · ECONOMIZA 33%</div>
+        <div class="paywall-plan-ribbon"><svg viewBox="0 0 24 24" width="11" height="11" fill="currentColor" style="vertical-align:-1px;margin-right:4px"><path d="M12 2l2.4 7.4H22l-6.2 4.6L18 21l-6-4.6L6 21l2.2-7L2 9.4h7.6L12 2z"/></svg>MELHOR CUSTO · ECONOMIZA 33%</div>
         <div class="paywall-plan-head">
           <div class="paywall-plan-name">Pro</div>
           <div class="paywall-plan-tag">ANUAL</div>
@@ -1887,7 +1918,7 @@
     </div>
 
     <div class="paywall-guarantee">
-      <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l8 4v6c0 5-3.5 9-8 10-4.5-1-8-5-8-10V6l8-4z"/><path d="M8 11l3 3 5-5"/></svg>
+      <div class="paywall-guarantee-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l8 4v6c0 5-3.5 9-8 10-4.5-1-8-5-8-10V6l8-4z"/><path d="M8 11l3 3 5-5"/></svg></div>
       <span><b>Cancele quando quiser.</b> Sem fidelidade, sem taxa de saída. Pagamento 100% seguro via Kirvano.</span>
     </div>
 
