@@ -1336,11 +1336,30 @@
     .chart-card .chart-legend-area {
       font-size:11px !important;
     }
-    /* Inputs de data nao crescem absurdos no mobile */
+    /* Inputs de data: trava altura mesmo vazio no iOS Safari */
     .form-input[type="date"] {
-      height:38px !important;
+      height:40px !important;
+      min-height:40px !important;
+      max-height:40px !important;
       padding:8px 10px !important;
       font-size:13px !important;
+      line-height:24px !important;
+      box-sizing:border-box !important;
+      -webkit-appearance:none;
+      appearance:none;
+      display:flex; align-items:center;
+    }
+    .form-input[type="date"]::-webkit-date-and-time-value {
+      text-align:left;
+      height:24px;
+    }
+    /* Modal: forca form-row com colunas iguais (Valor e Data do mesmo tamanho) */
+    .modal .form-row {
+      grid-template-columns:1fr 1fr !important;
+      gap:10px !important;
+    }
+    .modal .form-row > .form-group {
+      min-width:0 !important;
     }
     .form-input, .form-select { padding:10px 12px; font-size:13.5px; }
     .form-label { font-size:11.5px; margin-bottom:4px; }
