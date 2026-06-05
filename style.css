@@ -4524,6 +4524,29 @@ html.light .rank-podium-slot [class*="pod-pos"]{ color: #475569 !important; }
 html.light .rank-podium-slot [class*="pod-tier"]{ color: #475569 !important; }
 html.light .rank-podium-slot [class*="pod-profit"]{ color: #047857 !important; font-weight: 700; }
 
+/* Suaviza drop-shadows das PNGs (medalhas, escudos, tiers).
+   No tema escuro `drop-shadow(0 8px 20px rgba(0,0,0,.5))` fica natural,
+   mas no tema claro vira uma "sombra quadrada" preta feia ao redor da PNG.
+   Aqui troca por sombras suaves de cinza-azulado. */
+html.light .rank-podium-medal{
+  filter: drop-shadow(0 6px 14px rgba(15,23,42,.12)) drop-shadow(0 2px 4px rgba(15,23,42,.08)) !important;
+}
+html.light .rank-podium-medal-corner{
+  filter: drop-shadow(0 3px 6px rgba(15,23,42,.10)) !important;
+}
+html.light .rank-shield-img,
+html.light .rank-shield img{
+  filter: drop-shadow(0 3px 8px rgba(15,23,42,.12)) !important;
+}
+html.light .rank-tier-icon img{
+  filter: drop-shadow(0 2px 6px rgba(15,23,42,.12)) !important;
+}
+/* Linhas — icone de tier ao lado direito */
+html.light .rank-row .rank-row-tier-icon img,
+html.light .rank-row [class*="tier"] img{
+  filter: drop-shadow(0 1px 3px rgba(15,23,42,.10)) !important;
+}
+
 /* ════════════════════════════════════════════════════════════════
    TEMA CLARO — AFILIADO (Minhas Indicacoes)
    ════════════════════════════════════════════════════════════════ */
