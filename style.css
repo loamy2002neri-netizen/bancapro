@@ -4548,6 +4548,150 @@ html.light .rank-row [class*="tier"] img{
 }
 
 /* ════════════════════════════════════════════════════════════════
+   ROUND 3 — auditoria fina dos componentes ainda escuros no Ranking
+   Cobre os 5 cards/avatares que sobraram do tema escuro hard-coded.
+   ════════════════════════════════════════════════════════════════ */
+
+/* Avatares dos pódios (CM/HB/NF) — gradiente azul-escuro -> cinza claro */
+html.light .rank-podium-avatar{
+  background: linear-gradient(135deg, #475569, #1e293b) !important;
+  color: #ffffff !important;
+}
+
+/* Cards de informação "Seu nivel atual" e "Tiers" — gradiente escuro -> claro */
+html.light .rank-current-card,
+html.light .rank-tiers-card{
+  background: linear-gradient(160deg, #ffffff 0%, #f8fafc 100%) !important;
+  border: 1px solid rgba(99,102,241,.18) !important;
+  box-shadow: 0 8px 30px -10px rgba(99,102,241,.15) !important;
+}
+html.light .rank-tiers-card::before{
+  background: linear-gradient(90deg, transparent, rgba(99,102,241,.35), transparent) !important;
+}
+
+/* Titulos e subtitulos desses cards (tinham color:#fff hard-coded) */
+html.light .rank-tiers-title,
+html.light .rank-current-title,
+html.light .rank-tiers-current-name{
+  color: #0f172a !important;
+}
+html.light .rank-tiers-sub,
+html.light .rank-tiers-current-label{
+  color: #6366f1 !important;
+}
+html.light .rank-tiers-current{
+  background: linear-gradient(135deg, rgba(99,102,241,.10), rgba(255,255,255,1)) !important;
+  border: 1px solid rgba(99,102,241,.25) !important;
+  box-shadow: 0 4px 12px rgba(99,102,241,.10) !important;
+}
+
+/* "Tubo" dos niveis (rank-tier-tube) — fundo preto -> cinza claro */
+html.light .rank-tier-tube{
+  background: linear-gradient(rgba(15,23,42,.06) 0%, rgba(15,23,42,.10) 50%, rgba(15,23,42,.06) 100%) !important;
+  border: 1px solid rgba(15,23,42,.06) !important;
+}
+
+/* Stats inferiores do ranking (rank-bottom-card) */
+html.light .rank-bottom-card{
+  background: linear-gradient(160deg, #ffffff 0%, #f1f5f9 100%) !important;
+  border: 1px solid rgba(99,102,241,.18) !important;
+}
+html.light .rank-bottom-card *:where(.rbs-label, [class*="-label"]){ color: #6366f1 !important; }
+html.light .rank-bottom-card *:where(.rbs-value, [class*="-value"]){ color: #0f172a !important; }
+
+/* Tier bars wrap — gradient radial -> claro */
+html.light .rank-tier-bars-wrap{
+  background:
+    radial-gradient(ellipse 110% 80% at 50% 100%, rgba(99,102,241,.08) 0%, rgba(99,102,241,.02) 40%, transparent 70%),
+    radial-gradient(ellipse 60% 50% at 50% 0%, rgba(15,23,42,.03), transparent 70%) !important;
+}
+
+/* Names dos tiers individuais */
+html.light .rank-tier-name,
+html.light [class*="rank-tier"] [class*="name"]{
+  color: #0f172a !important;
+}
+html.light .rank-tier-meta,
+html.light [class*="rank-tier"] [class*="meta"]{
+  color: #475569 !important;
+}
+
+/* Labels dos pódios (1º LUGAR, 2º LUGAR) ficam dourado/cinza/bronze */
+html.light .rank-podium-1 [class*="position"]{ color: #b45309 !important; font-weight: 800; }
+html.light .rank-podium-2 [class*="position"]{ color: #475569 !important; font-weight: 800; }
+html.light .rank-podium-3 [class*="position"]{ color: #92400e !important; font-weight: 800; }
+
+/* Nomes do pódio (Cesar / Hericky / Nando) */
+html.light .rank-podium-slot [class*="name"]:not([class*="initials"]):not([class*="rank-row-name"]){
+  color: #0f172a !important;
+}
+html.light .rank-podium-slot [class*="profit"]{ color: #047857 !important; font-weight: 700; }
+html.light .rank-podium-slot [class*="tier"]:not([class*="icon"]){ color: #64748b !important; }
+
+/* ════════════════════════════════════════════════════════════════
+   ROUND 4 — Textos brancos invisíveis no tema claro (audit fino)
+   Detectados via DOM scan: 5 classes com color:#fff hard-coded.
+   ════════════════════════════════════════════════════════════════ */
+html.light .rank-headline{ color: #0f172a !important; }
+html.light .rank-current-name{ color: #0f172a !important; }
+html.light .rni-name{ color: #0f172a !important; }
+/* Valor "R$ 1.000" do progresso de proximo nivel — sem classe propria, mas
+   esta dentro de um container conhecido */
+html.light .rank-current-card *,
+html.light .rank-tiers-card *{
+  /* Reset color pra elementos sem classe (preto sobre claro) */
+}
+html.light .rank-current-card [style*="color:#fff"],
+html.light .rank-current-card [style*="color: #fff"],
+html.light .rank-tiers-card [style*="color:#fff"],
+html.light .rank-tiers-card [style*="color: #fff"]{
+  color: #0f172a !important;
+}
+
+/* Generic catch-all: qualquer texto branco que sobrou dentro do sec-ranking */
+html.light #sec-ranking *:not(.rank-podium-avatar):not(.rank-row-avatar):not(.rank-pill-voce):not([class*="pro-badge"]):not(.btn-primary):not(.mt-fab-inner):not(.mt-fab):not(.mt-fab *){
+  /* So aplica se for um elemento que NAO tem fundo escuro herdado */
+}
+html.light .rank-tier-name,
+html.light .rni-name,
+html.light .rank-headline,
+html.light .rank-current-name,
+html.light .rank-bottom-card div,
+html.light .rank-bottom-card span{ color: inherit; }
+
+/* Texto "R$ 0 de lucro acumulado" e similares — geralmente subtitle cinza claro */
+html.light .rank-current-card [class*="sub"],
+html.light .rank-current-card [class*="hint"],
+html.light .rank-tiers-card [class*="sub"]{
+  color: #64748b !important;
+}
+
+/* Cards "Bronze R$1k+", "Prata R$3k+", "Ouro R$5k+" (proximos niveis) */
+html.light .rni{
+  background: linear-gradient(135deg, #ffffff, #f8fafc) !important;
+  border: 1px solid rgba(15,23,42,.08) !important;
+}
+html.light .rni-name{ color: #0f172a !important; font-weight: 700; }
+html.light .rni-target{ color: #6366f1 !important; }
+
+/* Pill "TODOS OS TIERS" header */
+html.light .rank-section-pill,
+html.light [class*="rank-pill"]:not(.rank-pill-voce){
+  background: rgba(99,102,241,.08) !important;
+  color: #6366f1 !important;
+  border: 1px solid rgba(99,102,241,.18) !important;
+}
+
+/* Tiers bars no rodape do "Sistema de Ranks" — labels FERRO/BRONZE/PRATA */
+html.light .rank-tier-bar-label,
+html.light [class*="tier-bar"] [class*="label"]{
+  color: #475569 !important;
+}
+
+/* Eyebrow "SEU RANK ATUAL" */
+html.light .rank-tiers-current-label{ color: #6366f1 !important; }
+
+/* ════════════════════════════════════════════════════════════════
    TEMA CLARO — AFILIADO (Minhas Indicacoes)
    ════════════════════════════════════════════════════════════════ */
 html.light .aff-tier-card{
