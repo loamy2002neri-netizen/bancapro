@@ -246,7 +246,13 @@ async function enterApp(user) {
     if (metaName && !localStorage.getItem('bancapro-user-name')) {
       localStorage.setItem('bancapro-user-name', metaName);
     }
-    if (user.created_at) localStorage.setItem('bancapro-user-created-at', user.created_at);
+    if (user.created_at) {
+      localStorage.setItem('bancapro-user-created-at', user.created_at);
+      // SEMPRE sincroniza o trial-start com o created_at REAL do usuario
+      // (corrige o bug de "trial acabou" quando localStorage tinha data antiga de
+      // sessao demo anterior)
+      localStorage.setItem('bancapro-trial-start', user.created_at);
+    }
   } catch(e){}
   loadPersistedState();
   loadAccounts();
@@ -1502,6 +1508,12 @@ async function logout() {
   const sb = getSb();
   try { if (sb) await sb.auth.signOut(); } catch(e){}
   try { localStorage.removeItem(LOCAL_SESSION_KEY); } catch(e){}
+  // Limpa o trial-start pra proxima sessao usar o created_at do user que logar
+  // (evita carregar data de uma sessao anterior, gerando "trial acabou" indevido)
+  try {
+    localStorage.removeItem('bancapro-trial-start');
+    localStorage.removeItem('bancapro-user-created-at');
+  } catch(e){}
   clearUserLocal();
   currentUserId = null;
   location.reload();
@@ -2432,11 +2444,10 @@ function buildNotifications() {
     }
   });
 
-  // 3) Trial: dias restantes
+  // 3) Trial: dias restantes (usa helper que prioriza user.created_at)
   try {
-    const start = localStorage.getItem('bancapro-trial-start');
-    if(start) {
-      const d = new Date(start);
+    const d = getTrialStartDate();
+    if(d) {
       const elapsed = Math.floor((Date.now() - d.getTime()) / (1000*60*60*24));
       const left = Math.max(7 - elapsed, 0);
       if(left > 0 && left <= 3) {
@@ -3828,14 +3839,34 @@ const TRIAL_DAYS = 7;
 const SUBSCRIPTION_PRICE = 24.90;
 const SUBSCRIPTION_PRICE_ANNUAL = 199;
 
-function loadTrialState() {
-  let start = null;
-  try { start = localStorage.getItem('bancapro-trial-start'); } catch(e) {}
-  if(!start) {
+// Resolve a data de inicio do trial com PRIORIDADE pro user.created_at do Supabase.
+// Bug que existia: localStorage 'bancapro-trial-start' setado em sessao antiga (modo demo)
+// nao era resetado quando o user criava conta nova — entao "trial acabou" aparecia
+// imediatamente mesmo em conta criada hoje.
+// Agora: se ha user autenticado, usa SEMPRE o created_at dele (e atualiza o cache local).
+function getTrialStartDate(){
+  var start = null;
+  // 1) Prioridade: user.created_at (Supabase) — fonte de verdade
+  try {
+    var user = currentAuthUser;
+    if (user && user.created_at){
+      start = user.created_at;
+      // Sincroniza o cache local com o created_at real
+      try { localStorage.setItem('bancapro-trial-start', start); } catch(e){}
+      return new Date(start);
+    }
+  } catch(e){}
+  // 2) Fallback: localStorage (modo demo sem auth)
+  try { start = localStorage.getItem('bancapro-trial-start'); } catch(e){}
+  if (!start){
     start = new Date().toISOString();
-    try { localStorage.setItem('bancapro-trial-start', start); } catch(e) {}
+    try { localStorage.setItem('bancapro-trial-start', start); } catch(e){}
   }
   return new Date(start);
+}
+
+function loadTrialState() {
+  return getTrialStartDate();
 }
 
 // ═══════════════════════════════════════════
@@ -3868,17 +3899,8 @@ function updateTrialStickyBanner(){
       }
     }
   } catch(e){}
-  // Calcula dias restantes
-  let start = null;
-  try { start = localStorage.getItem('bancapro-trial-start'); } catch(e){}
-  if (!start){
-    try {
-      const user = currentAuthUser;
-      if (user && user.created_at) start = user.created_at;
-    } catch(e){}
-  }
-  if (!start){ start = new Date().toISOString(); try { localStorage.setItem('bancapro-trial-start', start); } catch(e){} }
-  const startDate = new Date(start);
+  // Calcula dias restantes (usa created_at do user quando disponivel — anti-bug)
+  const startDate = getTrialStartDate();
   const msPerDay = 86400000;
   const elapsed = Math.floor((Date.now() - startDate.getTime()) / msPerDay);
   const left = Math.max(TRIAL_DAYS - elapsed, 0);
@@ -3936,14 +3958,8 @@ function updateProSectionWarnings(){
   if (!notes.length) return;
   const label = getCurrentPlanLabel();
   if (label !== 'Trial'){ notes.forEach(n => n.style.display = 'none'); return; }
-  // Calcula dias restantes
-  let start = null;
-  try { start = localStorage.getItem('bancapro-trial-start'); } catch(e){}
-  if (!start){
-    try { const u = currentAuthUser; if (u && u.created_at) start = u.created_at; } catch(e){}
-  }
-  if (!start){ notes.forEach(n => n.style.display = 'none'); return; }
-  const startDate = new Date(start);
+  // Calcula dias restantes (usa helper que prioriza user.created_at)
+  const startDate = getTrialStartDate();
   const elapsed = Math.floor((Date.now() - startDate.getTime()) / 86400000);
   const left = Math.max(TRIAL_DAYS - elapsed, 0);
   // So mostra quando faltam 2 dias ou menos
