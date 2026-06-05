@@ -4746,6 +4746,13 @@ function setTheme(theme, el) {
   window._reportChartsInit = false;
   window._compareInit = false;
   window._methodEvoInit = false;
+  // Troca PNGs do ranking pra versao do tema certo (com/sem sombra)
+  try {
+    if (typeof renderUserRanking === 'function' && document.getElementById('sec-ranking')?.classList.contains('active')){
+      renderUserRanking();
+    }
+    if (typeof rankUpdateDashCard === 'function') rankUpdateDashCard();
+  } catch(e){}
   // sincroniza o tema na conta (entre aparelhos)
   if (typeof schedulePush === 'function') schedulePush();
 }
@@ -6282,10 +6289,26 @@ const RANK_IMAGE_FILES = {
   11:'11-elite', 12:'12-lendario', 13:'13-imortal', 14:'14-supremo', 15:'15-apex'
 };
 
+// Detecta tema atual e retorna a pasta de PNGs apropriada.
+// Tema escuro: brand/ranking/ (PNGs originais com sombra/glow)
+// Tema claro:  brand/ranking tema claro/ (versoes sem sombra)
+function rankImagesFolder(){
+  try {
+    if (document.documentElement.classList.contains('light')) return 'brand/ranking tema claro';
+  } catch(e){}
+  return 'brand/ranking';
+}
+function medalsFolder(){
+  try {
+    if (document.documentElement.classList.contains('light')) return 'brand/ranking tema claro';
+  } catch(e){}
+  return 'brand/medals';
+}
+
 function rankShieldSVG(tier){
-  // Usa imagem PNG premium dos ranks (brand/ranking/)
+  // Usa imagem PNG premium dos ranks (brand/ranking/ ou tema claro)
   if (tier && tier.idx && RANK_IMAGE_FILES[tier.idx]){
-    return '<img class="rank-shield-img" src="brand/ranking/'+RANK_IMAGE_FILES[tier.idx]+'.png" alt="'+tier.name+'" loading="eager"/>';
+    return '<img class="rank-shield-img" src="'+rankImagesFolder()+'/'+RANK_IMAGE_FILES[tier.idx]+'.png" alt="'+tier.name+'" loading="eager"/>';
   }
   // Fallback SVG (caso falte alguma imagem)
   const uid = 'rk'+(tier?.idx||0)+'_'+Math.random().toString(36).slice(2,8);
@@ -6740,10 +6763,10 @@ function renderRankMyPos(youProfit, currentTier){
   }
 }
 
-// Medalhas premium (Top 1/2/3) — imagens em brand/medals/
+// Medalhas premium (Top 1/2/3) — imagens em brand/medals/ ou tema claro
 function rankMedalSVG(rank){
   const r = (rank === 1 || rank === 2 || rank === 3) ? rank : 3;
-  return '<img class="rank-medal-img" src="brand/medals/'+r+'.png" alt="'+r+'º lugar" loading="eager"/>';
+  return '<img class="rank-medal-img" src="'+medalsFolder()+'/'+r+'.png" alt="'+r+'º lugar" loading="eager"/>';
 }
 
 // 🥇🥈🥉 Pódio Top 3
