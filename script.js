@@ -3904,6 +3904,12 @@ function updateTrialStickyBanner(){
   const msPerDay = 86400000;
   const elapsed = Math.floor((Date.now() - startDate.getTime()) / msPerDay);
   const left = Math.max(TRIAL_DAYS - elapsed, 0);
+  // So aparece a partir do 3o dia (quando faltam 5 dias ou menos).
+  // Primeiros 2 dias o user explora sem pressao de banner.
+  if (left > 5){
+    el.classList.remove('show');
+    return;
+  }
   const daysEl = document.getElementById('trialStickyDays');
   const txtEl  = document.getElementById('trialStickyText');
   const tailEl = document.getElementById('trialStickyTail');
@@ -4250,6 +4256,30 @@ function subscribeNow(plan) {
 function continueTrialToast() {
   showToast('Tudo certo! Aproveite seus dias grátis 🎉','success');
 }
+
+// Re-valida o plano do usuario com o Supabase e atualiza o banner.
+// Chamado quando a aba volta a ganhar foco (user volta do Kirvano)
+// e periodicamente. Garante que apos assinar, o banner trial some
+// sem precisar recarregar a pagina.
+async function refreshPlanAndUI(){
+  try {
+    if (!currentAuthUser) return;
+    await cachePlanLabel(currentAuthUser);
+    if (typeof updateAllUpgradeUI === 'function') updateAllUpgradeUI();
+    if (typeof updateTrialStickyBanner === 'function') updateTrialStickyBanner();
+  } catch(e){}
+}
+
+// Refresh quando aba volta a ser visivel (ex: user voltou do checkout Kirvano)
+document.addEventListener('visibilitychange', function(){
+  if (document.visibilityState === 'visible') refreshPlanAndUI();
+});
+window.addEventListener('focus', refreshPlanAndUI);
+// Refresh periodico a cada 90s enquanto app esta aberto (cobre o caso
+// do user assinar em outra aba e voltar pra essa)
+setInterval(function(){
+  if (document.visibilityState === 'visible') refreshPlanAndUI();
+}, 90000);
 
 function toggleFaq(el) {
   const item = el.closest('.faq-item');
