@@ -4524,18 +4524,31 @@ html.light .rank-podium-slot [class*="pod-pos"]{ color: #475569 !important; }
 html.light .rank-podium-slot [class*="pod-tier"]{ color: #475569 !important; }
 html.light .rank-podium-slot [class*="pod-profit"]{ color: #047857 !important; font-weight: 700; }
 
-/* Remove drop-shadow das PNGs no tema claro.
-   drop-shadow segue o contorno da PNG (com transparencia) — qualquer
-   sombra fica como "halo" ao redor do escudo/medalha. No tema claro
-   isso fica feio (sombra clara/escura sobressaindo). Remocao limpa. */
-html.light .rank-podium-medal,
-html.light .rank-podium-medal-corner,
-html.light .rank-shield-img,
+/* Remove drop-shadow de TODAS as PNGs no tema claro.
+   drop-shadow segue o contorno transparente da PNG — qualquer sombra
+   vira halo ao redor do escudo/medalha/icone. No tema claro fica feio
+   (sombra escura ou clara sobressaindo do contorno). Remocao total. */
+html.light img,
+html.light [class*="medal"],
+html.light [class*="shield"],
+html.light [class*="tier-icon"],
+html.light [class*="-icon"] img,
+html.light .rni img,
+html.light .rni-icon,
+html.light .rank-tier img,
+html.light .rank-shield,
 html.light .rank-shield img,
-html.light .rank-tier-icon img,
-html.light .rank-row .rank-row-tier-icon img,
-html.light .rank-row [class*="tier"] img{
+html.light .rank-podium-medal,
+html.light .rank-podium-medal-corner{
   filter: none !important;
+}
+
+/* Excecoes: badges pequenos que devem manter glow (pro badge azul, etc) */
+html.light .rank-pro-badge,
+html.light .rank-pro-badge svg,
+html.light .verified-badge img,
+html.light .verified-badge svg{
+  filter: drop-shadow(0 2px 4px rgba(29,155,240,.35)) !important;
 }
 
 /* ════════════════════════════════════════════════════════════════
