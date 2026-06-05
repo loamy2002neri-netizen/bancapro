@@ -4692,6 +4692,110 @@ html.light [class*="tier-bar"] [class*="label"]{
 html.light .rank-tiers-current-label{ color: #6366f1 !important; }
 
 /* ════════════════════════════════════════════════════════════════
+   ROUND 5 — Onboarding "Primeiros passos" + Dashboard rank +
+              Afiliado "Como funciona"
+   ════════════════════════════════════════════════════════════════ */
+
+/* ── Onboarding card "Primeiros passos" ── */
+html.light .onboarding-card{
+  background: linear-gradient(135deg, rgba(167,139,250,.08), #ffffff) !important;
+  border: 1px solid rgba(167,139,250,.22) !important;
+}
+html.light .onboarding-title,
+html.light .onboarding-card .onboarding-title{ color: #0f172a !important; }
+html.light .onboarding-subtitle,
+html.light .onboarding-card [class*="subtitle"],
+html.light .onboarding-card [class*="progress"]{ color: #64748b !important; }
+html.light .onboarding-step-text b,
+html.light .onboarding-step-text strong{
+  color: #0f172a !important;
+}
+html.light .onboarding-step-text,
+html.light .onboarding-step{ color: #475569 !important; }
+html.light .onboarding-step.is-done,
+html.light .onboarding-step.completed{
+  opacity: .55;
+}
+html.light .onboarding-step.is-done b,
+html.light .onboarding-step.completed b{
+  text-decoration: line-through;
+  color: #94a3b8 !important;
+}
+
+/* ── Dashboard Rank Card ("Você estaria em #10") ── */
+html.light .dash-rank-card{
+  background: linear-gradient(135deg, rgba(99,102,241,.08), #ffffff) !important;
+  border: 1px solid rgba(99,102,241,.22) !important;
+}
+html.light .dash-rank-card.is-locked{
+  background: linear-gradient(135deg, rgba(99,102,241,.06), rgba(255,255,255,1)) !important;
+}
+html.light .dash-rank-tag{ color: #6366f1 !important; }
+html.light .dash-rank-main,
+html.light #dashRankMain{ color: #0f172a !important; }
+html.light .dash-rank-sub,
+html.light #dashRankSub{ color: #475569 !important; }
+html.light .dash-rank-card b{ color: #4c1d95 !important; }
+html.light .dash-rank-card .btn,
+html.light .dash-rank-card button:not(.btn-primary){
+  background: rgba(99,102,241,.10) !important;
+  color: #6366f1 !important;
+  border: 1px solid rgba(99,102,241,.20) !important;
+}
+
+/* ── Afiliado "Como funciona" steps ── */
+html.light .aff-how-card{
+  background: #ffffff !important;
+  border: 1px solid rgba(15,23,42,.08) !important;
+}
+html.light .aff-how-card *:not(.aff-how-step-num):not([class*="badge"]):not([style*="color"]){
+  /* Reseta texto branco invisivel pra escuro */
+}
+html.light .aff-how-card h2,
+html.light .aff-how-card h3,
+html.light .aff-how-card [class*="title"]{ color: #0f172a !important; }
+html.light .aff-how-card .aff-how-step{
+  color: #0f172a !important;
+}
+html.light .aff-how-card .aff-how-step b,
+html.light .aff-how-card .aff-how-step strong{ color: #0f172a !important; }
+/* Numero do passo (1,2,3,4) — mantem branco em fundo roxo do badge */
+html.light .aff-how-step-num{
+  background: linear-gradient(135deg, #6366f1, #8b5cf6) !important;
+  color: #ffffff !important;
+}
+/* Texto/spans dentro dos steps sem classe */
+html.light .aff-how-card .aff-how-step > *,
+html.light .aff-how-card .aff-how-steps > div > *{ color: inherit; }
+html.light .aff-how-card .aff-how-step span,
+html.light .aff-how-card .aff-how-step div{ color: #475569; }
+
+/* Footer "Você ganha 30% recorrente" + Anti-abuse warning */
+html.light .aff-how-footer,
+html.light .aff-how-card [class*="footer"],
+html.light .aff-how-card [class*="summary"]{
+  background: linear-gradient(135deg, rgba(99,102,241,.08), rgba(167,139,250,.04)) !important;
+  border: 1px solid rgba(99,102,241,.20) !important;
+  color: #4c1d95 !important;
+}
+html.light .aff-how-footer *,
+html.light .aff-how-card [class*="footer"] *,
+html.light .aff-how-card [class*="summary"] *{ color: inherit; }
+
+/* Anti-abuse box (laranja) */
+html.light .aff-how-card .aff-anti-abuse,
+html.light .aff-how-card [class*="anti-abuse"],
+html.light .aff-how-card [class*="warning"]{
+  background: rgba(245,158,11,.10) !important;
+  border: 1px solid rgba(245,158,11,.30) !important;
+}
+html.light .aff-how-card [class*="anti-abuse"] b,
+html.light .aff-how-card [class*="anti-abuse"] strong,
+html.light .aff-how-card [class*="warning"] b{ color: #92400e !important; }
+html.light .aff-how-card [class*="anti-abuse"],
+html.light .aff-how-card [class*="warning"]{ color: #78350f !important; }
+
+/* ════════════════════════════════════════════════════════════════
    TEMA CLARO — AFILIADO (Minhas Indicacoes)
    ════════════════════════════════════════════════════════════════ */
 html.light .aff-tier-card{
