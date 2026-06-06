@@ -239,13 +239,23 @@ async function enterApp(user) {
   document.getElementById('appLayout').style.display = 'flex';
   await pullUserData(user.id);
   try {
-    if (user.email && !localStorage.getItem('bancapro-user-email')) {
-      localStorage.setItem('bancapro-user-email', user.email);
+    // Detecta troca de conta: se email/userid no localStorage difere do user
+    // que ta logando agora, limpa dados residuais (nome, avatar, etc) pra evitar
+    // que dados do user anterior contaminem a sessao atual.
+    var lastEmail = (localStorage.getItem('bancapro-user-email') || '').toLowerCase();
+    var currEmail = (user.email || '').toLowerCase();
+    if (lastEmail && currEmail && lastEmail !== currEmail){
+      // Conta DIFERENTE — limpa todos os dados de identidade do user antigo
+      ['bancapro-user-name','bancapro-profile-avatar','bancapro-profile-display-name',
+       'bancapro-profile-photo','bancapro-display-name'].forEach(function(k){
+        try { localStorage.removeItem(k); } catch(e){}
+      });
     }
+    // SEMPRE sobrescreve com dados do user atual (nao usa more `!getItem(...)`
+    // — isso era bug que mantinha dados antigos quando trocava conta)
+    if (user.email) localStorage.setItem('bancapro-user-email', user.email);
     const metaName = user.user_metadata && user.user_metadata.name;
-    if (metaName && !localStorage.getItem('bancapro-user-name')) {
-      localStorage.setItem('bancapro-user-name', metaName);
-    }
+    if (metaName) localStorage.setItem('bancapro-user-name', metaName);
     if (user.created_at) {
       localStorage.setItem('bancapro-user-created-at', user.created_at);
       // SEMPRE sincroniza o trial-start com o created_at REAL do usuario
@@ -1508,11 +1518,16 @@ async function logout() {
   const sb = getSb();
   try { if (sb) await sb.auth.signOut(); } catch(e){}
   try { localStorage.removeItem(LOCAL_SESSION_KEY); } catch(e){}
-  // Limpa o trial-start pra proxima sessao usar o created_at do user que logar
-  // (evita carregar data de uma sessao anterior, gerando "trial acabou" indevido)
+  // Limpa TODOS os dados de identidade do user atual pra proxima sessao comecar
+  // fresh — evita que nome/avatar/email residuais aparecam pro proximo user.
   try {
-    localStorage.removeItem('bancapro-trial-start');
-    localStorage.removeItem('bancapro-user-created-at');
+    ['bancapro-trial-start','bancapro-user-created-at',
+     'bancapro-user-email','bancapro-user-name',
+     'bancapro-profile-avatar','bancapro-profile-display-name',
+     'bancapro-profile-photo','bancapro-display-name',
+     'bancapro-rank-positions-today','bancapro-rank-positions-week',
+     'bancapro-rank-positions-month','bancapro-rank-positions-all'
+    ].forEach(function(k){ try { localStorage.removeItem(k); } catch(e){} });
   } catch(e){}
   clearUserLocal();
   currentUserId = null;
