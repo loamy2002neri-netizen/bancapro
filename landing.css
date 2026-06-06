@@ -1902,7 +1902,14 @@ body.lp-menu-open .lp-mobile-menu { display: flex; }
   .lp-cta-card { padding: 36px 22px; }
   .lp-price-card { padding: 24px 22px; }
   .lp-price-value { font-size: 38px; }
-  .lp-footer-cols { grid-template-columns: 1fr; }
+  /* Footer mobile: 2 colunas em vez de 1 — ocupa metade do espaco
+     vertical, fica mais visualmente equilibrado */
+  .lp-footer-cols { grid-template-columns: 1fr 1fr; gap: 24px 18px; }
+  .lp-footer-top { gap: 28px; margin-bottom: 28px; }
+  .lp-footer-brand .lp-logo{ margin-bottom: 10px; }
+  .lp-footer-desc { font-size: 13px; max-width: 100%; }
+  .lp-footer-col-title { font-size: 10.5px; margin-bottom: 10px; }
+  .lp-footer-col a { font-size: 13px; padding: 4px 0; }
   .lp-final-title { font-size: 26px; }
   .lp-hero-cta { flex-direction: column; width: 100%; }
   .lp-hero-cta .lp-btn-primary-lg,
