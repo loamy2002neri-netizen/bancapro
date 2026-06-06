@@ -324,7 +324,11 @@ async function enterApp(user) {
 }
 
 // ─── Controle de acesso por assinatura ───
-const OWNER_EMAILS = ['loamy2002neri@gmail.com', 'loamy69zzz@gmail.com']; // nunca bloqueado (dono)
+// OWNER_EMAILS vem de config.js (window.OWNERS.emails) — single source of truth.
+// Fallback hard-coded mantido caso config.js nao carregue (defesa em profundidade).
+const OWNER_EMAILS = (window.OWNERS && Array.isArray(window.OWNERS.emails) && window.OWNERS.emails.length)
+  ? window.OWNERS.emails.map(e => String(e).toLowerCase())
+  : ['loamy2002neri@gmail.com', 'loamy69zzz@gmail.com'];
 
 // Cacheia o label do plano (Free/Trial/Plus/Pro/Administrador) pra exibir no sidebar
 // instantaneamente no proximo reload via hydrateSidebar (sem flash de "Apostador")
@@ -6603,22 +6607,12 @@ function rankBuildLeaderboard(youProfit, youName, source){
   } else {
     base = []; // ha Supabase mas cache ainda nao populou — vazio temporario
   }
-  // Filtra contas de dono (admin) que possam vir do RPC. Owners NUNCA
-  // aparecem no leaderboard — nem pra outros usuarios, nem pra si mesmos.
-  // Estrategia: matching robusto por inclusao (substring) — pega qualquer
-  // variante: "Loamy neri", "Loamy Neri", "loamy 2002", "loamyzito admin", etc.
-  // Tambem detecta prefixos de email dos owners (loamy2002neri, loamy69zzz).
-  const OWNER_SIGNATURES = [
-    'loamy neri',
-    'loamy 2002',
-    'loamy2002',
-    'loamy 69',
-    'loamy69',
-    'loamyzito admin',
-    'loamy admin',
-    'admin loamy',
-    'apostack admin'
-  ];
+  // Filtra contas de dono (admin) que possam vir do RPC.
+  // Source of truth: config.js (window.OWNERS.signatures).
+  // Pra adicionar/remover owner editar la — aqui so puxa.
+  const OWNER_SIGNATURES = (window.OWNERS && Array.isArray(window.OWNERS.signatures) && window.OWNERS.signatures.length)
+    ? window.OWNERS.signatures
+    : ['loamy neri','loamy 2002','loamy2002','loamy 69','loamy69','loamyzito admin','loamy admin','admin loamy','apostack admin'];
   base = base.filter(u => {
     var raw = (u.name||'').toString().trim().toLowerCase();
     // Remove acentos pra comparacao mais flexivel
