@@ -6,15 +6,11 @@
 #    .\bump.ps1            (incrementa de 1)
 #    .\bump.ps1 -To 200    (forca pra 200)
 #
-#  O que faz:
-#    1) Le version.txt
-#    2) Incrementa +1 (ou usa -To)
-#    3) Escreve em version.txt
-#    4) Atualiza TODOS os ?v=X em index.html (script.js, style.css, config.js)
-#    5) Mostra resumo
+#  CRITICO: usa [System.IO.File] direto com encoding UTF-8 explicito
+#  pra NAO destruir caracteres especiais (é, ã, ç) do HTML.
 #
-#  Substitui o trabalho manual de procurar "v=158" e mudar pra "v=159"
-#  em 3 lugares do HTML toda vez que mexe em CSS/JS.
+#  Bug anterior: Get-Content + Set-Content do PS 5.1 leu UTF-8 como
+#  Windows-1252 e reescreveu como UTF-8 — virou mojibake (Métodos -> MÃ©todos).
 # ──────────────────────────────────────────────
 
 param(
@@ -26,19 +22,28 @@ $root = $PSScriptRoot
 $versionFile = Join-Path $root 'version.txt'
 $indexFile   = Join-Path $root 'index.html'
 
-if (-not (Test-Path $versionFile)){ Set-Content $versionFile -Value '100' -Encoding utf8 -NoNewline }
+if (-not (Test-Path $versionFile)){
+  [System.IO.File]::WriteAllText($versionFile, '100', (New-Object System.Text.UTF8Encoding $false))
+}
 
-$current = [int](Get-Content $versionFile -Raw).Trim()
+$current = [int]([System.IO.File]::ReadAllText($versionFile, [System.Text.Encoding]::UTF8)).Trim()
 $new = if ($To -gt 0) { $To } else { $current + 1 }
 
-# Atualiza version.txt
-Set-Content $versionFile -Value "$new" -Encoding utf8 -NoNewline
+# Atualiza version.txt (UTF-8 sem BOM)
+[System.IO.File]::WriteAllText($versionFile, "$new", (New-Object System.Text.UTF8Encoding $false))
 
 # Atualiza index.html — qualquer ?v=NUM nos assets locais (.js/.css)
-$html = Get-Content $indexFile -Raw
+# IMPORTANTE: detecta se tem BOM no original e preserva
+$bytes = [System.IO.File]::ReadAllBytes($indexFile)
+$hasBom = ($bytes.Length -ge 3) -and ($bytes[0] -eq 0xEF) -and ($bytes[1] -eq 0xBB) -and ($bytes[2] -eq 0xBF)
+
+$html = [System.IO.File]::ReadAllText($indexFile, [System.Text.Encoding]::UTF8)
 $pattern = '(?<=(?:[\w-]+\.(?:js|css))\?v=)\d+'
 $html = [regex]::Replace($html, $pattern, "$new")
-Set-Content $indexFile -Value $html -Encoding utf8 -NoNewline
+
+# Reescreve com mesmo BOM/no-BOM do original
+$encoding = New-Object System.Text.UTF8Encoding $hasBom
+[System.IO.File]::WriteAllText($indexFile, $html, $encoding)
 
 Write-Host "Version bump: $current -> $new" -ForegroundColor Green
-Write-Host "Atualizado em index.html" -ForegroundColor Cyan
+Write-Host "Atualizado em index.html (BOM: $hasBom)" -ForegroundColor Cyan
