@@ -34,9 +34,9 @@ $new = if ($To -gt 0) { $To } else { $current + 1 }
 # Atualiza version.txt
 Set-Content $versionFile -Value "$new" -Encoding utf8 -NoNewline
 
-# Atualiza index.html — qualquer ?v=NUM nos assets
+# Atualiza index.html — qualquer ?v=NUM nos assets locais (.js/.css)
 $html = Get-Content $indexFile -Raw
-$pattern = '(?<=(?:script\.js|style\.css|config\.js)\?v=)\d+'
+$pattern = '(?<=(?:[\w-]+\.(?:js|css))\?v=)\d+'
 $html = [regex]::Replace($html, $pattern, "$new")
 Set-Content $indexFile -Value $html -Encoding utf8 -NoNewline
 
