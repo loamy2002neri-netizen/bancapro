@@ -743,42 +743,42 @@ body.lp-menu-open .lp-mobile-menu { display: flex; }
 }
 .lp-float-card-sub-strong { color: var(--lp-text-2); font-weight: 500; }
 
-/* MOBILE — 4 cards FLUTUANDO ao redor do mockup (igual desktop, mas
-   em escala menor). Mantém positions absolutes pra preservar o visual
-   premium com tilt + animation. Apenas escala tamanhos pra caber em
-   tela pequena sem cortar o mockup. */
+/* MOBILE — 4 cards FLUTUANDO MENORES ao redor do mockup.
+   Cards bem compactos pro mockup do dashboard aparecer no centro
+   (era o problema: cards muito grandes cobriam tudo). */
 @media (max-width: 980px){
   .lp-hero-mockup-wrap {
-    padding: 70px 0 80px; /* espaco extra pros cards flutuantes top/bottom */
+    padding: 50px 0 60px;
   }
-  /* Cards menores em mobile, mas mantem absolute */
+  /* Cards compactos */
   .lp-float-card {
-    padding: 10px 14px;
+    padding: 7px 10px;
     min-width: 0;
-    max-width: 50%; /* nao passa de metade da tela */
+    max-width: 38%; /* bem menor — deixa mockup respirar */
+    border-radius: 10px;
   }
-  .lp-float-card-head{ font-size: 9.5px; letter-spacing: .6px; }
-  .lp-float-card-head svg{ width: 11px; height: 11px; }
-  .lp-float-card-value-sm{ font-size: 12.5px; line-height: 1.2; }
-  .lp-float-card-sub{ font-size: 10.5px; margin-top: 2px; }
-  /* Ajusta as 4 posicoes pra ficarem mais coladas ao mockup
-     (no mobile o mockup tem menos margem) */
-  .lp-float-card-tl{ top: 6%; left: -1%; --lp-tilt: -2deg; }
-  .lp-float-card-tr{ top: 4%; right: -1%; --lp-tilt: 2deg; }
-  .lp-float-card-bl{ bottom: 6%; left: 0; --lp-tilt: -1.5deg; }
-  .lp-float-card-br{ bottom: 4%; right: 0; --lp-tilt: 1.5deg; }
-  /* Card "7 dias gratis" ajuste check menor */
-  .lp-float-check{ width: 24px; height: 24px; }
-  .lp-float-check svg{ width: 12px; height: 12px; }
+  .lp-float-card-head{ font-size: 8px; letter-spacing: .4px; gap: 4px; }
+  .lp-float-card-head svg{ width: 9px; height: 9px; }
+  .lp-float-card-value-sm{ font-size: 10.5px; line-height: 1.15; }
+  .lp-float-card-sub{ font-size: 8.5px; margin-top: 1px; }
+  /* Posicoes nos CANTOS do mockup, sem invadir o centro */
+  .lp-float-card-tl{ top: 3%; left: -1%; --lp-tilt: -2deg; }
+  .lp-float-card-tr{ top: 2%; right: -1%; --lp-tilt: 2deg; }
+  .lp-float-card-bl{ bottom: 3%; left: -1%; --lp-tilt: -1.5deg; }
+  .lp-float-card-br{ bottom: 2%; right: -1%; --lp-tilt: 1.5deg; }
+  /* Card "7 dias gratis" check menor */
+  .lp-float-check{ width: 18px; height: 18px; }
+  .lp-float-check svg{ width: 9px; height: 9px; }
+  /* Pricing/icones pequenos nos heads dos outros cards */
+  .lp-float-card-head svg{ width: 9px !important; height: 9px !important; }
 }
 
-/* Telas BEM pequenas (Galaxy Fold, iPhone 5/SE 1g <=380px):
-   cards ainda menores, padding compacto */
+/* Galaxy Fold / iPhone SE 1g (<=380px) — ainda mais compacto */
 @media (max-width: 380px){
-  .lp-float-card { padding: 8px 11px; max-width: 48%; }
-  .lp-float-card-head{ font-size: 9px; }
-  .lp-float-card-value-sm{ font-size: 11.5px; }
-  .lp-float-card-sub{ font-size: 9.5px; }
+  .lp-float-card { padding: 6px 8px; max-width: 36%; }
+  .lp-float-card-head{ font-size: 7.5px; }
+  .lp-float-card-value-sm{ font-size: 10px; }
+  .lp-float-card-sub{ font-size: 8px; }
 }
 .lp-mockup-body {
   display: grid;
