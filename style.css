@@ -473,9 +473,16 @@
     flex-shrink:0;
   }
   .kpi-card .kpi-value {
-    font-size:26px; font-weight:800; letter-spacing:-0.5px;
+    /* clamp() escala fluidamente: minimo 18px, ideal ~2.2vw, maximo 26px.
+       Em telas estreitas (cards 220-280px), encolhe pra caber sem quebrar. */
+    font-size: clamp(18px, 1.8vw, 26px);
+    font-weight:800; letter-spacing:-0.5px;
     margin-bottom:8px; position:relative; z-index:1;
     color:var(--text-primary,#fff);
+    /* Nunca quebra o "R$" do numero. Forca uma linha so. */
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
   }
   .kpi-card .kpi-change {
     font-size:12px; font-weight:700; padding:3px 9px; border-radius:6px;
