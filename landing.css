@@ -3014,19 +3014,49 @@ body.lp-menu-open .lp-mobile-menu { display: flex; }
   font-style: italic;
 }
 
-/* Mobile */
+/* Mobile — itens compactos em UMA linha (icone + texto + preco)
+   em vez de empilhar (que dobrava a altura). */
 @media (max-width: 720px){
-  .lp-stack-card { padding: 28px 22px; }
+  .lp-stack-card { padding: 18px 14px; }
   .lp-stack-list li {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 8px;
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 0;
+  }
+  .lp-stack-item { gap: 10px; align-items: center; }
+  .lp-stack-icon {
+    width: 30px; height: 30px;
+    border-radius: 8px;
+  }
+  .lp-stack-icon svg { width: 14px; height: 14px; }
+  .lp-stack-name {
+    font-size: 13.5px;
+    margin-bottom: 1px;
+    gap: 5px;
+  }
+  .lp-stack-desc {
+    font-size: 11.5px;
+    line-height: 1.35;
   }
   .lp-stack-price {
-    align-self: flex-end;
-    font-size: 15px;
+    align-self: center;
+    font-size: 13.5px;
+    text-align: right;
   }
-  .lp-stack-highlight { margin: 0; }
-  .lp-stack-total { padding: 18px 20px; }
-  .lp-stack-total-now { font-size: 28px; }
+  .lp-stack-price span { font-size: 9.5px; }
+  .lp-stack-badge { font-size: 8px; padding: 2px 6px; }
+  .lp-stack-highlight {
+    margin: 0;
+    padding: 12px 12px !important;
+  }
+  /* Total mais compacto */
+  .lp-stack-total {
+    padding: 14px 16px;
+    border-radius: 12px;
+  }
+  .lp-stack-total-now { font-size: 24px; }
+  .lp-stack-total-label { font-size: 12px; }
+  .lp-stack-total-old { font-size: 14px; }
+  .lp-stack-total-note { font-size: 11px; margin-top: 8px; }
 }
