@@ -1702,7 +1702,16 @@ body.lp-menu-open .lp-mobile-menu { display: flex; }
 
 @media (max-width: 980px){
   .lp-plans-grid { grid-template-columns: 1fr; max-width: 440px; margin: 0 auto 32px; }
-  .lp-trust-bar { grid-template-columns: repeat(2, 1fr); }
+  /* Trust bar compacto: 2x2 com cards menores e icones reduzidos */
+  .lp-trust-bar { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+  .lp-trust-item { padding: 10px 11px; gap: 8px; border-radius: 10px; }
+  .lp-trust-icon {
+    width: 26px; height: 26px;
+    border-radius: 7px;
+  }
+  .lp-trust-icon svg { width: 14px; height: 14px; }
+  .lp-trust-title { font-size: 11.5px; line-height: 1.2; }
+  .lp-trust-sub { font-size: 10px; margin-top: 1px; line-height: 1.25; }
 }
 
 /* ═══════════════════════════════════════════
