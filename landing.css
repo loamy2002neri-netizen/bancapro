@@ -770,8 +770,13 @@ body.lp-menu-open .lp-mobile-menu { display: flex; }
     gap: 12px;
     position: static;
   }
-  /* O mockup-frame ocupa as 2 colunas no topo */
-  .lp-mockup-frame{ grid-column: 1 / -1; }
+  /* O mockup-frame ocupa as 2 colunas no TOPO (order:-1 garante que
+     vem ANTES dos cards no flow do grid) — mockup tem maior impacto
+     visual e segura atencao do usuario antes dos beneficios. */
+  .lp-mockup-frame{
+    grid-column: 1 / -1;
+    order: -1;
+  }
   /* Tamanho menor nos textos dentro dos cards */
   .lp-float-card-value-sm{ font-size: 15px; }
   .lp-float-card-sub{ font-size: 12.5px; }
