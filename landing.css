@@ -752,15 +752,15 @@ body.lp-menu-open .lp-mobile-menu { display: flex; }
   }
   /* Cards compactos */
   .lp-float-card {
-    padding: 7px 10px;
+    padding: 5px 8px;
     min-width: 0;
-    max-width: 38%; /* bem menor — deixa mockup respirar */
-    border-radius: 10px;
+    max-width: 32%; /* mais compacto ainda */
+    border-radius: 9px;
   }
-  .lp-float-card-head{ font-size: 8px; letter-spacing: .4px; gap: 4px; }
-  .lp-float-card-head svg{ width: 9px; height: 9px; }
-  .lp-float-card-value-sm{ font-size: 10.5px; line-height: 1.15; }
-  .lp-float-card-sub{ font-size: 8.5px; margin-top: 1px; }
+  .lp-float-card-head{ font-size: 7px; letter-spacing: .3px; gap: 3px; margin-bottom: 2px; }
+  .lp-float-card-head svg{ width: 8px; height: 8px; }
+  .lp-float-card-value-sm{ font-size: 9.5px; line-height: 1.1; }
+  .lp-float-card-sub{ font-size: 7.5px; margin-top: 1px; line-height: 1.2; }
   /* Posicoes nos CANTOS do mockup, sem invadir o centro */
   .lp-float-card-tl{ top: 3%; left: -1%; --lp-tilt: -2deg; }
   .lp-float-card-tr{ top: 2%; right: -1%; --lp-tilt: 2deg; }
@@ -775,10 +775,10 @@ body.lp-menu-open .lp-mobile-menu { display: flex; }
 
 /* Galaxy Fold / iPhone SE 1g (<=380px) — ainda mais compacto */
 @media (max-width: 380px){
-  .lp-float-card { padding: 6px 8px; max-width: 36%; }
-  .lp-float-card-head{ font-size: 7.5px; }
-  .lp-float-card-value-sm{ font-size: 10px; }
-  .lp-float-card-sub{ font-size: 8px; }
+  .lp-float-card { padding: 4px 7px; max-width: 30%; }
+  .lp-float-card-head{ font-size: 6.5px; }
+  .lp-float-card-value-sm{ font-size: 8.5px; }
+  .lp-float-card-sub{ font-size: 7px; }
 }
 .lp-mockup-body {
   display: grid;
