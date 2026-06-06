@@ -6698,7 +6698,8 @@ async function rankFetchLeaderboard(){
     return data.map(r => ({
       name: r.display_name || 'Apostador',
       profit: Number(r.profit) || 0,
-      isPro: !!r.is_pro
+      isPro: !!r.is_pro,
+      avatar: r.avatar || null
     }));
   } catch(e) { console.warn('rankFetchLeaderboard', e); return null; }
 }
@@ -6826,12 +6827,15 @@ function renderRankPodium(youProfit){
     const { current } = rankComputeCurrent(u.profit);
     const youCls = u.isYou ? 'is-you' : '';
     slot.className = 'rank-podium-slot rank-podium-' + rank + ' ' + youCls;
-    // Avatar: foto do localStorage se for "você", senão iniciais
+    // Avatar: prioridade — (1) foto vinda do RPC, (2) localStorage se 'voce',
+    // (3) iniciais como fallback
     let avatarHTML = rankUserInitials(u.name);
-    if (u.isYou){
+    if (u.avatar){
+      avatarHTML = '<img src="'+u.avatar+'" alt="" onerror="this.style.display=\'none\'"/>';
+    } else if (u.isYou){
       try {
         const dataUrl = localStorage.getItem('bancapro-avatar');
-        if (dataUrl) avatarHTML = '<img src="'+dataUrl+'" alt=""/>';
+        if (dataUrl) avatarHTML = '<img src="'+dataUrl+'" alt="" onerror="this.style.display=\'none\'"/>';
       } catch(e){}
     }
     // Esconde o nome "Você" do corpo quando for placeholder (avatar + borda já indicam)
@@ -6962,6 +6966,16 @@ function rankRenderBoard(youProfit){
     const youCls = u.isYou ? 'is-you' : '';
     const proCls = u.isPro ? 'is-pro' : '';
     const initials = rankUserInitials(u.name);
+    // Avatar com prioridade: foto do RPC > localStorage do 'voce' > iniciais
+    let avatarInner = initials;
+    if (u.avatar){
+      avatarInner = '<img src="'+u.avatar+'" alt="" onerror="this.style.display=\'none\'; this.parentElement.textContent=\''+initials.replace(/'/g, "\\'")+'\'"/>';
+    } else if (u.isYou){
+      try {
+        const dataUrl = localStorage.getItem('bancapro-avatar');
+        if (dataUrl) avatarInner = '<img src="'+dataUrl+'" alt="" onerror="this.style.display=\'none\'"/>';
+      } catch(e){}
+    }
     const proBadge = u.isPro ? proBadgeHTML : '';
     // Position delta ▲/▼ (vs sessão anterior)
     const prevPos = posCache[u.name];
@@ -6975,7 +6989,7 @@ function rankRenderBoard(youProfit){
     }
     return '<div class="rank-row '+youCls+' '+proCls+'">'+
       '<div class="rank-row-pos">#'+r.pos+'</div>'+
-      '<div class="rank-row-avatar">'+initials+'</div>'+
+      '<div class="rank-row-avatar">'+avatarInner+'</div>'+
       '<div class="rank-row-name">'+u.name+proBadge+(u.isYou ? '<b>VOCÊ</b>' : '')+deltaHtml+'</div>'+
       '<div class="rank-row-tier"><span class="rank-shield">'+rankShieldSVG(current)+'</span><span class="rank-row-tier-name">'+current.name+'</span></div>'+
       '<div class="rank-row-profit">'+rankFormatValue(u.profit)+'</div>'+
@@ -7280,7 +7294,8 @@ async function rankFetchLeaderboardMonth(){
     return data.map(r => ({
       name: r.display_name || 'Apostador',
       profit: Number(r.profit) || 0,
-      isPro: !!r.is_pro
+      isPro: !!r.is_pro,
+      avatar: r.avatar || null
     }));
   } catch(e){
     if (!_monthRpcWarned){ console.warn('rankFetchLeaderboardMonth', e); _monthRpcWarned = true; }
@@ -7303,7 +7318,8 @@ async function rankFetchLeaderboardToday(){
     return data.map(r => ({
       name: r.display_name || 'Apostador',
       profit: Number(r.profit) || 0,
-      isPro: !!r.is_pro
+      isPro: !!r.is_pro,
+      avatar: r.avatar || null
     }));
   } catch(e){
     if (!_todayRpcWarned){ console.warn('rankFetchLeaderboardToday', e); _todayRpcWarned = true; }
@@ -7326,7 +7342,8 @@ async function rankFetchLeaderboardWeek(){
     return data.map(r => ({
       name: r.display_name || 'Apostador',
       profit: Number(r.profit) || 0,
-      isPro: !!r.is_pro
+      isPro: !!r.is_pro,
+      avatar: r.avatar || null
     }));
   } catch(e){
     if (!_weekRpcWarned){ console.warn('rankFetchLeaderboardWeek', e); _weekRpcWarned = true; }
