@@ -2858,7 +2858,15 @@ body.lp-menu-open .lp-mobile-menu { display: flex; }
 @media (max-width: 980px){
   .lp-gallery { grid-template-columns: repeat(2, 1fr); }
   .lp-transform-grid, .lp-personas-grid { grid-template-columns: 1fr; }
-  .lp-vs-grid { grid-template-columns: 1fr; gap: 14px; }
+  /* VS grid: mantem 2 colunas em mobile (e um comparativo, faz mais
+     sentido lado a lado). Reduz padding/fontes pra caber. */
+  .lp-vs-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
+  .lp-vs-card { padding: 14px 12px; border-radius: 12px; }
+  .lp-vs-card-head { font-size: 10.5px; letter-spacing: 1px; gap: 5px; margin-bottom: 10px; }
+  .lp-vs-card-head svg { width: 13px; height: 13px; }
+  .lp-vs-list { gap: 7px; }
+  .lp-vs-list li { font-size: 11.5px; line-height: 1.35; padding-left: 14px; }
+  .lp-vs-list li::before { font-size: 11px; }
   .lp-kit-wrap { grid-template-columns: 1fr; gap: 24px; }
   .lp-kit-img { max-width: 480px; margin: 0 auto; }
   .lp-bonus-grid { grid-template-columns: repeat(2, 1fr); }
