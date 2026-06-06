@@ -2593,6 +2593,24 @@ body.lp-menu-open .lp-mobile-menu { display: flex; }
 }
 .lp-vs-result svg { color: var(--lp-purple-2); flex-shrink: 0; }
 
+/* Mobile: o pill format com text-align center quebra em varias linhas
+   apertadas. Vira card retangular com mais respiro. */
+@media (max-width: 720px){
+  .lp-vs-result{
+    padding: 14px 18px;
+    border-radius: 16px;
+    font-size: 12.5px;
+    line-height: 1.45;
+    gap: 8px;
+    align-items: flex-start;
+  }
+  .lp-vs-result svg{
+    width: 14px;
+    height: 14px;
+    margin-top: 2px;
+  }
+}
+
 /* Você vai sentir */
 .lp-feel-inner { max-width: 760px; }
 .lp-feel-list {
