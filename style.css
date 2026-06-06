@@ -4552,6 +4552,37 @@ html.light .verified-badge svg{
 }
 
 /* ════════════════════════════════════════════════════════════════
+   ROUND 6 — auditoria final post-deploy: invisiveis remanescentes
+   no Afiliado (.aff-tier-row-name) e Ranking (.rank-tier-num, etc).
+   ════════════════════════════════════════════════════════════════ */
+
+/* ── AFILIADO: tabela de tiers de comissao ── */
+html.light .aff-tier-row{
+  background: rgba(15,23,42,.025) !important;
+  border: 1px solid rgba(15,23,42,.08) !important;
+}
+html.light .aff-tier-row-name{ color: #0f172a !important; }
+html.light .aff-tier-row-range{ color: #64748b !important; }
+html.light .aff-tier-row.is-current{
+  background: rgba(247,147,30,.08) !important;
+  border-color: rgba(247,147,30,.32) !important;
+}
+
+/* ── RANKING: textos brancos nas barras de tier ── */
+html.light .rank-progress-remaining span{ color: #0f172a !important; }
+html.light .rank-tier-num{
+  color: #64748b !important;
+  background: rgba(15,23,42,.04) !important;
+  border: 1px solid rgba(15,23,42,.06) !important;
+}
+html.light .rank-tier-min{ color: #475569 !important; }
+html.light .rank-tier-mintag{ color: #94a3b8 !important; }
+html.light .rank-tier-bar.is-current .rank-tier-label{
+  color: #0f172a !important;
+  text-shadow: 0 0 8px rgba(99,102,241,.20) !important;
+}
+
+/* ════════════════════════════════════════════════════════════════
    ROUND 3 — auditoria fina dos componentes ainda escuros no Ranking
    Cobre os 5 cards/avatares que sobraram do tema escuro hard-coded.
    ════════════════════════════════════════════════════════════════ */
