@@ -6590,12 +6590,27 @@ function rankBuildLeaderboard(youProfit, youName, source){
   }
   // Filtra contas de dono (admin) que possam vir do RPC. Owners NUNCA
   // aparecem no leaderboard — nem pra outros usuarios, nem pra si mesmos.
-  // Nomes dos owners (display names usados no Apostack):
-  const OWNER_DISPLAY_NAMES = ['loamy neri', 'loamy 2002', 'loamy zito admin'];
+  // Estrategia: matching robusto por inclusao (substring) — pega qualquer
+  // variante: "Loamy neri", "Loamy Neri", "loamy 2002", "loamyzito admin", etc.
+  // Tambem detecta prefixos de email dos owners (loamy2002neri, loamy69zzz).
+  const OWNER_SIGNATURES = [
+    'loamy neri',
+    'loamy 2002',
+    'loamy2002',
+    'loamy 69',
+    'loamy69',
+    'loamyzito admin',
+    'loamy admin',
+    'admin loamy',
+    'apostack admin'
+  ];
   base = base.filter(u => {
-    var n = (u.name||'').toString().trim().toLowerCase();
-    // Match exato ou parcial com nomes conhecidos de owners
-    if (OWNER_DISPLAY_NAMES.indexOf(n) >= 0) return false;
+    var raw = (u.name||'').toString().trim().toLowerCase();
+    // Remove acentos pra comparacao mais flexivel
+    var n = raw.normalize('NFD').replace(/[̀-ͯ]/g, '');
+    for (var i = 0; i < OWNER_SIGNATURES.length; i++){
+      if (n.indexOf(OWNER_SIGNATURES[i]) >= 0) return false;
+    }
     return true;
   });
   const all = base.map(u => Object.assign({ isYou: false }, u));
