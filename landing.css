@@ -743,10 +743,44 @@ body.lp-menu-open .lp-mobile-menu { display: flex; }
 }
 .lp-float-card-sub-strong { color: var(--lp-text-2); font-weight: 500; }
 
-/* Esconde os cards flutuantes em telas pequenas (foco no mockup) */
+/* MOBILE — os 4 cards float saem das posicoes absolutas e ficam num
+   grid 2x2 EMBAIXO do mockup. Sao beneficios importantes pra venda,
+   nao podem sumir totalmente como antes. */
 @media (max-width: 980px){
-  .lp-float-card { display: none; }
-  .lp-hero-mockup-wrap { padding: 24px 0 40px; }
+  .lp-hero-mockup-wrap {
+    padding: 24px 0 40px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  .lp-float-card {
+    position: static;
+    width: auto;
+    min-width: 0;
+    max-width: none;
+    transform: none !important;
+    animation: none !important;
+    margin: 0;
+  }
+  /* Container virtual: usa o lp-hero-mockup como grid pra os 4 cards
+     ficarem 2x2 ABAIXO do mockup-frame. */
+  .lp-hero-mockup{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    position: static;
+  }
+  /* O mockup-frame ocupa as 2 colunas no topo */
+  .lp-mockup-frame{ grid-column: 1 / -1; }
+  /* Tamanho menor nos textos dentro dos cards */
+  .lp-float-card-value-sm{ font-size: 15px; }
+  .lp-float-card-sub{ font-size: 12.5px; }
+  .lp-float-card-head{ font-size: 11.5px; }
+}
+
+/* Em telas BEM pequenas (<= 380px), grid passa a 1 coluna */
+@media (max-width: 380px){
+  .lp-hero-mockup{ grid-template-columns: 1fr; }
 }
 .lp-mockup-body {
   display: grid;
