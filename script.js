@@ -6588,6 +6588,16 @@ function rankBuildLeaderboard(youProfit, youName, source){
   } else {
     base = []; // ha Supabase mas cache ainda nao populou — vazio temporario
   }
+  // Filtra contas de dono (admin) que possam vir do RPC. Owners NUNCA
+  // aparecem no leaderboard — nem pra outros usuarios, nem pra si mesmos.
+  // Nomes dos owners (display names usados no Apostack):
+  const OWNER_DISPLAY_NAMES = ['loamy neri', 'loamy 2002', 'loamy zito admin'];
+  base = base.filter(u => {
+    var n = (u.name||'').toString().trim().toLowerCase();
+    // Match exato ou parcial com nomes conhecidos de owners
+    if (OWNER_DISPLAY_NAMES.indexOf(n) >= 0) return false;
+    return true;
+  });
   const all = base.map(u => Object.assign({ isYou: false }, u));
 
   // Donos (admin) NUNCA aparecem no ranking — nem pra si mesmos.
