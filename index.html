@@ -1,4 +1,4 @@
-
+﻿
 <!DOCTYPE html>
 <html lang="pt-BR" class="dark">
 <head>
@@ -11,14 +11,14 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
 <meta name="apple-mobile-web-app-title" content="Apostack"/>
 <meta name="format-detection" content="telephone=no"/>
-<title>Apostack — Gestão Financeira</title>
+<title>Apostack â€” GestÃ£o Financeira</title>
 <link rel="icon" type="image/png" id="appFavicon" href="brand/icon.png"/>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
-<link rel="stylesheet" href="style.css?v=125"/>
+<link rel="stylesheet" href="style.css?v=161"/>
 </head>
 <body>
 
@@ -40,13 +40,13 @@
       <div class="form-group">
         <label class="form-label">Senha</label>
         <div class="pw-wrap">
-          <input class="form-input" type="password" id="loginPassword" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()"/>
+          <input class="form-input" type="password" id="loginPassword" placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()"/>
           <button type="button" class="pw-toggle" onclick="togglePw(this,'loginPassword')" aria-label="Mostrar senha"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8S1 12 1 12z"/><circle cx="12" cy="12" r="3"/></svg></button>
         </div>
       </div>
-      <button class="btn-primary" onclick="doLogin()">Entrar na plataforma →</button>
+      <button class="btn-primary" onclick="doLogin()">Entrar na plataforma â†’</button>
       <div class="auth-links">
-        <a onclick="showReset()">Esqueci minha senha</a> &nbsp;·&nbsp;
+        <a onclick="showReset()">Esqueci minha senha</a> &nbsp;Â·&nbsp;
         <a onclick="showRegister()">Criar conta</a>
       </div>
     </div>
@@ -58,7 +58,7 @@
       <div class="form-group">
         <label class="form-label">Senha</label>
         <div class="pw-wrap">
-          <input class="form-input" type="password" id="regPassword" placeholder="Mín. 6 caracteres" autocomplete="new-password"/>
+          <input class="form-input" type="password" id="regPassword" placeholder="MÃ­n. 6 caracteres" autocomplete="new-password"/>
           <button type="button" class="pw-toggle" onclick="togglePw(this,'regPassword')" aria-label="Mostrar senha"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8S1 12 1 12z"/><circle cx="12" cy="12" r="3"/></svg></button>
         </div>
       </div>
@@ -69,23 +69,23 @@
           <button type="button" class="pw-toggle" onclick="togglePw(this,'regPassword2')" aria-label="Mostrar senha"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8S1 12 1 12z"/><circle cx="12" cy="12" r="3"/></svg></button>
         </div>
       </div>
-      <button class="btn-primary" onclick="doRegister()">Criar conta grátis →</button>
-      <div class="auth-links"><a onclick="showLogin()">Já tenho conta</a></div>
+      <button class="btn-primary" onclick="doRegister()">Criar conta grÃ¡tis â†’</button>
+      <div class="auth-links"><a onclick="showLogin()">JÃ¡ tenho conta</a></div>
     </div>
     <div id="resetForm" style="display:none">
       <div class="auth-title">Recuperar senha</div>
-      <div class="auth-sub">Enviaremos um link de redefinição</div>
+      <div class="auth-sub">Enviaremos um link de redefiniÃ§Ã£o</div>
       <div class="form-group"><label class="form-label">E-mail</label><input class="form-input" type="email" id="resetEmail" placeholder="seu@email.com" autocomplete="email"/></div>
-      <button class="btn-primary" onclick="doReset()">Enviar link →</button>
+      <button class="btn-primary" onclick="doReset()">Enviar link â†’</button>
       <div class="auth-links"><a onclick="showLogin()">Voltar ao login</a></div>
     </div>
     <div id="recoveryForm" style="display:none">
-      <div class="auth-title">Definir nova senha 🔑</div>
+      <div class="auth-title">Definir nova senha ðŸ”‘</div>
       <div class="auth-sub">Escolha a nova senha da sua conta</div>
       <div class="form-group">
         <label class="form-label">Nova senha</label>
         <div class="pw-wrap">
-          <input class="form-input" type="password" id="recPwd" placeholder="Mín. 6 caracteres" autocomplete="new-password"/>
+          <input class="form-input" type="password" id="recPwd" placeholder="MÃ­n. 6 caracteres" autocomplete="new-password"/>
           <button type="button" class="pw-toggle" onclick="togglePw(this,'recPwd')" aria-label="Mostrar senha"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8S1 12 1 12z"/><circle cx="12" cy="12" r="3"/></svg></button>
         </div>
       </div>
@@ -96,7 +96,7 @@
           <button type="button" class="pw-toggle" onclick="togglePw(this,'recPwd2')" aria-label="Mostrar senha"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8S1 12 1 12z"/><circle cx="12" cy="12" r="3"/></svg></button>
         </div>
       </div>
-      <button class="btn-primary" onclick="doRecovery()">Salvar nova senha →</button>
+      <button class="btn-primary" onclick="doRecovery()">Salvar nova senha â†’</button>
       <div class="auth-links"><a onclick="showLogin()">Voltar ao login</a></div>
     </div>
     <div style="margin-top:22px;padding-top:16px;border-top:1px solid var(--glass-border);text-align:center;font-size:12px;color:var(--text-muted)">
@@ -107,20 +107,20 @@
 
 <!-- NOTIFICATION PANEL -->
 <div class="notif-panel" id="notifPanel">
-  <div class="notif-header">Notificações <span class="notif-clear" onclick="clearNotifs()">Limpar tudo</span></div>
+  <div class="notif-header">NotificaÃ§Ãµes <span class="notif-clear" onclick="clearNotifs()">Limpar tudo</span></div>
   <div id="notifList"></div>
 </div>
 
 <!-- ADD TRANSACTION MODAL -->
 <div class="modal-overlay" id="txModal">
   <div class="modal">
-    <div class="modal-title">Nova Transação</div>
+    <div class="modal-title">Nova TransaÃ§Ã£o</div>
     <div class="modal-sub">Registre uma entrada ou despesa</div>
     <div class="form-group">
       <label class="form-label">Tipo</label>
       <select class="form-select" id="txType">
         <option value="income">Entrada / Receita</option>
-        <option value="expense">Despesa / Saída</option>
+        <option value="expense">Despesa / SaÃ­da</option>
       </select>
     </div>
     <div class="form-row">
@@ -134,18 +134,18 @@
       </div>
     </div>
     <div class="form-group">
-      <label class="form-label">Método</label>
+      <label class="form-label">MÃ©todo</label>
       <select class="form-select" id="txMethod">
-        <option>Delay</option><option>Freebet</option><option>Surebet</option><option>iGaming</option><option>Duplo Green</option><option>Métodos</option><option>Geral</option>
+        <option>Delay</option><option>Freebet</option><option>Surebet</option><option>iGaming</option><option>Duplo Green</option><option>MÃ©todos</option><option>Geral</option>
       </select>
     </div>
     <div class="form-group">
-      <label class="form-label">Descrição</label>
-      <input class="form-input" type="text" placeholder="Descreva a transação..." id="txDesc"/>
+      <label class="form-label">DescriÃ§Ã£o</label>
+      <input class="form-input" type="text" placeholder="Descreva a transaÃ§Ã£o..." id="txDesc"/>
     </div>
     <div class="modal-actions">
       <button class="btn-ghost" onclick="closeTxModal()">Cancelar</button>
-      <button class="btn-primary" style="width:auto;padding:9px 20px" onclick="saveTransaction()">Salvar →</button>
+      <button class="btn-primary" style="width:auto;padding:9px 20px" onclick="saveTransaction()">Salvar â†’</button>
     </div>
   </div>
 </div>
@@ -161,7 +161,7 @@
     </div>
     <div class="modal-actions">
       <button class="btn-ghost" onclick="closeSaldoInicialModal()">Cancelar</button>
-      <button class="btn-primary" style="width:auto;padding:9px 20px" onclick="saveSaldoInicial()">Salvar →</button>
+      <button class="btn-primary" style="width:auto;padding:9px 20px" onclick="saveSaldoInicial()">Salvar â†’</button>
     </div>
   </div>
 </div>
@@ -169,16 +169,16 @@
 <!-- LIBERAR ACESSO (ADMIN) -->
 <div class="modal-overlay" id="grantModal">
   <div class="modal">
-    <div class="modal-title">🔓 Liberar acesso</div>
-    <div class="modal-sub">Usuário: <strong id="grantModalEmail">—</strong></div>
+    <div class="modal-title">ðŸ”“ Liberar acesso</div>
+    <div class="modal-sub">UsuÃ¡rio: <strong id="grantModalEmail">â€”</strong></div>
     <div class="form-group">
       <label class="form-label">Por quantos dias?</label>
-      <input class="form-input" type="number" min="1" step="1" placeholder="Ex: 30 — deixe vazio para acesso permanente" id="grantDaysInput" onkeydown="if(event.key==='Enter'){event.preventDefault();confirmGrant();}"/>
-      <div style="font-size:12px;color:var(--text-muted);margin-top:6px">Vazio = acesso permanente (até você bloquear)</div>
+      <input class="form-input" type="number" min="1" step="1" placeholder="Ex: 30 â€” deixe vazio para acesso permanente" id="grantDaysInput" onkeydown="if(event.key==='Enter'){event.preventDefault();confirmGrant();}"/>
+      <div style="font-size:12px;color:var(--text-muted);margin-top:6px">Vazio = acesso permanente (atÃ© vocÃª bloquear)</div>
     </div>
     <div class="modal-actions">
       <button class="btn-ghost" onclick="closeGrantModal()">Cancelar</button>
-      <button class="btn-primary" style="width:auto;padding:9px 20px" onclick="confirmGrant()">🔓 Liberar →</button>
+      <button class="btn-primary" style="width:auto;padding:9px 20px" onclick="confirmGrant()">ðŸ”“ Liberar â†’</button>
     </div>
   </div>
 </div>
@@ -187,7 +187,7 @@
 <div class="modal-overlay" id="balanceModal">
   <div class="modal">
     <div class="modal-title" id="balanceModalTitle">Depositar</div>
-    <div class="modal-sub" id="balanceModalSub">Saldo atual: —</div>
+    <div class="modal-sub" id="balanceModalSub">Saldo atual: â€”</div>
     <div class="form-group">
       <label class="form-label">Valor (R$)</label>
       <input class="form-input" type="number" min="0" step="0.01" placeholder="0,00" id="balanceModalValue" onkeydown="if(event.key==='Enter'){event.preventDefault();confirmBalanceAdjust();}"/>
@@ -199,14 +199,14 @@
   </div>
 </div>
 
-<!-- EDITAR USUÁRIO (ADMIN) -->
+<!-- EDITAR USUÃRIO (ADMIN) -->
 <div class="modal-overlay" id="editUserModal">
   <div class="modal">
-    <div class="modal-title">Editar usuário</div>
-    <div class="modal-sub">Usuário: <strong id="editUserEmail">—</strong> · <span id="editUserStatus">—</span></div>
+    <div class="modal-title">Editar usuÃ¡rio</div>
+    <div class="modal-sub">UsuÃ¡rio: <strong id="editUserEmail">â€”</strong> Â· <span id="editUserStatus">â€”</span></div>
     <div style="display:flex;flex-direction:column;gap:10px;margin:18px 0 4px">
-      <button class="btn-primary" id="editUserAccessBtn" style="width:100%" onclick="editUserToggleAccess()">🔓 Liberar acesso</button>
-      <button class="btn-ghost" id="editUserDeleteBtn" style="width:100%;color:var(--red);border-color:rgba(244,63,94,0.35)" onclick="editUserDelete()">🗑 Excluir usuário</button>
+      <button class="btn-primary" id="editUserAccessBtn" style="width:100%" onclick="editUserToggleAccess()">ðŸ”“ Liberar acesso</button>
+      <button class="btn-ghost" id="editUserDeleteBtn" style="width:100%;color:var(--red);border-color:rgba(244,63,94,0.35)" onclick="editUserDelete()">ðŸ—‘ Excluir usuÃ¡rio</button>
     </div>
     <div class="modal-actions">
       <button class="btn-ghost" onclick="closeEditUser()">Fechar</button>
@@ -218,18 +218,18 @@
 <div class="modal-overlay" id="addAffiliateModal">
   <div class="modal">
     <div class="modal-title">Adicionar afiliado</div>
-    <div class="modal-sub">Defina quem é afiliado, o slug e a comissão</div>
+    <div class="modal-sub">Defina quem Ã© afiliado, o slug e a comissÃ£o</div>
     <div class="form-group">
       <label class="form-label">E-mail do afiliado (a conta dele)</label>
       <input class="form-input" type="email" placeholder="parceiro@email.com" id="affEmailInput"/>
     </div>
     <div class="form-row">
-      <div class="form-group"><label class="form-label">Slug (código do link)</label><input class="form-input" type="text" placeholder="Ex: kingmetodos" id="affCupomInput"/></div>
-      <div class="form-group"><label class="form-label">Comissão (% líquido)</label><input class="form-input" type="number" value="50" min="1" max="100" id="affComissaoInput"/></div>
+      <div class="form-group"><label class="form-label">Slug (cÃ³digo do link)</label><input class="form-input" type="text" placeholder="Ex: kingmetodos" id="affCupomInput"/></div>
+      <div class="form-group"><label class="form-label">ComissÃ£o (% lÃ­quido)</label><input class="form-input" type="number" value="50" min="1" max="100" id="affComissaoInput"/></div>
     </div>
     <div class="modal-actions">
       <button class="btn-ghost" onclick="closeAddAffiliateModal()">Cancelar</button>
-      <button class="btn-primary" style="width:auto;padding:9px 20px" onclick="saveAffiliate()">Adicionar →</button>
+      <button class="btn-primary" style="width:auto;padding:9px 20px" onclick="saveAffiliate()">Adicionar â†’</button>
     </div>
   </div>
 </div>
@@ -237,8 +237,8 @@
 <!-- VER INDICADOS DO AFILIADO (ADMIN) -->
 <div class="modal-overlay" id="affReferralsModal">
   <div class="modal" style="width:580px;max-width:95vw">
-    <div class="modal-title">Indicados de <span id="affReferralsName">—</span></div>
-    <div class="modal-sub">Pessoas que entraram pelo link desse afiliado (você vê o email completo)</div>
+    <div class="modal-title">Indicados de <span id="affReferralsName">â€”</span></div>
+    <div class="modal-sub">Pessoas que entraram pelo link desse afiliado (vocÃª vÃª o email completo)</div>
     <div id="affReferralsList" style="margin-top:8px"></div>
     <div class="modal-actions">
       <button class="btn-ghost" onclick="closeAffReferralsModal()">Fechar</button>
@@ -256,7 +256,7 @@
       <input class="form-input" type="text" placeholder="Ex: Surebet, Reserva, Viagem..." id="goalName"/>
     </div>
     <div class="form-group">
-      <label class="form-label">Ícone (emoji)</label>
+      <label class="form-label">Ãcone (emoji)</label>
       <input class="form-input" type="text" placeholder="Ex: meta" id="goalIcon" maxlength="4" style="max-width:120px"/>
     </div>
     <div class="form-row">
@@ -271,15 +271,15 @@
     </div>
     <div class="modal-actions">
       <button class="btn-ghost" onclick="closeGoalModal()">Cancelar</button>
-      <button class="btn-primary" style="width:auto;padding:9px 20px" onclick="saveGoal()" id="goalSaveBtn">Salvar →</button>
+      <button class="btn-primary" style="width:auto;padding:9px 20px" onclick="saveGoal()" id="goalSaveBtn">Salvar â†’</button>
     </div>
   </div>
 </div>
 
-<!-- ADICIONAR PROGRESSO À META -->
+<!-- ADICIONAR PROGRESSO Ã€ META -->
 <div class="modal-overlay" id="goalProgressModal">
   <div class="modal">
-    <div class="modal-title">➕ Adicionar progresso</div>
+    <div class="modal-title">âž• Adicionar progresso</div>
     <div class="modal-sub" id="goalProgressSub">Some um valor ao progresso da meta</div>
     <div class="form-group">
       <label class="form-label">Quanto adicionar (R$)</label>
@@ -287,7 +287,7 @@
     </div>
     <div class="modal-actions">
       <button class="btn-ghost" onclick="closeGoalProgress()">Cancelar</button>
-      <button class="btn-primary" style="width:auto;padding:9px 20px" onclick="addGoalProgress()">Adicionar →</button>
+      <button class="btn-primary" style="width:auto;padding:9px 20px" onclick="addGoalProgress()">Adicionar â†’</button>
     </div>
   </div>
 </div>
@@ -296,7 +296,7 @@
 <div class="modal-overlay" id="accountModal">
   <div class="modal" style="width:560px;max-width:95vw">
     <div class="modal-title" id="accountModalTitle">Nova Conta Depositada</div>
-    <div class="modal-sub" id="accountModalSub">Registre o saldo que você tem numa casa de aposta</div>
+    <div class="modal-sub" id="accountModalSub">Registre o saldo que vocÃª tem numa casa de aposta</div>
 
     <div class="form-group">
       <label class="form-label">Casa de aposta</label>
@@ -312,38 +312,38 @@
         <input class="form-input" type="number" placeholder="100,00" id="accountAmount" step="0.01" min="0"/>
       </div>
       <div class="form-group">
-        <label class="form-label">Última atualização</label>
+        <label class="form-label">Ãšltima atualizaÃ§Ã£o</label>
         <input class="form-input" type="date" id="accountDate"/>
       </div>
     </div>
 
     <div class="form-group">
-      <label class="form-label">Observação (opcional)</label>
-      <input class="form-input" type="text" id="accountNote" placeholder="Ex: Bônus em rollover, freebet R$50..." maxlength="80"/>
+      <label class="form-label">ObservaÃ§Ã£o (opcional)</label>
+      <input class="form-input" type="text" id="accountNote" placeholder="Ex: BÃ´nus em rollover, freebet R$50..." maxlength="80"/>
     </div>
 
     <div class="modal-actions" style="justify-content:space-between">
-      <button class="btn-danger" id="accountDeleteBtn" onclick="deleteAccount()" style="display:none">🗑️ Excluir</button>
+      <button class="btn-danger" id="accountDeleteBtn" onclick="deleteAccount()" style="display:none">ðŸ—‘ï¸ Excluir</button>
       <div style="display:flex;gap:8px;margin-left:auto">
         <button class="btn-ghost" onclick="closeAccountModal()">Cancelar</button>
-        <button class="btn-primary" style="width:auto;padding:9px 20px" onclick="saveAccount()">Salvar →</button>
+        <button class="btn-primary" style="width:auto;padding:9px 20px" onclick="saveAccount()">Salvar â†’</button>
       </div>
     </div>
   </div>
 </div>
 
-<!-- METHODS CATALOG MODAL (gerenciar métodos: adicionar/editar/remover) -->
+<!-- METHODS CATALOG MODAL (gerenciar mÃ©todos: adicionar/editar/remover) -->
 <div class="modal-overlay" id="methodsCatalogModal">
   <div class="modal" style="width:760px;max-width:96vw">
-    <div class="modal-title">Gerenciar Métodos</div>
-    <div class="modal-sub">Adicione, edite ou remova seus métodos de trabalho. As mudanças refletem em toda a plataforma.</div>
+    <div class="modal-title">Gerenciar MÃ©todos</div>
+    <div class="modal-sub">Adicione, edite ou remova seus mÃ©todos de trabalho. As mudanÃ§as refletem em toda a plataforma.</div>
     <div id="methodsCatalogList" style="display:flex;flex-direction:column;gap:10px;max-height:55vh;overflow-y:auto;padding-right:4px"></div>
-    <button class="btn-ghost" style="margin-top:12px;width:100%;justify-content:center" onclick="addMethodCatalogRow()">+ Adicionar método</button>
+    <button class="btn-ghost" style="margin-top:12px;width:100%;justify-content:center" onclick="addMethodCatalogRow()">+ Adicionar mÃ©todo</button>
     <div class="modal-actions" style="justify-content:space-between">
-      <button class="btn-ghost" style="font-size:12px;color:var(--text-muted)" onclick="resetMethodsCatalogToDefaults()">Restaurar padrão</button>
+      <button class="btn-ghost" style="font-size:12px;color:var(--text-muted)" onclick="resetMethodsCatalogToDefaults()">Restaurar padrÃ£o</button>
       <div style="display:flex;gap:8px">
         <button class="btn-ghost" onclick="closeMethodsCatalogModal()">Cancelar</button>
-        <button class="btn-primary" style="width:auto;padding:9px 20px" onclick="saveMethodsCatalog()">Salvar →</button>
+        <button class="btn-primary" style="width:auto;padding:9px 20px" onclick="saveMethodsCatalog()">Salvar â†’</button>
       </div>
     </div>
   </div>
@@ -352,13 +352,13 @@
 <!-- METHODS COMPARE MODAL (editor de Abr vs Mai) -->
 <div class="modal-overlay" id="methodsCompareModal">
   <div class="modal" style="width:640px;max-width:95vw">
-    <div class="modal-title">Editar Comparativo por Método</div>
-    <div class="modal-sub">Altere nomes, valores ou adicione/remova métodos. Os dois gráficos atualizam automaticamente.</div>
+    <div class="modal-title">Editar Comparativo por MÃ©todo</div>
+    <div class="modal-sub">Altere nomes, valores ou adicione/remova mÃ©todos. Os dois grÃ¡ficos atualizam automaticamente.</div>
     <div id="methodsCompareList" style="display:flex;flex-direction:column;gap:10px;max-height:50vh;overflow-y:auto;padding-right:4px"></div>
-    <button class="btn-ghost" style="margin-top:12px;width:100%;justify-content:center" onclick="addMethodCompare()">+ Adicionar método</button>
+    <button class="btn-ghost" style="margin-top:12px;width:100%;justify-content:center" onclick="addMethodCompare()">+ Adicionar mÃ©todo</button>
     <div class="modal-actions">
       <button class="btn-ghost" onclick="closeMethodsCompareModal()">Cancelar</button>
-      <button class="btn-primary" style="width:auto;padding:9px 20px" onclick="saveMethodsCompare()">Salvar →</button>
+      <button class="btn-primary" style="width:auto;padding:9px 20px" onclick="saveMethodsCompare()">Salvar â†’</button>
     </div>
   </div>
 </div>
@@ -369,8 +369,8 @@
 <!-- CUSTOM CONFIRM MODAL -->
 <div class="modal-overlay" id="confirmModal">
   <div class="modal" style="width:440px">
-    <div class="modal-title" id="confirmTitle">Confirmar ação</div>
-    <div class="modal-sub" id="confirmMessage">Você tem certeza?</div>
+    <div class="modal-title" id="confirmTitle">Confirmar aÃ§Ã£o</div>
+    <div class="modal-sub" id="confirmMessage">VocÃª tem certeza?</div>
     <div class="modal-actions">
       <button class="btn-ghost" id="confirmCancelBtn">Cancelar</button>
       <button class="btn-danger" id="confirmOkBtn" style="padding:9px 20px">Confirmar</button>
@@ -397,27 +397,27 @@
     <div class="sidebar-section">
       <div class="sidebar-section-label">Principal</div>
       <div class="nav-item active" onclick="goTo('dashboard',this)"><span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M3 12L12 4l9 8M5 10v10h14V10"/></svg></span>Dashboard<span class="live-badge" style="margin-left:auto;font-size:10px"><span class="live-dot"></span>Live</span></div>
-      <div class="nav-item" onclick="goTo('methods',this)"><span class="nav-icon"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></span>Métodos</div>
-      <div class="nav-item" onclick="goTo('transactions',this)"><span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M7 17V3M3 7l4-4 4 4M17 7v14M13 17l4 4 4-4"/></svg></span>Transações</div>
+      <div class="nav-item" onclick="goTo('methods',this)"><span class="nav-icon"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></span>MÃ©todos</div>
+      <div class="nav-item" onclick="goTo('transactions',this)"><span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M7 17V3M3 7l4-4 4 4M17 7v14M13 17l4 4 4-4"/></svg></span>TransaÃ§Ãµes</div>
       <div class="nav-item" onclick="goTo('accounts',this)"><span class="nav-icon"><svg viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="14" rx="2"/><path d="M3 10h18M16 14h2"/></svg></span>Contas Depositadas</div>
     </div>
 
     <div class="sidebar-section">
-      <div class="sidebar-section-label">Análise</div>
-      <div class="nav-item" onclick="goTo('reports',this)"><span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M3 20h18M7 20V12M12 20V8M17 20v-6"/></svg></span>Relatórios</div>
+      <div class="sidebar-section-label">AnÃ¡lise</div>
+      <div class="nav-item" onclick="goTo('reports',this)"><span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M3 20h18M7 20V12M12 20V8M17 20v-6"/></svg></span>RelatÃ³rios</div>
       <div class="nav-item" onclick="goTo('goals',this)"><span class="nav-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.5" fill="currentColor" stroke="none"/></svg></span>Metas</div>
       <div class="nav-item" onclick="goTo('compare',this)"><span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M3 20V14M9 20V10M15 20V6M21 20V8"/></svg></span>Comparativo</div>
       <div class="nav-item" onclick="goTo('calculadora',this)"><span class="nav-icon"><svg viewBox="0 0 24 24"><rect x="4" y="2" width="16" height="20" rx="2"/><rect x="7" y="5" width="10" height="3"/><circle cx="8" cy="13" r="0.8" fill="currentColor" stroke="none"/><circle cx="12" cy="13" r="0.8" fill="currentColor" stroke="none"/><circle cx="16" cy="13" r="0.8" fill="currentColor" stroke="none"/><circle cx="8" cy="17" r="0.8" fill="currentColor" stroke="none"/><circle cx="12" cy="17" r="0.8" fill="currentColor" stroke="none"/><circle cx="16" cy="17" r="0.8" fill="currentColor" stroke="none"/></svg></span>Calculadora</div>
-      <div class="nav-item" onclick="goTo('anotacoes',this)"><span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M5 3h12a2 2 0 012 2v14a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2zM8 8h8M8 12h8M8 16h5"/></svg></span>Anotações</div>
+      <div class="nav-item" onclick="goTo('anotacoes',this)"><span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M5 3h12a2 2 0 012 2v14a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2zM8 8h8M8 12h8M8 16h5"/></svg></span>AnotaÃ§Ãµes</div>
       <div class="nav-item" onclick="goTo('ranking',this)"><span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M12 2l8 4v6c0 5-3.5 9-8 10-4.5-1-8-5-8-10V6l8-4z"/><path d="M8 11l3 3 5-5"/></svg></span>Ranking</div>
     </div>
 
     <div class="sidebar-section">
       <div class="sidebar-section-label">Sistema</div>
-      <div class="nav-item nav-upgrade-pro" id="navUpgradePro" onclick="upgradeNavClick(event)" style="display:none"><span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M12 2l2.5 6.5L21 9l-5 4.5L17.5 21 12 17.5 6.5 21 8 13.5 3 9l6.5-.5L12 2z" fill="currentColor" stroke="none"/></svg></span>Upgrade Pro<span class="upgrade-arrow">→</span></div>
+      <div class="nav-item nav-upgrade-pro" id="navUpgradePro" onclick="upgradeNavClick(event)" style="display:none"><span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M12 2l2.5 6.5L21 9l-5 4.5L17.5 21 12 17.5 6.5 21 8 13.5 3 9l6.5-.5L12 2z" fill="currentColor" stroke="none"/></svg></span>Upgrade Pro<span class="upgrade-arrow">â†’</span></div>
       <div class="nav-item nav-personalizar" onclick="goTo('personalizar',this)"><span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M12 3l2.4 4.8L20 9l-4 4 .9 5.5L12 16l-4.9 2.5L8 13 4 9l5.6-1.2z"/></svg></span>Personalizar</div>
-      <div class="nav-item" onclick="goTo('settings',this)"><span class="nav-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 01-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg></span>Configurações</div>
-      <div class="nav-item" id="navAfiliado" onclick="goTo('afiliado',this)" style="display:none"><span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg></span>Minhas Indicações</div>
+      <div class="nav-item" onclick="goTo('settings',this)"><span class="nav-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 01-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg></span>ConfiguraÃ§Ãµes</div>
+      <div class="nav-item" id="navAfiliado" onclick="goTo('afiliado',this)" style="display:none"><span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg></span>Minhas IndicaÃ§Ãµes</div>
       <div class="nav-item" id="navAdmin" onclick="goTo('admin',this)" style="display:none"><span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M12 2l8 4v6c0 5-3.5 9-8 10-4.5-1-8-5-8-10V6l8-4z"/><path d="M9 12l2 2 4-4"/></svg></span>Admin</div>
       <div class="nav-item" id="navAfiliados" onclick="goTo('afiliados',this)" style="display:none"><span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg></span>Afiliados</div>
     </div>
@@ -447,8 +447,8 @@
   </aside>
   <script>
   // Hidrata a user-pill e flags de sidebar instantaneamente do localStorage
-  // pra evitar flash de "Apostador" / "Minhas Indicações some-aparece" no reload.
-  // O JS principal vai re-confirmar tudo via auth/RPC depois — mas o usuario nao ve mais piscar.
+  // pra evitar flash de "Apostador" / "Minhas IndicaÃ§Ãµes some-aparece" no reload.
+  // O JS principal vai re-confirmar tudo via auth/RPC depois â€” mas o usuario nao ve mais piscar.
   (function hydrateSidebar(){
     try {
       var name = localStorage.getItem('bancapro-user-name') || '';
@@ -489,8 +489,8 @@
         <div class="topbar-breadcrumb">Apostack / <span id="breadcrumb">Dashboard</span></div>
       </div>
       <div class="topbar-actions">
-        <button class="btn-ghost txbtn" style="padding:6px 14px;font-size:12px" onclick="openTxModal()" title="Nova transação"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg><span class="txbtn-label"> Transação</span></button>
-        <button class="icon-btn" onclick="toggleNotif()" id="notifBtn" aria-label="Notificações" title="Notificações"><svg viewBox="0 0 24 24"><path d="M6 8a6 6 0 0112 0c0 7 3 9 3 9H3s3-2 3-9M10 21h4"/></svg><div class="notif-dot" id="notifDot"></div></button>
+        <button class="btn-ghost txbtn" style="padding:6px 14px;font-size:12px" onclick="openTxModal()" title="Nova transaÃ§Ã£o"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg><span class="txbtn-label"> TransaÃ§Ã£o</span></button>
+        <button class="icon-btn" onclick="toggleNotif()" id="notifBtn" aria-label="NotificaÃ§Ãµes" title="NotificaÃ§Ãµes"><svg viewBox="0 0 24 24"><path d="M6 8a6 6 0 0112 0c0 7 3 9 3 9H3s3-2 3-9M10 21h4"/></svg><div class="notif-dot" id="notifDot"></div></button>
       </div>
     </div>
 
@@ -502,12 +502,12 @@
         <span class="trial-sticky-banner-icon"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></span>
         <div class="trial-sticky-banner-text">
           <span id="trialStickyText">Seu trial termina em <b><span id="trialStickyDays">7</span> dias</b></span>
-          <span style="opacity:.92;font-weight:600;display:none" id="trialStickyTail"> · Assine para manter seu ranking, métricas e relatórios</span>
+          <span style="opacity:.92;font-weight:600;display:none" id="trialStickyTail"> Â· Assine para manter seu ranking, mÃ©tricas e relatÃ³rios</span>
         </div>
-        <button class="trial-sticky-banner-cta" onclick="event.stopPropagation();trialBannerClick()">Desbloquear Pro →</button>
+        <button class="trial-sticky-banner-cta" onclick="event.stopPropagation();trialBannerClick()">Desbloquear Pro â†’</button>
       </div>
 
-      <!-- ═══ DASHBOARD ═══ -->
+      <!-- â•â•â• DASHBOARD â•â•â• -->
       <div class="section active" id="sec-dashboard">
 
         <!-- Checklist "Primeiros passos" (visivel pra novos usuarios) -->
@@ -522,7 +522,7 @@
             </div>
             <div>
               <div class="onboarding-title">Primeiros passos</div>
-              <div class="onboarding-sub" id="onboardingProgress">Complete para começar a tirar valor do Apostack</div>
+              <div class="onboarding-sub" id="onboardingProgress">Complete para comeÃ§ar a tirar valor do Apostack</div>
             </div>
           </div>
           <div class="onboarding-steps">
@@ -530,23 +530,23 @@
               <div class="onboarding-check"></div>
               <div class="onboarding-step-text">
                 <b>Defina sua banca inicial</b>
-                <span>Em Configurações, registre quanto você tem hoje</span>
+                <span>Em ConfiguraÃ§Ãµes, registre quanto vocÃª tem hoje</span>
               </div>
               <div class="onboarding-arrow"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg></div>
             </div>
             <div class="onboarding-step" data-step="metodo" onclick="onboardingGo('metodo')">
               <div class="onboarding-check"></div>
               <div class="onboarding-step-text">
-                <b>Adicione seu primeiro método</b>
-                <span>Bet365, Sportingbet, Betano… registre as casas que você usa</span>
+                <b>Adicione seu primeiro mÃ©todo</b>
+                <span>Bet365, Sportingbet, Betanoâ€¦ registre as casas que vocÃª usa</span>
               </div>
               <div class="onboarding-arrow"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg></div>
             </div>
             <div class="onboarding-step" data-step="transacao" onclick="onboardingGo('transacao')">
               <div class="onboarding-check"></div>
               <div class="onboarding-step-text">
-                <b>Lance sua primeira transação</b>
-                <span>Botão "+ Transação" no topo. Registre uma entrada ou ganho</span>
+                <b>Lance sua primeira transaÃ§Ã£o</b>
+                <span>BotÃ£o "+ TransaÃ§Ã£o" no topo. Registre uma entrada ou ganho</span>
               </div>
               <div class="onboarding-arrow"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg></div>
             </div>
@@ -554,7 +554,7 @@
               <div class="onboarding-check"></div>
               <div class="onboarding-step-text">
                 <b>Defina uma meta mensal</b>
-                <span>Tenha um alvo claro para acompanhar evolução</span>
+                <span>Tenha um alvo claro para acompanhar evoluÃ§Ã£o</span>
               </div>
               <div class="onboarding-arrow"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg></div>
             </div>
@@ -562,7 +562,7 @@
               <div class="onboarding-check"></div>
               <div class="onboarding-step-text">
                 <b>Confira seu rank atual</b>
-                <span>Veja em que tier você está e quanto falta para o próximo</span>
+                <span>Veja em que tier vocÃª estÃ¡ e quanto falta para o prÃ³ximo</span>
               </div>
               <div class="onboarding-arrow"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg></div>
             </div>
@@ -573,7 +573,7 @@
           <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
             <div>
               <div class="page-title">Dashboard Financeiro</div>
-              <div class="page-subtitle">Visão completa da sua banca, resultados e performance em tempo real</div>
+              <div class="page-subtitle">VisÃ£o completa da sua banca, resultados e performance em tempo real</div>
             </div>
             <div class="period-tabs">
               <div class="period-tab" onclick="setPeriod('day',this)">Hoje</div>
@@ -590,30 +590,30 @@
             <button class="kpi-edit-btn" onclick="openSaldoInicialModal()" title="Definir banca inicial"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg></button>
             <div class="kpi-label">Saldo Total</div>
             <div class="kpi-value" id="kpi-saldo">R$ 0</div>
-            <div class="kpi-change neutral" id="kpi-saldo-change">—</div>
+            <div class="kpi-change neutral" id="kpi-saldo-change">â€”</div>
             <div class="kpi-sub" id="kpi-saldo-sub">Saldo atual da banca</div>
-            <div class="kpi-bg-icon">💰</div>
+            <div class="kpi-bg-icon">ðŸ’°</div>
           </div>
           <div class="kpi-card" style="--card-color:var(--green)">
             <div class="kpi-label">Lucro</div>
             <div class="kpi-value" id="kpi-lucro">R$ 0</div>
-            <div class="kpi-change neutral" id="kpi-lucro-change">—</div>
-            <div class="kpi-sub" id="kpi-lucro-sub">Lucro nos últimos 30 dias</div>
-            <div class="kpi-bg-icon">📈</div>
+            <div class="kpi-change neutral" id="kpi-lucro-change">â€”</div>
+            <div class="kpi-sub" id="kpi-lucro-sub">Lucro nos Ãºltimos 30 dias</div>
+            <div class="kpi-bg-icon">ðŸ“ˆ</div>
           </div>
           <div class="kpi-card" style="--card-color:var(--red)">
             <div class="kpi-label">Despesas</div>
             <div class="kpi-value" id="kpi-despesas">R$ 0</div>
-            <div class="kpi-change neutral" id="kpi-despesas-change">—</div>
-            <div class="kpi-sub" id="kpi-despesas-sub">Despesas nos últimos 30 dias</div>
-            <div class="kpi-bg-icon">💸</div>
+            <div class="kpi-change neutral" id="kpi-despesas-change">â€”</div>
+            <div class="kpi-sub" id="kpi-despesas-sub">Despesas nos Ãºltimos 30 dias</div>
+            <div class="kpi-bg-icon">ðŸ’¸</div>
           </div>
           <div class="kpi-card" style="--card-color:var(--yellow)">
-            <div class="kpi-label">ROI Médio</div>
+            <div class="kpi-label">ROI MÃ©dio</div>
             <div class="kpi-value" id="kpi-roi">0%</div>
-            <div class="kpi-change neutral" id="kpi-roi-change">—</div>
-            <div class="kpi-sub" id="kpi-roi-sub">Retorno médio em 30 dias</div>
-            <div class="kpi-bg-icon">🏆</div>
+            <div class="kpi-change neutral" id="kpi-roi-change">â€”</div>
+            <div class="kpi-sub" id="kpi-roi-sub">Retorno mÃ©dio em 30 dias</div>
+            <div class="kpi-bg-icon">ðŸ†</div>
           </div>
         </div>
 
@@ -623,19 +623,19 @@
           <div class="stat-chip"><div class="stat-chip-label">Lucro Hoje</div><div class="stat-chip-value" id="statLucroHoje" style="color:var(--green)">+R$ 840</div></div>
           <div class="stat-chip"><div class="stat-chip-label">Lucro 7 dias</div><div class="stat-chip-value" id="statLucroSemanal" style="color:var(--green)">+R$ 4.120</div></div>
           <div class="stat-chip"><div class="stat-chip-label">Lucro 30 dias</div><div class="stat-chip-value" id="statLucroMensal" style="color:var(--green)">+R$ 16.840</div></div>
-          <div class="stat-chip"><div class="stat-chip-label">Métodos Ativos</div><div class="stat-chip-value" id="statMetodosAtivos">6 / 6</div></div>
-          <div class="stat-chip"><div class="stat-chip-label">Transações</div><div class="stat-chip-value" id="statTransacoes">247</div></div>
+          <div class="stat-chip"><div class="stat-chip-label">MÃ©todos Ativos</div><div class="stat-chip-value" id="statMetodosAtivos">6 / 6</div></div>
+          <div class="stat-chip"><div class="stat-chip-label">TransaÃ§Ãµes</div><div class="stat-chip-value" id="statTransacoes">247</div></div>
           <div class="stat-chip"><div class="stat-chip-label">Metas</div><div class="stat-chip-value" id="statMetasAtingidas" style="color:var(--green)">4 de 5</div></div>
         </div>
 
         <!-- MAIN CHART -->
         <div class="chart-card" data-card="dash-evo" style="overflow:hidden;padding:24px;margin-bottom:20px">
 
-          <!-- Header: título + legenda -->
+          <!-- Header: tÃ­tulo + legenda -->
           <div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:14px">
             <div>
-              <div class="chart-title" style="font-size:14px">Evolução Financeira</div>
-              <div class="chart-subtitle" id="evoSubtitle">Mensal — Jan a Dez 2026</div>
+              <div class="chart-title" style="font-size:14px">EvoluÃ§Ã£o Financeira</div>
+              <div class="chart-subtitle" id="evoSubtitle">Mensal â€” Jan a Dez 2026</div>
               <div id="evoAxisNote" style="display:none;font-size:11px;color:#c69458;margin-top:4px;font-weight:500;opacity:.85">Lucro e despesas aparecem nos indicadores acima</div>
             </div>
             <div class="chart-legend" style="gap:14px">
@@ -643,7 +643,7 @@
             </div>
           </div>
 
-          <!-- Filtros de período -->
+          <!-- Filtros de perÃ­odo -->
           <div class="evo-filters" style="display:flex;align-items:center;gap:6px;margin-bottom:14px;flex-wrap:wrap">
             <div class="evo-btn-group" style="display:flex;gap:4px;background:var(--bg-secondary);border:1px solid var(--border);border-radius:8px;padding:3px">
               <button class="evo-btn"        data-mode="today"  onclick="setEvoMode('today',this)">Hoje</button>
@@ -652,30 +652,30 @@
               <button class="evo-btn"        data-mode="yearly"  onclick="setEvoMode('yearly',this)">Ano</button>
               <button class="evo-btn"        data-mode="custom" onclick="setEvoMode('custom',this)">Personalizado</button>
             </div>
-            <!-- Date range (aparece só no modo custom) -->
+            <!-- Date range (aparece sÃ³ no modo custom) -->
             <div id="evoDateRange" style="display:none;align-items:center;gap:6px" class="evo-date-row">
               <div style="display:flex;align-items:center;gap:6px">
                 <input type="date" id="evoDateFrom" class="form-input" style="padding:5px 10px;font-size:12px;width:130px" onchange="applyCustomRange()"/>
-                <span style="color:var(--text-muted);font-size:12px">até</span>
+                <span style="color:var(--text-muted);font-size:12px">atÃ©</span>
                 <input type="date" id="evoDateTo" class="form-input" style="padding:5px 10px;font-size:12px;width:130px" onchange="applyCustomRange()"/>
               </div>
             </div>
           </div>
 
-          <!-- Canvas: altura fixa via container pai — evita recalculo ao trocar filtro -->
+          <!-- Canvas: altura fixa via container pai â€” evita recalculo ao trocar filtro -->
           <div id="mainChartWrap" style="position:relative;width:100%;height:400px;overflow:hidden">
             <canvas id="mainChart" width="800" height="400" style="display:block;width:100%!important;height:100%!important"></canvas>
           </div>
         </div>
 
-        <!-- DASHBOARD RANK CARD — engloba a posição no ranking global pra puxar pra aba Ranking -->
+        <!-- DASHBOARD RANK CARD â€” engloba a posiÃ§Ã£o no ranking global pra puxar pra aba Ranking -->
         <div class="dash-rank-card" id="dashRankCard" data-card="dash-rank" onclick="goTo('ranking')" style="display:none">
           <div class="dash-rank-left">
             <div class="dash-rank-icon" id="dashRankIcon"></div>
             <div class="dash-rank-info">
-              <div class="dash-rank-tag" id="dashRankTag">SUA POSIÇÃO NO RANKING</div>
-              <div class="dash-rank-main" id="dashRankMain">—</div>
-              <div class="dash-rank-sub" id="dashRankSub">—</div>
+              <div class="dash-rank-tag" id="dashRankTag">SUA POSIÃ‡ÃƒO NO RANKING</div>
+              <div class="dash-rank-main" id="dashRankMain">â€”</div>
+              <div class="dash-rank-sub" id="dashRankSub">â€”</div>
             </div>
           </div>
           <div class="dash-rank-right">
@@ -707,7 +707,7 @@
               <div class="dash-streak-num" id="dashStreakNum">0</div>
               <div class="dash-streak-label" id="dashStreakLabel">DIAS SEGUIDOS</div>
             </div>
-            <div class="dash-rank-cta">Ver ranking <span class="dash-rank-arrow">→</span></div>
+            <div class="dash-rank-cta">Ver ranking <span class="dash-rank-arrow">â†’</span></div>
           </div>
         </div>
 
@@ -716,14 +716,14 @@
           <div class="chart-header">
             <div>
               <div class="chart-title">Por Categoria</div>
-              <div class="chart-subtitle">Receita comparativa por Métodos — Abr vs Mai</div>
+              <div class="chart-subtitle">Receita comparativa por MÃ©todos â€” Abr vs Mai</div>
             </div>
             <div class="chart-legend" style="gap:14px">
               <div class="legend-item" style="color:#cbd5e1;font-size:13px"><div class="legend-dot" style="background:#64748b;width:10px;height:10px;border-radius:50%"></div>Abril</div>
               <div class="legend-item" style="color:#cbd5e1;font-size:13px"><div class="legend-dot" style="background:#10b981;width:10px;height:10px;border-radius:50%"></div>Maio</div>
             </div>
           </div>
-          <!-- Wrapper com altura fixa em px — garante renderização do canvas -->
+          <!-- Wrapper com altura fixa em px â€” garante renderizaÃ§Ã£o do canvas -->
           <div id="methodChartWrap" style="position:relative;width:100%;height:260px">
             <canvas id="methodChart" width="600" height="260" style="width:100%!important;height:100%!important;display:block"></canvas>
           </div>
@@ -733,57 +733,57 @@
         <div style="margin-top:20px">
           <div class="alert-box warning">
             <div><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div>
-            <div><div class="alert-title">iGaming — Alerta de Despesas</div>iGaming ultrapassou o limite de despesas em 24%. Revise sua estratégia para este método.</div>
+            <div><div class="alert-title">iGaming â€” Alerta de Despesas</div>iGaming ultrapassou o limite de despesas em 24%. Revise sua estratÃ©gia para este mÃ©todo.</div>
           </div>
           <div class="alert-box success">
             <div><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.5" fill="currentColor" stroke="none"/></svg></div>
-            <div><div class="alert-title">Meta Atingida!</div>Surebet atingiu R$5.220 de lucro este mês, superando a meta de R$5.000 em 4.4%!</div>
+            <div><div class="alert-title">Meta Atingida!</div>Surebet atingiu R$5.220 de lucro este mÃªs, superando a meta de R$5.000 em 4.4%!</div>
           </div>
         </div>
 
         <!-- RECENT TRANSACTIONS -->
         <div class="transactions-card" style="margin-top:20px">
           <div class="transactions-header">
-            <div class="transactions-header-title">Histórico Recente</div>
-            <button class="btn-ghost" style="padding:5px 12px;font-size:12px" onclick="goTo('transactions',null)">Ver todos →</button>
+            <div class="transactions-header-title">HistÃ³rico Recente</div>
+            <button class="btn-ghost" style="padding:5px 12px;font-size:12px" onclick="goTo('transactions',null)">Ver todos â†’</button>
           </div>
           <table class="tx-table">
-            <thead><tr><th>Data</th><th>Descrição</th><th>Método</th><th>Tipo</th><th>Valor</th></tr></thead>
+            <thead><tr><th>Data</th><th>DescriÃ§Ã£o</th><th>MÃ©todo</th><th>Tipo</th><th>Valor</th></tr></thead>
             <tbody id="recentTxBody">
-              <tr><td>14/05</td><td>Lucro Surebet</td><td><span class="tx-method-pill">Surebet</span></td><td><span class="tx-type-badge income">↑ Entrada</span></td><td class="tx-amount income">+R$ 380,00</td></tr>
-              <tr><td>14/05</td><td>Taxa plataforma</td><td><span class="tx-method-pill">iGaming</span></td><td><span class="tx-type-badge expense">↓ Despesa</span></td><td class="tx-amount expense">-R$ 120,00</td></tr>
-              <tr><td>13/05</td><td>Aposta Delay</td><td><span class="tx-method-pill">Delay</span></td><td><span class="tx-type-badge income">↑ Entrada</span></td><td class="tx-amount income">+R$ 240,00</td></tr>
-              <tr><td>13/05</td><td>Freebet Convertida</td><td><span class="tx-method-pill">Freebet</span></td><td><span class="tx-type-badge income">↑ Entrada</span></td><td class="tx-amount income">+R$ 180,00</td></tr>
-              <tr><td>12/05</td><td>Despesa Geral</td><td><span class="tx-method-pill">Geral</span></td><td><span class="tx-type-badge expense">↓ Despesa</span></td><td class="tx-amount expense">-R$ 95,00</td></tr>
-              <tr><td>12/05</td><td>Duplo Green</td><td><span class="tx-method-pill">Duplo Green</span></td><td><span class="tx-type-badge income">↑ Entrada</span></td><td class="tx-amount income">+R$ 420,00</td></tr>
+              <tr><td>14/05</td><td>Lucro Surebet</td><td><span class="tx-method-pill">Surebet</span></td><td><span class="tx-type-badge income">â†‘ Entrada</span></td><td class="tx-amount income">+R$ 380,00</td></tr>
+              <tr><td>14/05</td><td>Taxa plataforma</td><td><span class="tx-method-pill">iGaming</span></td><td><span class="tx-type-badge expense">â†“ Despesa</span></td><td class="tx-amount expense">-R$ 120,00</td></tr>
+              <tr><td>13/05</td><td>Aposta Delay</td><td><span class="tx-method-pill">Delay</span></td><td><span class="tx-type-badge income">â†‘ Entrada</span></td><td class="tx-amount income">+R$ 240,00</td></tr>
+              <tr><td>13/05</td><td>Freebet Convertida</td><td><span class="tx-method-pill">Freebet</span></td><td><span class="tx-type-badge income">â†‘ Entrada</span></td><td class="tx-amount income">+R$ 180,00</td></tr>
+              <tr><td>12/05</td><td>Despesa Geral</td><td><span class="tx-method-pill">Geral</span></td><td><span class="tx-type-badge expense">â†“ Despesa</span></td><td class="tx-amount expense">-R$ 95,00</td></tr>
+              <tr><td>12/05</td><td>Duplo Green</td><td><span class="tx-method-pill">Duplo Green</span></td><td><span class="tx-type-badge income">â†‘ Entrada</span></td><td class="tx-amount income">+R$ 420,00</td></tr>
             </tbody>
           </table>
         </div>
       </div>
 
-      <!-- ═══ MÉTODOS ═══ -->
+      <!-- â•â•â• MÃ‰TODOS â•â•â• -->
       <div class="section" id="sec-methods">
         <div class="page-header" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
           <div>
-            <div class="page-title">Gestão de Métodos</div>
-            <div class="page-subtitle">Performance individual de cada estratégia</div>
+            <div class="page-title">GestÃ£o de MÃ©todos</div>
+            <div class="page-subtitle">Performance individual de cada estratÃ©gia</div>
           </div>
-          <button class="btn-primary" style="width:auto;padding:9px 18px" onclick="openMethodsCatalogModal()">Gerenciar métodos</button>
+          <button class="btn-primary" style="width:auto;padding:9px 18px" onclick="openMethodsCatalogModal()">Gerenciar mÃ©todos</button>
         </div>
 
         <!-- RANKING -->
         <div class="ranking-card" data-card="met-ranking">
-          <div style="font-size:15px;font-weight:700;margin-bottom:12px">Ranking — Métodos Mais Lucrativos</div>
+          <div style="font-size:15px;font-weight:700;margin-bottom:12px">Ranking â€” MÃ©todos Mais Lucrativos</div>
           <div id="rankingList"></div>
         </div>
 
         <!-- METHOD CARDS -->
         <div class="methods-grid" id="methodCardsGrid" data-card="met-grid"></div>
 
-        <!-- METHOD CHART — ampliado (500px desktop / 340px mobile) -->
+        <!-- METHOD CHART â€” ampliado (500px desktop / 340px mobile) -->
         <div class="chart-card" data-card="met-evo" style="padding:20px;margin-top:16px">
           <div class="chart-header" style="margin-bottom:12px">
-            <div><div class="chart-title" style="font-size:15px;font-weight:600">Evolução por Método — Últimos 6 Meses</div></div>
+            <div><div class="chart-title" style="font-size:15px;font-weight:600">EvoluÃ§Ã£o por MÃ©todo â€” Ãšltimos 6 Meses</div></div>
           </div>
           <div id="methodEvolutionWrap" style="height:500px;width:100%;position:relative">
             <canvas id="methodEvolutionChart"></canvas>
@@ -791,13 +791,13 @@
         </div>
       </div>
 
-      <!-- ═══ TRANSAÇÕES ═══ -->
+      <!-- â•â•â• TRANSAÃ‡Ã•ES â•â•â• -->
       <div class="section" id="sec-transactions">
         <div class="page-header">
           <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
             <div>
               <div class="page-title">Controle Financeiro</div>
-              <div class="page-subtitle">Gerencie todas as suas transações</div>
+              <div class="page-subtitle">Gerencie todas as suas transaÃ§Ãµes</div>
             </div>
             <div style="display:flex;gap:8px">
               <button class="btn-success" onclick="openTxModal()">+ Entrada</button>
@@ -813,8 +813,8 @@
           <div class="form-card-title" style="display:flex;align-items:center;gap:8px"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35"/></svg>Filtros</div>
           <div class="form-row">
             <div class="form-group"><label class="form-label">De</label><input class="form-input" type="date" id="filterDateFrom"/></div>
-            <div class="form-group"><label class="form-label">Até</label><input class="form-input" type="date" id="filterDateTo"/></div>
-            <div class="form-group"><label class="form-label">Método</label><select class="form-select" id="filterMethod"><option value="">Todos</option><option>Delay</option><option>Freebet</option><option>Surebet</option><option>iGaming</option><option>Duplo Green</option><option>Métodos</option></select></div>
+            <div class="form-group"><label class="form-label">AtÃ©</label><input class="form-input" type="date" id="filterDateTo"/></div>
+            <div class="form-group"><label class="form-label">MÃ©todo</label><select class="form-select" id="filterMethod"><option value="">Todos</option><option>Delay</option><option>Freebet</option><option>Surebet</option><option>iGaming</option><option>Duplo Green</option><option>MÃ©todos</option></select></div>
             <div class="form-group"><label class="form-label">Tipo</label><select class="form-select" id="filterType"><option value="">Todos</option><option value="income">Entrada</option><option value="expense">Despesa</option></select></div>
             <div class="form-group" style="display:flex;align-items:flex-end;gap:6px">
               <button class="btn-primary" style="width:auto;padding:10px 18px" onclick="applyTxFilter()">Filtrar</button>
@@ -829,22 +829,22 @@
         <!-- TRANSACTIONS TABLE -->
         <div class="transactions-card">
           <div class="transactions-header">
-            <div class="transactions-header-title">Todas as Transações</div>
+            <div class="transactions-header-title">Todas as TransaÃ§Ãµes</div>
             <div style="font-size:12px;color:var(--text-muted)"><span id="txCountLabel">0</span> registros</div>
           </div>
           <table class="tx-table">
-            <thead><tr><th>Data</th><th>Descrição</th><th>Categoria</th><th>Método</th><th>Tipo</th><th>Valor</th><th>Saldo</th><th></th></tr></thead>
+            <thead><tr><th>Data</th><th>DescriÃ§Ã£o</th><th>Categoria</th><th>MÃ©todo</th><th>Tipo</th><th>Valor</th><th>Saldo</th><th></th></tr></thead>
             <tbody id="txTableBody"></tbody>
           </table>
         </div>
       </div>
 
-      <!-- ═══ CONTAS DEPOSITADAS ═══ -->
+      <!-- â•â•â• CONTAS DEPOSITADAS â•â•â• -->
       <div class="section" id="sec-accounts">
         <div class="page-header" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
           <div>
             <div class="page-title">Contas Depositadas</div>
-            <div class="page-subtitle">Controle o saldo de cada casa de aposta — sem esquecer dinheiro parado</div>
+            <div class="page-subtitle">Controle o saldo de cada casa de aposta â€” sem esquecer dinheiro parado</div>
           </div>
           <div style="display:flex;gap:8px">
             <button class="btn-ghost" onclick="exportAccountsCSV()">Excel</button>
@@ -861,8 +861,8 @@
           </div>
           <div class="kpi-card" style="--card-color:var(--green)">
             <div class="kpi-label">Casa com Maior Saldo</div>
-            <div class="kpi-value" id="accTopValue" style="font-size:18px">—</div>
-            <div class="kpi-change up" id="accTopSub">—</div>
+            <div class="kpi-value" id="accTopValue" style="font-size:18px">â€”</div>
+            <div class="kpi-change up" id="accTopSub">â€”</div>
           </div>
           <div class="kpi-card" style="--card-color:var(--yellow)">
             <div class="kpi-label">Saldo Baixo (&lt; R$ 50)</div>
@@ -872,19 +872,19 @@
           <div class="kpi-card" style="--card-color:var(--blue)">
             <div class="kpi-label">Casas Cadastradas</div>
             <div class="kpi-value" id="accCount">0</div>
-            <div class="kpi-change neutral">de tantas casas que você quiser</div>
+            <div class="kpi-change neutral">de tantas casas que vocÃª quiser</div>
           </div>
         </div>
 
         <!-- Busca -->
         <div class="form-card" style="padding:14px 18px">
           <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
-            <span style="font-size:18px">🔍</span>
+            <span style="font-size:18px">ðŸ”</span>
             <input class="form-input" type="text" id="accountSearch" placeholder="Buscar casa de aposta..." oninput="renderAccounts()" style="flex:1;min-width:200px;padding:9px 14px"/>
             <select class="form-select" id="accountSort" onchange="renderAccounts()" style="width:auto;padding:9px 12px">
               <option value="value-desc">Maior saldo</option>
               <option value="value-asc">Menor saldo</option>
-              <option value="name-asc">A → Z</option>
+              <option value="name-asc">A â†’ Z</option>
               <option value="recent">Mais recentes</option>
             </select>
           </div>
@@ -895,34 +895,34 @@
         <div id="accountsEmpty" style="display:none;text-align:center;padding:60px 20px;color:var(--text-muted)">
           <div style="margin-bottom:14px;display:flex;justify-content:center;color:var(--text-muted)"><svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="14" rx="2"/><path d="M3 10h18M16 14h2"/></svg></div>
           <div style="font-size:16px;font-weight:600;color:var(--text-secondary);margin-bottom:6px">Nenhuma conta cadastrada</div>
-          <div style="font-size:13px">Clique em <b>+ Adicionar conta</b> pra começar a registrar suas casas</div>
+          <div style="font-size:13px">Clique em <b>+ Adicionar conta</b> pra comeÃ§ar a registrar suas casas</div>
         </div>
       </div>
       <div class="section" id="sec-recharge">
         <div class="page-header">
           <div class="page-title">Planos & Assinatura</div>
-          <div class="page-subtitle">Comece com 7 dias grátis. Sem cartão, sem compromisso.</div>
+          <div class="page-subtitle">Comece com 7 dias grÃ¡tis. Sem cartÃ£o, sem compromisso.</div>
         </div>
 
         <!-- HERO TRIAL BANNER -->
         <div class="trial-hero">
           <div class="trial-hero-bg"></div>
           <div class="trial-hero-content">
-            <div class="trial-hero-badge"><span class="trial-pulse"></span>Período gratuito ativo</div>
-            <div class="trial-hero-title">Você ainda tem <span id="trialDaysLeft">7</span> dias grátis</div>
-            <div class="trial-hero-sub">Aproveite todos os recursos do Apostack sem pagar nada até <strong id="trialEndDate">26/05/2026</strong>. Depois disso, a partir de <strong>R$ 16,58/mês</strong> (plano anual) ou <strong>R$ 24,90/mês</strong>.</div>
+            <div class="trial-hero-badge"><span class="trial-pulse"></span>PerÃ­odo gratuito ativo</div>
+            <div class="trial-hero-title">VocÃª ainda tem <span id="trialDaysLeft">7</span> dias grÃ¡tis</div>
+            <div class="trial-hero-sub">Aproveite todos os recursos do Apostack sem pagar nada atÃ© <strong id="trialEndDate">26/05/2026</strong>. Depois disso, a partir de <strong>R$ 16,58/mÃªs</strong> (plano anual) ou <strong>R$ 24,90/mÃªs</strong>.</div>
             <div class="trial-progress">
               <div class="trial-progress-bar"><div class="trial-progress-fill" id="trialProgressFill" style="width:14.3%"></div></div>
-              <div class="trial-progress-meta"><span id="trialUsedLabel">Dia 1 de 7</span><span id="trialPctLabel">14% concluído</span></div>
+              <div class="trial-progress-meta"><span id="trialUsedLabel">Dia 1 de 7</span><span id="trialPctLabel">14% concluÃ­do</span></div>
             </div>
             <div class="trial-hero-actions">
-              <button class="btn-cta-primary" onclick="subscribeNow()">Assinar agora · R$ 24,90/mês</button>
+              <button class="btn-cta-primary" onclick="subscribeNow()">Assinar agora Â· R$ 24,90/mÃªs</button>
               <button class="btn-cta-ghost" onclick="continueTrialToast()">Continuar no trial</button>
             </div>
           </div>
         </div>
 
-        <!-- PLANS GRID — Free vs Premium -->
+        <!-- PLANS GRID â€” Free vs Premium -->
         <div class="plans-grid">
           <!-- PLANO GRATUITO -->
           <div class="plan-card">
@@ -935,15 +935,15 @@
               <span class="plan-price-value">0</span>
               <span class="plan-price-period">por 7 dias</span>
             </div>
-            <div class="plan-desc">Conheça a plataforma sem pagar nada</div>
+            <div class="plan-desc">ConheÃ§a a plataforma sem pagar nada</div>
             <ul class="plan-features">
-              <li><span class="plan-check">✓</span>Dashboard completo</li>
-              <li><span class="plan-check">✓</span>Até 50 transações</li>
-              <li><span class="plan-check">✓</span>6 métodos cadastrados</li>
-              <li><span class="plan-check">✓</span>Relatórios básicos</li>
-              <li class="plan-feature-off"><span class="plan-x">✕</span>Exportar PDF / Excel</li>
-              <li class="plan-feature-off"><span class="plan-x">✕</span>Suporte prioritário</li>
-              <li class="plan-feature-off"><span class="plan-x">✕</span>Métodos ilimitados</li>
+              <li><span class="plan-check">âœ“</span>Dashboard completo</li>
+              <li><span class="plan-check">âœ“</span>AtÃ© 50 transaÃ§Ãµes</li>
+              <li><span class="plan-check">âœ“</span>6 mÃ©todos cadastrados</li>
+              <li><span class="plan-check">âœ“</span>RelatÃ³rios bÃ¡sicos</li>
+              <li class="plan-feature-off"><span class="plan-x">âœ•</span>Exportar PDF / Excel</li>
+              <li class="plan-feature-off"><span class="plan-x">âœ•</span>Suporte prioritÃ¡rio</li>
+              <li class="plan-feature-off"><span class="plan-x">âœ•</span>MÃ©todos ilimitados</li>
             </ul>
             <button class="btn-plan-ghost" disabled>Plano atual</button>
           </div>
@@ -958,20 +958,20 @@
             <div class="plan-price">
               <span class="plan-price-currency">R$</span>
               <span class="plan-price-value">24<small>,90</small></span>
-              <span class="plan-price-period">/mês</span>
+              <span class="plan-price-period">/mÃªs</span>
             </div>
-            <div class="plan-desc">Tudo o que você precisa pra gestão profissional</div>
+            <div class="plan-desc">Tudo o que vocÃª precisa pra gestÃ£o profissional</div>
             <ul class="plan-features">
-              <li><span class="plan-check premium">✓</span><strong>Transações ilimitadas</strong></li>
-              <li><span class="plan-check premium">✓</span><strong>Métodos ilimitados</strong></li>
-              <li><span class="plan-check premium">✓</span>Relatórios avançados (PDF/Excel)</li>
-              <li><span class="plan-check premium">✓</span>Comparativos e projeções</li>
-              <li><span class="plan-check premium">✓</span>Metas personalizadas</li>
-              <li><span class="plan-check premium">✓</span>Backup automático na nuvem</li>
-              <li><span class="plan-check premium">✓</span>Suporte prioritário</li>
+              <li><span class="plan-check premium">âœ“</span><strong>TransaÃ§Ãµes ilimitadas</strong></li>
+              <li><span class="plan-check premium">âœ“</span><strong>MÃ©todos ilimitados</strong></li>
+              <li><span class="plan-check premium">âœ“</span>RelatÃ³rios avanÃ§ados (PDF/Excel)</li>
+              <li><span class="plan-check premium">âœ“</span>Comparativos e projeÃ§Ãµes</li>
+              <li><span class="plan-check premium">âœ“</span>Metas personalizadas</li>
+              <li><span class="plan-check premium">âœ“</span>Backup automÃ¡tico na nuvem</li>
+              <li><span class="plan-check premium">âœ“</span>Suporte prioritÃ¡rio</li>
             </ul>
-            <button class="btn-plan-primary" onclick="subscribeNow()">Assinar Plus → R$ 24,90</button>
-            <div class="plan-guarantee">Cancele a qualquer momento · Sem fidelidade</div>
+            <button class="btn-plan-primary" onclick="subscribeNow()">Assinar Plus â†’ R$ 24,90</button>
+            <div class="plan-guarantee">Cancele a qualquer momento Â· Sem fidelidade</div>
           </div>
 
           <!-- PLANO PRO (ANUAL) -->
@@ -985,27 +985,27 @@
               <span class="plan-price-value">199</span>
               <span class="plan-price-period">/ano</span>
             </div>
-            <div class="plan-desc">≈ R$ 16,58/mês · pague uma vez no ano</div>
+            <div class="plan-desc">â‰ˆ R$ 16,58/mÃªs Â· pague uma vez no ano</div>
             <ul class="plan-features">
-              <li><span class="plan-check premium">✓</span><strong>Tudo do Plus, e mais:</strong></li>
-              <li><span class="plan-check premium">✓</span><strong>Suporte VIP exclusivo</strong></li>
-              <li><span class="plan-check premium">✓</span><strong>Acesso antecipado a novidades</strong></li>
-              <li><span class="plan-check premium">✓</span>Relatórios avançados (PDF/Excel)</li>
-              <li><span class="plan-check premium">✓</span>Comparativos e projeções</li>
-              <li><span class="plan-check premium">✓</span>Backup automático na nuvem</li>
-              <li><span class="plan-check premium">✓</span><strong>Economize R$ 99,80 (~4 meses grátis)</strong></li>
+              <li><span class="plan-check premium">âœ“</span><strong>Tudo do Plus, e mais:</strong></li>
+              <li><span class="plan-check premium">âœ“</span><strong>Suporte VIP exclusivo</strong></li>
+              <li><span class="plan-check premium">âœ“</span><strong>Acesso antecipado a novidades</strong></li>
+              <li><span class="plan-check premium">âœ“</span>RelatÃ³rios avanÃ§ados (PDF/Excel)</li>
+              <li><span class="plan-check premium">âœ“</span>Comparativos e projeÃ§Ãµes</li>
+              <li><span class="plan-check premium">âœ“</span>Backup automÃ¡tico na nuvem</li>
+              <li><span class="plan-check premium">âœ“</span><strong>Economize R$ 99,80 (~4 meses grÃ¡tis)</strong></li>
             </ul>
-            <button class="btn-plan-primary" onclick="subscribeNow('anual')">Assinar Pro → R$ 199</button>
-            <div class="plan-guarantee">1 pagamento por ano · Cancele quando quiser</div>
+            <button class="btn-plan-primary" onclick="subscribeNow('anual')">Assinar Pro â†’ R$ 199</button>
+            <div class="plan-guarantee">1 pagamento por ano Â· Cancele quando quiser</div>
           </div>
         </div>
 
         <!-- TRUST BAR -->
         <div class="trust-bar">
           <div class="trust-item"><div class="trust-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg></div><div><div class="trust-title">Pagamento seguro</div><div class="trust-sub">SSL 256-bit</div></div></div>
-          <div class="trust-item"><div class="trust-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M2 10h20M6 14h4"/></svg></div><div><div class="trust-title">Pix, cartão e boleto</div><div class="trust-sub">Renovação automática</div></div></div>
+          <div class="trust-item"><div class="trust-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M2 10h20M6 14h4"/></svg></div><div><div class="trust-title">Pix, cartÃ£o e boleto</div><div class="trust-sub">RenovaÃ§Ã£o automÃ¡tica</div></div></div>
           <div class="trust-item"><div class="trust-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 109-9 9.75 9.75 0 00-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg></div><div><div class="trust-title">Cancele quando quiser</div><div class="trust-sub">Sem multas</div></div></div>
-          <div class="trust-item"><div class="trust-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg></div><div><div class="trust-title">Acesso imediato</div><div class="trust-sub">Ativação instantânea</div></div></div>
+          <div class="trust-item"><div class="trust-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg></div><div><div class="trust-title">Acesso imediato</div><div class="trust-sub">AtivaÃ§Ã£o instantÃ¢nea</div></div></div>
         </div>
 
         <!-- FAQ -->
@@ -1013,56 +1013,56 @@
           <div class="form-card-title">Perguntas frequentes</div>
           <div class="faq-list">
             <div class="faq-item">
-              <div class="faq-q" onclick="toggleFaq(this)"><span>Como funcionam os 7 dias grátis?</span><span class="faq-arrow">▾</span></div>
-              <div class="faq-a">Você tem acesso completo a todos os recursos do Apostack por 7 dias sem pagar nada. Não é necessário cadastrar cartão. Ao final do período, basta assinar pra continuar — ou seus dados ficam guardados se quiser voltar depois.</div>
+              <div class="faq-q" onclick="toggleFaq(this)"><span>Como funcionam os 7 dias grÃ¡tis?</span><span class="faq-arrow">â–¾</span></div>
+              <div class="faq-a">VocÃª tem acesso completo a todos os recursos do Apostack por 7 dias sem pagar nada. NÃ£o Ã© necessÃ¡rio cadastrar cartÃ£o. Ao final do perÃ­odo, basta assinar pra continuar â€” ou seus dados ficam guardados se quiser voltar depois.</div>
             </div>
             <div class="faq-item">
-              <div class="faq-q" onclick="toggleFaq(this)"><span>Posso cancelar quando quiser?</span><span class="faq-arrow">▾</span></div>
-              <div class="faq-a">Sim. A assinatura é mensal e sem fidelidade. Cancele em 1 clique pelo próprio painel a qualquer momento — você continua tendo acesso até o fim do ciclo já pago.</div>
+              <div class="faq-q" onclick="toggleFaq(this)"><span>Posso cancelar quando quiser?</span><span class="faq-arrow">â–¾</span></div>
+              <div class="faq-a">Sim. A assinatura Ã© mensal e sem fidelidade. Cancele em 1 clique pelo prÃ³prio painel a qualquer momento â€” vocÃª continua tendo acesso atÃ© o fim do ciclo jÃ¡ pago.</div>
             </div>
             <div class="faq-item">
-              <div class="faq-q" onclick="toggleFaq(this)"><span>Quais formas de pagamento são aceitas?</span><span class="faq-arrow">▾</span></div>
-              <div class="faq-a">Aceitamos Pix (com confirmação instantânea), cartão de crédito (Visa, Mastercard, Elo, Hipercard, Amex) e boleto bancário. A cobrança é mensal e automática.</div>
+              <div class="faq-q" onclick="toggleFaq(this)"><span>Quais formas de pagamento sÃ£o aceitas?</span><span class="faq-arrow">â–¾</span></div>
+              <div class="faq-a">Aceitamos Pix (com confirmaÃ§Ã£o instantÃ¢nea), cartÃ£o de crÃ©dito (Visa, Mastercard, Elo, Hipercard, Amex) e boleto bancÃ¡rio. A cobranÃ§a Ã© mensal e automÃ¡tica.</div>
             </div>
             <div class="faq-item">
-              <div class="faq-q" onclick="toggleFaq(this)"><span>Meus dados ficam seguros?</span><span class="faq-arrow">▾</span></div>
-              <div class="faq-a">Totalmente. Usamos criptografia de ponta-a-ponta (AES-256) e seus dados financeiros nunca são compartilhados. Backup automático diário em servidores em conformidade com a LGPD.</div>
+              <div class="faq-q" onclick="toggleFaq(this)"><span>Meus dados ficam seguros?</span><span class="faq-arrow">â–¾</span></div>
+              <div class="faq-a">Totalmente. Usamos criptografia de ponta-a-ponta (AES-256) e seus dados financeiros nunca sÃ£o compartilhados. Backup automÃ¡tico diÃ¡rio em servidores em conformidade com a LGPD.</div>
             </div>
             <div class="faq-item">
-              <div class="faq-q" onclick="toggleFaq(this)"><span>Posso testar antes de pagar?</span><span class="faq-arrow">▾</span></div>
-              <div class="faq-a">Sim, é exatamente isso que os 7 dias grátis oferecem: acesso 100% a todos os recursos pra você testar sem compromisso. Se gostar, continua. Se não, é só não assinar — não cobramos nada.</div>
+              <div class="faq-q" onclick="toggleFaq(this)"><span>Posso testar antes de pagar?</span><span class="faq-arrow">â–¾</span></div>
+              <div class="faq-a">Sim, Ã© exatamente isso que os 7 dias grÃ¡tis oferecem: acesso 100% a todos os recursos pra vocÃª testar sem compromisso. Se gostar, continua. Se nÃ£o, Ã© sÃ³ nÃ£o assinar â€” nÃ£o cobramos nada.</div>
             </div>
           </div>
         </div>
 
-        <!-- HISTÓRICO DA ASSINATURA -->
+        <!-- HISTÃ“RICO DA ASSINATURA -->
         <div class="transactions-card" style="margin-top:24px">
-          <div class="transactions-header"><div class="transactions-header-title">Histórico da Assinatura</div></div>
+          <div class="transactions-header"><div class="transactions-header-title">HistÃ³rico da Assinatura</div></div>
           <table class="tx-table">
-            <thead><tr><th>Data</th><th>Descrição</th><th>Valor</th><th>Status</th></tr></thead>
+            <thead><tr><th>Data</th><th>DescriÃ§Ã£o</th><th>Valor</th><th>Status</th></tr></thead>
             <tbody id="subHistoryBody">
-              <tr><td id="subHistoryDate">—</td><td>Início do período grátis (7 dias)</td><td class="tx-amount income">R$ 0,00</td><td><span class="tx-type-badge income">Ativo</span></td></tr>
+              <tr><td id="subHistoryDate">â€”</td><td>InÃ­cio do perÃ­odo grÃ¡tis (7 dias)</td><td class="tx-amount income">R$ 0,00</td><td><span class="tx-type-badge income">Ativo</span></td></tr>
             </tbody>
           </table>
         </div>
 
         <!-- SUPORTE -->
         <div style="margin-top:24px;text-align:center;font-size:14px;color:var(--text-secondary)">
-          Dúvidas sobre o plano ou problema no pagamento?
+          DÃºvidas sobre o plano ou problema no pagamento?
           <a href="mailto:suporteapostack@gmail.com?subject=D%C3%BAvida%20sobre%20assinatura" style="color:var(--accent);text-decoration:none;font-weight:600">Fale com o suporte</a>
         </div>
       </div>
 
-      <!-- ═══ RELATÓRIOS ═══ -->
+      <!-- â•â•â• RELATÃ“RIOS â•â•â• -->
       <div class="section" id="sec-reports">
         <div class="trial-ending-note" data-pro-warning style="display:none">
           <span class="trial-ending-note-icon"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></span>
-          <div class="trial-ending-note-text">Você perde acesso a <b>Relatórios</b> em <b><span class="trialEndingDays">2</span> dias</b> se não assinar</div>
-          <button class="trial-ending-note-cta" onclick="subscribeNow('mensal')">Desbloquear Pro →</button>
+          <div class="trial-ending-note-text">VocÃª perde acesso a <b>RelatÃ³rios</b> em <b><span class="trialEndingDays">2</span> dias</b> se nÃ£o assinar</div>
+          <button class="trial-ending-note-cta" onclick="subscribeNow('mensal')">Desbloquear Pro â†’</button>
         </div>
         <div class="page-header">
           <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
-            <div><div class="page-title">Relatórios</div><div class="page-subtitle">Análise completa da sua performance</div></div>
+            <div><div class="page-title">RelatÃ³rios</div><div class="page-subtitle">AnÃ¡lise completa da sua performance</div></div>
             <div style="display:flex;gap:8px">
               <button class="btn-ghost" onclick="exportReportPDF()">PDF</button>
               <button class="btn-ghost" onclick="exportTransactionsCSV()">Excel</button>
@@ -1070,7 +1070,7 @@
           </div>
         </div>
         <div class="chart-card" data-card="rep-evo">
-          <div class="chart-header"><div><div class="chart-title">Receita vs Despesas vs Lucro</div><div class="chart-subtitle">Evolução mensal completa</div></div></div>
+          <div class="chart-header"><div><div class="chart-title">Receita vs Despesas vs Lucro</div><div class="chart-subtitle">EvoluÃ§Ã£o mensal completa</div></div></div>
           <div id="reportChartWrap" style="position:relative;width:100%;height:320px">
             <canvas id="reportChart"></canvas>
           </div>
@@ -1079,8 +1079,8 @@
           <div class="chart-card" data-card="rep-lucro">
             <div class="chart-header">
               <div>
-                <div class="chart-title">Distribuição de Lucro</div>
-                <div class="chart-subtitle">% de lucro por método</div>
+                <div class="chart-title">DistribuiÃ§Ã£o de Lucro</div>
+                <div class="chart-subtitle">% de lucro por mÃ©todo</div>
               </div>
             </div>
             <div id="pieChartWrap" style="position:relative;width:100%;height:280px;display:flex;align-items:center;justify-content:center">
@@ -1088,7 +1088,7 @@
             </div>
           </div>
           <div class="chart-card" data-card="rep-despesas">
-            <div class="chart-header"><div class="chart-title">Distribuição de Despesas</div></div>
+            <div class="chart-header"><div class="chart-title">DistribuiÃ§Ã£o de Despesas</div></div>
             <div id="expenseChartWrap" style="position:relative;width:100%;height:280px;display:flex;align-items:center;justify-content:center">
               <canvas id="expenseChart" style="max-width:260px;max-height:260px"></canvas>
             </div>
@@ -1096,7 +1096,7 @@
         </div>
       </div>
 
-      <!-- ═══ METAS ═══ -->
+      <!-- â•â•â• METAS â•â•â• -->
       <div class="section" id="sec-goals">
         <div class="page-header">
           <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
@@ -1108,78 +1108,78 @@
           <div class="kpi-card" style="--card-color:var(--green)"><div class="kpi-label">Atingidas</div><div class="kpi-value" id="goalsAtingidas">4</div><div class="kpi-change up" id="goalsAtingidasSub">de 5 metas</div></div>
           <div class="kpi-card" style="--card-color:var(--yellow)"><div class="kpi-label">Em Progresso</div><div class="kpi-value" id="goalsProgresso">1</div><div class="kpi-change neutral">97.5% completo</div></div>
           <div class="kpi-card" style="--card-color:var(--red)"><div class="kpi-label">Abaixo</div><div class="kpi-value" id="goalsAbaixo">1</div><div class="kpi-change down">iGaming em alerta</div></div>
-          <div class="kpi-card" style="--card-color:var(--accent)"><div class="kpi-label">Meta Total</div><div class="kpi-value" id="goalsMetaTotal">R$ 17.500</div><div class="kpi-change up">Alcançada</div></div>
+          <div class="kpi-card" style="--card-color:var(--accent)"><div class="kpi-label">Meta Total</div><div class="kpi-value" id="goalsMetaTotal">R$ 17.500</div><div class="kpi-change up">AlcanÃ§ada</div></div>
         </div>
         <div class="form-card">
-          <div class="form-card-title">Progresso das Metas — Maio 2026</div>
+          <div class="form-card-title">Progresso das Metas â€” Maio 2026</div>
           <div id="goalsList" style="display:flex;flex-direction:column;gap:16px"></div>
         </div>
       </div>
 
-      <!-- ═══ COMPARATIVO ═══ -->
+      <!-- â•â•â• COMPARATIVO â•â•â• -->
       <div class="section" id="sec-compare">
         <div class="trial-ending-note" data-pro-warning style="display:none">
           <span class="trial-ending-note-icon"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></span>
-          <div class="trial-ending-note-text">Você perde acesso a <b>Comparativo</b> em <b><span class="trialEndingDays">2</span> dias</b> se não assinar</div>
-          <button class="trial-ending-note-cta" onclick="subscribeNow('mensal')">Desbloquear Pro →</button>
+          <div class="trial-ending-note-text">VocÃª perde acesso a <b>Comparativo</b> em <b><span class="trialEndingDays">2</span> dias</b> se nÃ£o assinar</div>
+          <button class="trial-ending-note-cta" onclick="subscribeNow('mensal')">Desbloquear Pro â†’</button>
         </div>
-        <div class="page-header"><div class="page-title">Comparação Mensal</div><div class="page-subtitle" id="compareSubtitle">Mês anterior vs mês atual</div></div>
+        <div class="page-header"><div class="page-title">ComparaÃ§Ã£o Mensal</div><div class="page-subtitle" id="compareSubtitle">MÃªs anterior vs mÃªs atual</div></div>
         <div class="kpi-grid" data-card="cmp-kpis">
           <div class="kpi-card" style="--card-color:var(--green)">
             <div class="kpi-label">Receita</div>
-            <div class="kpi-value" id="cmpReceitaValue">—</div>
-            <div class="kpi-change up" id="cmpReceitaPct">—</div>
-            <div class="kpi-sub" id="cmpReceitaSub">—</div>
+            <div class="kpi-value" id="cmpReceitaValue">â€”</div>
+            <div class="kpi-change up" id="cmpReceitaPct">â€”</div>
+            <div class="kpi-sub" id="cmpReceitaSub">â€”</div>
           </div>
           <div class="kpi-card" style="--card-color:var(--accent)">
             <div class="kpi-label">Lucro</div>
-            <div class="kpi-value" id="cmpLucroValue">—</div>
-            <div class="kpi-change up" id="cmpLucroPct">—</div>
-            <div class="kpi-sub" id="cmpLucroSub">—</div>
+            <div class="kpi-value" id="cmpLucroValue">â€”</div>
+            <div class="kpi-change up" id="cmpLucroPct">â€”</div>
+            <div class="kpi-sub" id="cmpLucroSub">â€”</div>
           </div>
           <div class="kpi-card" style="--card-color:var(--yellow)">
             <div class="kpi-label">Despesas</div>
-            <div class="kpi-value" id="cmpDespValue">—</div>
-            <div class="kpi-change down" id="cmpDespPct">—</div>
-            <div class="kpi-sub" id="cmpDespSub">—</div>
+            <div class="kpi-value" id="cmpDespValue">â€”</div>
+            <div class="kpi-change down" id="cmpDespPct">â€”</div>
+            <div class="kpi-sub" id="cmpDespSub">â€”</div>
           </div>
           <div class="kpi-card" style="--card-color:var(--blue)">
             <div class="kpi-label">ROI</div>
-            <div class="kpi-value" id="cmpRoiValue">—</div>
-            <div class="kpi-change up" id="cmpRoiPct">—</div>
-            <div class="kpi-sub" id="cmpRoiSub">—</div>
+            <div class="kpi-value" id="cmpRoiValue">â€”</div>
+            <div class="kpi-change up" id="cmpRoiPct">â€”</div>
+            <div class="kpi-sub" id="cmpRoiSub">â€”</div>
           </div>
         </div>
         <div id="compareAutoBanner" style="display:none;align-items:center;gap:8px;padding:10px 14px;background:rgba(99,102,241,0.08);border:1px solid rgba(99,102,241,0.18);border-radius:10px;font-size:12.5px;color:var(--text-secondary);margin-bottom:14px"></div>
         <div class="chart-card" data-card="cmp-chart">
-          <div class="chart-header"><div class="chart-title">Comparativo por Método</div></div>
+          <div class="chart-header"><div class="chart-title">Comparativo por MÃ©todo</div></div>
           <div id="compareChartWrap" style="position:relative;width:100%;height:300px">
             <canvas id="compareChart"></canvas>
           </div>
         </div>
         <div class="form-card" data-card="cmp-detail">
           <div class="form-card-title" style="display:flex;align-items:center;justify-content:space-between;gap:8px">
-            <span>Análise Detalhada por Método</span>
-            <button class="btn-ghost" style="padding:6px 14px;font-size:12px" onclick="openMethodsCompareModal()">Editar métodos</button>
+            <span>AnÃ¡lise Detalhada por MÃ©todo</span>
+            <button class="btn-ghost" style="padding:6px 14px;font-size:12px" onclick="openMethodsCompareModal()">Editar mÃ©todos</button>
           </div>
           <div id="compareBarsList" style="display:flex;flex-direction:column;gap:12px"></div>
         </div>
       </div>
 
-      <!-- ═══ CONFIGURAÇÕES ═══ -->
+      <!-- â•â•â• CONFIGURAÃ‡Ã•ES â•â•â• -->
       <div class="section" id="sec-settings">
-        <div class="page-header"><div class="page-title">Configurações</div><div class="page-subtitle">Personalize sua plataforma</div></div>
+        <div class="page-header"><div class="page-title">ConfiguraÃ§Ãµes</div><div class="page-subtitle">Personalize sua plataforma</div></div>
 
         <div class="settings-grid">
           <div class="form-card">
-            <div class="form-card-title">🏷️ Identidade da Plataforma</div>
+            <div class="form-card-title">ðŸ·ï¸ Identidade da Plataforma</div>
             <div class="form-group"><label class="form-label">Nome da Plataforma</label><input class="form-input" type="text" value="Apostack" id="platformName" oninput="updatePlatformName()"/></div>
-            <div class="form-group"><label class="form-label">Slogan</label><input class="form-input" type="text" id="settingsSlogan" placeholder="Gestão financeira profissional"/></div>
+            <div class="form-group"><label class="form-label">Slogan</label><input class="form-input" type="text" id="settingsSlogan" placeholder="GestÃ£o financeira profissional"/></div>
 
             <div class="form-group">
               <label class="form-label">Estilo de cor do nome</label>
               <div class="theme-toggle">
-                <div class="theme-btn active" id="logoStyleSingle" onclick="setLogoStyle('single')">Cor única</div>
+                <div class="theme-btn active" id="logoStyleSingle" onclick="setLogoStyle('single')">Cor Ãºnica</div>
                 <div class="theme-btn" id="logoStyleDouble" onclick="setLogoStyle('double')">Duas cores</div>
               </div>
             </div>
@@ -1198,7 +1198,7 @@
                 <input type="color" id="logoColor2" value="#6366f1" style="width:46px;height:36px;padding:3px;cursor:pointer;background:var(--bg-secondary);border:1px solid var(--glass-border);border-radius:8px" oninput="updatePlatformName()"/>
                 <span style="font-size:12px;color:var(--text-muted)">Cor da segunda palavra</span>
               </div>
-              <label class="form-label" style="font-size:12px">Posição da divisão (caracteres a partir do fim)</label>
+              <label class="form-label" style="font-size:12px">PosiÃ§Ã£o da divisÃ£o (caracteres a partir do fim)</label>
               <input class="form-input" type="number" id="logoSplit" value="3" min="1" max="20" oninput="updatePlatformName()" style="max-width:120px"/>
             </div>
             <div class="form-group">
@@ -1206,9 +1206,9 @@
               <input type="file" id="logoFileInput" accept="image/png,image/svg+xml,image/jpeg,image/webp" style="display:none" onchange="handleLogoUpload(event)"/>
               <div class="upload-area" id="logoUploadArea" onclick="document.getElementById('logoFileInput').click()" ondragover="event.preventDefault();this.style.borderColor='var(--accent)'" ondragleave="this.style.borderColor=''" ondrop="handleLogoDrop(event)">
                 <div id="logoPreview" style="display:none;margin-bottom:8px"><img id="logoPreviewImg" style="max-width:80px;max-height:80px;border-radius:10px;object-fit:contain" alt=""/></div>
-                <span class="upload-icon" id="logoUploadIcon">📁</span>
+                <span class="upload-icon" id="logoUploadIcon">ðŸ“</span>
                 <div id="logoUploadText">Arraste ou clique para enviar logo (PNG, SVG)</div>
-                <button type="button" id="logoRemoveBtn" onclick="event.stopPropagation();removeLogo()" style="display:none;margin-top:8px;background:none;border:none;color:var(--red);font-size:12px;cursor:pointer">🗑️ Remover logo</button>
+                <button type="button" id="logoRemoveBtn" onclick="event.stopPropagation();removeLogo()" style="display:none;margin-top:8px;background:none;border:none;color:var(--red);font-size:12px;cursor:pointer">ðŸ—‘ï¸ Remover logo</button>
               </div>
             </div>
             <div class="form-group">
@@ -1216,20 +1216,20 @@
               <input type="file" id="faviconFileInput" accept="image/png,image/x-icon,image/svg+xml,image/jpeg" style="display:none" onchange="handleFaviconUpload(event)"/>
               <div class="upload-area" id="faviconUploadArea" onclick="document.getElementById('faviconFileInput').click()" ondragover="event.preventDefault();this.style.borderColor='var(--accent)'" ondragleave="this.style.borderColor=''" ondrop="handleFaviconDrop(event)">
                 <div id="faviconPreview" style="display:none;margin-bottom:8px"><img id="faviconPreviewImg" style="width:32px;height:32px;border-radius:6px;object-fit:contain" alt=""/></div>
-                <span class="upload-icon" id="faviconUploadIcon">🖼️</span>
+                <span class="upload-icon" id="faviconUploadIcon">ðŸ–¼ï¸</span>
                 <div id="faviconUploadText">Enviar favicon (.ico, .png 32x32)</div>
-                <button type="button" id="faviconRemoveBtn" onclick="event.stopPropagation();removeFavicon()" style="display:none;margin-top:8px;background:none;border:none;color:var(--red);font-size:12px;cursor:pointer">🗑️ Remover favicon</button>
+                <button type="button" id="faviconRemoveBtn" onclick="event.stopPropagation();removeFavicon()" style="display:none;margin-top:8px;background:none;border:none;color:var(--red);font-size:12px;cursor:pointer">ðŸ—‘ï¸ Remover favicon</button>
               </div>
             </div>
-            <button class="btn-primary" onclick="savePlatformIdentity()" style="margin-top:6px">💾 Salvar alterações</button>
+            <button class="btn-primary" onclick="savePlatformIdentity()" style="margin-top:6px">ðŸ’¾ Salvar alteraÃ§Ãµes</button>
           </div>
 
           <div class="form-card">
-            <div class="form-card-title">🎨 Aparência</div>
+            <div class="form-card-title">ðŸŽ¨ AparÃªncia</div>
             <div class="settings-section">
               <div class="settings-label">Tema</div>
               <div class="theme-toggle">
-                <div class="theme-btn" id="themeBtnDark" onclick="setTheme('dark',this)">🌙 Escuro</div>
+                <div class="theme-btn" id="themeBtnDark" onclick="setTheme('dark',this)">ðŸŒ™ Escuro</div>
                 <div class="theme-btn" id="themeBtnLight" onclick="setTheme('light',this)">Claro</div>
                 <script>try{document.getElementById(localStorage.getItem('bancapro-theme')==='light'?'themeBtnLight':'themeBtnDark').classList.add('active')}catch(e){document.getElementById('themeBtnDark').classList.add('active')}</script>
               </div>
@@ -1237,10 +1237,10 @@
             <div class="settings-section" style="margin-top:16px">
               <div class="settings-label">Cor Principal</div>
               <div class="color-swatches">
-                <div class="swatch active" style="background:#6366f1" onclick="setAccent('#6366f1','#8b5cf6',this)" title="Índigo"></div>
+                <div class="swatch active" style="background:#6366f1" onclick="setAccent('#6366f1','#8b5cf6',this)" title="Ãndigo"></div>
                 <div class="swatch" style="background:#3b82f6" onclick="setAccent('#3b82f6','#06b6d4',this)" title="Azul"></div>
                 <div class="swatch" style="background:#10b981" onclick="setAccent('#10b981','#34d399',this)" title="Verde"></div>
-                <div class="swatch" style="background:#f59e0b" onclick="setAccent('#f59e0b','#fbbf24',this)" title="Âmbar"></div>
+                <div class="swatch" style="background:#f59e0b" onclick="setAccent('#f59e0b','#fbbf24',this)" title="Ã‚mbar"></div>
                 <div class="swatch" style="background:#f43f5e" onclick="setAccent('#f43f5e','#fb7185',this)" title="Rosa"></div>
                 <div class="swatch" style="background:#8b5cf6" onclick="setAccent('#8b5cf6','#a78bfa',this)" title="Roxo"></div>
                 <div class="swatch" style="background:#ec4899" onclick="setAccent('#ec4899','#f472b6',this)" title="Pink"></div>
@@ -1254,11 +1254,11 @@
                 <button class="btn-ghost" onclick="applyCustomColor()">Aplicar</button>
               </div>
             </div>
-            <button class="btn-primary" onclick="saveAppearance()" style="margin-top:20px">💾 Salvar alterações</button>
+            <button class="btn-primary" onclick="saveAppearance()" style="margin-top:20px">ðŸ’¾ Salvar alteraÃ§Ãµes</button>
           </div>
 
           <div class="form-card">
-            <div class="form-card-title">Perfil do Usuário</div>
+            <div class="form-card-title">Perfil do UsuÃ¡rio</div>
 
             <!-- Avatar / Foto de perfil -->
             <div class="profile-avatar-section">
@@ -1272,97 +1272,97 @@
                   <button type="button" class="btn-ghost" onclick="document.getElementById('avatarFileInput').click()" style="padding:7px 14px;font-size:12px">Alterar foto</button>
                   <button type="button" class="btn-ghost" id="avatarRemoveBtn" onclick="removeAvatar()" style="padding:7px 14px;font-size:12px;display:none">Remover</button>
                 </div>
-                <div style="font-size:11px;color:var(--text-muted)">JPG, PNG ou WEBP — até 2 MB</div>
+                <div style="font-size:11px;color:var(--text-muted)">JPG, PNG ou WEBP â€” atÃ© 2 MB</div>
               </div>
               <input type="file" id="avatarFileInput" accept="image/jpeg,image/png,image/webp" style="display:none" onchange="handleAvatarUpload(event)"/>
             </div>
 
             <div class="form-group"><label class="form-label">Nome</label><input class="form-input" type="text" value="" placeholder="Seu nome" id="settingsUserName" oninput="updateUserName()"/></div>
             <div class="form-group"><label class="form-label">E-mail</label><input class="form-input" type="email" value="admin@bancapro.com" id="settingsUserEmail"/></div>
-            <div style="font-size:12px;color:var(--text-muted);margin:4px 0 10px">Trocar senha (deixe em branco se não quiser trocar)</div>
+            <div style="font-size:12px;color:var(--text-muted);margin:4px 0 10px">Trocar senha (deixe em branco se nÃ£o quiser trocar)</div>
             <div class="form-group">
               <label class="form-label">Senha atual</label>
               <div class="pw-wrap"><input class="form-input" type="password" placeholder="Sua senha de agora" id="settingsCurPwd" autocomplete="current-password"/><button type="button" class="pw-toggle" onclick="togglePw(this,'settingsCurPwd')" aria-label="Mostrar senha"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8S1 12 1 12z"/><circle cx="12" cy="12" r="3"/></svg></button></div>
             </div>
             <div class="form-group">
               <label class="form-label">Nova senha</label>
-              <div class="pw-wrap"><input class="form-input" type="password" placeholder="Mín. 6 caracteres" id="settingsNewPwd" autocomplete="new-password"/><button type="button" class="pw-toggle" onclick="togglePw(this,'settingsNewPwd')" aria-label="Mostrar senha"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8S1 12 1 12z"/><circle cx="12" cy="12" r="3"/></svg></button></div>
+              <div class="pw-wrap"><input class="form-input" type="password" placeholder="MÃ­n. 6 caracteres" id="settingsNewPwd" autocomplete="new-password"/><button type="button" class="pw-toggle" onclick="togglePw(this,'settingsNewPwd')" aria-label="Mostrar senha"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8S1 12 1 12z"/><circle cx="12" cy="12" r="3"/></svg></button></div>
             </div>
             <div class="form-group">
               <label class="form-label">Confirmar nova senha</label>
               <div class="pw-wrap"><input class="form-input" type="password" placeholder="Digite a nova senha de novo" id="settingsNewPwd2" autocomplete="new-password"/><button type="button" class="pw-toggle" onclick="togglePw(this,'settingsNewPwd2')" aria-label="Mostrar senha"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8S1 12 1 12z"/><circle cx="12" cy="12" r="3"/></svg></button></div>
             </div>
-            <button class="btn-primary" onclick="saveProfile()">Salvar Alterações</button>
+            <button class="btn-primary" onclick="saveProfile()">Salvar AlteraÃ§Ãµes</button>
           </div>
 
           <div class="form-card sub-mgmt-card">
             <div class="form-card-title">Gerenciar Assinatura</div>
             <div id="subscriptionCard">
-              <div style="color:var(--text-muted);font-size:13px">Carregando…</div>
+              <div style="color:var(--text-muted);font-size:13px">Carregandoâ€¦</div>
             </div>
           </div>
 
           <div class="form-card">
             <div class="form-card-title">Suporte</div>
             <p style="font-size:13px;color:var(--text-secondary);margin-bottom:14px;line-height:1.5">
-              Precisa de ajuda, encontrou um bug ou tem uma sugestão? Fala com a gente —
-              respondemos em até 24h em dias úteis.
+              Precisa de ajuda, encontrou um bug ou tem uma sugestÃ£o? Fala com a gente â€”
+              respondemos em atÃ© 24h em dias Ãºteis.
             </p>
-            <a href="mailto:suporteapostack@gmail.com?subject=Suporte%20Apostack" class="btn-primary" style="display:inline-block;text-decoration:none">✉️ suporteapostack@gmail.com</a>
+            <a href="mailto:suporteapostack@gmail.com?subject=Suporte%20Apostack" class="btn-primary" style="display:inline-block;text-decoration:none">âœ‰ï¸ suporteapostack@gmail.com</a>
           </div>
 
           <div class="form-card" style="border:1px solid rgba(244,63,94,0.25)">
             <div class="form-card-title">Zona de Perigo</div>
             <p style="font-size:13px;color:var(--text-secondary);margin-bottom:14px;line-height:1.5">
-              Limpa todos os dados salvos no seu navegador (transações, metas e comparativos) e volta ao estado inicial.
-              Esta ação não pode ser desfeita.
+              Limpa todos os dados salvos no seu navegador (transaÃ§Ãµes, metas e comparativos) e volta ao estado inicial.
+              Esta aÃ§Ã£o nÃ£o pode ser desfeita.
             </p>
-            <button class="btn-danger" onclick="resetAllData()">🗑️ Apagar todos os dados</button>
+            <button class="btn-danger" onclick="resetAllData()">ðŸ—‘ï¸ Apagar todos os dados</button>
           </div>
         </div>
       </div>
 
-      <!-- ═══ ADMIN ═══ -->
+      <!-- â•â•â• ADMIN â•â•â• -->
       <div class="section" id="sec-admin">
-        <div class="page-header"><div class="page-title">Painel Admin</div><div class="page-subtitle">Métricas da plataforma (visível só para o dono)</div></div>
+        <div class="page-header"><div class="page-title">Painel Admin</div><div class="page-subtitle">MÃ©tricas da plataforma (visÃ­vel sÃ³ para o dono)</div></div>
         <div class="form-card">
-          <div class="form-card-title">Métricas da plataforma</div>
+          <div class="form-card-title">MÃ©tricas da plataforma</div>
           <div id="adminStats">
-            <div class="empty-state-sub">Carregando…</div>
+            <div class="empty-state-sub">Carregandoâ€¦</div>
           </div>
-          <div style="margin-top:14px"><button class="btn-ghost" onclick="renderAdminStats();renderAdminUsers()" style="padding:8px 16px;font-size:12px">↻ Atualizar</button></div>
+          <div style="margin-top:14px"><button class="btn-ghost" onclick="renderAdminStats();renderAdminUsers()" style="padding:8px 16px;font-size:12px">â†» Atualizar</button></div>
         </div>
 
         <div class="form-card" style="margin-top:16px">
-          <div class="form-card-title">Usuários (<span id="adminUsersCount">—</span>)</div>
+          <div class="form-card-title">UsuÃ¡rios (<span id="adminUsersCount">â€”</span>)</div>
           <div id="adminUsers">
-            <div class="empty-state-sub">Carregando…</div>
+            <div class="empty-state-sub">Carregandoâ€¦</div>
           </div>
         </div>
 
         <div class="form-card" style="margin-top:16px">
           <div class="form-card-title" style="display:flex;align-items:center;gap:8px">
-            🛡️ Moderação do Ranking
-            <span style="font-size:11px;color:var(--text-muted);font-weight:400">— oculta cheaters das 4 abas</span>
+            ðŸ›¡ï¸ ModeraÃ§Ã£o do Ranking
+            <span style="font-size:11px;color:var(--text-muted);font-weight:400">â€” oculta cheaters das 4 abas</span>
           </div>
           <div style="font-size:12px;color:var(--text-muted);margin-bottom:12px;line-height:1.5">
-            Usuários banidos somem de Hoje, Semana, Mês e Geral. Você pode desbanir a qualquer momento.
+            UsuÃ¡rios banidos somem de Hoje, Semana, MÃªs e Geral. VocÃª pode desbanir a qualquer momento.
           </div>
           <div id="adminBanList">
-            <div class="empty-state-sub">Carregando…</div>
+            <div class="empty-state-sub">Carregandoâ€¦</div>
           </div>
-          <div style="margin-top:12px"><button class="btn-ghost" onclick="renderRankingModeration()" style="padding:8px 16px;font-size:12px">↻ Atualizar</button></div>
+          <div style="margin-top:12px"><button class="btn-ghost" onclick="renderRankingModeration()" style="padding:8px 16px;font-size:12px">â†» Atualizar</button></div>
         </div>
 
         <div class="form-card" style="margin-top:16px">
-          <div class="form-card-title">🐞 Erros recentes</div>
+          <div class="form-card-title">ðŸž Erros recentes</div>
           <div id="adminErrors">
-            <div class="empty-state-sub">Carregando…</div>
+            <div class="empty-state-sub">Carregandoâ€¦</div>
           </div>
         </div>
       </div>
 
-      <!-- ═══ AFILIADOS (GESTÃO — só dono) ═══ -->
+      <!-- â•â•â• AFILIADOS (GESTÃƒO â€” sÃ³ dono) â•â•â• -->
       <div class="section" id="sec-afiliados">
         <div class="page-header" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
           <div>
@@ -1374,22 +1374,22 @@
         <div class="form-card">
           <div class="form-card-title">Parceiros afiliados</div>
           <div id="adminAffiliates" style="margin-top:12px;overflow-x:auto">
-            <div class="empty-state-sub">Carregando…</div>
+            <div class="empty-state-sub">Carregandoâ€¦</div>
           </div>
-          <div style="font-size:11px;color:var(--text-muted);margin-top:8px">Você define quem é afiliado, o slug e a comissão. Cada um vê só os próprios indicados; você vê todos.</div>
+          <div style="font-size:11px;color:var(--text-muted);margin-top:8px">VocÃª define quem Ã© afiliado, o slug e a comissÃ£o. Cada um vÃª sÃ³ os prÃ³prios indicados; vocÃª vÃª todos.</div>
         </div>
 
         <div class="form-card" style="margin-top:16px">
           <div class="form-card-title">Saques solicitados (sistema antigo)</div>
-          <div id="adminWithdrawals" style="margin-top:12px;overflow-x:auto"><div class="empty-state-sub">Carregando…</div></div>
+          <div id="adminWithdrawals" style="margin-top:12px;overflow-x:auto"><div class="empty-state-sub">Carregandoâ€¦</div></div>
         </div>
 
-        <!-- ═══ SAQUES DO SISTEMA NOVO DE AFILIADOS (com niveis) ═══ -->
+        <!-- â•â•â• SAQUES DO SISTEMA NOVO DE AFILIADOS (com niveis) â•â•â• -->
         <div class="form-card" style="margin-top:16px">
           <div class="form-card-title" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
             <span style="display:flex;align-items:center;gap:8px">
               <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" style="color:#34d399"><path d="M21 12V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2h14a2 2 0 002-2v-3"/><path d="M16 12h.01M19 9l-3 3 3 3"/></svg>
-              Saques de afiliados (sistema com níveis)
+              Saques de afiliados (sistema com nÃ­veis)
             </span>
             <div style="display:flex;gap:6px">
               <button class="aff-tab-btn is-active" data-filter="pending" onclick="affAdminSwitchTab(this,'pending')">Pendentes</button>
@@ -1399,18 +1399,18 @@
             </div>
           </div>
           <div style="font-size:12px;color:var(--text-muted);margin:6px 0 14px;line-height:1.45">
-            Afiliado solicita saque → você confere os dados Pix → faz a transferência manualmente → marca como pago. Antes de aprovar, valide se o afiliado realmente tem saldo disponível.
+            Afiliado solicita saque â†’ vocÃª confere os dados Pix â†’ faz a transferÃªncia manualmente â†’ marca como pago. Antes de aprovar, valide se o afiliado realmente tem saldo disponÃ­vel.
           </div>
-          <div id="adminAffWithdrawals" style="overflow-x:auto"><div class="empty-state-sub">Carregando…</div></div>
-          <div style="margin-top:12px"><button class="btn-ghost" onclick="renderAffWithdrawalsAdmin()" style="padding:8px 16px;font-size:12px">↻ Atualizar</button></div>
+          <div id="adminAffWithdrawals" style="overflow-x:auto"><div class="empty-state-sub">Carregandoâ€¦</div></div>
+          <div style="margin-top:12px"><button class="btn-ghost" onclick="renderAffWithdrawalsAdmin()" style="padding:8px 16px;font-size:12px">â†» Atualizar</button></div>
         </div>
       </div>
 
-      <!-- ═══ MINHAS INDICAÇÕES (AFILIADO) ═══ -->
+      <!-- â•â•â• MINHAS INDICAÃ‡Ã•ES (AFILIADO) â•â•â• -->
       <div class="section" id="sec-afiliado">
-        <div class="page-header"><div class="page-title">Minhas Indicações</div><div class="page-subtitle">Divulgue seu link, acompanhe seus indicados e ganhe comissão recorrente com assinaturas ativas.</div></div>
+        <div class="page-header"><div class="page-title">Minhas IndicaÃ§Ãµes</div><div class="page-subtitle">Divulgue seu link, acompanhe seus indicados e ganhe comissÃ£o recorrente com assinaturas ativas.</div></div>
 
-        <!-- ═══ CARD DE NÍVEL — sistema novo ═══ -->
+        <!-- â•â•â• CARD DE NÃVEL â€” sistema novo â•â•â• -->
         <div class="aff-tier-card" id="affTierCard">
           <div class="aff-tier-glow"></div>
           <div class="aff-tier-left">
@@ -1418,14 +1418,14 @@
               <img id="affHeroImg" class="aff-badge-png aff-badge-hero" src="brand/icones%20afiliados/01_bronze.png" alt=""/>
             </div>
             <div class="aff-tier-info">
-              <div class="aff-tier-eyebrow" id="affTierEyebrow">Nível atual</div>
+              <div class="aff-tier-eyebrow" id="affTierEyebrow">NÃ­vel atual</div>
               <div class="aff-tier-name" id="affTierName">Bronze</div>
-              <div class="aff-tier-rate" id="affTierRate">10% de comissão recorrente</div>
+              <div class="aff-tier-rate" id="affTierRate">10% de comissÃ£o recorrente</div>
             </div>
           </div>
           <div class="aff-tier-progress" id="affTierProgress">
             <div class="aff-tier-progress-head">
-              <span class="aff-tier-progress-next" id="affTierNext">Próximo: Prata</span>
+              <span class="aff-tier-progress-next" id="affTierNext">PrÃ³ximo: Prata</span>
               <span class="aff-tier-progress-count"><b id="affTierCurrentCount">0</b>/<span id="affTierTargetCount">3</span></span>
             </div>
             <div class="aff-tier-progress-bar"><div class="aff-tier-progress-fill" id="affTierFill" style="width:0%"></div></div>
@@ -1438,11 +1438,11 @@
           <div class="aff-wallet-body">
             <div class="aff-wallet-info">
               <div class="aff-wallet-labelrow">
-                <span class="aff-wallet-label">Saldo disponível</span>
+                <span class="aff-wallet-label">Saldo disponÃ­vel</span>
                 <span class="aff-wallet-pix">Pix</span>
               </div>
               <div class="aff-wallet-value" id="affSaldo">R$ 0,00</div>
-              <div class="aff-wallet-sub">o que você pode sacar agora</div>
+              <div class="aff-wallet-sub">o que vocÃª pode sacar agora</div>
             </div>
             <div class="aff-wallet-cta">
               <button class="aff-wallet-btn" id="affSacarBtn" onclick="document.getElementById('sqCard').scrollIntoView({behavior:'smooth',block:'center'});var v=document.getElementById('sqValor');if(v){setTimeout(function(){v.focus();},300);}">Solicitar saque</button>
@@ -1451,32 +1451,32 @@
           </div>
         </div>
 
-        <!-- Link de indicação -->
+        <!-- Link de indicaÃ§Ã£o -->
         <div class="aff-link-card">
-          <div class="aff-link-caption" style="display:flex;align-items:center;gap:7px"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>Seu link de indicação</div>
+          <div class="aff-link-caption" style="display:flex;align-items:center;gap:7px"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>Seu link de indicaÃ§Ã£o</div>
           <div class="aff-link-row">
-            <div class="aff-link-url" id="myAffLink">—</div>
+            <div class="aff-link-url" id="myAffLink">â€”</div>
             <div class="aff-link-actions">
               <button class="aff-btn aff-btn-copy" onclick="copyAffLink()">Copiar</button>
               <button class="aff-btn aff-btn-share" onclick="shareAffLink()" style="display:inline-flex;align-items:center;gap:7px"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.59 13.51l6.83 3.98M15.41 6.51l-6.82 3.98"/></svg>Compartilhar</button>
             </div>
           </div>
-          <div class="aff-link-meta">Código <b id="myAffCode">—</b> · você ganha <b id="myAffCommission">—</b> por assinante ativo, todo mês</div>
+          <div class="aff-link-meta">CÃ³digo <b id="myAffCode">â€”</b> Â· vocÃª ganha <b id="myAffCommission">â€”</b> por assinante ativo, todo mÃªs</div>
         </div>
 
-        <!-- Métricas -->
+        <!-- MÃ©tricas -->
         <div class="kpi-grid aff-kpis">
           <div class="kpi-card" style="--card-color:var(--accent2)"><div class="kpi-label">Indicados</div><div class="kpi-value" id="myAffIndicados">0</div><div class="kpi-sub">no total</div></div>
           <div class="kpi-card" style="--card-color:var(--green)"><div class="kpi-label">Ativos</div><div class="kpi-value" id="myAffAtivos">0</div><div class="kpi-sub">assinantes pagando</div></div>
-          <div class="kpi-card" style="--card-color:var(--green)"><div class="kpi-label">Comissão/mês</div><div class="kpi-value" style="color:var(--green)" id="affEntradas">R$ 0,00</div><div class="kpi-sub">enquanto ativos</div></div>
-          <div class="kpi-card" style="--card-color:var(--yellow)"><div class="kpi-label">Em retenção</div><div class="kpi-value" id="affPendente">R$ 0,00</div><div class="kpi-sub">liberado após 7 dias do pagamento</div></div>
-          <div class="kpi-card" style="--card-color:var(--accent)"><div class="kpi-label">Já recebido</div><div class="kpi-value" id="affSaidas">R$ 0,00</div><div class="kpi-sub">total pago até hoje</div></div>
+          <div class="kpi-card" style="--card-color:var(--green)"><div class="kpi-label">ComissÃ£o/mÃªs</div><div class="kpi-value" style="color:var(--green)" id="affEntradas">R$ 0,00</div><div class="kpi-sub">enquanto ativos</div></div>
+          <div class="kpi-card" style="--card-color:var(--yellow)"><div class="kpi-label">Em retenÃ§Ã£o</div><div class="kpi-value" id="affPendente">R$ 0,00</div><div class="kpi-sub">liberado apÃ³s 7 dias do pagamento</div></div>
+          <div class="kpi-card" style="--card-color:var(--accent)"><div class="kpi-label">JÃ¡ recebido</div><div class="kpi-value" id="affSaidas">R$ 0,00</div><div class="kpi-sub">total pago atÃ© hoje</div></div>
         </div>
 
-        <!-- ═══ NÍVEIS DE COMISSÃO ═══ -->
+        <!-- â•â•â• NÃVEIS DE COMISSÃƒO â•â•â• -->
         <div class="form-card aff-tiers-card" style="margin-top:16px">
-          <div class="form-card-title">Níveis de comissão</div>
-          <div class="aff-tiers-intro">Quanto mais assinantes ativos você indicar, maior será sua comissão recorrente dentro do Apostack.</div>
+          <div class="form-card-title">NÃ­veis de comissÃ£o</div>
+          <div class="aff-tiers-intro">Quanto mais assinantes ativos vocÃª indicar, maior serÃ¡ sua comissÃ£o recorrente dentro do Apostack.</div>
           <div class="aff-tiers-grid">
             <div class="aff-tier-row" data-tier="bronze">
               <div class="aff-tier-row-medal"><img class="aff-badge-png" src="brand/icones%20afiliados/01_bronze.png" alt=""/></div>
@@ -1515,29 +1515,29 @@
               <div class="aff-tier-row-rate">40%</div>
             </div>
           </div>
-          <div class="aff-tiers-foot" id="affTiersFoot" style="display:none">Afiliados <b>VIP</b> possuem uma comissão especial definida pela administração.</div>
+          <div class="aff-tiers-foot" id="affTiersFoot" style="display:none">Afiliados <b>VIP</b> possuem uma comissÃ£o especial definida pela administraÃ§Ã£o.</div>
         </div>
 
         <div class="form-card" style="margin-top:16px">
           <div class="form-card-title">Seus indicados</div>
-          <div id="myAffList"><div class="empty-state-sub">Carregando…</div></div>
+          <div id="myAffList"><div class="empty-state-sub">Carregandoâ€¦</div></div>
         </div>
 
         <div class="form-card" id="sqCard" style="margin-top:16px">
-          <div class="form-card-title">Saque de comissão</div>
+          <div class="form-card-title">Saque de comissÃ£o</div>
           <div style="font-size:12px;color:var(--text-muted);margin-bottom:12px">
-            Disponível: <b id="sqDisponivel" style="color:var(--green)">R$ 0,00</b>
-            &nbsp;·&nbsp; Total comissão do mês: <b id="sqTotal">R$ 0,00</b>
+            DisponÃ­vel: <b id="sqDisponivel" style="color:var(--green)">R$ 0,00</b>
+            &nbsp;Â·&nbsp; Total comissÃ£o do mÃªs: <b id="sqTotal">R$ 0,00</b>
           </div>
           <div class="form-group"><label class="form-label">Valor</label><input class="form-input" type="number" step="0.01" min="0" placeholder="Ex: 50,00" id="sqValor"/></div>
           <div class="form-group">
             <label class="form-label">Chave PIX</label>
             <div style="display:flex;gap:8px;flex-wrap:wrap">
-              <select class="form-select" id="sqPixTipo" style="max-width:140px"><option>CPF</option><option>CNPJ</option><option>E-mail</option><option>Telefone</option><option>Aleatória</option></select>
+              <select class="form-select" id="sqPixTipo" style="max-width:140px"><option>CPF</option><option>CNPJ</option><option>E-mail</option><option>Telefone</option><option>AleatÃ³ria</option></select>
               <input class="form-input" type="text" placeholder="Digite a chave" id="sqPixChave" style="flex:1;min-width:160px"/>
             </div>
           </div>
-          <div class="form-group"><label class="form-label">Observação</label><input class="form-input" type="text" placeholder="Opcional" id="sqObs"/></div>
+          <div class="form-group"><label class="form-label">ObservaÃ§Ã£o</label><input class="form-input" type="text" placeholder="Opcional" id="sqObs"/></div>
           <button class="btn-primary" onclick="requestWithdrawal()">Solicitar saque</button>
           <div id="sqHistorico"></div>
         </div>
@@ -1547,51 +1547,51 @@
           <div class="aff-how-steps">
             <div class="aff-how-step">
               <div class="aff-how-step-num">1</div>
-              <div class="aff-how-step-text"><b>Compartilhe seu link</b><span>Mande pra quem quer organizar a banca, acompanhar métodos e ROI.</span></div>
+              <div class="aff-how-step-text"><b>Compartilhe seu link</b><span>Mande pra quem quer organizar a banca, acompanhar mÃ©todos e ROI.</span></div>
             </div>
             <div class="aff-how-step">
               <div class="aff-how-step-num">2</div>
-              <div class="aff-how-step-text"><b>A pessoa cria a conta e assina um plano</b><span>Quando o pagamento confirma, sua comissão entra em <b>retenção</b>.</span></div>
+              <div class="aff-how-step-text"><b>A pessoa cria a conta e assina um plano</b><span>Quando o pagamento confirma, sua comissÃ£o entra em <b>retenÃ§Ã£o</b>.</span></div>
             </div>
             <div class="aff-how-step">
               <div class="aff-how-step-num">3</div>
-              <div class="aff-how-step-text"><b>Após 7 dias a comissão é liberada</b><span>Esse é o prazo da Kirvano para garantia/reembolso. Passou os 7 dias, vira saldo disponível.</span></div>
+              <div class="aff-how-step-text"><b>ApÃ³s 7 dias a comissÃ£o Ã© liberada</b><span>Esse Ã© o prazo da Kirvano para garantia/reembolso. Passou os 7 dias, vira saldo disponÃ­vel.</span></div>
             </div>
             <div class="aff-how-step">
               <div class="aff-how-step-num">4</div>
-              <div class="aff-how-step-text"><b>Você recebe via Pix enquanto for assinante</b><span>Comissão recorrente todo mês — segue ativa enquanto a assinatura continuar.</span></div>
+              <div class="aff-how-step-text"><b>VocÃª recebe via Pix enquanto for assinante</b><span>ComissÃ£o recorrente todo mÃªs â€” segue ativa enquanto a assinatura continuar.</span></div>
             </div>
           </div>
 
           <div class="aff-how-warning">
             <div class="aff-how-warning-icon"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg></div>
-            <div class="aff-how-warning-text"><b>Política anti-abuso:</b> se o indicado pedir reembolso, chargeback ou cancelamento dentro dos 7 dias, a comissão é cancelada automaticamente. Isso evita fraude e mantém o programa saudável.</div>
+            <div class="aff-how-warning-text"><b>PolÃ­tica anti-abuso:</b> se o indicado pedir reembolso, chargeback ou cancelamento dentro dos 7 dias, a comissÃ£o Ã© cancelada automaticamente. Isso evita fraude e mantÃ©m o programa saudÃ¡vel.</div>
           </div>
-          <div class="aff-how-foot" id="affHowFoot">Sua comissão aumenta conforme a quantidade de assinantes ativos indicados.</div>
+          <div class="aff-how-foot" id="affHowFoot">Sua comissÃ£o aumenta conforme a quantidade de assinantes ativos indicados.</div>
         </div>
       </div>
 
-      <!-- ═══ CALCULADORA ═══ -->
+      <!-- â•â•â• CALCULADORA â•â•â• -->
       <div class="section" id="sec-calculadora">
         <div class="trial-ending-note" data-pro-warning style="display:none">
           <span class="trial-ending-note-icon"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></span>
-          <div class="trial-ending-note-text">Você perde acesso a <b>Calculadora</b> em <b><span class="trialEndingDays">2</span> dias</b> se não assinar</div>
-          <button class="trial-ending-note-cta" onclick="subscribeNow('mensal')">Desbloquear Pro →</button>
+          <div class="trial-ending-note-text">VocÃª perde acesso a <b>Calculadora</b> em <b><span class="trialEndingDays">2</span> dias</b> se nÃ£o assinar</div>
+          <button class="trial-ending-note-cta" onclick="subscribeNow('mensal')">Desbloquear Pro â†’</button>
         </div>
-        <div class="page-header"><div class="page-title">Calculadora</div><div class="page-subtitle">Surebet, stake e proteção de duplo</div></div>
+        <div class="page-header"><div class="page-title">Calculadora</div><div class="page-subtitle">Surebet, stake e proteÃ§Ã£o de duplo</div></div>
 
         <div class="period-tabs" style="margin-bottom:18px;display:inline-flex">
           <div class="period-tab active" onclick="switchCalc('surebet',this)">Surebet</div>
           <div class="period-tab" onclick="switchCalc('stake',this)">Stake</div>
-          <div class="period-tab" onclick="switchCalc('protecao',this)">Proteção de duplo</div>
+          <div class="period-tab" onclick="switchCalc('protecao',this)">ProteÃ§Ã£o de duplo</div>
         </div>
 
-        <!-- ─ SUREBET ─ -->
+        <!-- â”€ SUREBET â”€ -->
         <div class="calc-panel active" id="calc-surebet">
           <div class="form-card" style="margin-bottom:16px;display:flex;align-items:center;gap:14px;flex-wrap:wrap">
             <label class="form-label" style="margin:0">Casas</label>
             <select class="form-select" id="sbCount" style="max-width:130px" onchange="sbSetCount(this.value)"></select>
-            <div style="font-size:12px;color:var(--text-muted);flex:1;min-width:180px">Informe as odds e fixe a stake de uma casa — as outras se equilibram para o lucro ser igual em qualquer resultado.</div>
+            <div style="font-size:12px;color:var(--text-muted);flex:1;min-width:180px">Informe as odds e fixe a stake de uma casa â€” as outras se equilibram para o lucro ser igual em qualquer resultado.</div>
           </div>
           <div id="sbCasas" class="sb-grid"></div>
           <div class="form-card" style="margin-top:16px">
@@ -1610,40 +1610,40 @@
 
           <div class="form-card calc-tips" style="margin-top:16px">
             <div class="form-card-title">Como usar a Surebet</div>
-            <p>Surebet é apostar em <b>todos os resultados</b> de um jogo, em casas diferentes, de um jeito que você <b>lucra independente de quem ganhar</b>.</p>
+            <p>Surebet Ã© apostar em <b>todos os resultados</b> de um jogo, em casas diferentes, de um jeito que vocÃª <b>lucra independente de quem ganhar</b>.</p>
             <ol>
-              <li>Em <b>Casas</b>, escolha quantos resultados o mercado tem (2 = ex. vitória/derrota; 3 = casa/empate/fora).</li>
+              <li>Em <b>Casas</b>, escolha quantos resultados o mercado tem (2 = ex. vitÃ³ria/derrota; 3 = casa/empate/fora).</li>
               <li>Preencha o <b>nome</b> e a <b>odd</b> de cada casa.</li>
-              <li>Digite quanto vai apostar em uma casa e toque em <b>Fixar stake</b> — as outras se ajustam sozinhas.</li>
-              <li>Olhe o <b>Lucro garantido</b>: se ficar <b style="color:var(--green)">verde</b>, é surebet (lucro em qualquer resultado). Vermelho = daria prejuízo.</li>
+              <li>Digite quanto vai apostar em uma casa e toque em <b>Fixar stake</b> â€” as outras se ajustam sozinhas.</li>
+              <li>Olhe o <b>Lucro garantido</b>: se ficar <b style="color:var(--green)">verde</b>, Ã© surebet (lucro em qualquer resultado). Vermelho = daria prejuÃ­zo.</li>
             </ol>
             <div class="calc-tips-gloss">
-              <div class="gl"><b>Back / Lay</b> — Back é a aposta normal. Lay é apostar <i>contra</i> (só em bolsa de apostas, tipo Betfair).</div>
-              <div class="gl"><b>Comissão %</b> — taxa da bolsa de apostas (usada no Lay).</div>
-              <div class="gl"><b>Aumento %</b> — quando a casa turbina a odd (superodds). O <b>Real</b> mostra a odd já com o aumento.</div>
-              <div class="gl"><b>Freebet</b> — aposta grátis: a stake não volta, só o lucro.</div>
-              <div class="gl"><b>Cashback (R$)</b> — valor que a casa devolve se aquela aposta perder.</div>
-              <div class="gl"><b>Recompensa (R$)</b> — bônus fixo que você ganha por apostar ali.</div>
+              <div class="gl"><b>Back / Lay</b> â€” Back Ã© a aposta normal. Lay Ã© apostar <i>contra</i> (sÃ³ em bolsa de apostas, tipo Betfair).</div>
+              <div class="gl"><b>ComissÃ£o %</b> â€” taxa da bolsa de apostas (usada no Lay).</div>
+              <div class="gl"><b>Aumento %</b> â€” quando a casa turbina a odd (superodds). O <b>Real</b> mostra a odd jÃ¡ com o aumento.</div>
+              <div class="gl"><b>Freebet</b> â€” aposta grÃ¡tis: a stake nÃ£o volta, sÃ³ o lucro.</div>
+              <div class="gl"><b>Cashback (R$)</b> â€” valor que a casa devolve se aquela aposta perder.</div>
+              <div class="gl"><b>Recompensa (R$)</b> â€” bÃ´nus fixo que vocÃª ganha por apostar ali.</div>
             </div>
           </div>
         </div>
 
-        <!-- ─ STAKE ─ -->
+        <!-- â”€ STAKE â”€ -->
         <div class="calc-panel" id="calc-stake">
           <div class="form-card">
             <div class="form-card-title">Calculadora de stake (odd aumentada)</div>
             <div class="form-group"><label class="form-label">Valor da banca (R$)</label><input class="form-input" type="number" min="0" step="0.01" id="stkBanca" value="1000" oninput="calcStake()"></div>
             <div class="form-group"><label class="form-label">Odd normal (justa)</label><input class="form-input" type="number" min="1" step="0.01" id="stkOddN" value="2" oninput="calcStake()"></div>
             <div class="form-group"><label class="form-label">Odd aumentada (ofertada)</label><input class="form-input" type="number" min="1" step="0.01" id="stkOddA" value="2.5" oninput="calcStake()"></div>
-            <div class="kpi-card" style="--card-color:var(--green)"><div class="kpi-label">Aumento da odd</div><div class="kpi-value" style="color:var(--green)" id="stkAumento">0,00%</div><div class="kpi-sub" id="stkAumentoSub">—</div></div>
+            <div class="kpi-card" style="--card-color:var(--green)"><div class="kpi-label">Aumento da odd</div><div class="kpi-value" style="color:var(--green)" id="stkAumento">0,00%</div><div class="kpi-sub" id="stkAumentoSub">â€”</div></div>
           </div>
           <div class="form-card" style="margin-top:16px">
             <div class="form-card-title">Resultado</div>
             <div class="kpi-grid" style="grid-template-columns:repeat(2,1fr)">
               <div class="kpi-card" style="--card-color:var(--green)"><div class="kpi-label">Stake recomendada</div><div class="kpi-value" style="color:var(--green)" id="stkStake">R$ 0,00</div><div class="kpi-sub">valor a ser apostado</div></div>
-              <div class="kpi-card" style="--card-color:var(--accent)"><div class="kpi-label">% da banca</div><div class="kpi-value" style="color:var(--accent)" id="stkPct">0,00%</div><div class="kpi-sub">fração da banca total</div></div>
+              <div class="kpi-card" style="--card-color:var(--accent)"><div class="kpi-label">% da banca</div><div class="kpi-value" style="color:var(--accent)" id="stkPct">0,00%</div><div class="kpi-sub">fraÃ§Ã£o da banca total</div></div>
             </div>
-            <div style="font-size:12px;color:var(--text-muted);margin-top:12px">Baseado no critério de Kelly fracionado (1/10). É uma referência conservadora — não é garantia de lucro.</div>
+            <div style="font-size:12px;color:var(--text-muted);margin-top:12px">Baseado no critÃ©rio de Kelly fracionado (1/10). Ã‰ uma referÃªncia conservadora â€” nÃ£o Ã© garantia de lucro.</div>
           </div>
 
           <div class="form-card calc-tips" style="margin-top:16px">
@@ -1653,19 +1653,19 @@
               <li>Coloque o <b>valor total da sua banca</b>.</li>
               <li><b>Odd normal</b> = a odd justa do mercado, sem o aumento.</li>
               <li><b>Odd aumentada</b> = a odd turbinada que a casa ofereceu.</li>
-              <li>A <b>Stake recomendada</b> é o valor que vale a pena apostar pra aproveitar essa vantagem.</li>
+              <li>A <b>Stake recomendada</b> Ã© o valor que vale a pena apostar pra aproveitar essa vantagem.</li>
             </ol>
-            <div class="calc-tips-gloss"><div class="gl">Regra simples: quanto <b>maior o aumento</b> da odd, maior a stake sugerida. É uma aposta de valor — pode perder, mas no longo prazo tende a dar lucro.</div></div>
+            <div class="calc-tips-gloss"><div class="gl">Regra simples: quanto <b>maior o aumento</b> da odd, maior a stake sugerida. Ã‰ uma aposta de valor â€” pode perder, mas no longo prazo tende a dar lucro.</div></div>
           </div>
         </div>
 
-        <!-- ─ PROTEÇÃO DE DUPLO ─ -->
+        <!-- â”€ PROTEÃ‡ÃƒO DE DUPLO â”€ -->
         <div class="calc-panel" id="calc-protecao">
           <div class="form-card">
             <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
               <div>
                 <div class="form-card-title" style="margin-bottom:2px">Apostas feitas</div>
-                <div style="font-size:12px;color:var(--text-muted)">Coloque o valor e a odd das apostas que você já fez.</div>
+                <div style="font-size:12px;color:var(--text-muted)">Coloque o valor e a odd das apostas que vocÃª jÃ¡ fez.</div>
               </div>
               <div style="text-align:right"><div style="font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.6px">Total a proteger</div><div style="font-size:18px;font-weight:800;color:var(--accent2)" id="pdTotal">R$ 0,00</div></div>
             </div>
@@ -1674,40 +1674,40 @@
           </div>
 
           <div class="form-card" style="margin-top:16px">
-            <div class="form-card-title">Aposta de proteção</div>
-            <div class="form-group"><label class="form-label">Casa de aposta</label><input class="form-input" type="text" id="pdProtCasa" placeholder="Ex: Casa de proteção" oninput="calcProtecao()"></div>
+            <div class="form-card-title">Aposta de proteÃ§Ã£o</div>
+            <div class="form-group"><label class="form-label">Casa de aposta</label><input class="form-input" type="text" id="pdProtCasa" placeholder="Ex: Casa de proteÃ§Ã£o" oninput="calcProtecao()"></div>
             <div style="display:flex;gap:12px;flex-wrap:wrap">
               <div class="form-group" style="flex:1;min-width:140px"><label class="form-label">Odd</label><input class="form-input" type="number" min="1" step="0.01" id="pdProtOdd" value="1.5" oninput="calcProtecao()"></div>
-              <div class="form-group" style="flex:1;min-width:140px"><label class="form-label">Comissão %</label><input class="form-input" type="number" min="0" step="0.1" id="pdProtCom" value="0" oninput="calcProtecao()"></div>
+              <div class="form-group" style="flex:1;min-width:140px"><label class="form-label">ComissÃ£o %</label><input class="form-input" type="number" min="0" step="0.1" id="pdProtCom" value="0" oninput="calcProtecao()"></div>
             </div>
           </div>
 
           <div class="form-card" style="margin-top:16px">
-            <div class="form-card-title">Resultado da proteção</div>
+            <div class="form-card-title">Resultado da proteÃ§Ã£o</div>
             <div class="kpi-grid" style="grid-template-columns:repeat(2,1fr)">
-              <div class="kpi-card" style="--card-color:var(--accent)"><div class="kpi-label">Aposte o valor de</div><div class="kpi-value" style="color:var(--accent)" id="pdStake">R$ 0,00</div><div class="kpi-sub">na casa de proteção</div></div>
+              <div class="kpi-card" style="--card-color:var(--accent)"><div class="kpi-label">Aposte o valor de</div><div class="kpi-value" style="color:var(--accent)" id="pdStake">R$ 0,00</div><div class="kpi-sub">na casa de proteÃ§Ã£o</div></div>
               <div class="kpi-card" style="--card-color:var(--green)"><div class="kpi-label">Lucro estimado</div><div class="kpi-value" id="pdLucro">R$ 0,00</div><div class="kpi-sub">ao proteger o duplo</div></div>
             </div>
             <div class="form-card" style="margin-top:14px;background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.3)">
-              <div style="font-size:13px;font-weight:700;color:var(--green)">Cálculo validado</div>
-              <div style="font-size:12px;color:var(--text-secondary);margin-top:4px">O lucro trava igual nos dois resultados. Dica: confirme a odd na hora de apostar — elas mudam rápido.</div>
+              <div style="font-size:13px;font-weight:700;color:var(--green)">CÃ¡lculo validado</div>
+              <div style="font-size:12px;color:var(--text-secondary);margin-top:4px">O lucro trava igual nos dois resultados. Dica: confirme a odd na hora de apostar â€” elas mudam rÃ¡pido.</div>
             </div>
           </div>
 
           <div class="form-card calc-tips" style="margin-top:16px">
             <div class="form-card-title">Como usar</div>
-            <p>Serve pra <b>travar lucro</b> ou <b>reduzir o prejuízo</b> de apostas que você já fez, colocando uma aposta numa <b>casa de proteção</b>.</p>
+            <p>Serve pra <b>travar lucro</b> ou <b>reduzir o prejuÃ­zo</b> de apostas que vocÃª jÃ¡ fez, colocando uma aposta numa <b>casa de proteÃ§Ã£o</b>.</p>
             <ol>
-              <li>Em <b>Apostas feitas</b>, coloque o <b>valor</b> e a <b>odd</b> de cada aposta que você já tem em aberto (use “+ Adicionar aposta” pra mais de uma).</li>
-              <li>Em <b>Aposta de proteção</b>, coloque a <b>odd</b> da casa onde vai proteger (e a comissão, se for bolsa de apostas).</li>
-              <li><b>Aposte o valor de</b> mostra quanto colocar na proteção; o <b>Lucro estimado</b> é o resultado que fica travado.</li>
+              <li>Em <b>Apostas feitas</b>, coloque o <b>valor</b> e a <b>odd</b> de cada aposta que vocÃª jÃ¡ tem em aberto (use â€œ+ Adicionar apostaâ€ pra mais de uma).</li>
+              <li>Em <b>Aposta de proteÃ§Ã£o</b>, coloque a <b>odd</b> da casa onde vai proteger (e a comissÃ£o, se for bolsa de apostas).</li>
+              <li><b>Aposte o valor de</b> mostra quanto colocar na proteÃ§Ã£o; o <b>Lucro estimado</b> Ã© o resultado que fica travado.</li>
             </ol>
-            <div class="calc-tips-gloss"><div class="gl">Dica: use quando uma aposta sua já está “quase ganha” e você quer <b>garantir o lucro</b> sem depender do resultado final.</div></div>
+            <div class="calc-tips-gloss"><div class="gl">Dica: use quando uma aposta sua jÃ¡ estÃ¡ â€œquase ganhaâ€ e vocÃª quer <b>garantir o lucro</b> sem depender do resultado final.</div></div>
           </div>
         </div>
       </div>
 
-      <!-- ═══ PERSONALIZAR ═══ -->
+      <!-- â•â•â• PERSONALIZAR â•â•â• -->
       <div class="section" id="sec-personalizar">
         <div class="page-header">
           <div class="page-title">
@@ -1716,7 +1716,7 @@
               Personalizar
             </span>
           </div>
-          <div class="page-subtitle">Deixe o app do seu jeito — escolha o que aparece em cada tela</div>
+          <div class="page-subtitle">Deixe o app do seu jeito â€” escolha o que aparece em cada tela</div>
         </div>
 
         <div class="cust-hero">
@@ -1732,20 +1732,20 @@
         <div id="cardCustomizerList" class="cust-list"></div>
       </div>
 
-      <!-- ═══ ANOTAÇÕES ═══ -->
+      <!-- â•â•â• ANOTAÃ‡Ã•ES â•â•â• -->
       <div class="section" id="sec-anotacoes">
         <div class="page-header" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
-          <div><div class="page-title">Anotações</div><div class="page-subtitle">Suas notas, estratégias e lembretes</div></div>
-          <button class="btn-primary" style="width:auto;padding:11px 20px" onclick="notesAdd()">+ Nova anotação</button>
+          <div><div class="page-title">AnotaÃ§Ãµes</div><div class="page-subtitle">Suas notas, estratÃ©gias e lembretes</div></div>
+          <button class="btn-primary" style="width:auto;padding:11px 20px" onclick="notesAdd()">+ Nova anotaÃ§Ã£o</button>
         </div>
         <div id="notesGrid" class="notes-grid"></div>
         <div id="notesEmpty" class="notes-empty" style="display:none">
           <div style="margin-bottom:10px;display:flex;justify-content:center;color:var(--text-muted)"><svg viewBox="0 0 24 24" width="34" height="34" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3h12a2 2 0 012 2v14a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2zM8 8h8M8 12h8M8 16h5"/></svg></div>
-          <div class="empty-state-sub">Nenhuma anotação ainda. Toque em <b>“+ Nova anotação”</b> para criar a primeira — anote estratégias, casas, limites ou o que quiser.</div>
+          <div class="empty-state-sub">Nenhuma anotaÃ§Ã£o ainda. Toque em <b>â€œ+ Nova anotaÃ§Ã£oâ€</b> para criar a primeira â€” anote estratÃ©gias, casas, limites ou o que quiser.</div>
         </div>
       </div>
 
-      <!-- ═══ RANKING ═══ -->
+      <!-- â•â•â• RANKING â•â•â• -->
       <div class="section" id="sec-ranking">
         <div class="page-header"><div class="page-title">Ranking</div><div class="page-subtitle">Seu progresso baseado no lucro acumulado</div></div>
 
@@ -1754,19 +1754,19 @@
           <div class="rank-season-head">
             <div>
               <div class="rank-season-title">Temporada atual</div>
-              <div class="rank-season-sub" id="rankSeasonSub">Corrida mensal — reset em 28 dias</div>
+              <div class="rank-season-sub" id="rankSeasonSub">Corrida mensal â€” reset em 28 dias</div>
             </div>
-            <div class="rank-season-meta" id="rankGlobalMeta">— apostadores</div>
+            <div class="rank-season-meta" id="rankGlobalMeta">â€” apostadores</div>
           </div>
           <div class="rank-period-tabs">
             <button class="rank-period-tab" id="rankTabToday" onclick="switchRankPeriod('today')">Hoje</button>
             <button class="rank-period-tab" id="rankTabWeek" onclick="switchRankPeriod('week')">Semana</button>
-            <button class="rank-period-tab is-active" id="rankTabMonth" onclick="switchRankPeriod('month')">Mês</button>
+            <button class="rank-period-tab is-active" id="rankTabMonth" onclick="switchRankPeriod('month')">MÃªs</button>
             <button class="rank-period-tab" id="rankTabAll" onclick="switchRankPeriod('all')">Geral</button>
           </div>
         </div>
 
-        <!-- 🥇🥈🥉 Pódio Top 3 -->
+        <!-- ðŸ¥‡ðŸ¥ˆðŸ¥‰ PÃ³dio Top 3 -->
         <div class="rank-podium" id="rankPodium" style="display:none">
           <div class="rank-podium-slot rank-podium-2" id="rankPodium2" onclick="rankPodiumClick(2)"></div>
           <div class="rank-podium-slot rank-podium-1" id="rankPodium1" onclick="rankPodiumClick(1)"></div>
@@ -1786,19 +1786,19 @@
         <!-- Seu progresso -->
         <div class="rank-section-label">SEU PROGRESSO</div>
         <div class="rank-headline">Ranking.</div>
-        <div class="rank-headline-sub">Seu posicionamento atual baseado no lucro acumulado. Quanto mais você lucra, mais você sobe.</div>
+        <div class="rank-headline-sub">Seu posicionamento atual baseado no lucro acumulado. Quanto mais vocÃª lucra, mais vocÃª sobe.</div>
 
         <div class="rank-current-card">
           <div class="rank-current-head">
             <div class="rank-shield rank-shield-lg" id="rankShieldCurrent"></div>
             <div class="rank-current-info">
-              <div class="rank-current-tag">RANK ATUAL · <span id="rankCurrentIdx">T1 · 1/15</span></div>
+              <div class="rank-current-tag">RANK ATUAL Â· <span id="rankCurrentIdx">T1 Â· 1/15</span></div>
               <div class="rank-current-name" id="rankCurrentName">Ferro</div>
               <div class="rank-current-meta"><span id="rankCurrentCount">R$ 0</span> de lucro acumulado</div>
             </div>
           </div>
           <div class="rank-progress-row">
-            <div class="rank-progress-label">Próximo: <b id="rankNextName">Bronze</b></div>
+            <div class="rank-progress-label">PrÃ³ximo: <b id="rankNextName">Bronze</b></div>
             <div class="rank-progress-remaining">faltam <span id="rankNextRemaining">50</span></div>
           </div>
           <div class="rank-progress-bar"><div class="rank-progress-fill" id="rankProgressFill" style="width:0%"></div></div>
@@ -1808,7 +1808,7 @@
             <span id="rankNextMin">R$ 500</span>
           </div>
           <div class="rank-current-foot">
-            <div class="rank-foot-label">PRÓXIMOS NÍVEIS</div>
+            <div class="rank-foot-label">PRÃ“XIMOS NÃVEIS</div>
             <div class="rank-next-list" id="rankNextList"></div>
           </div>
         </div>
@@ -1821,10 +1821,10 @@
           <div class="rank-tiers-head">
             <div>
               <div class="rank-tiers-title">Sistema de Ranks</div>
-              <div class="rank-tiers-sub">15 NÍVEIS · ELOS · MMR COMPETITIVO</div>
+              <div class="rank-tiers-sub">15 NÃVEIS Â· ELOS Â· MMR COMPETITIVO</div>
             </div>
             <div class="rank-tiers-current">
-              <div class="rank-tiers-current-label">SEU RANK ATUAL <span class="rank-pill-voce">VOCÊ</span></div>
+              <div class="rank-tiers-current-label">SEU RANK ATUAL <span class="rank-pill-voce">VOCÃŠ</span></div>
               <div class="rank-tiers-current-name"><span class="rank-shield rank-shield-sm" id="rankShieldHead"></span><span id="rankHeadName">Ferro</span></div>
             </div>
           </div>
@@ -1836,41 +1836,41 @@
           <div class="rank-bottom-left">
             <div class="rank-shield rank-shield-md" id="rankShieldBottom"></div>
             <div>
-              <div class="rank-bottom-name"><span id="rankBottomName">Ferro</span> <span class="rank-pill-voce">VOCÊ</span></div>
-              <div class="rank-bottom-desc" id="rankBottomDesc">Iniciante. Cada aposta registrada é um passo na sua jornada.</div>
+              <div class="rank-bottom-name"><span id="rankBottomName">Ferro</span> <span class="rank-pill-voce">VOCÃŠ</span></div>
+              <div class="rank-bottom-desc" id="rankBottomDesc">Iniciante. Cada aposta registrada Ã© um passo na sua jornada.</div>
             </div>
           </div>
           <div class="rank-bottom-stats">
-            <div><div class="rbs-label">POSIÇÃO</div><div class="rbs-value">Top <span id="rankBottomPos">1</span> de 15</div></div>
-            <div><div class="rbs-label">PRÓXIMO</div><div class="rbs-value" id="rankBottomNext">Bronze</div></div>
-            <div><div class="rbs-label">MÍNIMO</div><div class="rbs-value" id="rankBottomMin">R$ 0</div></div>
+            <div><div class="rbs-label">POSIÃ‡ÃƒO</div><div class="rbs-value">Top <span id="rankBottomPos">1</span> de 15</div></div>
+            <div><div class="rbs-label">PRÃ“XIMO</div><div class="rbs-value" id="rankBottomNext">Bronze</div></div>
+            <div><div class="rbs-label">MÃNIMO</div><div class="rbs-value" id="rankBottomMin">R$ 0</div></div>
           </div>
         </div>
       </div>
 
     </div><!-- /page-content -->
 
-    <!-- ═══ BOTTOM TAB BAR (MOBILE — feel like a native app) ═══ -->
+    <!-- â•â•â• BOTTOM TAB BAR (MOBILE â€” feel like a native app) â•â•â• -->
     <!-- Aparece apenas em <=960px via CSS. Hamburger fica escondido nesse range. -->
-    <nav class="mobile-tabbar" id="mobileTabbar" aria-label="Navegação principal">
+    <nav class="mobile-tabbar" id="mobileTabbar" aria-label="NavegaÃ§Ã£o principal">
       <button class="mt-item" data-tab="dashboard" onclick="mobileNav('dashboard')" aria-label="Dashboard">
         <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12l9-9 9 9"/><path d="M5 10v10h14V10"/></svg>
-        <span>Início</span>
+        <span>InÃ­cio</span>
       </button>
       <button class="mt-item" data-tab="ranking" onclick="mobileNav('ranking')" aria-label="Ranking">
         <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M8 21h8M12 17v4M7 4h10v6a5 5 0 01-10 0V4z"/><path d="M5 6H3a2 2 0 002 4M19 6h2a2 2 0 01-2 4"/></svg>
         <span>Ranking</span>
       </button>
-      <button class="mt-fab" onclick="openTxModal()" aria-label="Nova transação">
+      <button class="mt-fab" onclick="openTxModal()" aria-label="Nova transaÃ§Ã£o">
         <span class="mt-fab-inner">
           <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
         </span>
       </button>
-      <button class="mt-item" data-tab="afiliado" onclick="mobileNav('afiliado')" aria-label="Indicações">
+      <button class="mt-item" data-tab="afiliado" onclick="mobileNav('afiliado')" aria-label="IndicaÃ§Ãµes">
         <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"/><path d="M2 21c1-4 4-6 7-6s6 2 7 6"/><circle cx="17" cy="7" r="2.5"/><path d="M22 15c-.5-2-2-3.5-4-3.5"/></svg>
         <span>Indicar</span>
       </button>
-      <button class="mt-item" data-tab="more" onclick="mobileNavMore()" aria-label="Mais opções">
+      <button class="mt-item" data-tab="more" onclick="mobileNavMore()" aria-label="Mais opÃ§Ãµes">
         <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/></svg>
         <span>Mais</span>
       </button>
@@ -1878,8 +1878,8 @@
 
   </main>
 </div><!-- /app -->
-<!-- PAYWALL — bloqueio para quem não é assinante (trial expirado) -->
-<!-- Welcome Modal (primeira visita do usuário) -->
+<!-- PAYWALL â€” bloqueio para quem nÃ£o Ã© assinante (trial expirado) -->
+<!-- Welcome Modal (primeira visita do usuÃ¡rio) -->
 <div id="welcomeModal" class="welcome-overlay" style="display:none" onclick="closeWelcomeModal(event)">
   <div class="welcome-card" onclick="event.stopPropagation()">
     <button class="welcome-close" onclick="closeWelcomeModal()" aria-label="Fechar"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
@@ -1889,37 +1889,37 @@
       </svg>
     </div>
     <div class="welcome-title">Bem-vindo ao Apostack</div>
-    <div class="welcome-sub">Você tem <b>7 dias de Pro grátis</b> para explorar tudo. Veja o que dá para fazer:</div>
+    <div class="welcome-sub">VocÃª tem <b>7 dias de Pro grÃ¡tis</b> para explorar tudo. Veja o que dÃ¡ para fazer:</div>
 
     <div class="welcome-features">
       <div class="welcome-feat">
         <div class="welcome-feat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7h13a4 4 0 014 4v6a2 2 0 01-2 2H5a2 2 0 01-2-2V7z"/><path d="M16 12h3M3 7l2-3h11l2 3"/></svg></div>
-        <div><b>Registre transações em segundos</b><div class="welcome-feat-sub">Entradas, despesas e ganhos por método. Saldo atualiza em tempo real.</div></div>
+        <div><b>Registre transaÃ§Ãµes em segundos</b><div class="welcome-feat-sub">Entradas, despesas e ganhos por mÃ©todo. Saldo atualiza em tempo real.</div></div>
       </div>
       <div class="welcome-feat">
         <div class="welcome-feat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 20h18M7 20V12M12 20V8M17 20v-6"/></svg></div>
-        <div><b>Dashboard inteligente</b><div class="welcome-feat-sub">Saldo, lucro, ROI e evolução em tempo real. Filtros de período no topo.</div></div>
+        <div><b>Dashboard inteligente</b><div class="welcome-feat-sub">Saldo, lucro, ROI e evoluÃ§Ã£o em tempo real. Filtros de perÃ­odo no topo.</div></div>
       </div>
       <div class="welcome-feat">
         <div class="welcome-feat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l8 4v6c0 5-3.5 9-8 10-4.5-1-8-5-8-10V6l8-4z"/><path d="M8 11l3 3 5-5"/></svg></div>
-        <div><b>Ranking entre apostadores</b><div class="welcome-feat-sub">Compita em Hoje, Semana, Mês e Geral. Suba de tier (Ferro → Apex).</div></div>
+        <div><b>Ranking entre apostadores</b><div class="welcome-feat-sub">Compita em Hoje, Semana, MÃªs e Geral. Suba de tier (Ferro â†’ Apex).</div></div>
       </div>
       <div class="welcome-feat">
         <div class="welcome-feat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 8-8M14 7h7v7"/></svg></div>
-        <div><b>Relatórios e Calculadora Pro</b><div class="welcome-feat-sub">Análises detalhadas por método, surebet, stake ideal e simulações.</div></div>
+        <div><b>RelatÃ³rios e Calculadora Pro</b><div class="welcome-feat-sub">AnÃ¡lises detalhadas por mÃ©todo, surebet, stake ideal e simulaÃ§Ãµes.</div></div>
       </div>
       <div class="welcome-feat">
         <div class="welcome-feat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.5" fill="currentColor" stroke="none"/></svg></div>
-        <div><b>Metas personalizadas</b><div class="welcome-feat-sub">Defina objetivos mensais e acompanhe seu progresso ao longo do mês.</div></div>
+        <div><b>Metas personalizadas</b><div class="welcome-feat-sub">Defina objetivos mensais e acompanhe seu progresso ao longo do mÃªs.</div></div>
       </div>
     </div>
 
-    <button class="welcome-cta" onclick="closeWelcomeModal()">Começar agora <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="margin-left:6px;vertical-align:-2px"><path d="M5 12h14M13 5l7 7-7 7"/></svg></button>
-    <div class="welcome-foot">Dica: comece registrando sua <b>banca inicial</b> em Configurações</div>
+    <button class="welcome-cta" onclick="closeWelcomeModal()">ComeÃ§ar agora <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="margin-left:6px;vertical-align:-2px"><path d="M5 12h14M13 5l7 7-7 7"/></svg></button>
+    <div class="welcome-foot">Dica: comece registrando sua <b>banca inicial</b> em ConfiguraÃ§Ãµes</div>
   </div>
 </div>
 
-<!-- Pro Upsell Modal — estilo Canva (mostrado quando Free clica em feature Pro) -->
+<!-- Pro Upsell Modal â€” estilo Canva (mostrado quando Free clica em feature Pro) -->
 <div id="proUpsellModal" class="pro-upsell-overlay" style="display:none" onclick="closeProUpsellModal(event)">
   <div class="pro-upsell-card pro-upsell-canva" onclick="event.stopPropagation()">
     <button class="pro-upsell-close" onclick="closeProUpsellModal()" aria-label="Fechar"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
@@ -1943,15 +1943,15 @@
         RECURSO PRO
       </div>
 
-      <h1 class="upsell-title" id="upsellTitle">Desbloqueie Relatórios avançados</h1>
-      <p class="upsell-sub" id="upsellSub">Análises detalhadas de performance por período, método e estratégia.</p>
+      <h1 class="upsell-title" id="upsellTitle">Desbloqueie RelatÃ³rios avanÃ§ados</h1>
+      <p class="upsell-sub" id="upsellSub">AnÃ¡lises detalhadas de performance por perÃ­odo, mÃ©todo e estratÃ©gia.</p>
 
       <div class="upsell-extras">
-        <div class="upsell-extras-label">Você também desbloqueia</div>
+        <div class="upsell-extras-label">VocÃª tambÃ©m desbloqueia</div>
         <div class="upsell-extras-grid">
           <div class="upsell-extra" data-extra="reports">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 20h18M7 20V12M12 20V8M17 20v-6"/></svg>
-            <span>Relatórios</span>
+            <span>RelatÃ³rios</span>
           </div>
           <div class="upsell-extra" data-extra="compare">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 8-8M14 7h7v7"/></svg>
@@ -1972,7 +1972,7 @@
         <button class="upsell-plan upsell-plan-plus" onclick="subscribeNow('mensal')">
           <div class="upsell-plan-info">
             <div class="upsell-plan-name">Plus mensal</div>
-            <div class="upsell-plan-price">R$ 24,90<span>/mês</span></div>
+            <div class="upsell-plan-price">R$ 24,90<span>/mÃªs</span></div>
           </div>
           <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
         </button>
@@ -1980,7 +1980,7 @@
           <div class="upsell-plan-tag">ECONOMIZA 33%</div>
           <div class="upsell-plan-info">
             <div class="upsell-plan-name">Pro anual</div>
-            <div class="upsell-plan-price">R$ 199<span>/ano · poupa R$ 99</span></div>
+            <div class="upsell-plan-price">R$ 199<span>/ano Â· poupa R$ 99</span></div>
           </div>
           <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
         </button>
@@ -1988,7 +1988,7 @@
 
       <div class="upsell-trust">
         <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l8 4v6c0 5-3.5 9-8 10-4.5-1-8-5-8-10V6l8-4z"/><path d="M8 11l3 3 5-5"/></svg>
-        Cancele quando quiser · Sem fidelidade · Suporte direto
+        Cancele quando quiser Â· Sem fidelidade Â· Suporte direto
       </div>
     </div>
   </div>
@@ -2027,9 +2027,9 @@
         <div class="paywall-hero-sparkle paywall-hero-sparkle-3"></div>
         <div class="paywall-hero-sparkle paywall-hero-sparkle-4"></div>
       </div>
-      <div class="paywall-badge">VOCÊ COMPLETOU 7 DIAS DE TESTE</div>
+      <div class="paywall-badge">VOCÃŠ COMPLETOU 7 DIAS DE TESTE</div>
       <h1 class="paywall-title">Continue evoluindo com<br/><span class="paywall-title-accent">controle, dados e clareza</span></h1>
-      <p class="paywall-sub">Os 7 dias mostraram o que dá para fazer com o Apostack. Mantenha seu progresso, suas métricas e seu ranking ativos — sem interrupção.</p>
+      <p class="paywall-sub">Os 7 dias mostraram o que dÃ¡ para fazer com o Apostack. Mantenha seu progresso, suas mÃ©tricas e seu ranking ativos â€” sem interrupÃ§Ã£o.</p>
     </div>
 
     <div class="paywall-stats">
@@ -2037,17 +2037,17 @@
       <div class="paywall-stats-row">
         <div class="paywall-stat">
           <div class="paywall-stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17V3M3 7l4-4 4 4M17 7v14M13 17l4 4 4-4"/></svg></div>
-          <div class="paywall-stat-body"><div class="paywall-stat-num" id="paywallStatTx">—</div><div class="paywall-stat-lbl">transações</div></div>
+          <div class="paywall-stat-body"><div class="paywall-stat-num" id="paywallStatTx">â€”</div><div class="paywall-stat-lbl">transaÃ§Ãµes</div></div>
         </div>
         <div class="paywall-stat-sep"></div>
         <div class="paywall-stat">
           <div class="paywall-stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l8 4v6c0 5-3.5 9-8 10-4.5-1-8-5-8-10V6l8-4z"/><path d="M8 11l3 3 5-5"/></svg></div>
-          <div class="paywall-stat-body"><div class="paywall-stat-num" id="paywallStatTier">—</div><div class="paywall-stat-lbl" id="paywallStatTierLbl">tier alcançado</div></div>
+          <div class="paywall-stat-body"><div class="paywall-stat-num" id="paywallStatTier">â€”</div><div class="paywall-stat-lbl" id="paywallStatTierLbl">tier alcanÃ§ado</div></div>
         </div>
         <div class="paywall-stat-sep"></div>
         <div class="paywall-stat">
           <div class="paywall-stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 9h18M8 3v4M16 3v4"/></svg></div>
-          <div class="paywall-stat-body"><div class="paywall-stat-num" id="paywallStatDays">—</div><div class="paywall-stat-lbl">dias ativos</div></div>
+          <div class="paywall-stat-body"><div class="paywall-stat-num" id="paywallStatDays">â€”</div><div class="paywall-stat-lbl">dias ativos</div></div>
         </div>
       </div>
     </div>
@@ -2060,22 +2060,22 @@
           <div class="paywall-plan-tag">MENSAL</div>
         </div>
         <div class="paywall-plan-price">
-          <span class="paywall-plan-currency">R$</span><span class="paywall-plan-value">24,90</span><span class="paywall-plan-period">/mês</span>
+          <span class="paywall-plan-currency">R$</span><span class="paywall-plan-value">24,90</span><span class="paywall-plan-period">/mÃªs</span>
         </div>
-        <div class="paywall-plan-equiv">≈ R$ 0,83 por dia</div>
+        <div class="paywall-plan-equiv">â‰ˆ R$ 0,83 por dia</div>
         <ul class="paywall-plan-features">
           <li><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg> Dashboard completo em tempo real</li>
-          <li><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg> Relatórios e Comparativo mensal</li>
+          <li><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg> RelatÃ³rios e Comparativo mensal</li>
           <li><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg> Calculadora profissional (stake, ROI, surebet)</li>
           <li><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg> Ranking entre todos os apostadores</li>
-          <li><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg> Metas e histórico ilimitados</li>
-          <li><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg> Sincronização entre dispositivos</li>
+          <li><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg> Metas e histÃ³rico ilimitados</li>
+          <li><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg> SincronizaÃ§Ã£o entre dispositivos</li>
         </ul>
         <button class="paywall-plan-cta" onclick="subscribeNow('mensal')">Assinar Plus<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="margin-left:6px"><path d="M5 12h14M13 5l7 7-7 7"/></svg></button>
       </div>
 
       <div class="paywall-plan paywall-plan-featured">
-        <div class="paywall-plan-ribbon"><svg viewBox="0 0 24 24" width="11" height="11" fill="currentColor" style="vertical-align:-1px;margin-right:4px"><path d="M12 2l2.4 7.4H22l-6.2 4.6L18 21l-6-4.6L6 21l2.2-7L2 9.4h7.6L12 2z"/></svg>MELHOR CUSTO · ECONOMIZA 33%</div>
+        <div class="paywall-plan-ribbon"><svg viewBox="0 0 24 24" width="11" height="11" fill="currentColor" style="vertical-align:-1px;margin-right:4px"><path d="M12 2l2.4 7.4H22l-6.2 4.6L18 21l-6-4.6L6 21l2.2-7L2 9.4h7.6L12 2z"/></svg>MELHOR CUSTO Â· ECONOMIZA 33%</div>
         <div class="paywall-plan-head">
           <div class="paywall-plan-name">Pro</div>
           <div class="paywall-plan-tag">ANUAL</div>
@@ -2083,13 +2083,13 @@
         <div class="paywall-plan-price">
           <span class="paywall-plan-currency">R$</span><span class="paywall-plan-value">199</span><span class="paywall-plan-period">/ano</span>
         </div>
-        <div class="paywall-plan-equiv">≈ R$ 16,58 por mês · poupa <b>R$ 99/ano</b></div>
+        <div class="paywall-plan-equiv">â‰ˆ R$ 16,58 por mÃªs Â· poupa <b>R$ 99/ano</b></div>
         <ul class="paywall-plan-features">
           <li><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg> <b>Tudo do Plus, mais:</b></li>
           <li><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg> Badge azul "Pro" no ranking</li>
-          <li><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg> Aparece direto nas 4 abas (sem critérios)</li>
-          <li><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg> Suporte prioritário direto</li>
-          <li><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg> 2 meses grátis vs mensal</li>
+          <li><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg> Aparece direto nas 4 abas (sem critÃ©rios)</li>
+          <li><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg> Suporte prioritÃ¡rio direto</li>
+          <li><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg> 2 meses grÃ¡tis vs mensal</li>
           <li><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg> Acesso antecipado a novos recursos</li>
         </ul>
         <button class="paywall-plan-cta paywall-plan-cta-featured" onclick="subscribeNow('anual')">Assinar Pro<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="margin-left:6px"><path d="M5 12h14M13 5l7 7-7 7"/></svg></button>
@@ -2099,12 +2099,12 @@
 
     <div class="paywall-guarantee">
       <div class="paywall-guarantee-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l8 4v6c0 5-3.5 9-8 10-4.5-1-8-5-8-10V6l8-4z"/><path d="M8 11l3 3 5-5"/></svg></div>
-      <span><b>Cancele quando quiser.</b> Sem fidelidade, sem taxa de saída. Pagamento 100% seguro via Kirvano.</span>
+      <span><b>Cancele quando quiser.</b> Sem fidelidade, sem taxa de saÃ­da. Pagamento 100% seguro via Kirvano.</span>
     </div>
 
     <div class="paywall-foot-premium">
-      <a onclick="location.reload()">Já assinei, atualizar</a>
-      <span class="paywall-foot-sep">·</span>
+      <a onclick="location.reload()">JÃ¡ assinei, atualizar</a>
+      <span class="paywall-foot-sep">Â·</span>
       <a onclick="logout()">Sair da conta</a>
     </div>
 
@@ -2115,11 +2115,11 @@
 <div class="tier-up-overlay" id="tierUpOverlay" onclick="closeTierUpModal(event)">
   <div class="tier-up-modal" id="tierUpModal" onclick="event.stopPropagation()">
     <div class="tier-up-confetti" id="tierUpConfetti"></div>
-    <div class="tier-up-tag">Você subiu de tier</div>
+    <div class="tier-up-tag">VocÃª subiu de tier</div>
     <div class="tier-up-shield" id="tierUpShield"></div>
     <div class="tier-up-title" id="tierUpTitleName">Bronze</div>
-    <div class="tier-up-subtitle" id="tierUpSubtitle">Tier <b>2 de 15</b> · R$ 1.000+ acumulados</div>
-    <div class="tier-up-desc" id="tierUpDesc">Você já saiu do zero. O primeiro milhar de lucro está na conta.</div>
+    <div class="tier-up-subtitle" id="tierUpSubtitle">Tier <b>2 de 15</b> Â· R$ 1.000+ acumulados</div>
+    <div class="tier-up-desc" id="tierUpDesc">VocÃª jÃ¡ saiu do zero. O primeiro milhar de lucro estÃ¡ na conta.</div>
     <div class="tier-up-actions">
       <button class="tier-up-btn-primary" onclick="goTo('ranking');closeTierUpModal()">Ver meu ranking</button>
       <button class="tier-up-btn-secondary" onclick="closeTierUpModal()">Continuar</button>
@@ -2132,17 +2132,17 @@
 <div class="tour-spotlight" id="tourSpotlight" hidden></div>
 <div class="tour-tooltip" id="tourTooltip" hidden role="dialog" aria-modal="true">
   <div class="tour-progress"><div class="tour-progress-bar" id="tourProgressBar"></div></div>
-  <button class="tour-tooltip-close" onclick="closeTour()" aria-label="Fechar tour">×</button>
+  <button class="tour-tooltip-close" onclick="closeTour()" aria-label="Fechar tour">Ã—</button>
   <div class="tour-tooltip-tag" id="tourTag">PASSO 1 DE 6</div>
-  <h4 id="tourTitle">Bem-vindo à Apostack</h4>
-  <p id="tourDesc">Vou te mostrar as principais funcionalidades em 6 passos rápidos.</p>
+  <h4 id="tourTitle">Bem-vindo Ã  Apostack</h4>
+  <p id="tourDesc">Vou te mostrar as principais funcionalidades em 6 passos rÃ¡pidos.</p>
   <div class="tour-tooltip-actions">
     <button class="tour-btn tour-btn-exit" onclick="closeTour()">Sair</button>
-    <button class="tour-btn tour-btn-next" onclick="nextTourStep()" id="tourNextBtn">Próximo ›</button>
+    <button class="tour-btn tour-btn-next" onclick="nextTourStep()" id="tourNextBtn">PrÃ³ximo â€º</button>
   </div>
 </div>
 
-<script src="config.js?v=10" defer></script>
-<script src="script.js?v=159" defer></script>
+<script src="config.js?v=161" defer></script>
+<script src="script.js?v=161" defer></script>
 </body>
 </html>
