@@ -6590,6 +6590,16 @@ function rankBuildLeaderboard(youProfit, youName, source){
   }
   const all = base.map(u => Object.assign({ isYou: false }, u));
 
+  // Donos (admin) NUNCA aparecem no ranking — nem pra si mesmos.
+  // Bug anterior: usuario admin se via como participante do ranking porque o
+  // codigo abaixo empurrava `me` pro array sem checar OWNER_EMAILS.
+  let isOwner = false;
+  try {
+    var myEmail = (currentAuthUser && currentAuthUser.email || '').toLowerCase();
+    if (!myEmail) myEmail = (localStorage.getItem('bancapro-user-email') || '').toLowerCase();
+    isOwner = typeof OWNER_EMAILS !== 'undefined' && OWNER_EMAILS.indexOf(myEmail) >= 0;
+  } catch(e){}
+
   const youNameNorm = rankNormalizeName(youName);
 
   // Procura minha entrada na lista (matching robusto: case-insensitive, sem acento, trim)
@@ -6600,11 +6610,17 @@ function rankBuildLeaderboard(youProfit, youName, source){
   let youIsPro = !!window._isProSubscriber;
   if (existing >= 0){
     youIsPro = !!all[existing].isPro;
-    // Já estou no leaderboard (via Pro ou atividade) — marca como isYou
-    // Mantém o profit do RPC (source-of-truth) e sobrescreve nome/isYou
-    all[existing] = Object.assign({}, all[existing], { isYou: true, name: youName });
-  } else {
+    if (isOwner){
+      // Admin nao deve aparecer — remove a entrada existente
+      all.splice(existing, 1);
+    } else {
+      // Já estou no leaderboard (via Pro ou atividade) — marca como isYou
+      // Mantém o profit do RPC (source-of-truth) e sobrescreve nome/isYou
+      all[existing] = Object.assign({}, all[existing], { isYou: true, name: youName });
+    }
+  } else if (!isOwner) {
     // Não estou no leaderboard — só insere se passar nos critérios de elegibilidade
+    // (e nao for admin)
     const elig = rankComputeEligibility();
     if (elig.eligible){
       const me = { name: youName || 'Você', profit: youProfit, isYou: true, isPro: youIsPro };
