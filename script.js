@@ -4397,21 +4397,11 @@ function getOnboardingProgress(){
 function updateOnboardingCard(){
   const card = document.getElementById('onboardingCard');
   if (!card) return;
-  // Se usuario ja dispensou, nao mostra mais
+  // Regra: aparece UMA UNICA VEZ na vida do usuario.
+  // Se ja foi visto (em qualquer momento), nunca mais mostra.
   try {
-    if (localStorage.getItem('bancapro-onboarding-dismissed') === '1'){
-      card.style.display = 'none';
-      return;
-    }
-  } catch(e){}
-  // Auto-dismiss permanente: usuario com >=5 transacoes claramente nao precisa
-  // mais de onboarding (e usuario ativo, ja entendeu o app)
-  try {
-    let txCount = 0;
-    if (typeof transactions !== 'undefined' && Array.isArray(transactions)) txCount = transactions.length;
-    else { try { txCount = (JSON.parse(localStorage.getItem('bancapro-transactions') || '[]')||[]).length; } catch(e){} }
-    if (txCount >= 5){
-      try { localStorage.setItem('bancapro-onboarding-dismissed', '1'); } catch(e){}
+    if (localStorage.getItem('bancapro-onboarding-dismissed') === '1' ||
+        localStorage.getItem('bancapro-onboarding-shown') === '1'){
       card.style.display = 'none';
       return;
     }
@@ -4419,13 +4409,9 @@ function updateOnboardingCard(){
   const done = getOnboardingProgress();
   const totalSteps = 5;
   const doneCount = Object.keys(done).length;
-  // Se ja completou tudo, esconde PERMANENTEMENTE (nao volta a aparecer)
-  if (doneCount >= totalSteps){
-    try { localStorage.setItem('bancapro-onboarding-dismissed', '1'); } catch(e){}
-    card.style.display = 'none';
-    return;
-  }
   card.style.display = '';
+  // Marca como ja exibido pra nao reaparecer em sessoes futuras
+  try { localStorage.setItem('bancapro-onboarding-shown', '1'); } catch(e){}
   // Marca steps concluidos
   card.querySelectorAll('.onboarding-step').forEach(step => {
     const k = step.getAttribute('data-step');
