@@ -2554,8 +2554,15 @@ document.addEventListener('click', e => {
 // ══════════════════════════════════════════════
 // Data de hoje (ou de uma data) em YYYY-MM-DD no fuso LOCAL — evita o atraso de 1 dia do toISOString (UTC)
 function isoDateLocal(d){ d = d || new Date(); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
+// ID da transacao sendo editada (null = criacao nova)
+let _editingTxId = null;
+
 function openTxModal() {
+  _editingTxId = null;
+  setTxModalMode('create');
   document.getElementById('txType').value = 'income';
+  document.getElementById('txValue').value = '';
+  document.getElementById('txDesc').value = '';
   document.getElementById('txModal').classList.add('open');
   const today = isoDateLocal();
   const dateInput = document.getElementById('txDate');
@@ -2564,7 +2571,11 @@ function openTxModal() {
   setTimeout(() => document.getElementById('txValue').focus(), 100);
 }
 function openTxModalExpense() {
+  _editingTxId = null;
+  setTxModalMode('create');
   document.getElementById('txType').value = 'expense';
+  document.getElementById('txValue').value = '';
+  document.getElementById('txDesc').value = '';
   document.getElementById('txModal').classList.add('open');
   const today = isoDateLocal();
   const dateInput = document.getElementById('txDate');
@@ -2572,7 +2583,40 @@ function openTxModalExpense() {
   dateInput.max = today;
   setTimeout(() => document.getElementById('txValue').focus(), 100);
 }
-function closeTxModal() { document.getElementById('txModal').classList.remove('open'); }
+function closeTxModal() {
+  document.getElementById('txModal').classList.remove('open');
+  _editingTxId = null;
+}
+
+// Abre o modal preenchido com dados da transacao pra edicao
+function editTransaction(id){
+  const tx = transactions.find(t => t.id === id);
+  if (!tx) { showToast('Transação não encontrada','error'); return; }
+  _editingTxId = id;
+  setTxModalMode('edit');
+  document.getElementById('txType').value = tx.type;
+  document.getElementById('txValue').value = tx.value;
+  document.getElementById('txDate').value = tx.date;
+  document.getElementById('txDate').max = isoDateLocal();
+  document.getElementById('txMethod').value = tx.method;
+  document.getElementById('txDesc').value = tx.desc;
+  document.getElementById('txModal').classList.add('open');
+  setTimeout(() => document.getElementById('txValue').focus(), 100);
+}
+
+// Atualiza titulo + label do botao salvar conforme o modo
+function setTxModalMode(mode){
+  const title = document.querySelector('#txModal .modal-title, #txModal h2, #txModal h3');
+  const saveBtn = document.querySelector('#txModal .btn-primary');
+  if (mode === 'edit'){
+    if (title) title.textContent = 'Editar transação';
+    if (saveBtn) saveBtn.innerHTML = 'Salvar alterações';
+  } else {
+    if (title) title.textContent = 'Nova Transação';
+    if (saveBtn) saveBtn.innerHTML = 'Salvar →';
+  }
+}
+
 function saveTransaction() {
   const val = parseFloat(document.getElementById('txValue').value);
   if(!val || val <= 0) { showToast('Informe um valor válido!','error'); return; }
@@ -2583,9 +2627,29 @@ function saveTransaction() {
   const type = document.getElementById('txType').value;
   const method = document.getElementById('txMethod').value;
   const desc = document.getElementById('txDesc').value || (type==='income'?'Entrada':'Despesa');
+  const nowIso = isoDateLocal();
+
+  // Edicao: atualiza a tx existente sem mexer no id nem created_at
+  if (_editingTxId){
+    const idx = transactions.findIndex(t => t.id === _editingTxId);
+    if (idx >= 0){
+      transactions[idx] = Object.assign({}, transactions[idx], {
+        date: dateVal, desc, method, type, value: val
+        // Mantem id e created_at originais (importante pro anti-backdate do ranking)
+      });
+      closeTxModal();
+      showToast('Transação atualizada!', 'success');
+      document.getElementById('txValue').value='';
+      document.getElementById('txDesc').value='';
+      recomputeAll();
+      persistState();
+      return;
+    }
+  }
+
+  // Criacao nova
   // created_at = momento real em que a transacao foi cadastrada (NAO eh o tx.date, que pode ser backdated)
   // Usado pelo ranking HOJE pra evitar que tx backdated (date=ontem, registrada hoje) vaze pro topo de hoje.
-  const nowIso = isoDateLocal();
   transactions.unshift({id:Date.now(), date:dateVal, desc, method, type, value:val, created_at:nowIso});
   closeTxModal();
   // Avisa o usuario quando ele backdata pra outro dia — explica que NAO conta pro HOJE
@@ -2985,7 +3049,10 @@ function renderAllTransactions(currentBalance) {
       <td data-label="Tipo"><span class="tx-type-badge ${cls}">${arrow}</span></td>
       <td data-label="Valor" class="tx-amount ${cls}">${sign}R$ ${t.value.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})}</td>
       <td data-label="Saldo">${fmtBRLshort(balanceNow)}</td>
-      <td data-label="" style="text-align:right"><button class="goal-action-btn danger" onclick="deleteTransaction(${t.id})" title="Excluir" aria-label="Excluir transação">🗑️</button></td>
+      <td data-label="" style="text-align:right;white-space:nowrap">
+        <button class="goal-action-btn" onclick="editTransaction(${t.id})" title="Editar" aria-label="Editar transação" style="margin-right:6px">✏️</button>
+        <button class="goal-action-btn danger" onclick="deleteTransaction(${t.id})" title="Excluir" aria-label="Excluir transação">🗑️</button>
+      </td>
     </tr>`;
   }).join('');
   body.innerHTML = rows;
