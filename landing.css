@@ -2702,27 +2702,31 @@ body.lp-menu-open .lp-mobile-menu { display: flex; }
 }
 
 @media (max-width: 720px){
-  /* Tabela compacta mas legivel — min-width menor evita scroll horizontal
-     com cells minusculas; padding e fonts reduzidos */
-  #market .lp-section-title{ font-size: 22px; line-height: 1.25; }
-  #market .lp-section-sub{ font-size: 13px; line-height: 1.45; }
-  #market .lp-eyebrow{ font-size: 10.5px; }
-  .lp-market-table-wrap{ margin: 0 -4px 18px; padding: 0 4px; }
-  .lp-market-table{ font-size: 10.5px; min-width: 480px; }
-  .lp-market-table th, .lp-market-table td{ padding: 7px 8px; }
-  .lp-market-table thead th{ font-size: 10px; padding: 9px 8px; }
-  .lp-market-table thead th small{ font-size: 8.5px; margin-top: 1px; }
-  .lp-market-table .lp-market-th-app{ font-size: 11px; padding: 3px 7px; }
-  .lp-market-callout{ padding: 12px 14px; gap: 10px; margin-bottom: 18px; }
-  .lp-market-callout-icon{ width: 32px; height: 32px; border-radius: 9px; }
-  .lp-market-callout-icon svg{ width: 16px; height: 16px; }
-  .lp-market-callout-title{ font-size: 13px; line-height: 1.3; }
-  .lp-market-callout-sub{ font-size: 11.5px; line-height: 1.4; }
-  /* CTA secundario menor pra nao competir com o sticky */
+  /* Tabela ultracompacta: vai pra 1 tela so. Section head menor,
+     padding reduzido, fontes minimas legiveis. */
+  #market{ padding-top: 32px; padding-bottom: 32px; }
+  #market .lp-section-head{ margin-bottom: 18px; }
+  #market .lp-section-title{ font-size: 18px; line-height: 1.2; margin-bottom: 6px; }
+  #market .lp-section-sub{ font-size: 11.5px; line-height: 1.4; }
+  #market .lp-eyebrow{ font-size: 9.5px; margin-bottom: 8px; padding: 4px 10px; }
+  .lp-market-table-wrap{ margin: 0 -4px 14px; padding: 0 4px; }
+  .lp-market-table{ font-size: 9.5px; min-width: 420px; }
+  .lp-market-table th, .lp-market-table td{ padding: 5px 6px; }
+  .lp-market-table thead th{ font-size: 9px; padding: 7px 6px; }
+  .lp-market-table thead th small{ font-size: 7.5px; margin-top: 0; }
+  .lp-market-table .lp-market-th-app{ font-size: 9.5px; padding: 2px 6px; }
+  .lp-market-callout{ padding: 10px 12px; gap: 8px; margin-bottom: 14px; border-radius: 10px; }
+  .lp-market-callout-icon{ width: 28px; height: 28px; border-radius: 7px; }
+  .lp-market-callout-icon svg{ width: 14px; height: 14px; }
+  .lp-market-callout-title{ font-size: 12px; line-height: 1.25; margin-bottom: 3px; }
+  .lp-market-callout-sub{ font-size: 11px; line-height: 1.4; }
+  /* CTA secundario discreto */
   .lp-market-cta .lp-btn-primary-lg{
-    padding: 12px 18px;
-    font-size: 13.5px;
+    padding: 10px 16px;
+    font-size: 12.5px;
+    gap: 6px;
   }
+  .lp-market-cta .lp-btn-primary-lg svg{ width: 15px; height: 15px; }
 }
 
 /* Mobile: o pill format com text-align center quebra em varias linhas
