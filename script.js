@@ -5662,9 +5662,9 @@ function buildReportCharts() {
           + '</div>';
         wrap.appendChild(emptyMsg);
       }
-      return;
-    }
-
+      // NAO usar `return` aqui — quebra os charts abaixo (Distribuicao de Despesas).
+      // Apenas pula a parte de criar o Chart e segue pra renderizar os proximos.
+    } else {
     // 2+ meses: renderiza chart normal
     ctx.style.display = '';
     if (emptyMsg) emptyMsg.remove();
@@ -5688,6 +5688,7 @@ function buildReportCharts() {
         plugins:{legend:{display:true, position:'top', align:'end', labels:{color:getChartColors().text, font:{size:11}, boxWidth:12, boxHeight:12, usePointStyle:true, pointStyle:'circle', padding:14}}}
       }
     });
+    } // fecha else (months >= 2)
   }
 
   // 2) DONUT — Distribuição de DESPESAS por método (QUALQUER método, inclusive "Geral"/custom)
