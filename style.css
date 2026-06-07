@@ -4409,7 +4409,35 @@ html { -webkit-text-size-adjust:100%; text-size-adjust:100%; }
 /* ════════════════════════════════════════════════════════════════
    CALENDÁRIO HEATMAP (Reports → Atividade)
    ════════════════════════════════════════════════════════════════ */
-.heatmap-card .chart-header{justify-content:space-between}
+/* Card heatmap com glow premium */
+.heatmap-card{
+  position:relative;
+  background:linear-gradient(180deg,rgba(167,139,250,.02),transparent 30%), var(--card-bg, rgba(255,255,255,.025)) !important;
+  box-shadow: 0 0 0 1px rgba(167,139,250,.06), 0 12px 40px rgba(0,0,0,.35) !important;
+}
+.heatmap-card::before{
+  content:'';position:absolute;inset:-1px;border-radius:inherit;
+  background:linear-gradient(135deg,rgba(167,139,250,.18),transparent 40%, transparent 60%, rgba(99,102,241,.12));
+  z-index:-1;pointer-events:none;opacity:.6;
+  filter:blur(6px);
+}
+.heatmap-header{
+  align-items:flex-start;gap:14px;flex-wrap:wrap;
+  justify-content:space-between;
+}
+.heatmap-title-wrap{
+  display:flex;gap:12px;align-items:center;min-width:0;
+}
+.heatmap-title-icon{
+  flex-shrink:0;width:38px;height:38px;border-radius:10px;
+  background:linear-gradient(135deg,rgba(167,139,250,.22),rgba(124,92,255,.10));
+  border:1px solid rgba(167,139,250,.25);
+  color:#a78bfa;
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 4px 12px rgba(124,92,255,.18);
+}
+.heatmap-card .chart-subtitle{font-size:12.5px;line-height:1.45;margin-top:3px}
+.heatmap-card .chart-subtitle b{color:#cbd5e1;font-weight:600}
 .heatmap-toggle{
   display:inline-flex;background:rgba(255,255,255,.04);
   border:1px solid rgba(255,255,255,.06);border-radius:8px;padding:3px;gap:2px;

@@ -790,6 +790,18 @@ html.light .heatmap-tooltip{
   color: #fff !important;
   border-color: rgba(167,139,250,.40) !important;
 }
+html.light .heatmap-card{
+  background: #ffffff !important;
+  box-shadow: 0 0 0 1px rgba(167,139,250,.14), 0 8px 24px rgba(15,23,42,.06) !important;
+}
+html.light .heatmap-card::before{ opacity: .25 !important; }
+html.light .heatmap-title-icon{
+  background: linear-gradient(135deg, rgba(167,139,250,.16), rgba(124,92,255,.06)) !important;
+  border-color: rgba(167,139,250,.30) !important;
+  color: #7c3aed !important;
+}
+html.light .heatmap-card .chart-subtitle{ color: #64748b !important; }
+html.light .heatmap-card .chart-subtitle b{ color: #0f172a !important; }
 html.light .heatmap-legitem{ color: #64748b !important; }
 html.light .heatmap-hint{
   background: rgba(167,139,250,.06) !important;
