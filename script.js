@@ -3041,7 +3041,8 @@ function renderAllTransactions(currentBalance) {
     const arrow = t.type==='income' ? '↑ Entrada' : '↓ Despesa';
     const balanceNow = balanceMap[t.id] || 0;
     const tag = inferTag(t);
-    return `<tr>
+    return `<tr draggable="true" data-tx-id="${t.id}" ondragstart="txDragStart(event)" ondragover="txDragOver(event)" ondragleave="txDragLeave(event)" ondrop="txDrop(event)" ondragend="txDragEnd(event)">
+      <td data-label="" class="tx-drag-handle" title="Arraste pra reordenar" aria-label="Arrastar transação">⋮⋮</td>
       <td data-label="Data">${dateBR(t.date)}</td>
       <td data-label="Descrição">${escapeHtml(t.desc)}</td>
       <td data-label="Categoria"><span class="tag">${tag}</span></td>
@@ -3056,6 +3057,74 @@ function renderAllTransactions(currentBalance) {
     </tr>`;
   }).join('');
   body.innerHTML = rows;
+}
+
+// ══════════════════════════════════════════════
+//  DRAG & DROP — reordenar transacoes
+//  User pediu: arrastar tx pra cima/baixo na lista (corrige ordem
+//  quando o usuario insere uma tx hoje que deveria estar antes de
+//  outra ja existente).
+// ══════════════════════════════════════════════
+let _txDragId = null;
+
+function txDragStart(e){
+  _txDragId = Number(e.currentTarget.dataset.txId);
+  e.currentTarget.classList.add('is-dragging');
+  e.dataTransfer.effectAllowed = 'move';
+  // Necessario pra Firefox aceitar drag
+  try { e.dataTransfer.setData('text/plain', String(_txDragId)); } catch(err){}
+}
+
+function txDragOver(e){
+  e.preventDefault();
+  e.dataTransfer.dropEffect = 'move';
+  const row = e.currentTarget;
+  if (Number(row.dataset.txId) === _txDragId) return;
+  // Highlight: linha cima se cursor na metade superior, baixo se inferior
+  const rect = row.getBoundingClientRect();
+  const isUpper = (e.clientY - rect.top) < rect.height / 2;
+  row.classList.remove('tx-drop-above', 'tx-drop-below');
+  row.classList.add(isUpper ? 'tx-drop-above' : 'tx-drop-below');
+}
+
+function txDragLeave(e){
+  e.currentTarget.classList.remove('tx-drop-above', 'tx-drop-below');
+}
+
+function txDrop(e){
+  e.preventDefault();
+  const targetId = Number(e.currentTarget.dataset.txId);
+  e.currentTarget.classList.remove('tx-drop-above', 'tx-drop-below');
+  if (!_txDragId || targetId === _txDragId) return;
+  // Determina se foi solto na metade superior ou inferior
+  const rect = e.currentTarget.getBoundingClientRect();
+  const isUpper = (e.clientY - rect.top) < rect.height / 2;
+
+  const fromIdx = transactions.findIndex(t => t.id === _txDragId);
+  let toIdx = transactions.findIndex(t => t.id === targetId);
+  if (fromIdx < 0 || toIdx < 0) return;
+
+  // Remove o item arrastado
+  const [item] = transactions.splice(fromIdx, 1);
+
+  // Recalcula targetIdx depois da remocao
+  toIdx = transactions.findIndex(t => t.id === targetId);
+  if (!isUpper) toIdx += 1;
+
+  // Insere na nova posicao
+  transactions.splice(toIdx, 0, item);
+
+  showToast('Ordem da transação atualizada','success');
+  recomputeAll();
+  persistState();
+}
+
+function txDragEnd(e){
+  e.currentTarget.classList.remove('is-dragging');
+  document.querySelectorAll('tr.tx-drop-above, tr.tx-drop-below').forEach(el => {
+    el.classList.remove('tx-drop-above','tx-drop-below');
+  });
+  _txDragId = null;
 }
 
 function inferTag(t) {

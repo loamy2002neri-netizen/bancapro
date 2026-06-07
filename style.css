@@ -472,6 +472,25 @@
     box-shadow:0 0 10px var(--card-color,var(--accent));
     flex-shrink:0;
   }
+  /* ── Drag handle pra reordenar transacoes ──
+     Coluna fica `cursor:grab` no hover, vira `grabbing` arrastando.
+     Highlight cima/baixo mostra onde a tx vai cair. */
+  .tx-drag-handle{
+    cursor: grab;
+    color: var(--text-muted, #94a3b8);
+    font-weight: 800;
+    font-size: 14px;
+    user-select: none;
+    width: 28px;
+    text-align: center;
+    opacity: .5;
+    transition: opacity .15s ease, color .15s ease;
+  }
+  .tx-drag-handle:hover{ opacity: 1; color: var(--accent, #6366f1); }
+  tr.is-dragging{ opacity: .4; }
+  tr.tx-drop-above{ box-shadow: inset 0 3px 0 0 var(--accent, #6366f1); }
+  tr.tx-drop-below{ box-shadow: inset 0 -3px 0 0 var(--accent, #6366f1); }
+
   .kpi-card .kpi-value {
     /* clamp() escala fluidamente: minimo 18px, ideal ~2.2vw, maximo 26px.
        Em telas estreitas (cards 220-280px), encolhe pra caber sem quebrar. */
