@@ -4427,22 +4427,22 @@ html { -webkit-text-size-adjust:100%; text-size-adjust:100%; }
 .heatmap-wrap{
   margin-top:14px;padding:6px 0 2px;overflow-x:auto;
   -webkit-overflow-scrolling:touch;
-  display:flex;justify-content:center;align-items:flex-start;
 }
-.heatmap-svg{display:block;max-width:100%;height:auto;margin:0 auto}
+.heatmap-svg{display:block;max-width:100%;height:auto}
 .heatmap-svg .heatmap-year{
   font-size:8.5px;font-weight:500;fill:var(--text-muted);opacity:.7;
   font-family:inherit;letter-spacing:.3px;
 }
 .heatmap-layout{
-  display:grid;grid-template-columns: minmax(0,1fr) 260px;gap:18px;margin-top:14px;
-  align-items:start;
+  display:flex;flex-wrap:wrap;gap:18px;margin-top:14px;
+  align-items:flex-start;justify-content:flex-start;
 }
-.heatmap-main{min-width:0}
+.heatmap-main{min-width:0;flex:0 0 auto}
 .heatmap-insights{
   background:rgba(255,255,255,.025);
   border:1px solid rgba(255,255,255,.06);
   border-radius:12px;padding:16px;
+  flex:1 1 260px;min-width:240px;max-width:340px;
 }
 .heatmap-insights-title{
   font-size:13px;font-weight:700;color:#fff;margin-bottom:14px;
