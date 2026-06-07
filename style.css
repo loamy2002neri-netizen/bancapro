@@ -4428,7 +4428,7 @@ html { -webkit-text-size-adjust:100%; text-size-adjust:100%; }
   margin-top:14px;padding:6px 0 2px;overflow-x:auto;
   -webkit-overflow-scrolling:touch;
 }
-.heatmap-svg{display:block;min-width:620px;max-width:100%;height:auto}
+.heatmap-svg{display:block;max-width:100%;height:auto}
 .heatmap-svg .heatmap-year{
   font-size:8.5px;font-weight:500;fill:var(--text-muted);opacity:.7;
   font-family:inherit;letter-spacing:.3px;
@@ -4582,7 +4582,7 @@ html { -webkit-text-size-adjust:100%; text-size-adjust:100%; }
   box-shadow:0 8px 24px rgba(0,0,0,.4);
   pointer-events:none;
 }
-@media (max-width: 720px){ .heatmap-svg{min-width:480px} }
+/* heatmap-svg cresce no natural size — sem stretch */
 
 .help-tour-card{
   display:flex;align-items:center;gap:14px;

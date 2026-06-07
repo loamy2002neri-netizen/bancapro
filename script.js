@@ -5818,10 +5818,10 @@ function renderActivityHeatmap(){
   if (maxVal === 0) maxVal = 1;
 
   // Monta SVG-like grid: colunas = semanas, linhas = dias da semana
-  const cellSize = 15;
-  const gap = 4;
-  const monthLabelH = 36; // 2 linhas: mes + ano
-  const dowLabelW = 18;
+  const cellSize = 11;
+  const gap = 3;
+  const monthLabelH = 30; // 2 linhas: mes + ano
+  const dowLabelW = 16;
   const cols = totalWeeks;
   const rows = 7;
   const gridW = cols * (cellSize + gap);
@@ -5829,7 +5829,7 @@ function renderActivityHeatmap(){
   const svgW = gridW + dowLabelW + 4;
   const svgH = gridH + monthLabelH + 2;
 
-  let svg = '<svg viewBox="0 0 '+svgW+' '+svgH+'" class="heatmap-svg" preserveAspectRatio="xMinYMin meet" role="img" aria-label="Heatmap de atividade dos últimos 6 meses">';
+  let svg = '<svg width="'+svgW+'" height="'+svgH+'" viewBox="0 0 '+svgW+' '+svgH+'" class="heatmap-svg" preserveAspectRatio="xMinYMin meet" role="img" aria-label="Heatmap de atividade dos últimos 6 meses">';
 
   // Labels de dia — todas 7 linhas, 1 letra (posicao desambigua)
   const dowLabels = ['D','S','T','Q','Q','S','S'];
@@ -5863,8 +5863,8 @@ function renderActivityHeatmap(){
       // Label do mes + ano — primeira semana de cada mes na linha 0
       if (r === 0 && d.getMonth() !== lastMonth){
         lastMonth = d.getMonth();
-        svg += '<text x="'+x+'" y="'+(monthLabelH-22)+'" class="heatmap-month">'+monthNames[d.getMonth()]+'</text>';
-        svg += '<text x="'+x+'" y="'+(monthLabelH-8)+'" class="heatmap-year">'+d.getFullYear()+'</text>';
+        svg += '<text x="'+x+'" y="'+(monthLabelH-18)+'" class="heatmap-month">'+monthNames[d.getMonth()]+'</text>';
+        svg += '<text x="'+x+'" y="'+(monthLabelH-6)+'" class="heatmap-year">'+d.getFullYear()+'</text>';
       }
     }
   }
