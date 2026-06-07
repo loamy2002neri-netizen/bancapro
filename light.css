@@ -466,12 +466,20 @@ html.light .onboarding-step-text,
 html.light .onboarding-step{ color: #475569 !important; }
 html.light .onboarding-step.is-done,
 html.light .onboarding-step.completed{
-  opacity: .55;
+  opacity: 1;
+  background: rgba(16,185,129,.06) !important;
+  border-color: rgba(16,185,129,.25) !important;
 }
 html.light .onboarding-step.is-done b,
 html.light .onboarding-step.completed b{
   text-decoration: line-through;
-  color: #94a3b8 !important;
+  color: #475569 !important;
+  opacity: .9;
+}
+html.light .onboarding-step.is-done .onboarding-step-text span,
+html.light .onboarding-step.completed .onboarding-step-text span{
+  color: #64748b !important;
+  opacity: .85;
 }
 
 /* ── Dashboard Rank Card ("Você estaria em #10") ── */

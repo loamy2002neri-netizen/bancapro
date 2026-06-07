@@ -3002,10 +3002,11 @@ html { -webkit-text-size-adjust:100%; text-size-adjust:100%; }
   display:block;line-height:1.4;
 }
 .onboarding-step.is-done b{
-  color:var(--text-muted);text-decoration:line-through;
-  opacity:.65;
+  color:#cbd5e1;text-decoration:line-through;
+  opacity:.92;
 }
-.onboarding-step.is-done span{opacity:.55}
+.onboarding-step.is-done span{color:#94a3b8;opacity:.85}
+.onboarding-step.is-done{background:rgba(16,185,129,.04);border-color:rgba(16,185,129,.18)}
 .onboarding-arrow{
   color:var(--text-muted);font-size:14px;
   flex-shrink:0;transition:transform .2s ease;
