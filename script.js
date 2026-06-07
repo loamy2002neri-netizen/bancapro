@@ -5732,7 +5732,7 @@ function setHeatmapMetric(metric, btn){
   const help = document.getElementById('heatmapHelp');
   if (help){
     if (_heatmapMetric === 'profit'){
-      help.innerHTML = 'Cada quadrado = 1 dia. <b style="color:#10b981">Verde = lucrou</b> · <b style="color:#ef4444">Vermelho = perdeu</b> · Cinza = dia sem aposta.';
+      help.innerHTML = 'Cada quadrado = 1 dia. <b style="color:#c9b4e8">Lilás = lucrou mais</b> · <b style="color:#b04156">Vermelho = lucrou menos</b> · Cinza = dia sem aposta.';
     } else {
       help.innerHTML = 'Cada quadrado = 1 dia. <b>Verde mais forte = mais apostas no dia.</b> Cinza = dia sem aposta.';
     }
@@ -5766,11 +5766,14 @@ function _heatBuildBuckets(){
 function _heatLevel(val, max, metric){
   if (!val) return 0;
   if (metric === 'profit'){
-    // Profit pode ser negativo. Escala absoluta: usa max do absoluto.
+    // Escala sequencial 1..6 (matching mockup: red->purple gradient)
+    // val pode ser negativo: nivel pela magnitude, sinal entra no `isNeg`
     const ratio = Math.abs(val) / max;
-    if (ratio > 0.75) return 4;
-    if (ratio > 0.5) return 3;
-    if (ratio > 0.25) return 2;
+    if (ratio > 0.83) return 6;
+    if (ratio > 0.66) return 5;
+    if (ratio > 0.5) return 4;
+    if (ratio > 0.33) return 3;
+    if (ratio > 0.16) return 2;
     return 1;
   }
   const ratio = val / max;
@@ -5859,13 +5862,14 @@ function renderActivityHeatmap(){
       const b = buckets[key];
       const val = b ? (metric === 'profit' ? b.profit : b.count) : 0;
       const level = b ? _heatLevel(val, maxVal, metric) : 0;
-      // sinal pra profit negativo: nivel separado (vermelho)
-      const isNeg = (metric === 'profit' && val < 0);
       const x = dowLabelW + w * (cellSize + gap);
       const y = monthLabelH + r * (cellSize + gap);
       const tooltip = _heatTooltip(d, b, metric);
-      const cls = 'heatmap-cell level-'+level + (isNeg && level > 0 ? ' is-neg' : '');
-      cells.push('<rect x="'+x+'" y="'+y+'" width="'+cellSize+'" height="'+cellSize+'" rx="2.5" class="'+cls+'" data-date="'+key+'" data-tooltip="'+tooltip+'" />');
+      // No modo lucro usa escala sequencial (matching mockup): heatmap-cell-p (profit)
+      // No modo apostas mantem verde
+      const baseCls = (metric === 'profit') ? 'heatmap-cell-p' : 'heatmap-cell';
+      const cls = baseCls + ' level-'+level;
+      cells.push('<rect x="'+x+'" y="'+y+'" width="'+cellSize+'" height="'+cellSize+'" rx="3" class="'+cls+'" data-date="'+key+'" data-tooltip="'+tooltip+'" />');
 
       // Label do mes + ano — primeira semana de cada mes na linha 0
       if (r === 0 && d.getMonth() !== lastMonth){
@@ -5892,18 +5896,21 @@ function renderActivityHeatmap(){
     legend.style.display='flex';
     const legendItems = document.getElementById('heatmapLegendItems');
     if (legendItems){
-      // Calcula os 4 intervalos reais (0%, 25%, 50%, 75%, 100% do max)
       if (metric === 'profit'){
-        // No modo lucro mostra duas escalas (perda + ganho) com R$
-        const q = Math.round(maxVal / 4); // quartil em R$
+        // Legenda compacta estilo mockup: "Menos lucro ▢▢▢▢▢▢ Mais lucro"
         legendItems.innerHTML =
-          '<span class="heatmap-legitem"><span class="heatmap-cell is-neg level-4"></span>perdeu mais de R$ ' + q*3 + '</span>' +
-          '<span class="heatmap-legitem"><span class="heatmap-cell is-neg level-2"></span>perdeu até R$ ' + q*2 + '</span>' +
-          '<span class="heatmap-legitem"><span class="heatmap-cell level-0"></span>sem aposta</span>' +
-          '<span class="heatmap-legitem"><span class="heatmap-cell level-2"></span>lucrou até R$ ' + q*2 + '</span>' +
-          '<span class="heatmap-legitem"><span class="heatmap-cell level-4"></span>lucrou mais de R$ ' + q*3 + '</span>';
+          '<span class="heatmap-legitem-label">Menos lucro</span>' +
+          '<span class="heatmap-legitem-scale">' +
+            '<span class="heatmap-cell-p level-1"></span>' +
+            '<span class="heatmap-cell-p level-2"></span>' +
+            '<span class="heatmap-cell-p level-3"></span>' +
+            '<span class="heatmap-cell-p level-4"></span>' +
+            '<span class="heatmap-cell-p level-5"></span>' +
+            '<span class="heatmap-cell-p level-6"></span>' +
+          '</span>' +
+          '<span class="heatmap-legitem-label">Mais lucro</span>';
       } else {
-        // No modo apostas mostra a faixa de qtde (1, 2-X, X-Y, Y+)
+        // Modo apostas: escala verde com numeros reais
         const q = Math.max(1, Math.round(maxVal / 4));
         legendItems.innerHTML =
           '<span class="heatmap-legitem"><span class="heatmap-cell level-0"></span>0 apostas</span>' +
