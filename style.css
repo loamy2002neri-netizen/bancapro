@@ -1650,10 +1650,37 @@ html { -webkit-text-size-adjust:100%; text-size-adjust:100%; }
     text-transform:uppercase; letter-spacing:.3px;
   }
   .tx-table td[data-label=""], .admin-table td[data-label=""] {
-    grid-column:1 / -1; align-items:flex-end; padding-top:8px !important;
-    border-top:1px solid var(--glass-border) !important; margin-top:2px;
+    grid-column:1 / -1;
+    /* Botoes em LINHA (era column empilhada que sobrava espaco gigante) */
+    flex-direction: row !important;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 8px;
+    padding-top:8px !important;
+    border-top:1px solid var(--glass-border) !important;
+    margin-top:2px;
   }
   .tx-table td[data-label=""]::before, .admin-table td[data-label=""]::before { content:none; }
+  .tx-table td[data-label=""] button, .admin-table td[data-label=""] button {
+    flex-shrink: 0;
+    margin: 0 !important;
+  }
+
+  /* Drag handle no mobile: vira pill inline no canto superior do card,
+     sem ocupar uma "celula" inteira do grid */
+  .tx-table td.tx-drag-handle{
+    grid-column: 1 / -1;
+    grid-row: 1;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    padding: 0 0 4px !important;
+    width: auto;
+    min-height: 28px;
+    font-size: 18px;
+    opacity: .35;
+  }
+  .tx-table td.tx-drag-handle::before{ content: none; }
 }
 
   /* ── EVO FILTER BUTTONS ── */
