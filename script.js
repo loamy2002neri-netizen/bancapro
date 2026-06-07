@@ -1792,6 +1792,13 @@ var CARDS_CATALOG = [
       accent: '#3b82f6'
     },
     {
+      key: 'rep-heatmap',
+      title: 'Calendário de Atividade',
+      desc: 'Heatmap dos últimos 6 meses — apostas ou lucro por dia',
+      icon: '<rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>',
+      accent: '#10b981'
+    },
+    {
       key: 'rep-despesas',
       title: 'Distribuição de Despesas',
       desc: 'Donut com % de despesas por método',
@@ -5707,7 +5714,237 @@ function buildReportCharts() {
   // assume o lugar dele no chart-grid do Relatorios.
 }
 
-function initReportCharts() { buildReportCharts(); }
+function initReportCharts() {
+  buildReportCharts();
+  try { renderActivityHeatmap(); } catch(e){}
+}
+
+// ══════════════════════════════════════════════
+//  CALENDÁRIO HEATMAP (estilo GitHub) — atividade dos últimos 6 meses
+// ══════════════════════════════════════════════
+var _heatmapMetric = 'count'; // 'count' | 'profit'
+
+function setHeatmapMetric(metric, btn){
+  _heatmapMetric = (metric === 'profit') ? 'profit' : 'count';
+  document.querySelectorAll('.heatmap-tab').forEach(t => t.classList.remove('is-active'));
+  if (btn) btn.classList.add('is-active');
+  renderActivityHeatmap();
+}
+
+function _heatDateKey(d){
+  // YYYY-MM-DD em horario local (nao UTC) pra nao deslocar dias
+  const y = d.getFullYear();
+  const m = String(d.getMonth()+1).padStart(2,'0');
+  const dd = String(d.getDate()).padStart(2,'0');
+  return y+'-'+m+'-'+dd;
+}
+
+function _heatBuildBuckets(){
+  // Map: 'YYYY-MM-DD' -> { count, profit }
+  const map = {};
+  if (typeof transactions === 'undefined' || !Array.isArray(transactions)) return map;
+  transactions.forEach(t => {
+    if (!t || !t.date) return;
+    const key = t.date; // tx.date ja eh YYYY-MM-DD
+    if (!map[key]) map[key] = { count: 0, profit: 0 };
+    map[key].count++;
+    const v = parseFloat(t.value) || 0;
+    map[key].profit += (t.type === 'income') ? v : -v;
+  });
+  return map;
+}
+
+function _heatLevel(val, max, metric){
+  if (!val) return 0;
+  if (metric === 'profit'){
+    // Profit pode ser negativo. Escala absoluta: usa max do absoluto.
+    const ratio = Math.abs(val) / max;
+    if (ratio > 0.75) return 4;
+    if (ratio > 0.5) return 3;
+    if (ratio > 0.25) return 2;
+    return 1;
+  }
+  const ratio = val / max;
+  if (ratio > 0.75) return 4;
+  if (ratio > 0.5) return 3;
+  if (ratio > 0.25) return 2;
+  return 1;
+}
+
+function renderActivityHeatmap(){
+  const wrap = document.getElementById('heatmapWrap');
+  const empty = document.getElementById('heatmapEmpty');
+  const legend = document.getElementById('heatmapLegend');
+  const summary = document.getElementById('heatmapSummary');
+  if (!wrap) return;
+
+  const buckets = _heatBuildBuckets();
+  const hasAny = Object.keys(buckets).length > 0;
+  if (!hasAny){
+    wrap.innerHTML = '';
+    if (empty) { empty.style.display='block'; wrap.appendChild(empty); }
+    if (legend) legend.style.display='none';
+    return;
+  }
+  if (empty) empty.style.display='none';
+
+  // 6 meses: hoje - 26 semanas. Alinhado em domingo (col=0).
+  const today = new Date();
+  today.setHours(0,0,0,0);
+  const dow = today.getDay(); // 0=dom..6=sab
+  const endCol = dow; // ultimo dia preenche ate essa linha
+  const totalWeeks = 26;
+  const totalDays = totalWeeks * 7;
+  // Comeca de "totalDays" dias atras, ajustado pra domingo
+  const start = new Date(today);
+  start.setDate(today.getDate() - totalDays + 1 + (6 - endCol)); // alinha
+  // Re-ajusta pra cair em domingo
+  while (start.getDay() !== 0) start.setDate(start.getDate()-1);
+
+  // Coleta valores existentes pro escala (max)
+  const metric = _heatmapMetric;
+  let maxVal = 0;
+  let totalCount = 0;
+  let totalProfit = 0;
+  Object.keys(buckets).forEach(k => {
+    const b = buckets[k];
+    totalCount += b.count;
+    totalProfit += b.profit;
+    const v = (metric === 'profit') ? Math.abs(b.profit) : b.count;
+    if (v > maxVal) maxVal = v;
+  });
+  if (maxVal === 0) maxVal = 1;
+
+  // Monta SVG-like grid: colunas = semanas, linhas = dias da semana
+  const cellSize = 13;
+  const gap = 3;
+  const monthLabelH = 18;
+  const dowLabelW = 22;
+  const cols = totalWeeks;
+  const rows = 7;
+  const gridW = cols * (cellSize + gap);
+  const gridH = rows * (cellSize + gap);
+  const svgW = gridW + dowLabelW + 4;
+  const svgH = gridH + monthLabelH + 2;
+
+  let svg = '<svg viewBox="0 0 '+svgW+' '+svgH+'" class="heatmap-svg" preserveAspectRatio="xMinYMin meet" role="img" aria-label="Heatmap de atividade dos últimos 6 meses">';
+
+  // Labels de dia (S, T, Q...) — mostra so dom, ter, qui, sab pra economizar espaco
+  const dowLabels = ['D','S','T','Q','Q','S','S'];
+  const dowShow = [0,2,4,6];
+  dowShow.forEach(i => {
+    const y = monthLabelH + i * (cellSize + gap) + cellSize - 2;
+    svg += '<text x="0" y="'+y+'" class="heatmap-dow">'+dowLabels[i]+'</text>';
+  });
+
+  // Labels de mes — coloca quando primeira semana do mes aparece
+  const monthNames = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+  let lastMonth = -1;
+  // Itera semanas e dias
+  const cells = [];
+  for (let w = 0; w < cols; w++){
+    for (let r = 0; r < rows; r++){
+      const d = new Date(start);
+      d.setDate(start.getDate() + w*7 + r);
+      if (d > today) continue; // futuro nao mostra
+      const key = _heatDateKey(d);
+      const b = buckets[key];
+      const val = b ? (metric === 'profit' ? b.profit : b.count) : 0;
+      const level = b ? _heatLevel(val, maxVal, metric) : 0;
+      // sinal pra profit negativo: nivel separado (vermelho)
+      const isNeg = (metric === 'profit' && val < 0);
+      const x = dowLabelW + w * (cellSize + gap);
+      const y = monthLabelH + r * (cellSize + gap);
+      const tooltip = _heatTooltip(d, b, metric);
+      const cls = 'heatmap-cell level-'+level + (isNeg && level > 0 ? ' is-neg' : '');
+      cells.push('<rect x="'+x+'" y="'+y+'" width="'+cellSize+'" height="'+cellSize+'" rx="2.5" class="'+cls+'" data-date="'+key+'" data-tooltip="'+tooltip+'" />');
+
+      // Label do mes — primeira semana de cada mes na linha 0
+      if (r === 0 && d.getMonth() !== lastMonth){
+        lastMonth = d.getMonth();
+        svg += '<text x="'+x+'" y="'+(monthLabelH-6)+'" class="heatmap-month">'+monthNames[d.getMonth()]+'</text>';
+      }
+    }
+  }
+  svg += cells.join('');
+  svg += '</svg>';
+
+  wrap.innerHTML = svg;
+
+  // Liga tooltip nativo via mouseover
+  wrap.querySelectorAll('.heatmap-cell').forEach(c => {
+    c.addEventListener('mouseenter', _heatShowTooltip);
+    c.addEventListener('mouseleave', _heatHideTooltip);
+    c.addEventListener('click', _heatCellClick);
+  });
+
+  // Legenda + sumario
+  if (legend){
+    legend.style.display='flex';
+    if (summary){
+      const totalDays_active = Object.keys(buckets).length;
+      if (metric === 'profit'){
+        const fmt = (totalProfit >= 0 ? '+' : '') + 'R$ ' + Math.abs(totalProfit).toLocaleString('pt-BR',{maximumFractionDigits:0});
+        summary.innerHTML = '<b>'+fmt+'</b> em '+totalDays_active+' dias ativos';
+        summary.className = 'heatmap-legend-summary ' + (totalProfit >= 0 ? 'is-pos' : 'is-neg');
+      } else {
+        summary.innerHTML = '<b>'+totalCount+'</b> transações em '+totalDays_active+' dias';
+        summary.className = 'heatmap-legend-summary';
+      }
+    }
+  }
+}
+
+function _heatTooltip(date, bucket, metric){
+  const d = date.toLocaleDateString('pt-BR', { weekday:'short', day:'2-digit', month:'short' });
+  if (!bucket){ return d + ' — sem atividade'; }
+  if (metric === 'profit'){
+    const sign = bucket.profit >= 0 ? '+' : '-';
+    return d + ' — ' + bucket.count + ' tx · ' + sign + 'R$ ' + Math.abs(bucket.profit).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
+  }
+  return d + ' — ' + bucket.count + ' transação' + (bucket.count !== 1 ? 'ões' : '');
+}
+
+var _heatTooltipEl = null;
+function _heatShowTooltip(ev){
+  const cell = ev.currentTarget;
+  const text = cell.getAttribute('data-tooltip') || '';
+  if (!_heatTooltipEl){
+    _heatTooltipEl = document.createElement('div');
+    _heatTooltipEl.className = 'heatmap-tooltip';
+    document.body.appendChild(_heatTooltipEl);
+  }
+  _heatTooltipEl.textContent = text;
+  _heatTooltipEl.style.display = 'block';
+  const r = cell.getBoundingClientRect();
+  const tw = _heatTooltipEl.offsetWidth;
+  const th = _heatTooltipEl.offsetHeight;
+  let left = r.left + r.width/2 - tw/2 + window.scrollX;
+  let top  = r.top - th - 8 + window.scrollY;
+  left = Math.max(8, Math.min(left, window.scrollX + window.innerWidth - tw - 8));
+  if (top < window.scrollY + 8) top = r.bottom + 8 + window.scrollY;
+  _heatTooltipEl.style.left = left + 'px';
+  _heatTooltipEl.style.top  = top + 'px';
+}
+function _heatHideTooltip(){
+  if (_heatTooltipEl) _heatTooltipEl.style.display = 'none';
+}
+function _heatCellClick(ev){
+  // Click numa celula filtra Transacoes pela data
+  const key = ev.currentTarget.getAttribute('data-date');
+  if (!key) return;
+  if (typeof goTo === 'function') goTo('transactions');
+  // Aplica filtro de busca pela data no campo de search das transacoes
+  setTimeout(() => {
+    const searchInput = document.querySelector('#txSearch, #transactionsSearch, [id*="earch"][placeholder]');
+    if (searchInput){
+      const br = key.split('-').reverse().join('/');
+      searchInput.value = br;
+      searchInput.dispatchEvent(new Event('input', { bubbles: true }));
+    }
+  }, 200);
+}
+
 
 // ══════════════════════════════════════════════
 //  COMPARATIVO (mês atual vs anterior) — auto-sincronizado com transactions

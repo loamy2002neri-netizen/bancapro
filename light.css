@@ -748,3 +748,45 @@ html.light .help-tour-btn:hover{
   background: #6366f1 !important;
   color: #fff !important;
 }
+
+/* ════════════════════════════════════════════════════════════════
+   TEMA CLARO — Calendário Heatmap
+   ════════════════════════════════════════════════════════════════ */
+html.light .heatmap-toggle{
+  background: rgba(15,23,42,.04) !important;
+  border-color: rgba(15,23,42,.08) !important;
+}
+html.light .heatmap-tab{ color: #64748b !important; }
+html.light .heatmap-tab:hover{ color: #0f172a !important; }
+html.light .heatmap-tab.is-active{
+  background: rgba(167,139,250,.18) !important;
+  color: #7c3aed !important;
+}
+html.light .heatmap-svg .heatmap-cell{
+  fill: rgba(15,23,42,.05) !important;
+  stroke: rgba(15,23,42,.04) !important;
+}
+html.light .heatmap-svg .heatmap-cell.level-1{ fill: rgba(16,185,129,.20) !important; }
+html.light .heatmap-svg .heatmap-cell.level-2{ fill: rgba(16,185,129,.42) !important; }
+html.light .heatmap-svg .heatmap-cell.level-3{ fill: rgba(16,185,129,.68) !important; }
+html.light .heatmap-svg .heatmap-cell.level-4{ fill: rgba(16,185,129,.95) !important; }
+html.light .heatmap-svg .heatmap-cell.is-neg.level-1{ fill: rgba(239,68,68,.20) !important; }
+html.light .heatmap-svg .heatmap-cell.is-neg.level-2{ fill: rgba(239,68,68,.42) !important; }
+html.light .heatmap-svg .heatmap-cell.is-neg.level-3{ fill: rgba(239,68,68,.68) !important; }
+html.light .heatmap-svg .heatmap-cell.is-neg.level-4{ fill: rgba(239,68,68,.95) !important; }
+html.light .heatmap-svg .heatmap-month{ fill: #64748b !important; }
+html.light .heatmap-svg .heatmap-dow{ fill: #94a3b8 !important; }
+html.light .heatmap-empty{
+  background: rgba(15,23,42,.02) !important;
+  border-color: rgba(15,23,42,.10) !important;
+  color: #64748b !important;
+}
+html.light .heatmap-legend-label{ color: #64748b !important; }
+html.light .heatmap-legend .heatmap-cell.level-0{ background: rgba(15,23,42,.06) !important; }
+html.light .heatmap-legend-summary{ color: #475569 !important; }
+html.light .heatmap-legend-summary b{ color: #0f172a !important; }
+html.light .heatmap-tooltip{
+  background: #0f172a !important;
+  color: #fff !important;
+  border-color: rgba(167,139,250,.40) !important;
+}

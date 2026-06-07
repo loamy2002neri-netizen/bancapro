@@ -18,8 +18,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
-<link rel="stylesheet" href="style.css?v=177"/>
-<link rel="stylesheet" href="light.css?v=177"/>
+<link rel="stylesheet" href="style.css?v=178"/>
+<link rel="stylesheet" href="light.css?v=178"/>
 </head>
 <body>
 
@@ -1075,6 +1075,38 @@
           <div class="chart-header"><div><div class="chart-title">Receita vs Despesas vs Lucro</div><div class="chart-subtitle">Evolução mensal completa</div></div></div>
           <div id="reportChartWrap" style="position:relative;width:100%;height:320px">
             <canvas id="reportChart"></canvas>
+          </div>
+        </div>
+
+        <!-- Calendário Heatmap de Atividade -->
+        <div class="chart-card heatmap-card" data-card="rep-heatmap">
+          <div class="chart-header" style="align-items:flex-start;gap:12px;flex-wrap:wrap">
+            <div>
+              <div class="chart-title">Calendário de Atividade</div>
+              <div class="chart-subtitle">Últimos 6 meses — clica numa célula pra ver o dia</div>
+            </div>
+            <div class="heatmap-toggle" role="tablist" aria-label="Métrica do heatmap">
+              <button class="heatmap-tab is-active" data-metric="count" onclick="setHeatmapMetric('count', this)">Apostas</button>
+              <button class="heatmap-tab" data-metric="profit" onclick="setHeatmapMetric('profit', this)">Lucro</button>
+            </div>
+          </div>
+          <div id="heatmapWrap" class="heatmap-wrap">
+            <div class="heatmap-empty" id="heatmapEmpty">
+              Sem atividade no período. Lance uma transação pra começar a colorir 🎨
+            </div>
+          </div>
+          <div class="heatmap-legend" id="heatmapLegend" style="display:none">
+            <span class="heatmap-legend-label">Menos</span>
+            <span class="heatmap-legend-scale">
+              <span class="heatmap-cell level-0"></span>
+              <span class="heatmap-cell level-1"></span>
+              <span class="heatmap-cell level-2"></span>
+              <span class="heatmap-cell level-3"></span>
+              <span class="heatmap-cell level-4"></span>
+            </span>
+            <span class="heatmap-legend-label">Mais</span>
+            <span class="heatmap-legend-spacer"></span>
+            <span class="heatmap-legend-summary" id="heatmapSummary"></span>
           </div>
         </div>
         <div class="chart-grid">
@@ -2288,8 +2320,8 @@
   </div>
 </div>
 
-<script src="config.js?v=177" defer></script>
-<script src="storage.js?v=177" defer></script>
-<script src="script.js?v=177" defer></script>
+<script src="config.js?v=178" defer></script>
+<script src="storage.js?v=178" defer></script>
+<script src="script.js?v=178" defer></script>
 </body>
 </html>

@@ -4406,6 +4406,82 @@ html { -webkit-text-size-adjust:100%; text-size-adjust:100%; }
 .help-contact-btn svg{transition:transform .18s ease}
 .help-contact-btn:hover svg{transform:translateX(3px)}
 
+/* ════════════════════════════════════════════════════════════════
+   CALENDÁRIO HEATMAP (Reports → Atividade)
+   ════════════════════════════════════════════════════════════════ */
+.heatmap-card .chart-header{justify-content:space-between}
+.heatmap-toggle{
+  display:inline-flex;background:rgba(255,255,255,.04);
+  border:1px solid rgba(255,255,255,.06);border-radius:8px;padding:3px;gap:2px;
+}
+.heatmap-tab{
+  padding:6px 12px;border:0;background:transparent;cursor:pointer;
+  font-family:inherit;font-size:12px;font-weight:600;color:var(--text-muted);
+  border-radius:6px;transition:all .15s ease;
+}
+.heatmap-tab:hover{color:#e2e8f0}
+.heatmap-tab.is-active{
+  background:rgba(167,139,250,.20);color:#fff;
+  box-shadow:0 1px 3px rgba(0,0,0,.2);
+}
+.heatmap-wrap{
+  margin-top:14px;padding:6px 0 2px;overflow-x:auto;
+  -webkit-overflow-scrolling:touch;
+}
+.heatmap-svg{display:block;min-width:540px;max-width:100%;height:auto}
+.heatmap-svg .heatmap-cell{
+  fill:rgba(255,255,255,.04);
+  stroke:rgba(255,255,255,.02);stroke-width:1;
+  transition:filter .15s ease;cursor:pointer;
+}
+.heatmap-svg .heatmap-cell:hover{filter:brightness(1.4)}
+.heatmap-svg .heatmap-cell.level-1{fill:rgba(16,185,129,.22)}
+.heatmap-svg .heatmap-cell.level-2{fill:rgba(16,185,129,.42)}
+.heatmap-svg .heatmap-cell.level-3{fill:rgba(16,185,129,.68)}
+.heatmap-svg .heatmap-cell.level-4{fill:rgba(16,185,129,.95)}
+.heatmap-svg .heatmap-cell.is-neg.level-1{fill:rgba(239,68,68,.22)}
+.heatmap-svg .heatmap-cell.is-neg.level-2{fill:rgba(239,68,68,.42)}
+.heatmap-svg .heatmap-cell.is-neg.level-3{fill:rgba(239,68,68,.68)}
+.heatmap-svg .heatmap-cell.is-neg.level-4{fill:rgba(239,68,68,.95)}
+.heatmap-svg .heatmap-month{
+  font-size:9.5px;font-weight:600;fill:var(--text-muted);
+  font-family:inherit;text-transform:uppercase;letter-spacing:.5px;
+}
+.heatmap-svg .heatmap-dow{font-size:9px;fill:var(--text-muted);font-family:inherit}
+.heatmap-empty{
+  padding:24px 16px;text-align:center;color:var(--text-muted);
+  font-size:13px;border:1px dashed rgba(255,255,255,.10);
+  border-radius:10px;background:rgba(255,255,255,.015);
+}
+.heatmap-legend{
+  display:flex;align-items:center;gap:8px;margin-top:14px;
+  flex-wrap:wrap;
+}
+.heatmap-legend-label{font-size:11px;color:var(--text-muted)}
+.heatmap-legend-scale{display:inline-flex;gap:3px}
+.heatmap-legend .heatmap-cell{
+  width:12px;height:12px;border-radius:3px;display:inline-block;
+}
+.heatmap-legend .heatmap-cell.level-0{background:rgba(255,255,255,.06)}
+.heatmap-legend .heatmap-cell.level-1{background:rgba(16,185,129,.22)}
+.heatmap-legend .heatmap-cell.level-2{background:rgba(16,185,129,.42)}
+.heatmap-legend .heatmap-cell.level-3{background:rgba(16,185,129,.68)}
+.heatmap-legend .heatmap-cell.level-4{background:rgba(16,185,129,.95)}
+.heatmap-legend-spacer{flex:1;min-width:8px}
+.heatmap-legend-summary{font-size:12px;color:#cbd5e1}
+.heatmap-legend-summary b{color:#fff;font-weight:700}
+.heatmap-legend-summary.is-pos b{color:#10b981}
+.heatmap-legend-summary.is-neg b{color:#ef4444}
+.heatmap-tooltip{
+  position:absolute;display:none;z-index:9999;
+  padding:6px 10px;background:#0f172a;color:#fff;
+  border:1px solid rgba(167,139,250,.30);border-radius:6px;
+  font-size:11.5px;font-weight:600;white-space:nowrap;
+  box-shadow:0 8px 24px rgba(0,0,0,.4);
+  pointer-events:none;
+}
+@media (max-width: 720px){ .heatmap-svg{min-width:480px} }
+
 .help-tour-card{
   display:flex;align-items:center;gap:14px;
   padding:14px 18px;border-radius:12px;
