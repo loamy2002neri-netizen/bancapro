@@ -5765,8 +5765,17 @@ function _heatBuildBuckets(){
 
 function _heatLevel(val, max, metric){
   if (!val) return 0;
-  // Escala 1..4 (verde sequencial OU vermelho sequencial dependendo do sinal)
-  const ratio = (metric === 'profit') ? (Math.abs(val) / max) : (val / max);
+  if (metric === 'profit'){
+    // Escala sequencial 1..6 matching mockup (vinho->lilas)
+    const ratio = Math.abs(val) / max;
+    if (ratio > 0.83) return 6;
+    if (ratio > 0.66) return 5;
+    if (ratio > 0.5) return 4;
+    if (ratio > 0.33) return 3;
+    if (ratio > 0.16) return 2;
+    return 1;
+  }
+  const ratio = val / max;
   if (ratio > 0.75) return 4;
   if (ratio > 0.5) return 3;
   if (ratio > 0.25) return 2;
@@ -5852,13 +5861,13 @@ function renderActivityHeatmap(){
       const b = buckets[key];
       const val = b ? (metric === 'profit' ? b.profit : b.count) : 0;
       const level = b ? _heatLevel(val, maxVal, metric) : 0;
-      const isNeg = (metric === 'profit' && val < 0);
       const x = dowLabelW + w * (cellSize + gap);
       const y = monthLabelH + r * (cellSize + gap);
       const tooltip = _heatTooltip(d, b, metric);
-      // Verde = lucrou, Vermelho = perdeu, Cinza = sem aposta
-      const cls = 'heatmap-cell level-'+level + (isNeg && level > 0 ? ' is-neg' : '');
-      cells.push('<rect x="'+x+'" y="'+y+'" width="'+cellSize+'" height="'+cellSize+'" rx="3" class="'+cls+'" data-date="'+key+'" data-tooltip="'+tooltip+'" />');
+      // Modo profit: escala sequencial 6 cores (vinho->lilas). Modo apostas: verde
+      const baseCls = (metric === 'profit') ? 'heatmap-cell-p' : 'heatmap-cell';
+      const cls = baseCls + ' level-'+level;
+      cells.push('<rect x="'+x+'" y="'+y+'" width="'+cellSize+'" height="'+cellSize+'" rx="4" class="'+cls+'" data-date="'+key+'" data-tooltip="'+tooltip+'" />');
 
       // Label do mes + ano — primeira semana de cada mes na linha 0
       if (r === 0 && d.getMonth() !== lastMonth){
@@ -5889,19 +5898,16 @@ function renderActivityHeatmap(){
         // Legenda compacta estilo mockup mas com vermelho->verde divergente
         // (mantem semantica: vermelho perdeu, verde lucrou)
         legendItems.innerHTML =
-          '<span class="heatmap-legitem-label">Perdeu mais</span>' +
+          '<span class="heatmap-legitem-label">Menos lucro</span>' +
           '<span class="heatmap-legitem-scale">' +
-            '<span class="heatmap-cell is-neg level-4"></span>' +
-            '<span class="heatmap-cell is-neg level-3"></span>' +
-            '<span class="heatmap-cell is-neg level-2"></span>' +
-            '<span class="heatmap-cell is-neg level-1"></span>' +
-            '<span class="heatmap-cell level-0"></span>' +
-            '<span class="heatmap-cell level-1"></span>' +
-            '<span class="heatmap-cell level-2"></span>' +
-            '<span class="heatmap-cell level-3"></span>' +
-            '<span class="heatmap-cell level-4"></span>' +
+            '<span class="heatmap-cell-p level-1"></span>' +
+            '<span class="heatmap-cell-p level-2"></span>' +
+            '<span class="heatmap-cell-p level-3"></span>' +
+            '<span class="heatmap-cell-p level-4"></span>' +
+            '<span class="heatmap-cell-p level-5"></span>' +
+            '<span class="heatmap-cell-p level-6"></span>' +
           '</span>' +
-          '<span class="heatmap-legitem-label">Lucrou mais</span>';
+          '<span class="heatmap-legitem-label">Mais lucro</span>';
       } else {
         // Modo apostas: escala verde com numeros reais
         const q = Math.max(1, Math.round(maxVal / 4));
