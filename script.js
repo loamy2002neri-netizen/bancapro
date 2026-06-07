@@ -1695,7 +1695,7 @@ function goTo(section, el) {
       if(n.textContent.toLowerCase().includes(section.toLowerCase())) n.classList.add('active');
     });
   }
-  const labels = {dashboard:'Dashboard',methods:'Métodos',transactions:'Transações',accounts:'Contas Depositadas',recharge:'Assinatura',reports:'Relatórios',goals:'Metas',compare:'Comparativo',calculadora:'Calculadora',anotacoes:'Anotações',ranking:'Ranking',settings:'Configurações',admin:'Admin',afiliado:'Minhas Indicações',afiliados:'Afiliados',personalizar:'Personalizar'};
+  const labels = {dashboard:'Dashboard',methods:'Métodos',transactions:'Transações',accounts:'Contas Depositadas',recharge:'Assinatura',reports:'Relatórios',goals:'Metas',compare:'Comparativo',calculadora:'Calculadora',anotacoes:'Anotações',ranking:'Ranking',settings:'Configurações',help:'Ajuda',admin:'Admin',afiliado:'Minhas Indicações',afiliados:'Afiliados',personalizar:'Personalizar'};
   var _bc = document.getElementById('breadcrumb'); if(_bc) _bc.textContent = labels[section] || section;
   closeSidebar();
   if(section === 'reports') setTimeout(initReportCharts, 100);
@@ -7789,5 +7789,21 @@ function rankRenderDashCard(profit, currentTier, board_users){
     if (elig.txCount < RANK_ELIGIBILITY.minTx) missing.push((RANK_ELIGIBILITY.minTx - elig.txCount)+' transações');
     if (elig.distinctDays < RANK_ELIGIBILITY.minActiveDays) missing.push((RANK_ELIGIBILITY.minActiveDays - elig.distinctDays)+' dias de atividade');
     document.getElementById('dashRankSub').innerHTML = '🔒 Faltam <b>'+missing.join(' · ')+'</b> pra entrar';
+  }
+}
+
+// ══════════════════════════════════════════════
+//  FAQ — accordion da Central de Ajuda
+// ══════════════════════════════════════════════
+function toggleFaq(btn){
+  if (!btn) return;
+  const item = btn.closest('.help-faq-item');
+  if (!item) return;
+  const expanded = item.classList.toggle('is-open');
+  btn.setAttribute('aria-expanded', expanded ? 'true' : 'false');
+  // Fecha os outros do mesmo grupo pra UX limpa (1 aberto por vez)
+  if (expanded){
+    const all = item.parentElement ? item.parentElement.querySelectorAll('.help-faq-item.is-open') : [];
+    all.forEach(it => { if (it !== item){ it.classList.remove('is-open'); const b = it.querySelector('.help-faq-q'); if (b) b.setAttribute('aria-expanded','false'); } });
   }
 }

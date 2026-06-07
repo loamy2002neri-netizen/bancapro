@@ -692,3 +692,40 @@ html.light .transactions-card{
   border: 1px solid rgba(15,23,42,.08) !important;
 }
 html.light .transactions-header-title{ color: #0f172a !important; }
+
+/* ════════════════════════════════════════════════════════════════
+   TEMA CLARO — Central de Ajuda (FAQ)
+   ════════════════════════════════════════════════════════════════ */
+html.light .help-contact-card{
+  background: linear-gradient(135deg, rgba(167,139,250,.10), #ffffff) !important;
+  border: 1px solid rgba(167,139,250,.30) !important;
+}
+html.light .help-contact-title{ color: #0f172a !important; }
+html.light .help-contact-sub{ color: #475569 !important; }
+html.light .help-contact-sub b{ color: #0f172a !important; }
+html.light .help-faq-category{ color: #7c3aed !important; }
+html.light .help-faq-item{
+  background: #ffffff !important;
+  border: 1px solid rgba(15,23,42,.10) !important;
+}
+html.light .help-faq-item:hover{
+  border-color: rgba(167,139,250,.35) !important;
+  background: rgba(167,139,250,.04) !important;
+}
+html.light .help-faq-item.is-open{
+  border-color: rgba(167,139,250,.45) !important;
+  background: rgba(167,139,250,.06) !important;
+}
+html.light .help-faq-q{ color: #0f172a !important; }
+html.light .help-faq-q:hover{ color: #0f172a !important; }
+html.light .help-faq-arrow{
+  background: rgba(167,139,250,.18) !important;
+  color: #7c3aed !important;
+}
+html.light .help-faq-item.is-open .help-faq-arrow{
+  background: rgba(167,139,250,.32) !important;
+  color: #fff !important;
+}
+html.light .help-faq-a p{ color: #475569 !important; }
+html.light .help-faq-a b{ color: #0f172a !important; }
+html.light .help-faq-a a{ color: #7c3aed !important; }

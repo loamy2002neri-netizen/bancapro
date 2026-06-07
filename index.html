@@ -18,8 +18,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
-<link rel="stylesheet" href="style.css?v=174"/>
-<link rel="stylesheet" href="light.css?v=174"/>
+<link rel="stylesheet" href="style.css?v=175"/>
+<link rel="stylesheet" href="light.css?v=175"/>
 </head>
 <body>
 
@@ -418,6 +418,7 @@
       <div class="nav-item nav-upgrade-pro" id="navUpgradePro" onclick="upgradeNavClick(event)" style="display:none"><span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M12 2l2.5 6.5L21 9l-5 4.5L17.5 21 12 17.5 6.5 21 8 13.5 3 9l6.5-.5L12 2z" fill="currentColor" stroke="none"/></svg></span>Upgrade Pro<span class="upgrade-arrow">→</span></div>
       <div class="nav-item nav-personalizar" onclick="goTo('personalizar',this)"><span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M12 3l2.4 4.8L20 9l-4 4 .9 5.5L12 16l-4.9 2.5L8 13 4 9l5.6-1.2z"/></svg></span>Personalizar</div>
       <div class="nav-item" onclick="goTo('settings',this)"><span class="nav-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 01-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg></span>Configurações</div>
+      <div class="nav-item" onclick="goTo('help',this)"><span class="nav-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></span>Ajuda</div>
       <div class="nav-item" id="navAfiliado" onclick="goTo('afiliado',this)" style="display:none"><span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg></span>Minhas Indicações</div>
       <div class="nav-item" id="navAdmin" onclick="goTo('admin',this)" style="display:none"><span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M12 2l8 4v6c0 5-3.5 9-8 10-4.5-1-8-5-8-10V6l8-4z"/><path d="M9 12l2 2 4-4"/></svg></span>Admin</div>
       <div class="nav-item" id="navAfiliados" onclick="goTo('afiliados',this)" style="display:none"><span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg></span>Afiliados</div>
@@ -1164,6 +1165,138 @@
             <button class="btn-ghost" style="padding:6px 14px;font-size:12px" onclick="openMethodsCompareModal()">Editar métodos</button>
           </div>
           <div id="compareBarsList" style="display:flex;flex-direction:column;gap:12px"></div>
+        </div>
+      </div>
+
+      <!-- ═══ AJUDA (FAQ + Suporte) ═══ -->
+      <div class="section" id="sec-help">
+        <div class="page-header">
+          <div class="page-title">Central de Ajuda</div>
+          <div class="page-subtitle">Tudo o que você precisa saber. Não achou? Fale comigo direto.</div>
+        </div>
+
+        <!-- Cartão de contato direto -->
+        <div class="help-contact-card">
+          <div class="help-contact-icon">
+            <svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          </div>
+          <div class="help-contact-content">
+            <div class="help-contact-title">Não achou sua resposta?</div>
+            <div class="help-contact-sub">Mando email pra você em até <b>24h úteis</b>. Suporte 1 a 1 — sem bot, sem fila.</div>
+          </div>
+          <a href="mailto:suporteapostack@gmail.com?subject=Suporte%20Apostack" class="help-contact-btn">
+            Falar com suporte
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          </a>
+        </div>
+
+        <!-- FAQ Accordion -->
+        <div class="help-faq-section">
+          <div class="help-faq-category">Conta &amp; Login</div>
+
+          <div class="help-faq-item">
+            <button class="help-faq-q" onclick="toggleFaq(this)" aria-expanded="false">
+              <span>Esqueci minha senha. E agora?</span>
+              <span class="help-faq-arrow">+</span>
+            </button>
+            <div class="help-faq-a">
+              <p>Na tela de login, clica em <b>"Esqueceu a senha?"</b> e informa seu email. Você recebe um link em segundos pra criar uma nova. Se não chegar, confere o spam — alguns provedores filtram. Sem link em 5min? Manda email pra <a href="mailto:suporteapostack@gmail.com">suporteapostack@gmail.com</a> que eu reseto manualmente.</p>
+            </div>
+          </div>
+
+          <div class="help-faq-item">
+            <button class="help-faq-q" onclick="toggleFaq(this)" aria-expanded="false">
+              <span>Posso usar o Apostack em mais de um aparelho?</span>
+              <span class="help-faq-arrow">+</span>
+            </button>
+            <div class="help-faq-a">
+              <p>Sim. Tudo é sincronizado pela nuvem: lança no celular, vê no PC. Basta fazer login com o mesmo email. Funciona em qualquer navegador moderno (Chrome, Edge, Safari, Firefox).</p>
+            </div>
+          </div>
+
+          <div class="help-faq-item">
+            <button class="help-faq-q" onclick="toggleFaq(this)" aria-expanded="false">
+              <span>Meus dados estão seguros?</span>
+              <span class="help-faq-arrow">+</span>
+            </button>
+            <div class="help-faq-a">
+              <p>Sim. Todos os dados ficam criptografados no <b>Supabase</b> (provedor profissional usado por milhares de empresas, hospedado na AWS). Sua senha nunca é armazenada em texto — só um hash irreversível. Ninguém — nem eu — consegue ver sua senha.</p>
+            </div>
+          </div>
+
+          <div class="help-faq-category">Trial &amp; Assinatura</div>
+
+          <div class="help-faq-item">
+            <button class="help-faq-q" onclick="toggleFaq(this)" aria-expanded="false">
+              <span>Como funciona o trial de 7 dias?</span>
+              <span class="help-faq-arrow">+</span>
+            </button>
+            <div class="help-faq-a">
+              <p>Quando você cria a conta, ganha <b>7 dias grátis com acesso completo</b> — sem precisar cartão de crédito. Após o trial, se quiser continuar, escolhe um plano. Se não, você ainda pode usar a versão Free (limitada). <b>Não há cobrança automática</b>.</p>
+            </div>
+          </div>
+
+          <div class="help-faq-item">
+            <button class="help-faq-q" onclick="toggleFaq(this)" aria-expanded="false">
+              <span>Como cancelar minha assinatura?</span>
+              <span class="help-faq-arrow">+</span>
+            </button>
+            <div class="help-faq-a">
+              <p>Vai em <b>Configurações → Gerenciar Assinatura</b> e clica em "Cancelar". Você continua com acesso Pro até o fim do período pago (sem perda). Sem letra miúda, sem fila, sem retenção forçada. Se preferir, manda email pra <a href="mailto:suporteapostack@gmail.com">suporteapostack@gmail.com</a> que eu cancelo na hora.</p>
+            </div>
+          </div>
+
+          <div class="help-faq-item">
+            <button class="help-faq-q" onclick="toggleFaq(this)" aria-expanded="false">
+              <span>Quais formas de pagamento são aceitas?</span>
+              <span class="help-faq-arrow">+</span>
+            </button>
+            <div class="help-faq-a">
+              <p><b>Cartão de crédito</b> (Visa, Master, Elo, Amex), <b>PIX</b> e <b>boleto</b>. O processamento é feito pela <b>Kirvano</b>, plataforma certificada e segura. Recibo enviado por email automaticamente.</p>
+            </div>
+          </div>
+
+          <div class="help-faq-category">Uso do App</div>
+
+          <div class="help-faq-item">
+            <button class="help-faq-q" onclick="toggleFaq(this)" aria-expanded="false">
+              <span>Como exportar minhas transações?</span>
+              <span class="help-faq-arrow">+</span>
+            </button>
+            <div class="help-faq-a">
+              <p>Vai na aba <b>Transações</b> e clica em <b>"Excel"</b> (CSV — abre no Excel/Google Sheets) ou <b>"Exportar PDF"</b>. O arquivo respeita os filtros ativos (período, método etc) e inclui data, descrição, categoria, método, tipo e valor. Útil pra contador e declaração de IR.</p>
+            </div>
+          </div>
+
+          <div class="help-faq-item">
+            <button class="help-faq-q" onclick="toggleFaq(this)" aria-expanded="false">
+              <span>Posso editar ou apagar uma transação?</span>
+              <span class="help-faq-arrow">+</span>
+            </button>
+            <div class="help-faq-a">
+              <p>Sim. Na lista de transações, cada linha tem um botão <b>✏️ (editar)</b> e um botão de excluir. Você também pode <b>reordenar</b> arrastando (ou segurando no mobile). As edições são salvas na hora e sincronizadas entre seus aparelhos.</p>
+            </div>
+          </div>
+
+          <div class="help-faq-item">
+            <button class="help-faq-q" onclick="toggleFaq(this)" aria-expanded="false">
+              <span>Como aparecer no ranking público?</span>
+              <span class="help-faq-arrow">+</span>
+            </button>
+            <div class="help-faq-a">
+              <p>O ranking é automático: basta lançar transações com lucro. Você compete com outros usuários por ROI, lucro total e consistência. Em <b>Configurações</b>, você escolhe o nome/foto que aparece (ou fica anônimo como <i>refuser123</i>). Quer privacidade total? Pode desativar a participação no ranking.</p>
+            </div>
+          </div>
+
+          <div class="help-faq-item">
+            <button class="help-faq-q" onclick="toggleFaq(this)" aria-expanded="false">
+              <span>O Apostack faz palpites ou usa IA pra prever resultados?</span>
+              <span class="help-faq-arrow">+</span>
+            </button>
+            <div class="help-faq-a">
+              <p><b>Não.</b> Apostack é uma ferramenta de <b>medição</b> — mostra qual método/esporte realmente te dá lucro. Você decide o que apostar. Funciona com qualquer estratégia: tipster, IA externa, análise própria. Sem palpite, sem promessa mágica — só seus números, organizados.</p>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -2143,8 +2276,8 @@
   </div>
 </div>
 
-<script src="config.js?v=174" defer></script>
-<script src="storage.js?v=174" defer></script>
-<script src="script.js?v=174" defer></script>
+<script src="config.js?v=175" defer></script>
+<script src="storage.js?v=175" defer></script>
+<script src="script.js?v=175" defer></script>
 </body>
 </html>
