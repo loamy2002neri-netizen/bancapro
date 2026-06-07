@@ -286,6 +286,9 @@ async function enterApp(user) {
   try { cachePlanLabel(user); } catch(e){}
   // Onboarding: mostra welcome modal na 1a visita autenticada
   try { if (typeof maybeShowWelcome === 'function') maybeShowWelcome(); } catch(e){}
+  // Tour guiado de 12 passos pra usuarios novos (zero/poucas transacoes).
+  // Veteranos sao auto-marcados como "ja viu" silenciosamente.
+  try { if (typeof maybeStartTour === 'function') maybeStartTour(); } catch(e){}
   // Menu Admin/Afiliados só para o dono
   try {
     const isOwner = OWNER_EMAILS.includes((user.email || '').toLowerCase());
@@ -2298,9 +2301,20 @@ function closeTour() {
 
 function maybeStartTour() {
   try {
-    if (localStorage.getItem('bancapro-tour-done') !== '1') {
-      setTimeout(startTour, 900);
+    // Se ja marcado como visto, nao mostra
+    if (localStorage.getItem('bancapro-tour-done') === '1') return;
+    // Veteranos: usuario que ja tem 3+ transacoes claramente nao precisa
+    // de tour (ja entendeu o app). Marca como visto silenciosamente
+    // pra nao incomodar nas proximas sessoes.
+    let txCount = 0;
+    if (typeof transactions !== 'undefined' && Array.isArray(transactions)) txCount = transactions.length;
+    else { try { txCount = (JSON.parse(localStorage.getItem('bancapro-transactions') || '[]')||[]).length; } catch(e){} }
+    if (txCount >= 3){
+      try { localStorage.setItem('bancapro-tour-done', '1'); } catch(e){}
+      return;
     }
+    // Usuario novo (zero ou poucas transacoes) — mostra o tour
+    setTimeout(startTour, 1500);
   } catch(e){}
 }
 
@@ -7795,6 +7809,11 @@ function rankRenderDashCard(profit, currentTier, board_users){
 // ══════════════════════════════════════════════
 //  FAQ — accordion da Central de Ajuda
 // ══════════════════════════════════════════════
+function restartTour(){
+  try { localStorage.removeItem('bancapro-tour-done'); } catch(e){}
+  if (typeof startTour === 'function') startTour();
+}
+
 function toggleFaq(btn){
   if (!btn) return;
   const item = btn.closest('.help-faq-item');

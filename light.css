@@ -729,3 +729,22 @@ html.light .help-faq-item.is-open .help-faq-arrow{
 html.light .help-faq-a p{ color: #475569 !important; }
 html.light .help-faq-a b{ color: #0f172a !important; }
 html.light .help-faq-a a{ color: #7c3aed !important; }
+html.light .help-tour-card{
+  background: linear-gradient(135deg, rgba(99,102,241,.08), #ffffff) !important;
+  border: 1px solid rgba(99,102,241,.30) !important;
+}
+html.light .help-tour-icon{
+  background: rgba(99,102,241,.16) !important;
+  color: #6366f1 !important;
+}
+html.light .help-tour-title{ color: #0f172a !important; }
+html.light .help-tour-sub{ color: #475569 !important; }
+html.light .help-tour-sub b{ color: #0f172a !important; }
+html.light .help-tour-btn{
+  background: rgba(99,102,241,.16) !important;
+  color: #4338ca !important;
+}
+html.light .help-tour-btn:hover{
+  background: #6366f1 !important;
+  color: #fff !important;
+}

@@ -4406,6 +4406,29 @@ html { -webkit-text-size-adjust:100%; text-size-adjust:100%; }
 .help-contact-btn svg{transition:transform .18s ease}
 .help-contact-btn:hover svg{transform:translateX(3px)}
 
+.help-tour-card{
+  display:flex;align-items:center;gap:14px;
+  padding:14px 18px;border-radius:12px;
+  background:linear-gradient(135deg,rgba(99,102,241,.08),rgba(99,102,241,.02));
+  border:1px solid rgba(99,102,241,.22);
+  margin-bottom:24px;
+}
+.help-tour-icon{
+  flex-shrink:0;width:42px;height:42px;border-radius:10px;
+  background:rgba(99,102,241,.18);color:#a78bfa;
+  display:flex;align-items:center;justify-content:center;
+}
+.help-tour-content{flex:1;min-width:0}
+.help-tour-title{font-size:14px;font-weight:700;color:#fff;margin-bottom:2px}
+.help-tour-sub{font-size:12px;color:var(--text-muted);line-height:1.45}
+.help-tour-sub b{color:#cbd5e1}
+.help-tour-btn{
+  flex-shrink:0;padding:9px 16px;border-radius:9px;border:0;cursor:pointer;
+  background:rgba(99,102,241,.20);color:#c7d2fe;font-weight:700;font-size:12.5px;
+  font-family:inherit;transition:all .18s ease;
+}
+.help-tour-btn:hover{background:rgba(99,102,241,.32);color:#fff;transform:translateY(-1px)}
+
 .help-faq-section{display:flex;flex-direction:column;gap:8px}
 .help-faq-category{
   font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:1.2px;
@@ -4459,6 +4482,8 @@ html { -webkit-text-size-adjust:100%; text-size-adjust:100%; }
 @media (max-width: 720px){
   .help-contact-card{flex-direction:column;align-items:flex-start;gap:12px;padding:16px}
   .help-contact-btn{width:100%;justify-content:center}
+  .help-tour-card{flex-direction:column;align-items:flex-start;gap:10px;padding:14px}
+  .help-tour-btn{width:100%}
   .help-faq-q{font-size:13px;padding:12px 14px}
   .help-faq-a p{font-size:12.5px}
 }
