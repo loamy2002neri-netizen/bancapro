@@ -4577,11 +4577,11 @@ setInterval(function(){
   if (document.visibilityState === 'visible') refreshPlanAndUI();
 }, 90000);
 
-function toggleFaq(el) {
-  const item = el.closest('.faq-item');
-  if(!item) return;
-  item.classList.toggle('open');
-}
+// REMOVIDO: definicao antiga conflitava com toggleFaq() da Central de Ajuda
+// (linha ~8274). A versao consolidada abaixo lida com AMBOS os FAQs:
+// - .faq-item (pagina de Assinatura/Recharge — usa class 'open')
+// - .help-faq-item (Central de Ajuda — usa class 'is-open')
+// Funcao unificada no fim do script.js (RESTART tour + toggleFaq).
 
 // ══════════════════════════════════════════════
 //  SETTINGS
@@ -8273,6 +8273,13 @@ function restartTour(){
 
 function toggleFaq(btn){
   if (!btn) return;
+  // Caso 1: FAQ antigo (pagina de Assinatura/Recharge) — .faq-item com class 'open'
+  const legacyItem = btn.closest('.faq-item');
+  if (legacyItem){
+    legacyItem.classList.toggle('open');
+    return;
+  }
+  // Caso 2: FAQ novo (Central de Ajuda) — .help-faq-item com class 'is-open'
   const item = btn.closest('.help-faq-item');
   if (!item) return;
   const expanded = item.classList.toggle('is-open');
