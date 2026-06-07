@@ -1791,13 +1791,16 @@ var CARDS_CATALOG = [
       icon: '<path d="M3 3v18h18"/><path d="M7 14l4-4 4 4 5-6"/>',
       accent: '#3b82f6'
     },
-    {
-      key: 'rep-heatmap',
-      title: 'Calendário de Atividade',
-      desc: 'Heatmap dos últimos 6 meses — apostas ou lucro por dia',
-      icon: '<rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>',
-      accent: '#10b981'
-    },
+    // rep-heatmap removido temporariamente do catalog enquanto o card
+    // fica oculto em producao (feature flag _isHeatmapEnabled em script.js).
+    // Quando liberar, descomentar:
+    // {
+    //   key: 'rep-heatmap',
+    //   title: 'Calendário de Atividade',
+    //   desc: 'Heatmap dos últimos 6 meses — apostas ou lucro por dia',
+    //   icon: '<rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>',
+    //   accent: '#10b981'
+    // },
     {
       key: 'rep-despesas',
       title: 'Distribuição de Despesas',
@@ -5744,7 +5747,24 @@ function buildReportCharts() {
 
 function initReportCharts() {
   buildReportCharts();
-  try { renderActivityHeatmap(); } catch(e){}
+  // Heatmap so renderiza se o card estiver visivel (preview/localhost por enquanto)
+  try {
+    if (_isHeatmapEnabled()) {
+      const card = document.getElementById('heatmapCard');
+      if (card) card.style.display = '';
+      renderActivityHeatmap();
+    }
+  } catch(e){}
+}
+
+// Feature flag: heatmap visivel apenas em preview/localhost ou via ?heatmap=1
+function _isHeatmapEnabled(){
+  try {
+    const h = location.hostname || '';
+    if (h === 'localhost' || h === '127.0.0.1' || h.startsWith('192.168.') || h.endsWith('.local')) return true;
+    if (new URLSearchParams(location.search).get('heatmap') === '1') return true;
+    return false;
+  } catch(e){ return false; }
 }
 
 // ══════════════════════════════════════════════
