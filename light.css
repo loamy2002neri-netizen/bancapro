@@ -762,21 +762,18 @@ html.light .heatmap-tab.is-active{
   background: rgba(167,139,250,.18) !important;
   color: #7c3aed !important;
 }
-html.light .heatmap-svg .heatmap-cell,
-html.light .heatmap-svg .heatmap-cell-p{
+html.light .heatmap-svg .heatmap-cell{
   fill: rgba(15,23,42,.05) !important;
   stroke: rgba(167,139,250,.18) !important;
 }
-html.light .heatmap-svg .heatmap-cell.level-1{ fill: rgba(16,185,129,.22) !important; stroke: transparent !important; }
-html.light .heatmap-svg .heatmap-cell.level-2{ fill: rgba(16,185,129,.45) !important; stroke: transparent !important; }
-html.light .heatmap-svg .heatmap-cell.level-3{ fill: rgba(16,185,129,.70) !important; stroke: transparent !important; }
+html.light .heatmap-svg .heatmap-cell.level-1{ fill: rgba(16,185,129,.25) !important; stroke: transparent !important; }
+html.light .heatmap-svg .heatmap-cell.level-2{ fill: rgba(16,185,129,.50) !important; stroke: transparent !important; }
+html.light .heatmap-svg .heatmap-cell.level-3{ fill: rgba(16,185,129,.72) !important; stroke: transparent !important; }
 html.light .heatmap-svg .heatmap-cell.level-4{ fill: rgba(16,185,129,.95) !important; stroke: transparent !important; }
-html.light .heatmap-svg .heatmap-cell-p.level-1{ fill: #c97a86 !important; stroke: transparent !important; }
-html.light .heatmap-svg .heatmap-cell-p.level-2{ fill: #b04156 !important; stroke: transparent !important; }
-html.light .heatmap-svg .heatmap-cell-p.level-3{ fill: #6b7eb0 !important; stroke: transparent !important; }
-html.light .heatmap-svg .heatmap-cell-p.level-4{ fill: #7d6dba !important; stroke: transparent !important; }
-html.light .heatmap-svg .heatmap-cell-p.level-5{ fill: #a78bdb !important; stroke: transparent !important; }
-html.light .heatmap-svg .heatmap-cell-p.level-6{ fill: #d4c3ed !important; stroke: transparent !important; }
+html.light .heatmap-svg .heatmap-cell.is-neg.level-1{ fill: rgba(239,68,68,.25) !important; stroke: transparent !important; }
+html.light .heatmap-svg .heatmap-cell.is-neg.level-2{ fill: rgba(239,68,68,.50) !important; stroke: transparent !important; }
+html.light .heatmap-svg .heatmap-cell.is-neg.level-3{ fill: rgba(239,68,68,.72) !important; stroke: transparent !important; }
+html.light .heatmap-svg .heatmap-cell.is-neg.level-4{ fill: rgba(239,68,68,.95) !important; stroke: transparent !important; }
 html.light .heatmap-svg .heatmap-month{ fill: #64748b !important; }
 html.light .heatmap-svg .heatmap-dow{ fill: #94a3b8 !important; }
 html.light .heatmap-empty{
