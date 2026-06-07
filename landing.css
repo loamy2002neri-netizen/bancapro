@@ -2593,6 +2593,123 @@ body.lp-menu-open .lp-mobile-menu { display: flex; }
 }
 .lp-vs-result svg { color: var(--lp-purple-2); flex-shrink: 0; }
 
+/* ════════════════════════════════════════════════════════════════
+   COMPARATIVO DE MERCADO (sec-market)
+   Tabela comparativa Apostack vs concorrentes reais (Pikkit, Mobills,
+   MyBetSpace etc) baseada em benchmark de 20 empresas.
+   ════════════════════════════════════════════════════════════════ */
+.lp-market-table-wrap{
+  overflow-x: auto;
+  margin: 0 -8px 28px;
+  padding: 0 8px;
+  scrollbar-width: thin;
+}
+.lp-market-table{
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  border-radius: 16px;
+  overflow: hidden;
+  background: rgba(13,15,30,0.7);
+  border: 1px solid var(--lp-border-hi);
+  font-size: 14px;
+  min-width: 640px;
+}
+.lp-market-table th,
+.lp-market-table td{
+  padding: 14px 18px;
+  text-align: left;
+  border-bottom: 1px solid var(--lp-border);
+  color: var(--lp-text-2);
+  vertical-align: middle;
+}
+.lp-market-table thead th{
+  background: rgba(124,92,255,.08);
+  color: var(--lp-text);
+  font-size: 12.5px;
+  font-weight: 700;
+  letter-spacing: .3px;
+  text-transform: uppercase;
+}
+.lp-market-table thead th small{
+  display: block;
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--lp-text-3);
+  text-transform: none;
+  letter-spacing: 0;
+  margin-top: 2px;
+}
+.lp-market-table tbody tr:last-child td{ border-bottom: 0; }
+.lp-market-table tbody td:first-child{
+  font-weight: 700;
+  color: var(--lp-text);
+  background: rgba(255,255,255,.02);
+}
+.lp-market-table .lp-market-th-app{
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, var(--lp-purple), var(--lp-purple-2));
+  color: #fff;
+  font-weight: 800;
+  font-size: 13px;
+  letter-spacing: .2px;
+}
+.lp-market-table .lp-market-good{
+  color: var(--lp-text);
+  font-weight: 600;
+  background: rgba(124,92,255,.06);
+}
+
+.lp-market-callout{
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 18px 22px;
+  background: linear-gradient(135deg, rgba(124,92,255,.10), rgba(13,15,30,.7));
+  border: 1px solid rgba(124,92,255,.25);
+  border-radius: 14px;
+  margin-bottom: 24px;
+}
+.lp-market-callout-icon{
+  flex-shrink: 0;
+  width: 44px; height: 44px;
+  border-radius: 12px;
+  background: rgba(124,92,255,.18);
+  color: var(--lp-purple-2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.lp-market-callout-title{
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--lp-text);
+  margin-bottom: 4px;
+  letter-spacing: -.2px;
+}
+.lp-market-callout-sub{
+  font-size: 13.5px;
+  color: var(--lp-text-2);
+  line-height: 1.5;
+}
+.lp-market-callout-sub b{ color: var(--lp-text); font-weight: 700; }
+
+.lp-market-cta{
+  display: flex;
+  justify-content: center;
+}
+
+@media (max-width: 720px){
+  .lp-market-table{ font-size: 12.5px; min-width: 560px; }
+  .lp-market-table th, .lp-market-table td{ padding: 11px 12px; }
+  .lp-market-callout{ padding: 14px 16px; gap: 10px; }
+  .lp-market-callout-icon{ width: 36px; height: 36px; border-radius: 10px; }
+  .lp-market-callout-title{ font-size: 14.5px; }
+  .lp-market-callout-sub{ font-size: 12.5px; }
+}
+
 /* Mobile: o pill format com text-align center quebra em varias linhas
    apertadas. Vira card retangular com mais respiro. */
 @media (max-width: 720px){
