@@ -4375,8 +4375,21 @@ function getOnboardingProgress(){
     if (typeof goals !== 'undefined' && Array.isArray(goals)) goalsList = goals;
     else { try { goalsList = JSON.parse(localStorage.getItem('bancapro-goals') || '[]'); } catch(e){} }
     if (Array.isArray(goalsList) && goalsList.length > 0) done.meta = true;
-    // Visitou Ranking
+    // Visitou Ranking (chave explicita)
     if (localStorage.getItem('bancapro-visited-ranking') === '1') done.ranking = true;
+    // Fallback: se ja tem >=3 transacoes E os outros 4 passos estao OK,
+    // assume que ranking ja foi visto (usuario claramente engajado).
+    // Sem isso, o card fica preso em "4 de 5" pra sempre quando o hook
+    // de goTo nao registrou a visita (ex: app recarregado antes do click).
+    if (!done.ranking && done.banca && done.metodo && done.transacao && done.meta){
+      const txLen = (typeof transactions !== 'undefined' && Array.isArray(transactions))
+        ? transactions.length
+        : (function(){ try { return (JSON.parse(localStorage.getItem('bancapro-transactions')||'[]')||[]).length; } catch(e){ return 0; } })();
+      if (txLen >= 3){
+        done.ranking = true;
+        try { localStorage.setItem('bancapro-visited-ranking', '1'); } catch(e){}
+      }
+    }
   } catch(e){}
   return done;
 }
@@ -4391,11 +4404,27 @@ function updateOnboardingCard(){
       return;
     }
   } catch(e){}
+  // Auto-dismiss permanente: usuario com >=5 transacoes claramente nao precisa
+  // mais de onboarding (e usuario ativo, ja entendeu o app)
+  try {
+    let txCount = 0;
+    if (typeof transactions !== 'undefined' && Array.isArray(transactions)) txCount = transactions.length;
+    else { try { txCount = (JSON.parse(localStorage.getItem('bancapro-transactions') || '[]')||[]).length; } catch(e){} }
+    if (txCount >= 5){
+      try { localStorage.setItem('bancapro-onboarding-dismissed', '1'); } catch(e){}
+      card.style.display = 'none';
+      return;
+    }
+  } catch(e){}
   const done = getOnboardingProgress();
   const totalSteps = 5;
   const doneCount = Object.keys(done).length;
-  // Se ja completou tudo, esconde automaticamente
-  if (doneCount >= totalSteps){ card.style.display = 'none'; return; }
+  // Se ja completou tudo, esconde PERMANENTEMENTE (nao volta a aparecer)
+  if (doneCount >= totalSteps){
+    try { localStorage.setItem('bancapro-onboarding-dismissed', '1'); } catch(e){}
+    card.style.display = 'none';
+    return;
+  }
   card.style.display = '';
   // Marca steps concluidos
   card.querySelectorAll('.onboarding-step').forEach(step => {
@@ -4428,17 +4457,30 @@ function onboardingGo(step){
   }
 }
 
-// Quando entra no Ranking, marca como visitado pro checklist
+// Quando entra no Ranking, marca como visitado pro checklist.
+// Tenta hookar imediato; se goTo nao existir ainda, reagenda ate existir.
 (function hookRankingVisit(){
-  const orig = window.goTo;
-  if (typeof orig === 'function'){
-    window.goTo = function(section, el){
+  function install(){
+    const orig = window.goTo;
+    if (typeof orig !== 'function') return false;
+    if (orig.__ob_rank_hooked) return true;
+    const wrapped = function(section, el){
       if (section === 'ranking'){
         try { localStorage.setItem('bancapro-visited-ranking', '1'); } catch(e){}
+        try { setTimeout(updateOnboardingCard, 50); } catch(e){}
       }
       return orig.apply(this, arguments);
     };
+    wrapped.__ob_rank_hooked = true;
+    window.goTo = wrapped;
+    return true;
   }
+  if (install()) return;
+  // Retry ate 20x (1s total) caso goTo seja definido depois
+  let tries = 0;
+  const id = setInterval(() => {
+    if (install() || ++tries > 20) clearInterval(id);
+  }, 50);
 })();
 
 // Roda a cada minuto pra atualizar dias do trial sem precisar reload
