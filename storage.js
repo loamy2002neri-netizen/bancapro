@@ -52,9 +52,6 @@ window.Storage = (function(){
       'bancapro-rank-positions-geral',
       'bancapro-last-tier-idx',
       'bancapro-visited-ranking',
-      'bancapro-welcome-seen',
-      'bancapro-tour-done',
-      'bancapro-onboarding-dismissed',
       'bancapro-ref',
       'bancapro-hidden-cards'
     ],
@@ -69,7 +66,13 @@ window.Storage = (function(){
       'bancapro-logo-color2',
       'bancapro-logo-split',
       'bancapro-accent',
-      'bancapro-accent2'
+      'bancapro-accent2',
+      // Flags de onboarding 1x-na-vida: devem sobreviver a logout
+      // pra nao reaparecer toda vez que o user volta na conta
+      'bancapro-welcome-seen',
+      'bancapro-tour-done',
+      'bancapro-onboarding-dismissed',
+      'bancapro-onboarding-shown'
     ]
   };
 

@@ -4359,6 +4359,15 @@ function maybeShowWelcome(){
     // So mostra se ja tiver email (= logado)
     const email = (localStorage.getItem('bancapro-user-email')||'').trim();
     if (!email) return;
+    // Veterano: usuario que ja tem 1+ transacao claramente nao precisa
+    // de 'bem-vindo'. Marca como visto silenciosamente.
+    let txCount = 0;
+    if (typeof transactions !== 'undefined' && Array.isArray(transactions)) txCount = transactions.length;
+    else { try { txCount = (JSON.parse(localStorage.getItem('bancapro-transactions') || '[]')||[]).length; } catch(e){} }
+    if (txCount >= 1){
+      try { localStorage.setItem('bancapro-welcome-seen', '1'); } catch(e){}
+      return;
+    }
     // Delay pequeno pra UI hidratar
     setTimeout(openWelcomeModal, 1200);
   } catch(e){}
