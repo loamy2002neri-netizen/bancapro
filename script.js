@@ -5636,8 +5636,36 @@ function buildReportCharts() {
 
   const ctx = document.getElementById('reportChart');
   if(ctx) {
+    const wrap = ctx.parentElement;
+    let emptyMsg = wrap ? wrap.querySelector('.chart-empty-msg') : null;
+    if(reportLineChart) { reportLineChart.destroy(); reportLineChart = null; }
+
+    // Linha precisa de 2+ pontos pra fazer sentido. Com 0 ou 1 mes,
+    // mostra estado vazio amigavel (mesmo padrao do donut de despesas).
+    if (months.length < 2){
+      ctx.style.display = 'none';
+      if (wrap && !emptyMsg){
+        emptyMsg = document.createElement('div');
+        emptyMsg.className = 'chart-empty-msg';
+        emptyMsg.style.cssText = 'text-align:center;color:var(--text-muted);font-size:13px;padding:60px 20px;line-height:1.6;display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%';
+        const hasOne = months.length === 1;
+        emptyMsg.innerHTML = '<div style="font-size:36px;margin-bottom:12px;opacity:.7">📈</div>'
+          + '<div style="font-size:14px;font-weight:600;color:#cbd5e1;margin-bottom:4px">'
+          + (hasOne ? 'Quase lá!' : 'Sem dados suficientes')
+          + '</div>'
+          + '<div>' + (hasOne
+              ? 'Você tem apostas só de <b>' + labels[0] + '</b>.<br>Lance transações em <b>outro mês</b> pra ver a evolução.'
+              : 'Adicione transações para começar a ver a evolução mensal aqui.')
+          + '</div>';
+        wrap.appendChild(emptyMsg);
+      }
+      return;
+    }
+
+    // 2+ meses: renderiza chart normal
+    ctx.style.display = '';
+    if (emptyMsg) emptyMsg.remove();
     const ctxRC = ctx.getContext('2d');
-    if(reportLineChart) reportLineChart.destroy();
     const g1 = ctxRC.createLinearGradient(0,0,0,320);
     g1.addColorStop(0,'rgba(59,130,246,0.25)'); g1.addColorStop(1,'rgba(59,130,246,0)');
     reportLineChart = new Chart(ctxRC, {
