@@ -473,20 +473,26 @@
     flex-shrink:0;
   }
   /* ── Drag handle pra reordenar transacoes ──
-     Coluna fica `cursor:grab` no hover, vira `grabbing` arrastando.
-     Highlight cima/baixo mostra onde a tx vai cair. */
+     Desktop: cursor:grab. Mobile: touch-action:none impede o scroll
+     enquanto arrasta. Tap target maior (min 32x32) pro dedo pegar bem. */
   .tx-drag-handle{
     cursor: grab;
     color: var(--text-muted, #94a3b8);
     font-weight: 800;
-    font-size: 14px;
+    font-size: 16px;
+    line-height: 1;
     user-select: none;
-    width: 28px;
+    -webkit-user-select: none;
+    width: 32px;
+    min-height: 32px;
     text-align: center;
-    opacity: .5;
-    transition: opacity .15s ease, color .15s ease;
+    opacity: .55;
+    transition: opacity .15s ease, color .15s ease, background .15s ease;
+    touch-action: none;
+    -webkit-tap-highlight-color: transparent;
   }
-  .tx-drag-handle:hover{ opacity: 1; color: var(--accent, #6366f1); }
+  .tx-drag-handle:hover,
+  .tx-drag-handle:active{ opacity: 1; color: var(--accent, #6366f1); background: rgba(99,102,241,.08); }
   tr.is-dragging{ opacity: .4; }
   tr.tx-drop-above{ box-shadow: inset 0 3px 0 0 var(--accent, #6366f1); }
   tr.tx-drop-below{ box-shadow: inset 0 -3px 0 0 var(--accent, #6366f1); }

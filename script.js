@@ -3127,6 +3127,100 @@ function txDragEnd(e){
   _txDragId = null;
 }
 
+// ── Touch (mobile) drag-and-drop ──
+// HTML5 drag/drop nativo nao funciona em celular pq o touch eh
+// usado pelo scroll. Implementamos manual com touchstart/move/end.
+// User segura no handle, arrasta com dedo, solta na posicao desejada.
+let _txTouchRow = null;        // <tr> sendo arrastada
+let _txTouchTargetRow = null;  // <tr> alvo do drop atual
+let _txTouchScrollTimer = null;
+
+function txTouchStart(e){
+  const handle = e.target.closest('.tx-drag-handle');
+  if (!handle) return;
+  const row = handle.closest('tr[data-tx-id]');
+  if (!row) return;
+  e.preventDefault();
+  e.stopPropagation();
+  _txDragId = Number(row.dataset.txId);
+  _txTouchRow = row;
+  row.classList.add('is-dragging');
+  // Vibra (se disponivel) pra dar feedback de "lift"
+  try { if (navigator.vibrate) navigator.vibrate(30); } catch(err){}
+}
+
+function txTouchMove(e){
+  if (!_txTouchRow) return;
+  e.preventDefault();
+  const touch = e.touches[0];
+  if (!touch) return;
+  // Acha o elemento embaixo do dedo
+  const el = document.elementFromPoint(touch.clientX, touch.clientY);
+  const row = el ? el.closest('tr[data-tx-id]') : null;
+  // Limpa highlight anterior se mudou de row
+  if (_txTouchTargetRow && _txTouchTargetRow !== row){
+    _txTouchTargetRow.classList.remove('tx-drop-above','tx-drop-below');
+  }
+  _txTouchTargetRow = row;
+  if (!row || Number(row.dataset.txId) === _txDragId) return;
+  // Highlight cima/baixo baseado em qual metade do row o dedo ta
+  const rect = row.getBoundingClientRect();
+  const isUpper = (touch.clientY - rect.top) < rect.height / 2;
+  row.classList.remove('tx-drop-above','tx-drop-below');
+  row.classList.add(isUpper ? 'tx-drop-above' : 'tx-drop-below');
+
+  // Auto-scroll se chegou perto do topo/fundo da tela
+  const winH = window.innerHeight;
+  if (touch.clientY < 90){
+    window.scrollBy(0, -6);
+  } else if (touch.clientY > winH - 90){
+    window.scrollBy(0, 6);
+  }
+}
+
+function txTouchEnd(e){
+  if (!_txTouchRow) return;
+  _txTouchRow.classList.remove('is-dragging');
+  // Se tem target valido, faz o reorder
+  if (_txTouchTargetRow && _txDragId){
+    const targetId = Number(_txTouchTargetRow.dataset.txId);
+    if (targetId !== _txDragId){
+      const touch = e.changedTouches[0];
+      const rect = _txTouchTargetRow.getBoundingClientRect();
+      const isUpper = touch ? (touch.clientY - rect.top) < rect.height / 2 : true;
+
+      const fromIdx = transactions.findIndex(t => t.id === _txDragId);
+      let toIdx = transactions.findIndex(t => t.id === targetId);
+      if (fromIdx >= 0 && toIdx >= 0){
+        const [item] = transactions.splice(fromIdx, 1);
+        toIdx = transactions.findIndex(t => t.id === targetId);
+        if (!isUpper) toIdx += 1;
+        transactions.splice(toIdx, 0, item);
+        try { if (navigator.vibrate) navigator.vibrate([20,30,20]); } catch(err){}
+        showToast('Ordem da transação atualizada','success');
+        recomputeAll();
+        persistState();
+      }
+    }
+    _txTouchTargetRow.classList.remove('tx-drop-above','tx-drop-below');
+  }
+  _txTouchRow = null;
+  _txTouchTargetRow = null;
+  _txDragId = null;
+}
+
+// Bind global no body — captura touchstart no handle e impede o scroll
+// nativo durante o drag.
+document.addEventListener('touchstart', function(e){
+  if (e.target.closest && e.target.closest('.tx-drag-handle')) txTouchStart(e);
+}, { passive: false });
+document.addEventListener('touchmove', function(e){
+  if (_txTouchRow) txTouchMove(e);
+}, { passive: false });
+document.addEventListener('touchend', function(e){
+  if (_txTouchRow) txTouchEnd(e);
+}, { passive: false });
+
 function inferTag(t) {
   if(t.type === 'expense') {
     const d = (t.desc||'').toLowerCase();
