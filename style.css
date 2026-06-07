@@ -4454,24 +4454,40 @@ html { -webkit-text-size-adjust:100%; text-size-adjust:100%; }
   border-radius:10px;background:rgba(255,255,255,.015);
 }
 .heatmap-legend{
-  display:flex;align-items:center;gap:8px;margin-top:14px;
+  display:flex;align-items:center;gap:12px;margin-top:14px;
   flex-wrap:wrap;
 }
-.heatmap-legend-label{font-size:11px;color:var(--text-muted)}
-.heatmap-legend-scale{display:inline-flex;gap:3px}
+.heatmap-legend-items{
+  display:inline-flex;align-items:center;gap:14px;flex-wrap:wrap;
+}
+.heatmap-legitem{
+  display:inline-flex;align-items:center;gap:5px;
+  font-size:11.5px;color:var(--text-muted);
+  white-space:nowrap;
+}
 .heatmap-legend .heatmap-cell{
-  width:12px;height:12px;border-radius:3px;display:inline-block;
+  width:11px;height:11px;border-radius:3px;display:inline-block;flex-shrink:0;
 }
 .heatmap-legend .heatmap-cell.level-0{background:rgba(255,255,255,.06)}
-.heatmap-legend .heatmap-cell.level-1{background:rgba(16,185,129,.22)}
-.heatmap-legend .heatmap-cell.level-2{background:rgba(16,185,129,.42)}
-.heatmap-legend .heatmap-cell.level-3{background:rgba(16,185,129,.68)}
+.heatmap-legend .heatmap-cell.level-1{background:rgba(16,185,129,.30)}
+.heatmap-legend .heatmap-cell.level-2{background:rgba(16,185,129,.50)}
+.heatmap-legend .heatmap-cell.level-3{background:rgba(16,185,129,.72)}
 .heatmap-legend .heatmap-cell.level-4{background:rgba(16,185,129,.95)}
+.heatmap-legend .heatmap-cell.is-neg.level-2{background:rgba(239,68,68,.50)}
+.heatmap-legend .heatmap-cell.is-neg.level-4{background:rgba(239,68,68,.95)}
 .heatmap-legend-spacer{flex:1;min-width:8px}
-.heatmap-legend-summary{font-size:12px;color:#cbd5e1}
+.heatmap-legend-summary{font-size:12px;color:#cbd5e1;white-space:nowrap}
 .heatmap-legend-summary b{color:#fff;font-weight:700}
 .heatmap-legend-summary.is-pos b{color:#10b981}
 .heatmap-legend-summary.is-neg b{color:#ef4444}
+.heatmap-hint{
+  margin-top:10px;padding:8px 12px;
+  background:rgba(167,139,250,.05);
+  border:1px solid rgba(167,139,250,.12);
+  border-radius:8px;
+  font-size:11.5px;color:var(--text-muted);line-height:1.5;
+}
+.heatmap-hint b{color:#cbd5e1;font-weight:600}
 .heatmap-tooltip{
   position:absolute;display:none;z-index:9999;
   padding:6px 10px;background:#0f172a;color:#fff;

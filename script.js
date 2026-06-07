@@ -5728,6 +5728,15 @@ function setHeatmapMetric(metric, btn){
   _heatmapMetric = (metric === 'profit') ? 'profit' : 'count';
   document.querySelectorAll('.heatmap-tab').forEach(t => t.classList.remove('is-active'));
   if (btn) btn.classList.add('is-active');
+  // Atualiza o texto explicativo segundo a metrica
+  const help = document.getElementById('heatmapHelp');
+  if (help){
+    if (_heatmapMetric === 'profit'){
+      help.innerHTML = 'Cada quadrado = 1 dia. <b style="color:#10b981">Verde = lucrou</b> · <b style="color:#ef4444">Vermelho = perdeu</b> · Cinza = dia sem aposta.';
+    } else {
+      help.innerHTML = 'Cada quadrado = 1 dia. <b>Verde mais forte = mais apostas no dia.</b> Cinza = dia sem aposta.';
+    }
+  }
   renderActivityHeatmap();
 }
 
@@ -5819,7 +5828,7 @@ function renderActivityHeatmap(){
   const cellSize = 13;
   const gap = 3;
   const monthLabelH = 18;
-  const dowLabelW = 22;
+  const dowLabelW = 32;
   const cols = totalWeeks;
   const rows = 7;
   const gridW = cols * (cellSize + gap);
@@ -5829,9 +5838,9 @@ function renderActivityHeatmap(){
 
   let svg = '<svg viewBox="0 0 '+svgW+' '+svgH+'" class="heatmap-svg" preserveAspectRatio="xMinYMin meet" role="img" aria-label="Heatmap de atividade dos últimos 6 meses">';
 
-  // Labels de dia (S, T, Q...) — mostra so dom, ter, qui, sab pra economizar espaco
-  const dowLabels = ['D','S','T','Q','Q','S','S'];
-  const dowShow = [0,2,4,6];
+  // Labels de dia — 3 letras pra ficar inequivoco (Dom/Ter/Qui/Sab)
+  const dowLabels = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
+  const dowShow = [1,3,5]; // Seg, Qua, Sex (intercalado pra economizar espaco)
   dowShow.forEach(i => {
     const y = monthLabelH + i * (cellSize + gap) + cellSize - 2;
     svg += '<text x="0" y="'+y+'" class="heatmap-dow">'+dowLabels[i]+'</text>';
@@ -5881,14 +5890,37 @@ function renderActivityHeatmap(){
   // Legenda + sumario
   if (legend){
     legend.style.display='flex';
+    const legendItems = document.getElementById('heatmapLegendItems');
+    if (legendItems){
+      // Calcula os 4 intervalos reais (0%, 25%, 50%, 75%, 100% do max)
+      if (metric === 'profit'){
+        // No modo lucro mostra duas escalas (perda + ganho) com R$
+        const q = Math.round(maxVal / 4); // quartil em R$
+        legendItems.innerHTML =
+          '<span class="heatmap-legitem"><span class="heatmap-cell is-neg level-4"></span>perdeu mais de R$ ' + q*3 + '</span>' +
+          '<span class="heatmap-legitem"><span class="heatmap-cell is-neg level-2"></span>perdeu até R$ ' + q*2 + '</span>' +
+          '<span class="heatmap-legitem"><span class="heatmap-cell level-0"></span>sem aposta</span>' +
+          '<span class="heatmap-legitem"><span class="heatmap-cell level-2"></span>lucrou até R$ ' + q*2 + '</span>' +
+          '<span class="heatmap-legitem"><span class="heatmap-cell level-4"></span>lucrou mais de R$ ' + q*3 + '</span>';
+      } else {
+        // No modo apostas mostra a faixa de qtde (1, 2-X, X-Y, Y+)
+        const q = Math.max(1, Math.round(maxVal / 4));
+        legendItems.innerHTML =
+          '<span class="heatmap-legitem"><span class="heatmap-cell level-0"></span>0 apostas</span>' +
+          '<span class="heatmap-legitem"><span class="heatmap-cell level-1"></span>1 aposta</span>' +
+          '<span class="heatmap-legitem"><span class="heatmap-cell level-2"></span>até ' + (q*2) + '</span>' +
+          '<span class="heatmap-legitem"><span class="heatmap-cell level-3"></span>até ' + (q*3) + '</span>' +
+          '<span class="heatmap-legitem"><span class="heatmap-cell level-4"></span>' + (q*3+1) + ' ou mais</span>';
+      }
+    }
     if (summary){
       const totalDays_active = Object.keys(buckets).length;
       if (metric === 'profit'){
-        const fmt = (totalProfit >= 0 ? '+' : '') + 'R$ ' + Math.abs(totalProfit).toLocaleString('pt-BR',{maximumFractionDigits:0});
-        summary.innerHTML = '<b>'+fmt+'</b> em '+totalDays_active+' dias ativos';
+        const fmt = (totalProfit >= 0 ? '+' : '-') + 'R$ ' + Math.abs(totalProfit).toLocaleString('pt-BR',{maximumFractionDigits:0});
+        summary.innerHTML = 'Total: <b>'+fmt+'</b> em '+totalDays_active+' dias ativos';
         summary.className = 'heatmap-legend-summary ' + (totalProfit >= 0 ? 'is-pos' : 'is-neg');
       } else {
-        summary.innerHTML = '<b>'+totalCount+'</b> transações em '+totalDays_active+' dias';
+        summary.innerHTML = 'Total: <b>'+totalCount+'</b> apostas em '+totalDays_active+' dias';
         summary.className = 'heatmap-legend-summary';
       }
     }

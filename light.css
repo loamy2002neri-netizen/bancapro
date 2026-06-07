@@ -790,3 +790,10 @@ html.light .heatmap-tooltip{
   color: #fff !important;
   border-color: rgba(167,139,250,.40) !important;
 }
+html.light .heatmap-legitem{ color: #64748b !important; }
+html.light .heatmap-hint{
+  background: rgba(167,139,250,.06) !important;
+  border-color: rgba(167,139,250,.20) !important;
+  color: #64748b !important;
+}
+html.light .heatmap-hint b{ color: #0f172a !important; }
