@@ -18,8 +18,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
-<link rel="stylesheet" href="style.css?v=179"/>
-<link rel="stylesheet" href="light.css?v=179"/>
+<link rel="stylesheet" href="style.css?v=180"/>
+<link rel="stylesheet" href="light.css?v=180"/>
 </head>
 <body>
 
@@ -1090,16 +1090,94 @@
               <button class="heatmap-tab" data-metric="profit" onclick="setHeatmapMetric('profit', this)">Lucro no dia</button>
             </div>
           </div>
-          <div id="heatmapWrap" class="heatmap-wrap">
-            <div class="heatmap-empty" id="heatmapEmpty">
-              Sem atividade no período. Lance uma transação pra começar a colorir 🎨
+
+          <!-- Grid: heatmap à esquerda · Insights à direita -->
+          <div class="heatmap-layout">
+            <div class="heatmap-main">
+              <div id="heatmapWrap" class="heatmap-wrap">
+                <div class="heatmap-empty" id="heatmapEmpty">
+                  Sem atividade no período. Lance uma transação pra começar a colorir 🎨
+                </div>
+              </div>
+              <div class="heatmap-legend" id="heatmapLegend" style="display:none">
+                <span class="heatmap-legend-items" id="heatmapLegendItems"></span>
+                <span class="heatmap-legend-spacer"></span>
+                <span class="heatmap-info-icon">
+                  <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                  Cada quadrado representa um dia
+                </span>
+              </div>
+            </div>
+
+            <aside class="heatmap-insights" id="heatmapInsights" style="display:none">
+              <div class="heatmap-insights-title">Insights do período</div>
+              <div class="heatmap-insight">
+                <div class="heatmap-insight-icon"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
+                <div class="heatmap-insight-body">
+                  <div class="heatmap-insight-label">Dias ativos</div>
+                  <div class="heatmap-insight-main"><span id="insDiasAtivos">—</span></div>
+                  <div class="heatmap-insight-sub"><span id="insDiasAtivosSub">—</span></div>
+                </div>
+                <div class="heatmap-insight-extra" id="insDiasAtivosPct">—</div>
+              </div>
+              <div class="heatmap-insight">
+                <div class="heatmap-insight-icon"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5C5.5 13 4 10 4 7c0-1 1-3 3-3 1 1 1 2 1 3 1-2 3-4 5-4 1 4-1 6-2 8 2 0 4 1 4 4 0 4-3 7-7 7"/></svg></div>
+                <div class="heatmap-insight-body">
+                  <div class="heatmap-insight-label">Melhor sequência</div>
+                  <div class="heatmap-insight-main"><span id="insSequencia">—</span></div>
+                  <div class="heatmap-insight-sub"><span id="insSequenciaSub">—</span></div>
+                </div>
+              </div>
+              <div class="heatmap-insight">
+                <div class="heatmap-insight-icon"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg></div>
+                <div class="heatmap-insight-body">
+                  <div class="heatmap-insight-label">Maior lucro diário</div>
+                  <div class="heatmap-insight-main"><span id="insMaiorLucro">—</span></div>
+                  <div class="heatmap-insight-sub"><span id="insMaiorLucroSub">—</span></div>
+                </div>
+              </div>
+              <div class="heatmap-insight">
+                <div class="heatmap-insight-icon"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="13" width="4" height="8" rx="1"/><rect x="10" y="9" width="4" height="12" rx="1"/><rect x="17" y="5" width="4" height="16" rx="1"/></svg></div>
+                <div class="heatmap-insight-body">
+                  <div class="heatmap-insight-label">Média semanal</div>
+                  <div class="heatmap-insight-main"><span id="insMediaSemana">—</span></div>
+                  <div class="heatmap-insight-sub">lucro médio</div>
+                </div>
+              </div>
+            </aside>
+          </div>
+
+          <!-- Barra resumo embaixo -->
+          <div class="heatmap-summary-bar" id="heatmapSummaryBar" style="display:none">
+            <div class="heatmap-summary-head">
+              <div class="heatmap-summary-icon"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg></div>
+              <div>
+                <div class="heatmap-summary-title">Resumo do período</div>
+                <div class="heatmap-summary-sub" id="sumPeriodo">—</div>
+              </div>
+            </div>
+            <div class="heatmap-summary-kpi">
+              <div class="heatmap-summary-kpi-label">Lucro total</div>
+              <div class="heatmap-summary-kpi-val" id="sumLucro">—</div>
+            </div>
+            <div class="heatmap-summary-kpi">
+              <div class="heatmap-summary-kpi-label">Total de apostas</div>
+              <div class="heatmap-summary-kpi-val neutral" id="sumApostas">—</div>
+            </div>
+            <div class="heatmap-summary-kpi">
+              <div class="heatmap-summary-kpi-label">ROI</div>
+              <div class="heatmap-summary-kpi-val" id="sumRoi">—</div>
+            </div>
+            <div class="heatmap-summary-kpi">
+              <div class="heatmap-summary-kpi-label">Stake médio</div>
+              <div class="heatmap-summary-kpi-val neutral" id="sumStake">—</div>
+            </div>
+            <div class="heatmap-summary-kpi">
+              <div class="heatmap-summary-kpi-label">Bankroll atual</div>
+              <div class="heatmap-summary-kpi-val accent" id="sumBankroll">—</div>
             </div>
           </div>
-          <div class="heatmap-legend" id="heatmapLegend" style="display:none">
-            <span class="heatmap-legend-items" id="heatmapLegendItems"></span>
-            <span class="heatmap-legend-spacer"></span>
-            <span class="heatmap-legend-summary" id="heatmapSummary"></span>
-          </div>
+
           <div class="heatmap-hint">💡 <b>Passe o mouse</b> num quadrado pra ver o dia · <b>Clica</b> pra abrir as transações daquele dia</div>
         </div>
         <div class="chart-grid">
@@ -2313,8 +2391,8 @@
   </div>
 </div>
 
-<script src="config.js?v=179" defer></script>
-<script src="storage.js?v=179" defer></script>
-<script src="script.js?v=179" defer></script>
+<script src="config.js?v=180" defer></script>
+<script src="storage.js?v=180" defer></script>
+<script src="script.js?v=180" defer></script>
 </body>
 </html>

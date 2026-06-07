@@ -797,3 +797,32 @@ html.light .heatmap-hint{
   color: #64748b !important;
 }
 html.light .heatmap-hint b{ color: #0f172a !important; }
+html.light .heatmap-svg .heatmap-year{ fill: #94a3b8 !important; }
+html.light .heatmap-insights{
+  background: #ffffff !important;
+  border: 1px solid rgba(15,23,42,.08) !important;
+}
+html.light .heatmap-insights-title{ color: #0f172a !important; border-bottom-color: rgba(15,23,42,.08) !important; }
+html.light .heatmap-insight{ border-bottom-color: rgba(15,23,42,.05) !important; }
+html.light .heatmap-insight-icon{
+  background: rgba(167,139,250,.14) !important;
+  color: #7c3aed !important;
+}
+html.light .heatmap-insight-label{ color: #64748b !important; }
+html.light .heatmap-insight-main{ color: #0f172a !important; }
+html.light .heatmap-insight-sub{ color: #94a3b8 !important; }
+html.light .heatmap-insight-extra{
+  color: #7c3aed !important;
+  background: rgba(167,139,250,.14) !important;
+}
+html.light .heatmap-info-icon{ color: #64748b !important; }
+
+html.light .heatmap-summary-bar{
+  background: linear-gradient(135deg, rgba(167,139,250,.05), #ffffff) !important;
+  border-color: rgba(167,139,250,.22) !important;
+}
+html.light .heatmap-summary-title{ color: #0f172a !important; }
+html.light .heatmap-summary-sub{ color: #64748b !important; }
+html.light .heatmap-summary-kpi-label{ color: #64748b !important; }
+html.light .heatmap-summary-kpi-val.neutral{ color: #0f172a !important; }
+html.light .heatmap-summary-kpi-val.accent{ color: #7c3aed !important; }

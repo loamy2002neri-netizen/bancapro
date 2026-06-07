@@ -5825,10 +5825,10 @@ function renderActivityHeatmap(){
   if (maxVal === 0) maxVal = 1;
 
   // Monta SVG-like grid: colunas = semanas, linhas = dias da semana
-  const cellSize = 13;
-  const gap = 3;
-  const monthLabelH = 18;
-  const dowLabelW = 32;
+  const cellSize = 15;
+  const gap = 4;
+  const monthLabelH = 36; // 2 linhas: mes + ano
+  const dowLabelW = 18;
   const cols = totalWeeks;
   const rows = 7;
   const gridW = cols * (cellSize + gap);
@@ -5838,13 +5838,12 @@ function renderActivityHeatmap(){
 
   let svg = '<svg viewBox="0 0 '+svgW+' '+svgH+'" class="heatmap-svg" preserveAspectRatio="xMinYMin meet" role="img" aria-label="Heatmap de atividade dos últimos 6 meses">';
 
-  // Labels de dia — 3 letras pra ficar inequivoco (Dom/Ter/Qui/Sab)
-  const dowLabels = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
-  const dowShow = [1,3,5]; // Seg, Qua, Sex (intercalado pra economizar espaco)
-  dowShow.forEach(i => {
+  // Labels de dia — todas 7 linhas, 1 letra (posicao desambigua)
+  const dowLabels = ['D','S','T','Q','Q','S','S'];
+  for (let i = 0; i < 7; i++){
     const y = monthLabelH + i * (cellSize + gap) + cellSize - 2;
     svg += '<text x="0" y="'+y+'" class="heatmap-dow">'+dowLabels[i]+'</text>';
-  });
+  }
 
   // Labels de mes — coloca quando primeira semana do mes aparece
   const monthNames = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
@@ -5868,10 +5867,11 @@ function renderActivityHeatmap(){
       const cls = 'heatmap-cell level-'+level + (isNeg && level > 0 ? ' is-neg' : '');
       cells.push('<rect x="'+x+'" y="'+y+'" width="'+cellSize+'" height="'+cellSize+'" rx="2.5" class="'+cls+'" data-date="'+key+'" data-tooltip="'+tooltip+'" />');
 
-      // Label do mes — primeira semana de cada mes na linha 0
+      // Label do mes + ano — primeira semana de cada mes na linha 0
       if (r === 0 && d.getMonth() !== lastMonth){
         lastMonth = d.getMonth();
-        svg += '<text x="'+x+'" y="'+(monthLabelH-6)+'" class="heatmap-month">'+monthNames[d.getMonth()]+'</text>';
+        svg += '<text x="'+x+'" y="'+(monthLabelH-22)+'" class="heatmap-month">'+monthNames[d.getMonth()]+'</text>';
+        svg += '<text x="'+x+'" y="'+(monthLabelH-8)+'" class="heatmap-year">'+d.getFullYear()+'</text>';
       }
     }
   }
@@ -5913,18 +5913,142 @@ function renderActivityHeatmap(){
           '<span class="heatmap-legitem"><span class="heatmap-cell level-4"></span>' + (q*3+1) + ' ou mais</span>';
       }
     }
-    if (summary){
-      const totalDays_active = Object.keys(buckets).length;
-      if (metric === 'profit'){
-        const fmt = (totalProfit >= 0 ? '+' : '-') + 'R$ ' + Math.abs(totalProfit).toLocaleString('pt-BR',{maximumFractionDigits:0});
-        summary.innerHTML = 'Total: <b>'+fmt+'</b> em '+totalDays_active+' dias ativos';
-        summary.className = 'heatmap-legend-summary ' + (totalProfit >= 0 ? 'is-pos' : 'is-neg');
-      } else {
-        summary.innerHTML = 'Total: <b>'+totalCount+'</b> apostas em '+totalDays_active+' dias';
-        summary.className = 'heatmap-legend-summary';
-      }
+  }
+
+  // Renderiza painel de Insights + barra de Resumo (so quando tem dados)
+  try { renderHeatmapInsights(buckets, start, today); } catch(e){}
+  try { renderHeatmapSummaryBar(start, today); } catch(e){}
+}
+
+// ─── Insights (painel lateral direito) ───
+function renderHeatmapInsights(buckets, start, end){
+  const panel = document.getElementById('heatmapInsights');
+  if (!panel) return;
+  const keys = Object.keys(buckets);
+  if (!keys.length){ panel.style.display='none'; return; }
+  panel.style.display = '';
+
+  const totalDays = Math.max(1, Math.round((end - start) / 86400000));
+  const activeDays = keys.length;
+  const pct = Math.round((activeDays / totalDays) * 100);
+
+  // Maior lucro diario
+  let maxProfit = -Infinity, maxProfitDate = null;
+  keys.forEach(k => { if (buckets[k].profit > maxProfit){ maxProfit = buckets[k].profit; maxProfitDate = k; }});
+
+  // Melhor sequencia (consecutiva de dias ATIVOS)
+  const sortedKeys = keys.slice().sort();
+  let bestStreak = 0, bestStart = null, bestEnd = null;
+  let curStreak = 1, curStart = sortedKeys[0];
+  for (let i = 1; i < sortedKeys.length; i++){
+    const prev = new Date(sortedKeys[i-1] + 'T00:00:00');
+    const cur = new Date(sortedKeys[i] + 'T00:00:00');
+    const diff = Math.round((cur - prev) / 86400000);
+    if (diff === 1){ curStreak++; }
+    else {
+      if (curStreak > bestStreak){ bestStreak = curStreak; bestStart = curStart; bestEnd = sortedKeys[i-1]; }
+      curStreak = 1; curStart = sortedKeys[i];
     }
   }
+  if (curStreak > bestStreak){ bestStreak = curStreak; bestStart = curStart; bestEnd = sortedKeys[sortedKeys.length-1]; }
+
+  // Media semanal (lucro total / numero de semanas com pelo menos 1 dia ativo)
+  let totalProfit = 0;
+  keys.forEach(k => totalProfit += buckets[k].profit);
+  const weeksWithActivity = Math.max(1, Math.ceil(activeDays / 7));
+  const avgWeek = totalProfit / weeksWithActivity;
+
+  const fmtBR = v => v.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
+  const fmtDay = k => {
+    const d = new Date(k+'T00:00:00');
+    return d.toLocaleDateString('pt-BR',{day:'2-digit',month:'short'}).replace('.','');
+  };
+
+  document.getElementById('insDiasAtivos').textContent = activeDays;
+  document.getElementById('insDiasAtivosSub').textContent = 'de ' + totalDays + ' dias';
+  document.getElementById('insDiasAtivosPct').textContent = pct + '%';
+
+  document.getElementById('insSequencia').textContent = bestStreak + ' dia' + (bestStreak !== 1 ? 's' : '');
+  document.getElementById('insSequenciaSub').textContent = bestStart ? (fmtDay(bestStart) + (bestStart !== bestEnd ? ' – ' + fmtDay(bestEnd) : '')) : '—';
+
+  const lucroEl = document.getElementById('insMaiorLucro');
+  if (maxProfit > 0){
+    lucroEl.textContent = 'R$ ' + fmtBR(maxProfit);
+    lucroEl.className = 'is-pos';
+  } else if (maxProfit < 0){
+    lucroEl.textContent = '-R$ ' + fmtBR(Math.abs(maxProfit));
+    lucroEl.className = 'is-neg';
+  } else {
+    lucroEl.textContent = 'R$ 0,00';
+    lucroEl.className = '';
+  }
+  document.getElementById('insMaiorLucroSub').textContent = maxProfitDate ? fmtDay(maxProfitDate) : '—';
+
+  const mediaEl = document.getElementById('insMediaSemana');
+  if (avgWeek >= 0){
+    mediaEl.textContent = 'R$ ' + fmtBR(avgWeek);
+    mediaEl.className = 'is-pos';
+  } else {
+    mediaEl.textContent = '-R$ ' + fmtBR(Math.abs(avgWeek));
+    mediaEl.className = 'is-neg';
+  }
+}
+
+// ─── Resumo do periodo (barra inferior) ───
+function renderHeatmapSummaryBar(start, end){
+  const bar = document.getElementById('heatmapSummaryBar');
+  if (!bar) return;
+  if (typeof transactions === 'undefined' || !Array.isArray(transactions) || !transactions.length){
+    bar.style.display='none'; return;
+  }
+  bar.style.display = '';
+
+  const startKey = _heatDateKey(start);
+  const endKey = _heatDateKey(end);
+  const inRange = transactions.filter(t => t && t.date && t.date >= startKey && t.date <= endKey);
+
+  let lucro = 0, totalStake = 0, countStake = 0;
+  inRange.forEach(t => {
+    const v = parseFloat(t.value) || 0;
+    if (t.type === 'income') lucro += v;
+    else { lucro -= v; totalStake += v; countStake++; }
+  });
+  const apostas = inRange.length;
+  const avgStake = countStake ? (totalStake / countStake) : 0;
+  const roi = totalStake > 0 ? ((lucro / totalStake) * 100) : 0;
+
+  // Bankroll atual = saldo inicial + lucro total geral (todas as txs)
+  let saldoInicial = 0;
+  try { saldoInicial = parseFloat(localStorage.getItem('bancapro-saldo-inicial') || '0') || 0; } catch(e){}
+  let totalLucroAll = 0;
+  transactions.forEach(t => {
+    const v = parseFloat(t.value) || 0;
+    totalLucroAll += (t.type === 'income') ? v : -v;
+  });
+  const bankroll = saldoInicial + totalLucroAll;
+
+  const fmtBR = v => v.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
+  const fmtDay = d => d.toLocaleDateString('pt-BR',{day:'2-digit',month:'short',year:'numeric'}).replace('.','');
+
+  document.getElementById('sumPeriodo').textContent = 'De ' + fmtDay(start) + ' até ' + fmtDay(end);
+
+  const lucroEl = document.getElementById('sumLucro');
+  if (lucro >= 0){
+    lucroEl.textContent = 'R$ ' + fmtBR(lucro);
+    lucroEl.className = 'heatmap-summary-kpi-val is-pos';
+  } else {
+    lucroEl.textContent = '-R$ ' + fmtBR(Math.abs(lucro));
+    lucroEl.className = 'heatmap-summary-kpi-val is-neg';
+  }
+
+  document.getElementById('sumApostas').textContent = apostas;
+
+  const roiEl = document.getElementById('sumRoi');
+  roiEl.textContent = (roi >= 0 ? '' : '-') + Math.abs(roi).toFixed(1).replace('.',',') + '%';
+  roiEl.className = 'heatmap-summary-kpi-val ' + (roi >= 0 ? 'is-pos' : 'is-neg');
+
+  document.getElementById('sumStake').textContent = 'R$ ' + fmtBR(avgStake);
+  document.getElementById('sumBankroll').textContent = 'R$ ' + fmtBR(bankroll);
 }
 
 function _heatTooltip(date, bucket, metric){

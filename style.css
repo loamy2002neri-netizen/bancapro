@@ -4428,7 +4428,87 @@ html { -webkit-text-size-adjust:100%; text-size-adjust:100%; }
   margin-top:14px;padding:6px 0 2px;overflow-x:auto;
   -webkit-overflow-scrolling:touch;
 }
-.heatmap-svg{display:block;min-width:540px;max-width:100%;height:auto}
+.heatmap-svg{display:block;min-width:620px;max-width:100%;height:auto}
+.heatmap-svg .heatmap-year{
+  font-size:8.5px;font-weight:500;fill:var(--text-muted);opacity:.7;
+  font-family:inherit;letter-spacing:.3px;
+}
+.heatmap-layout{
+  display:grid;grid-template-columns: minmax(0,1fr) 260px;gap:18px;margin-top:14px;
+  align-items:start;
+}
+.heatmap-main{min-width:0}
+.heatmap-insights{
+  background:rgba(255,255,255,.025);
+  border:1px solid rgba(255,255,255,.06);
+  border-radius:12px;padding:16px;
+}
+.heatmap-insights-title{
+  font-size:13px;font-weight:700;color:#fff;margin-bottom:14px;
+  padding-bottom:12px;border-bottom:1px solid rgba(255,255,255,.06);
+}
+.heatmap-insight{
+  display:flex;align-items:center;gap:12px;
+  padding:11px 0;border-bottom:1px solid rgba(255,255,255,.05);
+}
+.heatmap-insight:last-child{border-bottom:0;padding-bottom:0}
+.heatmap-insight-icon{
+  flex-shrink:0;width:36px;height:36px;border-radius:9px;
+  background:rgba(167,139,250,.12);color:#a78bfa;
+  display:flex;align-items:center;justify-content:center;
+}
+.heatmap-insight-body{flex:1;min-width:0}
+.heatmap-insight-label{font-size:11.5px;color:var(--text-muted);margin-bottom:2px;line-height:1.2}
+.heatmap-insight-main{font-size:17px;font-weight:800;color:#fff;line-height:1.2}
+.heatmap-insight-main .is-pos{color:#10b981}
+.heatmap-insight-main .is-neg{color:#ef4444}
+.heatmap-insight-sub{font-size:10.5px;color:var(--text-muted);margin-top:2px;line-height:1.2}
+.heatmap-insight-extra{
+  flex-shrink:0;font-size:13px;font-weight:700;color:#a78bfa;
+  padding:4px 9px;background:rgba(167,139,250,.10);border-radius:8px;
+}
+.heatmap-info-icon{
+  display:inline-flex;align-items:center;gap:5px;
+  font-size:11px;color:var(--text-muted);font-style:normal;
+}
+.heatmap-info-icon svg{flex-shrink:0;opacity:.7}
+@media (max-width: 960px){
+  .heatmap-layout{grid-template-columns: 1fr}
+}
+
+/* Barra de Resumo do Período */
+.heatmap-summary-bar{
+  display:grid;grid-template-columns: 1.8fr repeat(5, 1fr);gap:18px;
+  margin-top:18px;padding:16px 18px;
+  background:linear-gradient(135deg,rgba(167,139,250,.04),rgba(99,102,241,.02));
+  border:1px solid rgba(167,139,250,.14);
+  border-radius:12px;
+  align-items:center;
+}
+.heatmap-summary-head{display:flex;align-items:center;gap:12px;min-width:0}
+.heatmap-summary-icon{
+  flex-shrink:0;width:36px;height:36px;border-radius:50%;
+  background:linear-gradient(135deg,#8b5cf6,#7c3aed);
+  display:flex;align-items:center;justify-content:center;color:#fff;
+  box-shadow:0 4px 12px rgba(139,92,246,.3);
+}
+.heatmap-summary-title{font-size:13px;font-weight:700;color:#fff;line-height:1.2}
+.heatmap-summary-sub{font-size:11px;color:var(--text-muted);margin-top:2px;line-height:1.3}
+.heatmap-summary-kpi{display:flex;flex-direction:column;gap:3px;min-width:0}
+.heatmap-summary-kpi-label{font-size:11px;color:var(--text-muted);line-height:1.2;white-space:nowrap}
+.heatmap-summary-kpi-val{font-size:17px;font-weight:800;line-height:1.2;white-space:nowrap}
+.heatmap-summary-kpi-val.neutral{color:#fff}
+.heatmap-summary-kpi-val.accent{color:#a78bfa}
+.heatmap-summary-kpi-val.is-pos{color:#10b981}
+.heatmap-summary-kpi-val.is-neg{color:#ef4444}
+@media (max-width: 1100px){
+  .heatmap-summary-bar{grid-template-columns: 1fr 1fr 1fr;gap:14px}
+  .heatmap-summary-head{grid-column: 1 / -1}
+}
+@media (max-width: 540px){
+  .heatmap-summary-bar{grid-template-columns: 1fr 1fr}
+  .heatmap-summary-kpi-val{font-size:15px}
+}
 .heatmap-svg .heatmap-cell{
   fill:rgba(255,255,255,.04);
   stroke:rgba(255,255,255,.02);stroke-width:1;
