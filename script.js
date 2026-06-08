@@ -1291,6 +1291,29 @@ async function renderAdminErrors() {
 async function handleReturnFromCheckout() {
   try { history.replaceState(null, '', location.pathname); } catch(e){}
   showToast('Pagamento recebido! Ativando seu acesso… 🎉','success');
+  // Meta Pixel: Purchase + Subscribe — usuario retornou do checkout com sucesso
+  try {
+    if (typeof fbq === 'function') {
+      // Tenta inferir valor do plano via URL ou padrao mensal
+      let value = 24.90, plan = 'Plus Mensal';
+      try {
+        const p = new URLSearchParams(location.search).get('plano');
+        if (p === 'anual') { value = 199; plan = 'Pro Anual'; }
+      } catch(e){}
+      fbq('track', 'Subscribe', {
+        value: value,
+        currency: 'BRL',
+        predicted_ltv: value * 6,
+        content_name: 'Apostack ' + plan
+      });
+      // Purchase como fallback (alguns templates de campanha usam Purchase)
+      fbq('track', 'Purchase', {
+        value: value,
+        currency: 'BRL',
+        content_name: 'Apostack ' + plan
+      });
+    }
+  } catch(e){}
   for (let i = 0; i < 8; i++) {
     await new Promise(r => setTimeout(r, 2500));
     if (currentAuthUser && await checkAccess(currentAuthUser)) {
@@ -4564,6 +4587,18 @@ function subscribeNow(plan) {
     let email = (currentAuthUser && currentAuthUser.email) || '';
     if (!email) { try { email = localStorage.getItem('bancapro-user-email') || ''; } catch(e){} }
     if (email) url += (url.indexOf('?') === -1 ? '?' : '&') + 'email=' + encodeURIComponent(email);
+    // Meta Pixel: InitiateCheckout — dispara antes de redirecionar pro Kirvano
+    try {
+      if (typeof fbq === 'function') {
+        const value = (plan === 'anual') ? 199 : 24.90;
+        fbq('track', 'InitiateCheckout', {
+          content_name: 'Apostack ' + (plan === 'anual' ? 'Pro Anual' : 'Plus Mensal'),
+          content_category: 'subscription',
+          value: value,
+          currency: 'BRL'
+        });
+      }
+    } catch(e){}
     showToast('Abrindo o checkout seguro…','info');
     window.location.href = url;
   } else {

@@ -9,6 +9,24 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" href="landing.css?v=21"/>
+
+  <!-- Meta Pixel Code -->
+  <script>
+  !function(f,b,e,v,n,t,s)
+  {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+  n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+  if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+  n.queue=[];t=b.createElement(e);t.async=!0;
+  t.src=v;s=b.getElementsByTagName(e)[0];
+  s.parentNode.insertBefore(t,s)}(window, document,'script',
+  'https://connect.facebook.net/en_US/fbevents.js');
+  fbq('init', '859710540533085');
+  fbq('track', 'PageView');
+  </script>
+  <noscript><img height="1" width="1" style="display:none"
+  src="https://www.facebook.com/tr?id=859710540533085&ev=PageView&noscript=1"
+  /></noscript>
+  <!-- End Meta Pixel Code -->
 </head>
 <body class="lp-body">
 
@@ -1257,6 +1275,34 @@
   window.addEventListener('resize', measure);
   window.addEventListener('scroll', onScroll, {passive:true});
   onScroll();
+})();
+</script>
+
+<!-- Meta Pixel: Lead (click CTA) + ViewContent (scroll ate pricing) -->
+<script>
+(function(){
+  if (typeof fbq !== 'function') return;
+  // Lead: dispara em todos os botoes CTA principais (lp-btn-primary-lg)
+  document.querySelectorAll('.lp-btn-primary-lg, [data-pixel="lead"]').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      try { fbq('track', 'Lead', { content_name: 'CTA Landing', source: 'apostack.com/landing' }); } catch(e){}
+    }, { passive: true });
+  });
+  // ViewContent: dispara quando usuario rola ate a secao de pricing
+  var fired = false;
+  var pricing = document.getElementById('pricing');
+  if (pricing && 'IntersectionObserver' in window){
+    var obs = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        if (e.isIntersecting && !fired){
+          fired = true;
+          try { fbq('track', 'ViewContent', { content_name: 'Planos Apostack', content_category: 'pricing' }); } catch(e){}
+          obs.disconnect();
+        }
+      });
+    }, { threshold: 0.3 });
+    obs.observe(pricing);
+  }
 })();
 </script>
 
