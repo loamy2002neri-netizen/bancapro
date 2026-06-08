@@ -297,22 +297,26 @@ async function enterApp(user) {
     const navAfiliados = document.getElementById('navAfiliados');
     if (navAfiliados) navAfiliados.style.display = isOwner ? '' : 'none';
   } catch(e){}
-  // Registra a indicação (?ref) e libera o painel do afiliado
-  // AGORA: Minhas Indicacoes aparece pra TODOS os usuarios logados
-  // Apenas marca se eh VIP (50% fixo) ou comum (10-35% por nivel)
+  // Registra a indicação (?ref) e libera o painel do afiliado.
+  // RESTRICAO: 'Minhas Indicacoes' agora aparece SOMENTE pra afiliados VIP
+  // (linha 50% fixo). Usuarios novos NAO veem mais o painel — feature de
+  // afiliacao foi descontinuada pra base geral. Owners sempre veem.
   try {
     await recordReferralIfAny(user);
     const sb = getSb();
     const navAf = document.getElementById('navAfiliado');
-    if (navAf) navAf.style.display = '';  // visivel pra todos
+    let isVip = false;
     if (sb) {
       try {
         const r = await sb.rpc('get_my_affiliate');
-        const isVip = !!(r.data && r.data.length);
+        isVip = !!(r.data && r.data.length);
         try { localStorage.setItem('bancapro-is-affiliate', isVip ? '1' : '0'); } catch(e){}
         try { localStorage.setItem('bancapro-affiliate-vip', isVip ? '1' : '0'); } catch(e){}
       } catch(e){}
     }
+    // Mostra nav SO se for VIP. Owner tambem ve (acima ja libera navAfiliados).
+    const isOwner2 = OWNER_EMAILS.includes((user.email || '').toLowerCase());
+    if (navAf) navAf.style.display = (isVip || isOwner2) ? '' : 'none';
   } catch(e){}
   // Voltou do checkout? mostra "obrigado" e reconfere a assinatura
   try {
@@ -1680,6 +1684,18 @@ try {
 //  NAVIGATION
 // ══════════════════════════════════════════════
 function goTo(section, el) {
+  // Bloqueia 'afiliado' pra quem nao for VIP nem owner (feature restrita)
+  try {
+    if (section === 'afiliado'){
+      const isVip = localStorage.getItem('bancapro-affiliate-vip') === '1';
+      const email = (localStorage.getItem('bancapro-user-email') || '').toLowerCase();
+      const isOwner = (typeof OWNER_EMAILS !== 'undefined') && OWNER_EMAILS.indexOf(email) >= 0;
+      if (!isVip && !isOwner){
+        // Silenciosamente redireciona pro dashboard — nao expoe a feature
+        section = 'dashboard';
+      }
+    }
+  } catch(e){}
   // Intercepta navegacao do Free pra features Pro: mostra upsell modal
   try {
     const label = (typeof getCurrentPlanLabel === 'function') ? getCurrentPlanLabel() : 'Free';
