@@ -5653,55 +5653,53 @@ function buildReportCharts() {
   const ctx = document.getElementById('reportChart');
   if(ctx) {
     const wrap = ctx.parentElement;
-    let emptyMsg = wrap ? wrap.querySelector('.chart-empty-msg') : null;
+    const emptyMsg = wrap ? wrap.querySelector('.chart-empty-msg') : null;
+    if (emptyMsg) emptyMsg.remove();
     if(reportLineChart) { reportLineChart.destroy(); reportLineChart = null; }
 
-    // Linha precisa de 2+ pontos pra fazer sentido. Com 0 ou 1 mes,
-    // mostra estado vazio amigavel (mesmo padrao do donut de despesas).
-    if (months.length < 2){
+    // 0 meses: estado vazio amigavel (sem dados pra mostrar mesmo)
+    if (months.length === 0){
       ctx.style.display = 'none';
-      if (wrap && !emptyMsg){
-        emptyMsg = document.createElement('div');
-        emptyMsg.className = 'chart-empty-msg';
-        emptyMsg.style.cssText = 'text-align:center;color:var(--text-muted);font-size:13px;padding:60px 20px;line-height:1.6;display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%';
-        const hasOne = months.length === 1;
-        emptyMsg.innerHTML = '<div style="font-size:36px;margin-bottom:12px;opacity:.7">📈</div>'
-          + '<div style="font-size:14px;font-weight:600;color:#cbd5e1;margin-bottom:4px">'
-          + (hasOne ? 'Quase lá!' : 'Sem dados suficientes')
-          + '</div>'
-          + '<div>' + (hasOne
-              ? 'Você tem apostas só de <b>' + labels[0] + '</b>.<br>Lance transações em <b>outro mês</b> pra ver a evolução.'
-              : 'Adicione transações para começar a ver a evolução mensal aqui.')
-          + '</div>';
-        wrap.appendChild(emptyMsg);
+      if (wrap){
+        const m = document.createElement('div');
+        m.className = 'chart-empty-msg';
+        m.style.cssText = 'text-align:center;color:var(--text-muted);font-size:13px;padding:60px 20px;line-height:1.6;display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%';
+        m.innerHTML = '<div style="font-size:36px;margin-bottom:12px;opacity:.7">📈</div>'
+          + '<div style="font-size:14px;font-weight:600;color:#cbd5e1;margin-bottom:4px">Sem dados ainda</div>'
+          + '<div>Lance sua primeira transação pra ver os números aqui.</div>';
+        wrap.appendChild(m);
       }
-      // NAO usar `return` aqui — quebra os charts abaixo (Distribuicao de Despesas).
-      // Apenas pula a parte de criar o Chart e segue pra renderizar os proximos.
+      // NAO usar `return` — segue pra Distribuicao de Despesas abaixo
     } else {
-    // 2+ meses: renderiza chart normal
-    ctx.style.display = '';
-    if (emptyMsg) emptyMsg.remove();
-    const ctxRC = ctx.getContext('2d');
-    const g1 = ctxRC.createLinearGradient(0,0,0,320);
-    g1.addColorStop(0,'rgba(59,130,246,0.25)'); g1.addColorStop(1,'rgba(59,130,246,0)');
-    reportLineChart = new Chart(ctxRC, {
-      type:'line',
-      data:{
-        labels,
-        datasets:[
-          {label:'Receita',  data:dataReceita,  borderColor:'#3b82f6', backgroundColor:g1, fill:true,  borderWidth:2.5, tension:0.4, pointRadius:3, pointHoverRadius:5},
-          {label:'Lucro',    data:dataLucro,    borderColor:'#10b981', fill:false, borderWidth:2,   tension:0.4, pointRadius:3, pointHoverRadius:5},
-          {label:'Despesas', data:dataDespesas, borderColor:'#f43f5e', fill:false, borderWidth:2,   tension:0.4, pointRadius:3, pointHoverRadius:5, borderDash:[4,4]},
-        ]
-      },
-      options:{
-        ...chartDefaults, responsive:true, maintainAspectRatio:false,
-        layout:{padding:{top:4,right:8,left:0,bottom:0}},
-        interaction:{mode:'index', intersect:false},
-        plugins:{legend:{display:true, position:'top', align:'end', labels:{color:getChartColors().text, font:{size:11}, boxWidth:12, boxHeight:12, usePointStyle:true, pointStyle:'circle', padding:14}}}
-      }
-    });
-    } // fecha else (months >= 2)
+      ctx.style.display = '';
+      const ctxRC = ctx.getContext('2d');
+      // 1 mes: BAR chart (3 barras agrupadas Receita/Lucro/Despesas).
+      // 2+ meses: LINE chart com evolucao.
+      const isBar = months.length === 1;
+      const g1 = ctxRC.createLinearGradient(0,0,0,320);
+      g1.addColorStop(0,'rgba(59,130,246,0.25)'); g1.addColorStop(1,'rgba(59,130,246,0)');
+      reportLineChart = new Chart(ctxRC, {
+        type: isBar ? 'bar' : 'line',
+        data:{
+          labels,
+          datasets: isBar ? [
+            {label:'Receita',  data:dataReceita,  backgroundColor:'#3b82f6', borderRadius:6, borderSkipped:false, maxBarThickness:80},
+            {label:'Lucro',    data:dataLucro,    backgroundColor:'#10b981', borderRadius:6, borderSkipped:false, maxBarThickness:80},
+            {label:'Despesas', data:dataDespesas, backgroundColor:'#f43f5e', borderRadius:6, borderSkipped:false, maxBarThickness:80},
+          ] : [
+            {label:'Receita',  data:dataReceita,  borderColor:'#3b82f6', backgroundColor:g1, fill:true,  borderWidth:2.5, tension:0.4, pointRadius:3, pointHoverRadius:5},
+            {label:'Lucro',    data:dataLucro,    borderColor:'#10b981', fill:false, borderWidth:2,   tension:0.4, pointRadius:3, pointHoverRadius:5},
+            {label:'Despesas', data:dataDespesas, borderColor:'#f43f5e', fill:false, borderWidth:2,   tension:0.4, pointRadius:3, pointHoverRadius:5, borderDash:[4,4]},
+          ]
+        },
+        options:{
+          ...chartDefaults, responsive:true, maintainAspectRatio:false,
+          layout:{padding:{top:4,right:8,left:0,bottom:0}},
+          interaction:{mode:'index', intersect:false},
+          plugins:{legend:{display:true, position:'top', align:'end', labels:{color:getChartColors().text, font:{size:11}, boxWidth:12, boxHeight:12, usePointStyle:true, pointStyle:'circle', padding:14}}}
+        }
+      });
+    }
   }
 
   // 2) DONUT — Distribuição de DESPESAS por método (QUALQUER método, inclusive "Geral"/custom)
