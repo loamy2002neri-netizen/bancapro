@@ -2041,12 +2041,26 @@ function mobileNavMore(){
       + '  <button class="mms-item" onclick="mobileNav(\'help\')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>Ajuda</button>'
       + '  <button class="mms-item mms-item-accent" onclick="mobileNav(\'personalizar\')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l2.4 4.8L20 9l-4 4 .9 5.5L12 16l-4.9 2.5L8 13 4 9l5.6-1.2z"/></svg>Personalizar</button>'
       + '  <button class="mms-item mms-item-pro" onclick="mobileNav(\'recharge\')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3 6 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1z"/></svg>Assinatura</button>'
+      + '  <div class="mms-divider" id="mmsOwnerDivider" style="display:none"></div>'
+      + '  <button class="mms-item mms-item-owner" id="mmsAdmin" onclick="mobileNav(\'admin\')" style="display:none"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l8 4v6c0 5-3.5 9-8 10-4.5-1-8-5-8-10V6l8-4z"/><path d="M9 12l2 2 4-4"/></svg>Admin</button>'
+      + '  <button class="mms-item mms-item-owner" id="mmsAfiliadosOwner" onclick="mobileNav(\'afiliados\')" style="display:none"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"/><path d="M2 21c1-4 4-6 7-6s6 2 7 6"/><circle cx="17" cy="7" r="2.5"/><path d="M22 15c-.5-2-2-3.5-4-3.5"/></svg>Afiliados</button>'
       + '  <div class="mms-divider"></div>'
       + '  <button class="mms-item is-danger" onclick="closeMobileMoreSheet(); if(typeof logout===\'function\') logout();"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><path d="M16 17l5-5-5-5M21 12H9"/></svg>Sair da conta</button>'
       + '</div>';
     sheet.addEventListener('click', closeMobileMoreSheet);
     document.body.appendChild(sheet);
   }
+  // Mostra Admin/Afiliados SO se for owner (verifica toda vez que abre o sheet)
+  try {
+    const email = (localStorage.getItem('bancapro-user-email') || '').toLowerCase();
+    const isOwner = (typeof OWNER_EMAILS !== 'undefined') && OWNER_EMAILS.indexOf(email) >= 0;
+    const admBtn = document.getElementById('mmsAdmin');
+    const afoBtn = document.getElementById('mmsAfiliadosOwner');
+    const divider = document.getElementById('mmsOwnerDivider');
+    if (admBtn) admBtn.style.display = isOwner ? '' : 'none';
+    if (afoBtn) afoBtn.style.display = isOwner ? '' : 'none';
+    if (divider) divider.style.display = isOwner ? '' : 'none';
+  } catch(e){}
   sheet.classList.add('is-open');
 }
 
