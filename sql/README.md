@@ -33,7 +33,7 @@ Queries de leitura pra debugar — pode rodar quantas vezes quiser, não muda na
 | 002 | `referral_code_anonymous.sql` | ✅ Sim | 2026-06-05 |
 | 003 | `owner_filter_rpcs.sql` | ✅ Sim | 2026-06-06 |
 | 004 | `ban_admins.sql` | ✅ Sim | 2026-06-06 |
-| 005 | `ranking_avatar.sql` | ⏳ Pendente | — |
+| 005 | `ranking_avatar.sql` | ✅ Sim | 2026-06-08 |
 
 > **Atualizar essa tabela toda vez que rodar uma migration nova!**
 
