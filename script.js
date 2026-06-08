@@ -318,9 +318,11 @@ async function enterApp(user) {
     const isOwner2 = OWNER_EMAILS.includes((user.email || '').toLowerCase());
     const showAff = isVip || isOwner2;
     if (navAf) navAf.style.display = showAff ? '' : 'none';
-    // Tambem controla o botao 'Indicar' da tabbar mobile (mesma regra)
+    // Tabbar mobile: alterna 'Indicar' (VIP) com 'Métodos' (fallback nao-VIP)
     const mtbAf = document.getElementById('mtbAfiliado');
+    const mtbMet = document.getElementById('mtbMethods');
     if (mtbAf) mtbAf.style.display = showAff ? '' : 'none';
+    if (mtbMet) mtbMet.style.display = showAff ? 'none' : '';
   } catch(e){}
   // Voltou do checkout? mostra "obrigado" e reconfere a assinatura
   try {

@@ -2587,10 +2587,19 @@ html { -webkit-text-size-adjust:100%; text-size-adjust:100%; }
   border-color:#f7931e;
 }
 @media (max-width:680px){
-  .trial-sticky-banner{padding:8px 12px;flex-wrap:wrap}
-  .trial-sticky-banner-text{font-size:11.5px;flex-basis:100%;order:2}
-  .trial-sticky-banner-icon{order:1;font-size:13px}
-  .trial-sticky-banner-cta{order:3;margin-left:auto;font-size:10.5px;padding:4px 10px}
+  /* Mobile: uma unica linha compacta tipo o card 'Ver ranking' */
+  .trial-sticky-banner{padding:8px 12px;flex-wrap:nowrap;gap:8px;border-radius:10px;margin-bottom:12px}
+  .trial-sticky-banner-text{
+    font-size:11.5px;line-height:1.25;
+    overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0;
+  }
+  /* Esconde o "tail" longo ("Assine para manter...") no mobile pra caber */
+  #trialStickyTail{display:none !important}
+  .trial-sticky-banner-icon svg{width:12px;height:12px}
+  .trial-sticky-banner-cta{
+    flex-shrink:0;font-size:10.5px;padding:5px 10px;
+    white-space:nowrap;
+  }
 }
 
 /* ═══════════════════════════════════════════

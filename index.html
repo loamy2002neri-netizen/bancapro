@@ -18,8 +18,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
-<link rel="stylesheet" href="style.css?v=201"/>
-<link rel="stylesheet" href="light.css?v=201"/>
+<link rel="stylesheet" href="style.css?v=202"/>
+<link rel="stylesheet" href="light.css?v=202"/>
 </head>
 <body>
 
@@ -471,12 +471,15 @@
       // restrita. Owners tambem veem (sempre).
       var isVipCache = localStorage.getItem('bancapro-affiliate-vip') === '1';
       var isOwnerCache = email && OWNERS.indexOf(email) >= 0;
-      if (isVipCache || isOwnerCache){
+      var showAffCache = isVipCache || isOwnerCache;
+      if (showAffCache){
         var af = document.getElementById('navAfiliado');
         if (af) af.style.display = '';
-        // Tabbar mobile: botao 'Indicar'
+        // Tabbar mobile: mostra 'Indicar', esconde 'Métodos' fallback
         var mtbAf = document.getElementById('mtbAfiliado');
         if (mtbAf) mtbAf.style.display = '';
+        var mtbMet = document.getElementById('mtbMethods');
+        if (mtbMet) mtbMet.style.display = 'none';
       }
       // Mostra "Admin" / "Afiliados" se o email cacheado e de owner
       if (email && OWNERS.indexOf(email) >= 0){
@@ -2129,6 +2132,11 @@
         <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"/><path d="M2 21c1-4 4-6 7-6s6 2 7 6"/><circle cx="17" cy="7" r="2.5"/><path d="M22 15c-.5-2-2-3.5-4-3.5"/></svg>
         <span>Indicar</span>
       </button>
+      <!-- Fallback pra nao-VIP: ocupa o slot quando 'Indicar' esta escondido -->
+      <button class="mt-item" id="mtbMethods" data-tab="methods" onclick="mobileNav('methods')" aria-label="Métodos">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="M3 10h18"/></svg>
+        <span>Métodos</span>
+      </button>
       <button class="mt-item" data-tab="more" onclick="mobileNavMore()" aria-label="Mais opções">
         <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/></svg>
         <span>Mais</span>
@@ -2401,8 +2409,8 @@
   </div>
 </div>
 
-<script src="config.js?v=201" defer></script>
-<script src="storage.js?v=201" defer></script>
-<script src="script.js?v=201" defer></script>
+<script src="config.js?v=202" defer></script>
+<script src="storage.js?v=202" defer></script>
+<script src="script.js?v=202" defer></script>
 </body>
 </html>
