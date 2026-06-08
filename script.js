@@ -289,13 +289,16 @@ async function enterApp(user) {
   // Tour guiado de 12 passos pra usuarios novos (zero/poucas transacoes).
   // Veteranos sao auto-marcados como "ja viu" silenciosamente.
   try { if (typeof maybeStartTour === 'function') maybeStartTour(); } catch(e){}
-  // Menu Admin/Afiliados só para o dono
+  // Menu Admin/Afiliados só para o dono + Zona de Perigo (acao destrutiva)
   try {
     const isOwner = OWNER_EMAILS.includes((user.email || '').toLowerCase());
     const navAdmin = document.getElementById('navAdmin');
     if (navAdmin) navAdmin.style.display = isOwner ? '' : 'none';
     const navAfiliados = document.getElementById('navAfiliados');
     if (navAfiliados) navAfiliados.style.display = isOwner ? '' : 'none';
+    // Zona de Perigo (Apagar todos os dados) — so owner
+    const dangerZone = document.getElementById('dangerZoneCard');
+    if (dangerZone) dangerZone.style.display = isOwner ? '' : 'none';
   } catch(e){}
   // Registra a indicação (?ref) e libera o painel do afiliado.
   // RESTRICAO: 'Minhas Indicacoes' agora aparece SOMENTE pra afiliados VIP
