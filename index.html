@@ -18,8 +18,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
-<link rel="stylesheet" href="style.css?v=196"/>
-<link rel="stylesheet" href="light.css?v=196"/>
+<link rel="stylesheet" href="style.css?v=197"/>
+<link rel="stylesheet" href="light.css?v=197"/>
 </head>
 <body>
 
@@ -467,8 +467,11 @@
         else if (email && OWNERS.indexOf(email) >= 0) roleEl.textContent = 'Administrador';
         else roleEl.textContent = 'Free';
       }
-      // Mostra "Minhas Indicacoes" se ja foi confirmado afiliado em sessao anterior
-      if (localStorage.getItem('bancapro-is-affiliate') === '1'){
+      // Mostra "Minhas Indicacoes" SO se for afiliado VIP (50%) — feature
+      // restrita. Owners tambem veem (sempre).
+      var isVipCache = localStorage.getItem('bancapro-affiliate-vip') === '1';
+      var isOwnerCache = email && OWNERS.indexOf(email) >= 0;
+      if (isVipCache || isOwnerCache){
         var af = document.getElementById('navAfiliado');
         if (af) af.style.display = '';
       }
@@ -2395,8 +2398,8 @@
   </div>
 </div>
 
-<script src="config.js?v=196" defer></script>
-<script src="storage.js?v=196" defer></script>
-<script src="script.js?v=196" defer></script>
+<script src="config.js?v=197" defer></script>
+<script src="storage.js?v=197" defer></script>
+<script src="script.js?v=197" defer></script>
 </body>
 </html>

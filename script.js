@@ -679,30 +679,27 @@ function affUpdateTierCard(activeCount, isVip){
   const nameEl   = document.getElementById('affTierName');
   const rateEl   = document.getElementById('affTierRate');
   const progress = document.getElementById('affTierProgress');
-  const footEl   = document.getElementById('affTierFoot');
   const howFoot  = document.getElementById('affHowFoot');
   const heroImg  = document.getElementById('affHeroImg');
   const tiersCard = document.querySelector('.aff-tiers-card');
 
-  // Modelo simplificado: sempre visual premium (borda roxa).
-  // Esconde barra de progresso e tabela de niveis pra todos.
-  card.classList.add('is-vip'); // sempre purple border
   if (progress) progress.style.display = 'none';
   if (tiersCard) tiersCard.style.display = 'none';
 
-  if (isVip){
-    if (heroImg) heroImg.src = 'brand/icones%20afiliados/06_partner.png';
-    if (eyebrow) eyebrow.textContent = 'Plano especial';
-    if (nameEl)  nameEl.textContent  = 'Afiliado VIP';
-    if (rateEl)  rateEl.textContent  = 'Comissão especial: 50% recorrente';
-    if (howFoot) howFoot.textContent = 'Você possui uma comissão especial de 50% recorrente em suas indicações ativas.';
-  } else {
-    if (heroImg) heroImg.src = 'brand/icones%20afiliados/06_partner.png';
-    if (eyebrow) eyebrow.textContent = 'Programa de indicação';
-    if (nameEl)  nameEl.textContent  = 'Afiliado';
-    if (rateEl)  rateEl.textContent  = '30% de comissão recorrente';
-    if (howFoot) howFoot.textContent = 'Você ganha 30% recorrente em cada indicação ativa, todo mês enquanto continuar assinante.';
+  // Programa de afiliacao agora e EXCLUSIVO pra VIPs (50%). Quem nao for VIP
+  // (ex: owner sem flag VIP) nao ve nenhum card de afiliacao — esconde tudo.
+  if (!isVip){
+    card.style.display = 'none';
+    return;
   }
+
+  card.style.display = '';
+  card.classList.add('is-vip');
+  if (heroImg) heroImg.src = 'brand/icones%20afiliados/06_partner.png';
+  if (eyebrow) eyebrow.textContent = 'Plano especial';
+  if (nameEl)  nameEl.textContent  = 'Afiliado VIP';
+  if (rateEl)  rateEl.textContent  = 'Comissão especial: 50% recorrente';
+  if (howFoot) howFoot.textContent = 'Você possui uma comissão especial de 50% recorrente em suas indicações ativas.';
 }
 
 // ── Helper: deriva codigo de indicacao do email pra usuario comum ──
