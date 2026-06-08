@@ -18,8 +18,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
-<link rel="stylesheet" href="style.css?v=200"/>
-<link rel="stylesheet" href="light.css?v=200"/>
+<link rel="stylesheet" href="style.css?v=201"/>
+<link rel="stylesheet" href="light.css?v=201"/>
 </head>
 <body>
 
@@ -474,6 +474,9 @@
       if (isVipCache || isOwnerCache){
         var af = document.getElementById('navAfiliado');
         if (af) af.style.display = '';
+        // Tabbar mobile: botao 'Indicar'
+        var mtbAf = document.getElementById('mtbAfiliado');
+        if (mtbAf) mtbAf.style.display = '';
       }
       // Mostra "Admin" / "Afiliados" se o email cacheado e de owner
       if (email && OWNERS.indexOf(email) >= 0){
@@ -2122,7 +2125,7 @@
           <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
         </span>
       </button>
-      <button class="mt-item" data-tab="afiliado" onclick="mobileNav('afiliado')" aria-label="Indicações">
+      <button class="mt-item" id="mtbAfiliado" data-tab="afiliado" onclick="mobileNav('afiliado')" aria-label="Indicações" style="display:none">
         <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"/><path d="M2 21c1-4 4-6 7-6s6 2 7 6"/><circle cx="17" cy="7" r="2.5"/><path d="M22 15c-.5-2-2-3.5-4-3.5"/></svg>
         <span>Indicar</span>
       </button>
@@ -2398,8 +2401,8 @@
   </div>
 </div>
 
-<script src="config.js?v=200" defer></script>
-<script src="storage.js?v=200" defer></script>
-<script src="script.js?v=200" defer></script>
+<script src="config.js?v=201" defer></script>
+<script src="storage.js?v=201" defer></script>
+<script src="script.js?v=201" defer></script>
 </body>
 </html>

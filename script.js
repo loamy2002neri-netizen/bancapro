@@ -316,7 +316,11 @@ async function enterApp(user) {
     }
     // Mostra nav SO se for VIP. Owner tambem ve (acima ja libera navAfiliados).
     const isOwner2 = OWNER_EMAILS.includes((user.email || '').toLowerCase());
-    if (navAf) navAf.style.display = (isVip || isOwner2) ? '' : 'none';
+    const showAff = isVip || isOwner2;
+    if (navAf) navAf.style.display = showAff ? '' : 'none';
+    // Tambem controla o botao 'Indicar' da tabbar mobile (mesma regra)
+    const mtbAf = document.getElementById('mtbAfiliado');
+    if (mtbAf) mtbAf.style.display = showAff ? '' : 'none';
   } catch(e){}
   // Voltou do checkout? mostra "obrigado" e reconfere a assinatura
   try {
