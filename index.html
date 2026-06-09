@@ -40,8 +40,8 @@ src="https://www.facebook.com/tr?id=859710540533085&ev=PageView&noscript=1"
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
-<link rel="stylesheet" href="style.css?v=212"/>
-<link rel="stylesheet" href="light.css?v=212"/>
+<link rel="stylesheet" href="style.css?v=213"/>
+<link rel="stylesheet" href="light.css?v=213"/>
 </head>
 <body>
 
@@ -877,11 +877,24 @@ src="https://www.facebook.com/tr?id=859710540533085&ev=PageView&noscript=1"
         <div class="page-header" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
           <div>
             <div class="page-title">Contas Depositadas</div>
-            <div class="page-subtitle">Controle o saldo de cada casa de aposta — sem esquecer dinheiro parado</div>
+            <div class="page-subtitle">Anote o saldo que você deixou em cada casa de aposta — pra não esquecer dinheiro parado</div>
           </div>
           <div style="display:flex;gap:8px">
             <button class="btn-ghost" onclick="exportAccountsCSV()">Excel</button>
             <button class="btn-primary" style="width:auto;padding:9px 18px" onclick="openAccountModal()">+ Adicionar conta</button>
+          </div>
+        </div>
+
+        <!-- Banner explicativo: pra deixar claro pra que serve essa aba -->
+        <div style="display:flex;align-items:flex-start;gap:14px;padding:14px 18px;border-radius:12px;background:linear-gradient(135deg,rgba(99,102,241,.08),rgba(99,102,241,.02));border:1px solid rgba(99,102,241,.20);margin-bottom:18px">
+          <div style="flex-shrink:0;width:36px;height:36px;border-radius:9px;background:rgba(99,102,241,.15);display:flex;align-items:center;justify-content:center;color:#a78bfa">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+          </div>
+          <div style="flex:1;min-width:0">
+            <div style="font-size:13.5px;font-weight:700;color:#fff;line-height:1.3;margin-bottom:4px">Pra que serve essa aba?</div>
+            <div style="font-size:12.5px;color:var(--text-secondary);line-height:1.55">
+              <b style="color:#cbd5e1">Aqui você anota o saldo que tem guardado em cada casa de aposta</b> (Bet365, Betano, Pinnacle, Sportingbet…). Apostador deposita em várias casas e <b style="color:#cbd5e1">esquece</b> que tem R$ 80 numa, R$ 200 em outra. Cadastra aqui pra ter visão de <b style="color:#cbd5e1">onde tá seu dinheiro</b> e poder sacar quando precisar. <span style="color:var(--text-muted)">Atualize o saldo sempre que apostar ou sacar.</span>
+            </div>
           </div>
         </div>
 
@@ -905,7 +918,7 @@ src="https://www.facebook.com/tr?id=859710540533085&ev=PageView&noscript=1"
           <div class="kpi-card" style="--card-color:var(--blue)">
             <div class="kpi-label">Casas Cadastradas</div>
             <div class="kpi-value" id="accCount">0</div>
-            <div class="kpi-change neutral">de tantas casas que você quiser</div>
+            <div class="kpi-change neutral">Cadastre quantas casas usar</div>
           </div>
         </div>
 
@@ -2456,8 +2469,8 @@ src="https://www.facebook.com/tr?id=859710540533085&ev=PageView&noscript=1"
   </div>
 </div>
 
-<script src="config.js?v=212" defer></script>
-<script src="storage.js?v=212" defer></script>
-<script src="script.js?v=212" defer></script>
+<script src="config.js?v=213" defer></script>
+<script src="storage.js?v=213" defer></script>
+<script src="script.js?v=213" defer></script>
 </body>
 </html>
