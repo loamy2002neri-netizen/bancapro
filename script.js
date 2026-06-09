@@ -2782,12 +2782,12 @@ function saveSaldoInicial() {
 // Catálogo oficial dos métodos (cores, ícones, metas)
 // ── CATÁLOGO DE MÉTODOS — editável e persistente ──
 const DEFAULT_METHODS_CATALOG = [
-  {name:'Surebet',     icon:'🎯', color:'#fbbf24', color2:'#eab308', meta:5000},
-  {name:'Delay',       icon:'⏱',  color:'#34d399', color2:'#14b8a6', meta:4000},
-  {name:'Métodos',     icon:'💼', color:'#6366f1', color2:'#1d4ed8', meta:3800},
-  {name:'Freebet',     icon:'🎁', color:'#f43f5e', color2:'#dc2626', meta:3000},
-  {name:'iGaming',     icon:'🎮', color:'#8b5cf6', color2:'#9333ea', meta:2000},
-  {name:'Duplo Green', icon:'🟢', color:'#22d3ee', color2:'#3b82f6', meta:3500},
+  {name:'Futebol',     icon:'⚽', color:'#10b981', color2:'#059669', meta:5000},
+  {name:'Basquete',    icon:'🏀', color:'#f59e0b', color2:'#d97706', meta:3000},
+  {name:'Tênis',       icon:'🎾', color:'#84cc16', color2:'#65a30d', meta:2500},
+  {name:'MMA / UFC',   icon:'🥊', color:'#ef4444', color2:'#dc2626', meta:2000},
+  {name:'E-sports',    icon:'🎮', color:'#8b5cf6', color2:'#7c3aed', meta:2000},
+  {name:'Cassino',     icon:'🎰', color:'#f43f5e', color2:'#e11d48', meta:1500},
 ];
 let METHODS_CATALOG = JSON.parse(JSON.stringify(DEFAULT_METHODS_CATALOG));
 
