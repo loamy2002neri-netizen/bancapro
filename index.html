@@ -40,8 +40,8 @@ src="https://www.facebook.com/tr?id=859710540533085&ev=PageView&noscript=1"
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
-<link rel="stylesheet" href="style.css?v=209"/>
-<link rel="stylesheet" href="light.css?v=209"/>
+<link rel="stylesheet" href="style.css?v=210"/>
+<link rel="stylesheet" href="light.css?v=210"/>
 </head>
 <body>
 
@@ -358,8 +358,8 @@ src="https://www.facebook.com/tr?id=859710540533085&ev=PageView&noscript=1"
 <!-- METHODS CATALOG MODAL (gerenciar métodos: adicionar/editar/remover) -->
 <div class="modal-overlay" id="methodsCatalogModal">
   <div class="modal" style="width:760px;max-width:96vw">
-    <div class="modal-title">Gerenciar Métodos</div>
-    <div class="modal-sub">Adicione, edite ou remova seus métodos de trabalho. As mudanças refletem em toda a plataforma.</div>
+    <div class="modal-title">Gerenciar Categorias</div>
+    <div class="modal-sub">Adicione, edite ou remova suas categorias. As mudanças refletem em toda a plataforma.</div>
     <div id="methodsCatalogList" style="display:flex;flex-direction:column;gap:10px;max-height:55vh;overflow-y:auto;padding-right:4px"></div>
     <button class="btn-ghost" style="margin-top:12px;width:100%;justify-content:center" onclick="addMethodCatalogRow()">+ Adicionar método</button>
     <div class="modal-actions" style="justify-content:space-between">
@@ -375,7 +375,7 @@ src="https://www.facebook.com/tr?id=859710540533085&ev=PageView&noscript=1"
 <!-- METHODS COMPARE MODAL (editor de Abr vs Mai) -->
 <div class="modal-overlay" id="methodsCompareModal">
   <div class="modal" style="width:640px;max-width:95vw">
-    <div class="modal-title">Editar Comparativo por Método</div>
+    <div class="modal-title">Editar Comparativo por Categoria</div>
     <div class="modal-sub">Altere nomes, valores ou adicione/remova métodos. Os dois gráficos atualizam automaticamente.</div>
     <div id="methodsCompareList" style="display:flex;flex-direction:column;gap:10px;max-height:50vh;overflow-y:auto;padding-right:4px"></div>
     <button class="btn-ghost" style="margin-top:12px;width:100%;justify-content:center" onclick="addMethodCompare()">+ Adicionar método</button>
@@ -656,7 +656,7 @@ src="https://www.facebook.com/tr?id=859710540533085&ev=PageView&noscript=1"
           <div class="stat-chip"><div class="stat-chip-label">Lucro Hoje</div><div class="stat-chip-value" id="statLucroHoje" style="color:var(--green)">+R$ 840</div></div>
           <div class="stat-chip"><div class="stat-chip-label">Lucro 7 dias</div><div class="stat-chip-value" id="statLucroSemanal" style="color:var(--green)">+R$ 4.120</div></div>
           <div class="stat-chip"><div class="stat-chip-label">Lucro 30 dias</div><div class="stat-chip-value" id="statLucroMensal" style="color:var(--green)">+R$ 16.840</div></div>
-          <div class="stat-chip"><div class="stat-chip-label">Métodos Ativos</div><div class="stat-chip-value" id="statMetodosAtivos">6 / 6</div></div>
+          <div class="stat-chip"><div class="stat-chip-label">Categorias Ativas</div><div class="stat-chip-value" id="statMetodosAtivos">6 / 6</div></div>
           <div class="stat-chip"><div class="stat-chip-label">Transações</div><div class="stat-chip-value" id="statTransacoes">247</div></div>
           <div class="stat-chip"><div class="stat-chip-label">Metas</div><div class="stat-chip-value" id="statMetasAtingidas" style="color:var(--green)">4 de 5</div></div>
         </div>
@@ -749,7 +749,7 @@ src="https://www.facebook.com/tr?id=859710540533085&ev=PageView&noscript=1"
           <div class="chart-header">
             <div>
               <div class="chart-title">Por Categoria</div>
-              <div class="chart-subtitle">Receita comparativa por Métodos — Abr vs Mai</div>
+              <div class="chart-subtitle">Receita comparativa por Categorias — Abr vs Mai</div>
             </div>
             <div class="chart-legend" style="gap:14px">
               <div class="legend-item" style="color:#cbd5e1;font-size:13px"><div class="legend-dot" style="background:#64748b;width:10px;height:10px;border-radius:50%"></div>Abril</div>
@@ -806,7 +806,7 @@ src="https://www.facebook.com/tr?id=859710540533085&ev=PageView&noscript=1"
 
         <!-- RANKING -->
         <div class="ranking-card" data-card="met-ranking">
-          <div style="font-size:15px;font-weight:700;margin-bottom:12px">Ranking — Métodos Mais Lucrativos</div>
+          <div style="font-size:15px;font-weight:700;margin-bottom:12px">Ranking — Categorias Mais Lucrativas</div>
           <div id="rankingList"></div>
         </div>
 
@@ -816,7 +816,7 @@ src="https://www.facebook.com/tr?id=859710540533085&ev=PageView&noscript=1"
         <!-- METHOD CHART — ampliado (500px desktop / 340px mobile) -->
         <div class="chart-card" data-card="met-evo" style="padding:20px;margin-top:16px">
           <div class="chart-header" style="margin-bottom:12px">
-            <div><div class="chart-title" style="font-size:15px;font-weight:600">Evolução por Método — Últimos 6 Meses</div></div>
+            <div><div class="chart-title" style="font-size:15px;font-weight:600">Evolução por Categoria — Últimos 6 Meses</div></div>
           </div>
           <div id="methodEvolutionWrap" style="height:500px;width:100%;position:relative">
             <canvas id="methodEvolutionChart"></canvas>
@@ -976,7 +976,7 @@ src="https://www.facebook.com/tr?id=859710540533085&ev=PageView&noscript=1"
               <li><span class="plan-check">✓</span>Relatórios básicos</li>
               <li class="plan-feature-off"><span class="plan-x">✕</span>Exportar PDF / Excel</li>
               <li class="plan-feature-off"><span class="plan-x">✕</span>Suporte prioritário</li>
-              <li class="plan-feature-off"><span class="plan-x">✕</span>Métodos ilimitados</li>
+              <li class="plan-feature-off"><span class="plan-x">✕</span>Categorias ilimitadas</li>
             </ul>
             <button class="btn-plan-ghost" disabled>Plano atual</button>
           </div>
@@ -996,7 +996,7 @@ src="https://www.facebook.com/tr?id=859710540533085&ev=PageView&noscript=1"
             <div class="plan-desc">Tudo o que você precisa pra gestão profissional</div>
             <ul class="plan-features">
               <li><span class="plan-check premium">✓</span><strong>Transações ilimitadas</strong></li>
-              <li><span class="plan-check premium">✓</span><strong>Métodos ilimitados</strong></li>
+              <li><span class="plan-check premium">✓</span><strong>Categorias ilimitadas</strong></li>
               <li><span class="plan-check premium">✓</span>Relatórios avançados (PDF/Excel)</li>
               <li><span class="plan-check premium">✓</span>Comparativos e projeções</li>
               <li><span class="plan-check premium">✓</span>Metas personalizadas</li>
@@ -1292,15 +1292,15 @@ src="https://www.facebook.com/tr?id=859710540533085&ev=PageView&noscript=1"
         </div>
         <div id="compareAutoBanner" style="display:none;align-items:center;gap:8px;padding:10px 14px;background:rgba(99,102,241,0.08);border:1px solid rgba(99,102,241,0.18);border-radius:10px;font-size:12.5px;color:var(--text-secondary);margin-bottom:14px"></div>
         <div class="chart-card" data-card="cmp-chart">
-          <div class="chart-header"><div class="chart-title">Comparativo por Método</div></div>
+          <div class="chart-header"><div class="chart-title">Comparativo por Categoria</div></div>
           <div id="compareChartWrap" style="position:relative;width:100%;height:300px">
             <canvas id="compareChart"></canvas>
           </div>
         </div>
         <div class="form-card" data-card="cmp-detail">
           <div class="form-card-title" style="display:flex;align-items:center;justify-content:space-between;gap:8px">
-            <span>Análise Detalhada por Método</span>
-            <button class="btn-ghost" style="padding:6px 14px;font-size:12px" onclick="openMethodsCompareModal()">Editar métodos</button>
+            <span>Análise Detalhada por Categoria</span>
+            <button class="btn-ghost" style="padding:6px 14px;font-size:12px" onclick="openMethodsCompareModal()">Editar categorias</button>
           </div>
           <div id="compareBarsList" style="display:flex;flex-direction:column;gap:12px"></div>
         </div>
@@ -2456,8 +2456,8 @@ src="https://www.facebook.com/tr?id=859710540533085&ev=PageView&noscript=1"
   </div>
 </div>
 
-<script src="config.js?v=209" defer></script>
-<script src="storage.js?v=209" defer></script>
-<script src="script.js?v=209" defer></script>
+<script src="config.js?v=210" defer></script>
+<script src="storage.js?v=210" defer></script>
+<script src="script.js?v=210" defer></script>
 </body>
 </html>
