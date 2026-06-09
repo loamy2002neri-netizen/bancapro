@@ -72,7 +72,8 @@ window.Storage = (function(){
       'bancapro-welcome-seen',
       'bancapro-tour-done',
       'bancapro-onboarding-dismissed',
-      'bancapro-onboarding-shown'
+      'bancapro-onboarding-shown',
+      'bancapro-accounts-info-dismissed'
     ]
   };
 

@@ -4526,6 +4526,28 @@ function dismissOnboarding(){
   if (card) card.style.display = 'none';
 }
 
+// Banner explicativo da aba 'Contas Depositadas' — pode ser dispensado
+// pelo X e nao volta a aparecer (flag em localStorage).
+function dismissAccountsInfoBanner(){
+  try { localStorage.setItem('bancapro-accounts-info-dismissed', '1'); } catch(e){}
+  const b = document.getElementById('accountsInfoBanner');
+  if (b) b.style.display = 'none';
+}
+
+// Aplica estado dispensado ao carregar o app
+(function initAccountsInfoBanner(){
+  function apply(){
+    try {
+      if (localStorage.getItem('bancapro-accounts-info-dismissed') === '1'){
+        const b = document.getElementById('accountsInfoBanner');
+        if (b) b.style.display = 'none';
+      }
+    } catch(e){}
+  }
+  if (document.readyState !== 'loading') setTimeout(apply, 50);
+  else document.addEventListener('DOMContentLoaded', apply);
+})();
+
 function onboardingGo(step){
   // Roteador dos passos do checklist
   switch(step){
