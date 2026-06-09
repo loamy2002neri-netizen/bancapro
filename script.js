@@ -1779,7 +1779,7 @@ var CARDS_CATALOG = [
     {
       key: 'dash-stats',
       title: 'Mini-stats',
-      desc: 'Receita, Lucro Hoje/7d/30d, Métodos, Transações, Metas',
+      desc: 'Receita, Lucro Hoje/7d/30d, Categorias, Transações, Metas',
       icon: '<path d="M3 12h4l3-8 4 16 3-8h4"/>',
       accent: '#22d3ee'
     },
@@ -1800,7 +1800,7 @@ var CARDS_CATALOG = [
     {
       key: 'dash-categoria',
       title: 'Por Categoria',
-      desc: 'Gráfico de barras comparando métodos',
+      desc: 'Gráfico de barras comparando categorias',
       icon: '<path d="M4 21V8M10 21V4M16 21V12M22 21H2"/>',
       accent: '#ec4899'
     }
@@ -1808,22 +1808,22 @@ var CARDS_CATALOG = [
   { section: 'Categoria', sectionIcon: 'briefcase', items: [
     {
       key: 'met-ranking',
-      title: 'Ranking de Métodos',
-      desc: 'Top métodos mais lucrativos do mês',
+      title: 'Ranking de Categorias',
+      desc: 'Top categorias mais lucrativas do mês',
       icon: '<path d="M8 21h8M12 17v4M7 4h10v6a5 5 0 01-10 0V4z"/>',
       accent: '#fbbf24'
     },
     {
       key: 'met-grid',
-      title: 'Cards de Métodos',
-      desc: 'Cards individuais de cada método (Surebet, Delay, Freebet...)',
+      title: 'Cards de Categorias',
+      desc: 'Cards individuais de cada categoria (Futebol, Basquete, Tênis...)',
       icon: '<rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/>',
       accent: '#a78bfa'
     },
     {
       key: 'met-evo',
-      title: 'Evolução por Método',
-      desc: 'Gráfico de cada método ao longo dos meses',
+      title: 'Evolução por Categoria',
+      desc: 'Gráfico de cada categoria ao longo dos meses',
       icon: '<path d="M3 17l6-6 4 4 8-9"/>',
       accent: '#10b981'
     }
@@ -1849,14 +1849,14 @@ var CARDS_CATALOG = [
     {
       key: 'rep-despesas',
       title: 'Distribuição de Despesas',
-      desc: 'Donut com % de despesas por método',
+      desc: 'Donut com % de despesas por categoria',
       icon: '<circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 019 9"/>',
       accent: '#ef4444'
     },
     {
       key: 'rep-lucro',
       title: 'Distribuição de Lucro',
-      desc: 'Donut com % de lucro por método',
+      desc: 'Donut com % de lucro por categoria',
       icon: '<circle cx="12" cy="12" r="9"/><path d="M3 12a9 9 0 0118 0"/>',
       accent: '#f59e0b'
     }
@@ -1871,7 +1871,7 @@ var CARDS_CATALOG = [
     },
     {
       key: 'cmp-chart',
-      title: 'Comparativo por Método',
+      title: 'Comparativo por Categoria',
       desc: 'Gráfico de barras mês anterior vs atual',
       icon: '<path d="M3 6h7M3 12h11M3 18h6"/><path d="M17 4l4 4-4 4"/>',
       accent: '#a78bfa'
@@ -1879,7 +1879,7 @@ var CARDS_CATALOG = [
     {
       key: 'cmp-detail',
       title: 'Análise Detalhada',
-      desc: 'Lista expandida com barras por método',
+      desc: 'Lista expandida com barras por categoria',
       icon: '<path d="M4 6h16M4 12h16M4 18h10"/>',
       accent: '#ec4899'
     }
