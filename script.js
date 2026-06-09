@@ -7560,7 +7560,7 @@ function renderRankMyPos(youProfit, currentTier){
     const ahead = isInList ? board_users[yourPos - 2] : board_users[displayPos - 2];
     if (ahead){
       const diff = ahead.profit - youProfit;
-      if (progEl) progEl.innerHTML = 'Faltam <b>'+rankFormatValue(diff)+'</b> pra ultrapassar <span class="ahead">'+ahead.name+'</span> no <b>#'+(displayPos - 1)+'</b>';
+      if (progEl) progEl.innerHTML = 'Faltam <b>'+rankFormatValue(diff)+'</b> pra ultrapassar <span class="ahead">'+escapeHtml(ahead.name)+'</span> no <b>#'+(displayPos - 1)+'</b>';
       // Progresso: quanto do gap entre eu e o próximo já cobri (relativo ao gap com o de baixo)
       let pct = 0;
       if (isInList && board_users[yourPos]){
@@ -7610,11 +7610,11 @@ function renderRankPodium(youProfit){
     // (3) iniciais como fallback
     let avatarHTML = rankUserInitials(u.name);
     if (u.avatar){
-      avatarHTML = '<img src="'+u.avatar+'" alt="" onerror="this.style.display=\'none\'"/>';
+      avatarHTML = '<img src="'+escapeHtml(u.avatar)+'" alt="" onerror="this.style.display=\'none\'"/>';
     } else if (u.isYou){
       try {
         const dataUrl = localStorage.getItem('bancapro-avatar');
-        if (dataUrl) avatarHTML = '<img src="'+dataUrl+'" alt="" onerror="this.style.display=\'none\'"/>';
+        if (dataUrl) avatarHTML = '<img src="'+escapeHtml(dataUrl)+'" alt="" onerror="this.style.display=\'none\'"/>';
       } catch(e){}
     }
     // Esconde o nome "Você" do corpo quando for placeholder (avatar + borda já indicam)
@@ -7624,8 +7624,8 @@ function renderRankPodium(youProfit){
       '<div class="rank-podium-avatar">'+avatarHTML+'</div>'+
       '<div class="rank-podium-rank">'+labels[rank]+'</div>'+
       '<div class="rank-podium-shield rank-shield">'+rankShieldSVG(current)+'</div>'+
-      (displayName ? '<div class="rank-podium-name">'+displayName+(u.isPro ? proBadge : '')+'</div>' : '')+
-      '<div class="rank-podium-tier-name">'+current.name+'</div>'+
+      (displayName ? '<div class="rank-podium-name">'+escapeHtml(displayName)+(u.isPro ? proBadge : '')+'</div>' : '')+
+      '<div class="rank-podium-tier-name">'+escapeHtml(current.name)+'</div>'+
       '<div class="rank-podium-profit">'+rankFormatValue(u.profit)+'</div>';
   });
 }
@@ -7748,11 +7748,11 @@ function rankRenderBoard(youProfit){
     // Avatar com prioridade: foto do RPC > localStorage do 'voce' > iniciais
     let avatarInner = initials;
     if (u.avatar){
-      avatarInner = '<img src="'+u.avatar+'" alt="" onerror="this.style.display=\'none\'; this.parentElement.textContent=\''+initials.replace(/'/g, "\\'")+'\'"/>';
+      avatarInner = '<img src="'+escapeHtml(u.avatar)+'" alt="" onerror="this.style.display=\'none\'; this.parentElement.textContent=\''+initials.replace(/'/g, "\\'")+'\'"/>';
     } else if (u.isYou){
       try {
         const dataUrl = localStorage.getItem('bancapro-avatar');
-        if (dataUrl) avatarInner = '<img src="'+dataUrl+'" alt="" onerror="this.style.display=\'none\'"/>';
+        if (dataUrl) avatarInner = '<img src="'+escapeHtml(dataUrl)+'" alt="" onerror="this.style.display=\'none\'"/>';
       } catch(e){}
     }
     const proBadge = u.isPro ? proBadgeHTML : '';
@@ -7769,8 +7769,8 @@ function rankRenderBoard(youProfit){
     return '<div class="rank-row '+youCls+' '+proCls+'">'+
       '<div class="rank-row-pos">#'+r.pos+'</div>'+
       '<div class="rank-row-avatar">'+avatarInner+'</div>'+
-      '<div class="rank-row-name">'+u.name+proBadge+(u.isYou ? '<b>VOCÊ</b>' : '')+deltaHtml+'</div>'+
-      '<div class="rank-row-tier"><span class="rank-shield">'+rankShieldSVG(current)+'</span><span class="rank-row-tier-name">'+current.name+'</span></div>'+
+      '<div class="rank-row-name">'+escapeHtml(u.name)+proBadge+(u.isYou ? '<b>VOCÊ</b>' : '')+deltaHtml+'</div>'+
+      '<div class="rank-row-tier"><span class="rank-shield">'+rankShieldSVG(current)+'</span><span class="rank-row-tier-name">'+escapeHtml(current.name)+'</span></div>'+
       '<div class="rank-row-profit">'+rankFormatValue(u.profit)+'</div>'+
     '</div>';
   }).join('');
@@ -8292,7 +8292,7 @@ function rankRenderDashCard(profit, currentTier, board_users){
     } else {
       const ahead = board_users[myPos - 2];
       const diff = ahead ? ahead.profit - profit : 0;
-      document.getElementById('dashRankSub').innerHTML = 'Faltam <b>'+rankFormatValue(diff)+'</b> pra ultrapassar <b>'+ahead.name+'</b>';
+      document.getElementById('dashRankSub').innerHTML = 'Faltam <b>'+rankFormatValue(diff)+'</b> pra ultrapassar <b>'+escapeHtml(ahead.name)+'</b>';
     }
   } else if (elig.eligible){
     // Elegível mas ainda não carregou — raro
