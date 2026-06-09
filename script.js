@@ -1743,7 +1743,7 @@ function goTo(section, el) {
       if(n.textContent.toLowerCase().includes(section.toLowerCase())) n.classList.add('active');
     });
   }
-  const labels = {dashboard:'Dashboard',methods:'Métodos',transactions:'Transações',accounts:'Contas Depositadas',recharge:'Assinatura',reports:'Relatórios',goals:'Metas',compare:'Comparativo',calculadora:'Calculadora',anotacoes:'Anotações',ranking:'Ranking',settings:'Configurações',help:'Ajuda',admin:'Admin',afiliado:'Minhas Indicações',afiliados:'Afiliados',personalizar:'Personalizar'};
+  const labels = {dashboard:'Dashboard',methods:'Categoria',transactions:'Transações',accounts:'Contas Depositadas',recharge:'Assinatura',reports:'Relatórios',goals:'Metas',compare:'Comparativo',calculadora:'Calculadora',anotacoes:'Anotações',ranking:'Ranking',settings:'Configurações',help:'Ajuda',admin:'Admin',afiliado:'Minhas Indicações',afiliados:'Afiliados',personalizar:'Personalizar'};
   var _bc = document.getElementById('breadcrumb'); if(_bc) _bc.textContent = labels[section] || section;
   closeSidebar();
   if(section === 'reports') setTimeout(initReportCharts, 100);
@@ -1805,7 +1805,7 @@ var CARDS_CATALOG = [
       accent: '#ec4899'
     }
   ]},
-  { section: 'Métodos', sectionIcon: 'briefcase', items: [
+  { section: 'Categoria', sectionIcon: 'briefcase', items: [
     {
       key: 'met-ranking',
       title: 'Ranking de Métodos',
@@ -2033,7 +2033,7 @@ function mobileNavMore(){
       + '  <div class="mms-handle"></div>'
       + '  <div class="mms-title">Mais opções</div>'
       + '  <button class="mms-item" onclick="mobileNav(\'transactions\')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7h18M3 12h18M3 17h18"/></svg>Transações</button>'
-      + '  <button class="mms-item" onclick="mobileNav(\'methods\')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="M3 10h18"/></svg>Métodos</button>'
+      + '  <button class="mms-item" onclick="mobileNav(\'methods\')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="M3 10h18"/></svg>Categoria</button>'
       + '  <button class="mms-item" onclick="mobileNav(\'accounts\')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2h14a2 2 0 002-2v-2"/><path d="M16 12h5"/></svg>Contas Depositadas</button>'
       + '  <button class="mms-item" onclick="mobileNav(\'goals\')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.5"/></svg>Metas</button>'
       + '  <button class="mms-item" onclick="mobileNav(\'reports\')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 14l4-4 4 4 5-6"/></svg>Relatórios</button>'
