@@ -189,31 +189,129 @@ function applyBlob(blob) {
   });
 }
 
-// Baixa o "banco" do usuário e popula o localStorage para os loaders existentes lerem
+// Baixa o "banco" do usuário e popula o localStorage para os loaders existentes lerem.
+//
+// BUG ANTERIOR: clearUserLocal() + applyBlob cego sobrescrevia tx locais nao
+// sincronizadas (caso comum: push 800ms nao rodou porque user fechou aba).
+// Resultado: transacoes cadastradas no celular sumiam ao reabrir o app.
+//
+// FIX: merge inteligente — preserva itens locais que ainda nao foram pra cloud
+// e funde com cloud por ID. Em caso de conflito, vence o mais recente.
 async function pullUserData(userId) {
+  // 1. Salva snapshot do que tem em local AGORA (antes de baixar cloud).
+  //    Esse snapshot pode conter tx ainda nao sincronizadas (push pendente
+  //    que ficou no ar do uso anterior).
+  const localBefore = {};
+  SYNC_KEYS.forEach(k => {
+    try { const v = localStorage.getItem(k); if (v != null) localBefore[k] = v; } catch(e){}
+  });
+  const hadPendingPush = (() => {
+    try { return localStorage.getItem('bancapro-push-pending-' + userId) === '1'; } catch(e){ return false; }
+  })();
+
   clearUserLocal();
+
+  // 2. Baixa cloud
+  let cloudBlob = null;
   const sb = getSb();
   if (sb) {
     try {
       const { data, error } = await sb.from('user_data').select('data').eq('user_id', userId).maybeSingle();
-      if (error) { console.warn('pullUserData', error); return; }
-      applyBlob(data && data.data ? data.data : null);
+      if (!error) cloudBlob = data && data.data ? data.data : null;
+      else console.warn('pullUserData', error);
     } catch(e) { console.warn('pullUserData', e); }
   } else {
     try {
       const raw = localStorage.getItem('bancapro-userdata-' + userId);
-      if (raw) applyBlob(JSON.parse(raw));
+      if (raw) cloudBlob = JSON.parse(raw);
     } catch(e){}
+  }
+
+  // 3. Aplica cloud primeiro (base)
+  applyBlob(cloudBlob);
+
+  // 4. Merge: se tinha push pendente OU se local tem dados extras, funde
+  //    Foco nos arrays (transactions, goals, accounts) onde perda eh critica.
+  const ARRAY_KEYS = ['bancapro-transactions','bancapro-goals','bancapro-accounts'];
+  let merged = false;
+  ARRAY_KEYS.forEach(k => {
+    try {
+      const cloudArr = cloudBlob && cloudBlob[k] ? JSON.parse(cloudBlob[k]) : [];
+      const localArr = localBefore[k] ? JSON.parse(localBefore[k]) : [];
+      if (!Array.isArray(cloudArr) || !Array.isArray(localArr)) return;
+      if (localArr.length === 0) return; // nada pra mesclar
+
+      // Indexa por id
+      const byId = new Map();
+      cloudArr.forEach(item => { if (item && item.id != null) byId.set(String(item.id), item); });
+
+      // Merge: tx local que nao esta no cloud entra; conflito = mais recente vence
+      let added = 0;
+      localArr.forEach(item => {
+        if (!item || item.id == null) return;
+        const id = String(item.id);
+        const existing = byId.get(id);
+        if (!existing) {
+          byId.set(id, item);
+          added++;
+        } else {
+          // Mesma id em ambos — vence o mais recente
+          const localStamp = new Date(item.created_at || item.updated_at || 0).getTime();
+          const cloudStamp = new Date(existing.created_at || existing.updated_at || 0).getTime();
+          if (localStamp > cloudStamp) byId.set(id, item);
+        }
+      });
+
+      const finalArr = Array.from(byId.values());
+      // Ordena: tx por created_at desc (mais novo primeiro), igual o app espera
+      if (k === 'bancapro-transactions'){
+        finalArr.sort((a, b) => {
+          const ta = new Date(a.created_at || 0).getTime();
+          const tb = new Date(b.created_at || 0).getTime();
+          return tb - ta;
+        });
+      }
+      localStorage.setItem(k, JSON.stringify(finalArr));
+      if (added > 0) merged = true;
+    } catch(e) { console.warn('merge ' + k, e); }
+  });
+
+  // 5. Se houve merge OU havia push pendente, agenda novo push pra mandar tudo pra cloud
+  if (merged || hadPendingPush) {
+    console.log('[pullUserData] merge detectado, agendando push pra sincronizar');
+    if (typeof schedulePush === 'function') schedulePush();
   }
 }
 
-// Salva o "banco" do usuário (debounced — chamado por persistState/persistAccounts/saveProfile)
+// Salva o "banco" do usuário.
+//
+// BUG CRITICO ANTERIOR: debounce de 800ms + push que so rodava na aba ativa
+// faziam transacoes sumirem. Cenario tipico: user cadastrava tx no celular,
+// bloqueava o aparelho antes dos 800ms, browser pausava timer, push nunca
+// rodava. Ao reabrir, pullUserData() apagava local e baixava cloud (sem a
+// tx nova) -> dado perdido.
+//
+// FIX:
+//  1. Debounce reduzido pra 250ms
+//  2. beforeunload/pagehide/visibilitychange forcam push imediato
+//  3. Flag _pendingPush detecta push que ficou no ar, retry no proximo abrir
+//  4. Push falhou? Retry com backoff (3s, 8s, 20s) ate funcionar
 let _pushTimer = null;
+let _pendingPush = false;       // true entre schedulePush() e pushUserData() concluir
+let _retryTimer = null;
+let _retryDelay = 3000;         // backoff inicial
+const _PUSH_DEBOUNCE = 250;     // antes era 800
+const _PUSH_RETRY_DELAYS = [3000, 8000, 20000];
+
 function schedulePush() {
   if (!currentUserId) return;
+  _pendingPush = true;
+  // Marca no localStorage que tem push pendente — sobrevive reload
+  try { localStorage.setItem('bancapro-push-pending-' + currentUserId, '1'); } catch(e){}
   clearTimeout(_pushTimer);
-  _pushTimer = setTimeout(pushUserData, 800);
+  _pushTimer = setTimeout(pushUserData, _PUSH_DEBOUNCE);
 }
+
 async function pushUserData() {
   if (!currentUserId) return null;
   const blob = {};
@@ -225,18 +323,64 @@ async function pushUserData() {
     try {
       const { error } = await sb.from('user_data')
         .upsert({ user_id: currentUserId, data: blob, updated_at: new Date().toISOString() }, { onConflict: 'user_id' });
-      if (error) { console.warn('pushUserData', error); return error; }
-      // Se a aba ranking estiver aberta, re-fetch pra refletir nome/lucro atualizado
+      if (error) {
+        console.warn('pushUserData', error);
+        _schedulePushRetry();
+        return error;
+      }
+      // SUCESSO: limpa flag de pending + reseta backoff
+      _pendingPush = false;
+      _retryDelay = _PUSH_RETRY_DELAYS[0];
+      clearTimeout(_retryTimer);
+      try { localStorage.removeItem('bancapro-push-pending-' + currentUserId); } catch(e){}
+      // Se a aba ranking estiver aberta, re-fetch
       var rs = document.getElementById('sec-ranking');
       if (rs && rs.classList.contains('active') && typeof renderUserRanking === 'function'){
         setTimeout(renderUserRanking, 300);
       }
       return null;
-    } catch(e) { console.warn('pushUserData', e); return e; }
+    } catch(e) {
+      console.warn('pushUserData', e);
+      _schedulePushRetry();
+      return e;
+    }
   } else {
-    try { localStorage.setItem('bancapro-userdata-' + currentUserId, JSON.stringify(blob)); return null; }
+    try {
+      localStorage.setItem('bancapro-userdata-' + currentUserId, JSON.stringify(blob));
+      _pendingPush = false;
+      try { localStorage.removeItem('bancapro-push-pending-' + currentUserId); } catch(e){}
+      return null;
+    }
     catch(e){ return e; }
   }
+}
+
+// Backoff exponencial pra push falho — protege contra rede ruim
+function _schedulePushRetry(){
+  clearTimeout(_retryTimer);
+  const idx = Math.min(_PUSH_RETRY_DELAYS.indexOf(_retryDelay) + 1, _PUSH_RETRY_DELAYS.length - 1);
+  _retryDelay = _PUSH_RETRY_DELAYS[idx];
+  _retryTimer = setTimeout(() => {
+    if (_pendingPush && currentUserId) pushUserData();
+  }, _retryDelay);
+}
+
+// Push imediato quando aba vai pra background OU vai ser fechada.
+// CRITICO pra mobile: browser pausa setTimeout quando user bloqueia tela.
+function _flushPushNow(){
+  if (!_pendingPush || !currentUserId) return;
+  clearTimeout(_pushTimer);
+  pushUserData(); // fire and forget — beforeunload nao espera promise
+}
+
+// Listeners de "aba ta saindo" — registrados 1x
+if (typeof window !== 'undefined' && !window._apostackPushFlushRegistered){
+  window._apostackPushFlushRegistered = true;
+  window.addEventListener('beforeunload', _flushPushNow);
+  window.addEventListener('pagehide', _flushPushNow);
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'hidden') _flushPushNow();
+  });
 }
 
 // Entra no app depois de autenticado
