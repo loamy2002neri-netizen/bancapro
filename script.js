@@ -5476,6 +5476,32 @@ function setTheme(theme, el) {
 // ══════════════════════════════════════════════
 //  TOAST
 // ══════════════════════════════════════════════
+// Suporte por email: copia o email pro clipboard e tenta abrir o cliente.
+// mailto: nao funciona se o usuario nao tem cliente de email padrao (caso
+// comum no Windows sem Outlook) — entao o copy garante que o email fica
+// disponivel pra colar no Gmail/webmail mesmo.
+function contactByEmail(subject){
+  const email = 'suporteapostack@gmail.com';
+  const sub = subject || 'Suporte Apostack';
+  try {
+    if (navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(email).then(
+        function(){ showToast('📋 Email copiado: ' + email,'success'); },
+        function(){ showToast('Nosso email: ' + email,'info'); }
+      );
+    } else {
+      showToast('Nosso email: ' + email,'info');
+    }
+  } catch(e){
+    showToast('Nosso email: ' + email,'info');
+  }
+  // Bonus: tenta abrir cliente de email se existir. Sem garantia.
+  try {
+    window.location.href = 'mailto:' + email + '?subject=' + encodeURIComponent(sub);
+  } catch(e){}
+  return false;
+}
+
 function showToast(msg, type='info') {
   const icons = {success:'✅',error:'❌',info:'ℹ️',warning:'⚠️'};
   const t = document.createElement('div');
