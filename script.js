@@ -2899,6 +2899,8 @@ function recomputeAll() {
   if(typeof initMethodEvolution === 'function' && document.getElementById('methodEvolutionChart')) {
     initMethodEvolution();
   }
+  // Re-avalia alertas inteligentes quando dados mudam
+  try { if (typeof renderSmartAlerts === 'function') renderSmartAlerts(); } catch(e){}
 }
 
 function setTextSafe(id, txt) {
@@ -4525,6 +4527,195 @@ function dismissOnboarding(){
   const card = document.getElementById('onboardingCard');
   if (card) card.style.display = 'none';
 }
+
+// ══════════════════════════════════════════════
+//  SMART ALERTS (notificacoes contextuais no Dashboard)
+//  - Sem aposta ha X dias / ROI caiu / Meta batida / Empty states
+//  - Dispensaveis individualmente (flag por ID em localStorage)
+// ══════════════════════════════════════════════
+function _smartAlertsDismissedSet(){
+  try {
+    const raw = localStorage.getItem('bancapro-smart-alerts-dismissed') || '[]';
+    const arr = JSON.parse(raw);
+    return new Set(Array.isArray(arr) ? arr : []);
+  } catch(e){ return new Set(); }
+}
+
+function dismissSmartAlert(id){
+  try {
+    const s = _smartAlertsDismissedSet();
+    s.add(id);
+    localStorage.setItem('bancapro-smart-alerts-dismissed', JSON.stringify([...s]));
+  } catch(e){}
+  renderSmartAlerts();
+}
+
+function _daysSince(dateStr){
+  if (!dateStr) return null;
+  const d = new Date(dateStr + (dateStr.length === 10 ? 'T00:00:00' : ''));
+  if (isNaN(d.getTime())) return null;
+  const today = new Date();
+  today.setHours(0,0,0,0);
+  d.setHours(0,0,0,0);
+  return Math.floor((today - d) / 86400400);
+}
+
+function computeSmartAlerts(){
+  const alerts = [];
+  const txs = (typeof transactions !== 'undefined' && Array.isArray(transactions)) ? transactions : [];
+  const acc = (typeof accounts !== 'undefined' && Array.isArray(accounts)) ? accounts : [];
+  const gls = (typeof goals !== 'undefined' && Array.isArray(goals)) ? goals : [];
+  const monthYear = new Date().toISOString().slice(0,7);
+
+  // 1. INATIVIDADE — sem transacao ha X dias
+  if (txs.length > 0){
+    const sorted = txs.slice().sort((a,b) => (b.date || '').localeCompare(a.date || ''));
+    const lastDate = sorted[0]?.date;
+    const days = _daysSince(lastDate);
+    if (days !== null){
+      if (days >= 14){
+        alerts.push({
+          id: 'inactive-14d-' + monthYear,
+          priority: 3,
+          icon: '👋',
+          color: '#a78bfa',
+          title: 'Que bom te ver de volta!',
+          desc: 'Você não lança transação há ' + days + ' dias. Atualize seus saldos e continue de onde parou.',
+          action: { label: 'Lançar transação', fn: 'openTxModal()' }
+        });
+      } else if (days >= 3){
+        alerts.push({
+          id: 'inactive-3d-' + monthYear,
+          priority: 4,
+          icon: '⏰',
+          color: '#3b82f6',
+          title: 'Sem aposta há ' + days + ' dias',
+          desc: 'Tem alguma aposta nova pra registrar? Mantém seu controle em dia.',
+          action: { label: 'Lançar agora', fn: 'openTxModal()' }
+        });
+      }
+    }
+  }
+
+  // 2. ROI CAIU — compara 7 dias com 7 dias anteriores
+  if (txs.length >= 10){
+    const today = new Date(); today.setHours(0,0,0,0);
+    const d7  = new Date(today); d7.setDate(today.getDate() - 7);
+    const d14 = new Date(today); d14.setDate(today.getDate() - 14);
+    const toKey = (d) => d.toISOString().slice(0,10);
+    let lucroA = 0, despesaA = 0, lucroB = 0, despesaB = 0;
+    txs.forEach(t => {
+      if (!t.date) return;
+      const v = parseFloat(t.value) || 0;
+      const isInc = t.type === 'income';
+      if (t.date >= toKey(d7)){
+        if (isInc) lucroA += v; else despesaA += v;
+      } else if (t.date >= toKey(d14)){
+        if (isInc) lucroB += v; else despesaB += v;
+      }
+    });
+    const roiA = despesaA > 0 ? ((lucroA - despesaA) / despesaA) * 100 : 0;
+    const roiB = despesaB > 0 ? ((lucroB - despesaB) / despesaB) * 100 : 0;
+    const diff = roiA - roiB;
+    if (roiB > 0 && diff <= -15){
+      alerts.push({
+        id: 'roi-drop-' + monthYear,
+        priority: 2,
+        icon: '📉',
+        color: '#f59e0b',
+        title: 'ROI caiu ' + Math.abs(Math.round(diff)) + '% essa semana',
+        desc: 'De ' + Math.round(roiB) + '% pra ' + Math.round(roiA) + '%. Vale dar uma olhada em qual categoria tá queimando.',
+        action: { label: 'Ver relatórios', fn: "goTo('reports')" }
+      });
+    }
+  }
+
+  // 3. META ATINGIDA recentemente
+  if (gls.length > 0 && txs.length > 0){
+    const totalLucro = txs.reduce((s,t) => s + (t.type === 'income' ? (parseFloat(t.value)||0) : -(parseFloat(t.value)||0)), 0);
+    gls.forEach(g => {
+      const target = parseFloat(g.target) || 0;
+      if (target > 0 && totalLucro >= target){
+        alerts.push({
+          id: 'goal-' + (g.id || g.name) + '-' + monthYear,
+          priority: 1,
+          icon: '🎯',
+          color: '#10b981',
+          title: 'Meta batida: ' + (g.name || 'Meta'),
+          desc: 'Você ultrapassou R$ ' + target.toLocaleString('pt-BR') + ' de lucro. Continue assim!',
+          action: { label: 'Ver metas', fn: "goTo('goals')" }
+        });
+      }
+    });
+  }
+
+  // 4. DICA: sem meta cadastrada (apos 5+ txs)
+  if (gls.length === 0 && txs.length >= 5){
+    alerts.push({
+      id: 'tip-no-goals',
+      priority: 5,
+      icon: '💡',
+      color: '#8b5cf6',
+      title: 'Cadastre uma meta',
+      desc: 'Definir uma meta mensal te dá clareza sobre quanto falta pra bater seu objetivo.',
+      action: { label: 'Criar meta', fn: "goTo('goals')" }
+    });
+  }
+
+  // 5. DICA: sem contas depositadas (apos 3+ txs)
+  if (acc.length === 0 && txs.length >= 3){
+    alerts.push({
+      id: 'tip-no-accounts',
+      priority: 6,
+      icon: '💰',
+      color: '#6366f1',
+      title: 'Anote suas contas depositadas',
+      desc: 'Cadastre quanto tem em cada casa pra não esquecer dinheiro parado.',
+      action: { label: 'Adicionar conta', fn: "goTo('accounts')" }
+    });
+  }
+
+  // Ordena por prioridade (1 = mais importante)
+  alerts.sort((a,b) => (a.priority||99) - (b.priority||99));
+  return alerts;
+}
+
+function renderSmartAlerts(){
+  const wrap = document.getElementById('smartAlerts');
+  if (!wrap) return;
+  const dismissed = _smartAlertsDismissedSet();
+  const all = computeSmartAlerts();
+  const visible = all.filter(a => !dismissed.has(a.id)).slice(0, 3);
+  if (visible.length === 0){
+    wrap.style.display = 'none';
+    wrap.innerHTML = '';
+    return;
+  }
+  wrap.style.display = '';
+  wrap.innerHTML = visible.map(a => ''
+    + '<div class="smart-alert" data-id="' + escapeHtml(a.id) + '" style="--alert-color:' + a.color + '">'
+    + '  <div class="smart-alert-icon" style="background:' + a.color + '20;color:' + a.color + '">' + a.icon + '</div>'
+    + '  <div class="smart-alert-content">'
+    + '    <div class="smart-alert-title">' + escapeHtml(a.title) + '</div>'
+    + '    <div class="smart-alert-desc">' + escapeHtml(a.desc) + '</div>'
+    + '  </div>'
+    + '  <div class="smart-alert-actions">'
+    + (a.action ? '    <button class="smart-alert-btn" onclick="' + a.action.fn + '">' + escapeHtml(a.action.label) + '</button>' : '')
+    + '    <button class="smart-alert-dismiss" onclick="dismissSmartAlert(\'' + a.id.replace(/'/g,"\\'") + '\')" aria-label="Dispensar">'
+    + '      <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg>'
+    + '    </button>'
+    + '  </div>'
+    + '</div>'
+  ).join('');
+}
+
+// Roda em momentos chave: load do dashboard + a cada 60s + apos tx
+(function initSmartAlertsTimer(){
+  function safeRender(){ try { renderSmartAlerts(); } catch(e){} }
+  if (document.readyState !== 'loading') setTimeout(safeRender, 800);
+  else document.addEventListener('DOMContentLoaded', () => setTimeout(safeRender, 800));
+  setInterval(safeRender, 60000);
+})();
 
 // Banner explicativo da aba 'Contas Depositadas' — pode ser dispensado
 // pelo X e nao volta a aparecer (flag em localStorage).
