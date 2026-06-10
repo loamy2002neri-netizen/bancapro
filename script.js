@@ -1469,23 +1469,108 @@ async function renderSubscriptionCard() {
   }
 }
 
+// ══════════════════════════════════════════════
+//  RATE LIMIT no login (defesa anti brute-force)
+// ══════════════════════════════════════════════
+// Track de tentativas falhas por email + IP-ish (limitado em browser).
+// Progressive delay:
+//   0-2 erros: sem delay
+//   3 erros:  espera 5s
+//   4 erros:  espera 15s
+//   5+ erros: espera 30s
+//   10+ erros: lockout 5min (login bloqueado)
+// Reset em login OK ou apos 1h.
+function _loginAttemptsKey(email){ return 'bancapro-login-attempts-' + (email||'').toLowerCase(); }
+function _getLoginAttempts(email){
+  try {
+    const raw = localStorage.getItem(_loginAttemptsKey(email));
+    if (!raw) return { count: 0, lastFail: 0, lockedUntil: 0 };
+    const obj = JSON.parse(raw);
+    // Reset se passou 1 hora sem tentar (deu tempo de o user lembrar)
+    if (obj.lastFail && (Date.now() - obj.lastFail) > 3600000){
+      return { count: 0, lastFail: 0, lockedUntil: 0 };
+    }
+    return obj;
+  } catch(e){ return { count: 0, lastFail: 0, lockedUntil: 0 }; }
+}
+function _setLoginAttempts(email, obj){
+  try { localStorage.setItem(_loginAttemptsKey(email), JSON.stringify(obj)); } catch(e){}
+}
+function _clearLoginAttempts(email){
+  try { localStorage.removeItem(_loginAttemptsKey(email)); } catch(e){}
+}
+function _registerLoginFailure(email){
+  const a = _getLoginAttempts(email);
+  a.count = (a.count || 0) + 1;
+  a.lastFail = Date.now();
+  // Lockout apos 10 falhas
+  if (a.count >= 10) a.lockedUntil = Date.now() + (5 * 60 * 1000); // 5 minutos
+  _setLoginAttempts(email, a);
+  return a;
+}
+function _checkLoginRateLimit(email){
+  // Retorna: { allowed: bool, waitMs: ms, reason: string }
+  const a = _getLoginAttempts(email);
+  const now = Date.now();
+  // Lockout ativo?
+  if (a.lockedUntil && a.lockedUntil > now){
+    const left = Math.ceil((a.lockedUntil - now) / 60000);
+    return { allowed: false, waitMs: a.lockedUntil - now, reason: 'Muitas tentativas. Aguarde ' + left + ' min ou recupere sua senha.' };
+  }
+  // Delay progressivo apos 3+ falhas
+  const sinceLastFail = a.lastFail ? (now - a.lastFail) : Infinity;
+  let requiredWait = 0;
+  if (a.count >= 5) requiredWait = 30000;
+  else if (a.count >= 4) requiredWait = 15000;
+  else if (a.count >= 3) requiredWait = 5000;
+  if (requiredWait && sinceLastFail < requiredWait){
+    const left = Math.ceil((requiredWait - sinceLastFail) / 1000);
+    return { allowed: false, waitMs: requiredWait - sinceLastFail, reason: 'Aguarde ' + left + 's antes de tentar de novo.' };
+  }
+  return { allowed: true };
+}
+
 async function doLogin() {
   const email = (document.getElementById('loginEmail').value || '').trim().toLowerCase();
   const password = document.getElementById('loginPassword').value || '';
   if (!email || !password) { showToast('Preencha email e senha.','error'); return; }
+
+  // Rate limit check ANTES de tentar autenticar
+  const rl = _checkLoginRateLimit(email);
+  if (!rl.allowed){
+    showToast(rl.reason, 'error');
+    return;
+  }
+
   const sb = getSb();
   if (sb) {
     showToast('Entrando…','info');
     try {
       const { data, error } = await sb.auth.signInWithPassword({ email, password });
-      if (error) { showToast('Email ou senha incorretos.','error'); return; }
+      if (error) {
+        const a = _registerLoginFailure(email);
+        // Aviso especial se tá perto do lockout
+        if (a.count >= 7 && a.count < 10){
+          showToast('Email ou senha incorretos. Faltam ' + (10 - a.count) + ' tentativas até bloqueio temporário.','error');
+        } else if (a.count >= 10){
+          showToast('Muitas tentativas. Login bloqueado por 5 minutos.','error');
+        } else {
+          showToast('Email ou senha incorretos.','error');
+        }
+        return;
+      }
+      _clearLoginAttempts(email); // Login OK: zera contador
       await enterApp(data.user);
-    } catch(e) { showToast('Erro ao entrar. Tente novamente.','error'); }
+    } catch(e) {
+      _registerLoginFailure(email);
+      showToast('Erro ao entrar. Tente novamente.','error');
+    }
   } else {
     const u = localGetUsers().find(x => x.email === email);
-    if (!u) { showToast('Email ou senha incorretos.','error'); return; }
+    if (!u) { _registerLoginFailure(email); showToast('Email ou senha incorretos.','error'); return; }
     const h = await hashPassword(password, u.salt);
-    if (h !== u.passHash) { showToast('Email ou senha incorretos.','error'); return; }
+    if (h !== u.passHash) { _registerLoginFailure(email); showToast('Email ou senha incorretos.','error'); return; }
+    _clearLoginAttempts(email);
     try { localStorage.setItem(LOCAL_SESSION_KEY, u.id); } catch(e){}
     await enterApp({ id: u.id, email: u.email, user_metadata: { name: u.name } });
   }

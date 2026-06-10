@@ -45,6 +45,9 @@ window.Storage = (function(){
     ],
     SESSION: [
       'bancapro-trial-start',
+      // Rate limit prefix — limpa em qualquer troca de conta/logout
+      // (chaves dinamicas tipo bancapro-login-attempts-{email})
+      'bancapro-login-attempts',
       'bancapro-rank-positions-today',
       'bancapro-rank-positions-week',
       'bancapro-rank-positions-month',
