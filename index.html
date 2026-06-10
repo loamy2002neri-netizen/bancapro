@@ -46,6 +46,11 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
 <meta name="apple-mobile-web-app-title" content="Apostack"/>
 <meta name="format-detection" content="telephone=no"/>
+<!-- Anti-cache: browser sempre revalida HTML, pega update rapido apos push.
+     CSS/JS continuam cached (rapido) mas atualizam via ?v=XXX. -->
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
+<meta http-equiv="Pragma" content="no-cache"/>
+<meta http-equiv="Expires" content="0"/>
 <!-- Security headers (defesa em profundidade) -->
 <meta http-equiv="X-Content-Type-Options" content="nosniff"/>
 <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin"/>
@@ -75,8 +80,8 @@ src="https://www.facebook.com/tr?id=1566054278577058&ev=PageView&noscript=1"
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
-<link rel="stylesheet" href="style.css?v=239"/>
-<link rel="stylesheet" href="light.css?v=239"/>
+<link rel="stylesheet" href="style.css?v=241"/>
+<link rel="stylesheet" href="light.css?v=241"/>
 </head>
 <body>
 
@@ -2549,8 +2554,8 @@ src="https://www.facebook.com/tr?id=1566054278577058&ev=PageView&noscript=1"
   </div>
 </div>
 
-<script src="config.js?v=239" defer></script>
-<script src="storage.js?v=239" defer></script>
-<script src="script.js?v=239" defer></script>
+<script src="config.js?v=241" defer></script>
+<script src="storage.js?v=241" defer></script>
+<script src="script.js?v=241" defer></script>
 </body>
 </html>
