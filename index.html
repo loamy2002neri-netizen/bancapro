@@ -75,8 +75,8 @@ src="https://www.facebook.com/tr?id=1566054278577058&ev=PageView&noscript=1"
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
-<link rel="stylesheet" href="style.css?v=235"/>
-<link rel="stylesheet" href="light.css?v=235"/>
+<link rel="stylesheet" href="style.css?v=236"/>
+<link rel="stylesheet" href="light.css?v=236"/>
 </head>
 <body>
 
@@ -1665,47 +1665,33 @@ src="https://www.facebook.com/tr?id=1566054278577058&ev=PageView&noscript=1"
             </div>
           </div>
 
-          <div class="form-card">
-            <div class="form-card-title">Suporte</div>
-            <p style="font-size:13px;color:var(--text-secondary);margin-bottom:14px;line-height:1.5">
-              Precisa de ajuda, encontrou um bug ou tem uma sugestão? Fala com a gente —
-              respondemos em até 24h em dias úteis.
-            </p>
-            <a href="mailto:suporteapostack@gmail.com?subject=Suporte%20Apostack" class="btn-primary" style="display:inline-block;text-decoration:none">✉️ suporteapostack@gmail.com</a>
-          </div>
+          <!-- Suporte: email + whatsapp lado a lado -->
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px">
+            <div class="form-card" style="margin:0">
+              <div class="form-card-title">Suporte por e-mail</div>
+              <p style="font-size:13px;color:var(--text-secondary);margin-bottom:14px;line-height:1.5">
+                Precisa de ajuda, encontrou um bug ou tem uma sugestão? Fala com a gente —
+                respondemos em até 24h em dias úteis.
+              </p>
+              <a href="mailto:suporteapostack@gmail.com?subject=Suporte%20Apostack" class="btn-primary" style="display:inline-block;text-decoration:none">✉️ suporteapostack@gmail.com</a>
+            </div>
 
-          <!-- Toggle: alertas inteligentes no Dashboard -->
-          <div class="form-card">
-            <div class="form-card-title">Notificações</div>
-            <div style="display:flex;align-items:center;justify-content:space-between;gap:14px;padding:6px 0">
-              <div style="flex:1;min-width:0">
-                <div style="font-size:13.5px;font-weight:600;color:#fff;margin-bottom:3px">Alertas inteligentes no Dashboard</div>
-                <div style="font-size:12px;color:var(--text-secondary);line-height:1.5">
-                  Mostra avisos quando você bate uma meta, seu ROI cai significativamente ou volta após muitos dias inativo. Desligue se preferir um dashboard 100% silencioso.
-                </div>
+            <!-- Suporte rapido via WhatsApp — visivel pra todos -->
+            <div class="form-card" style="margin:0;border:1px solid rgba(34,197,94,0.25);background:linear-gradient(135deg,rgba(34,197,94,0.06),rgba(34,197,94,0.02))">
+              <div class="form-card-title" style="display:flex;align-items:center;gap:10px">
+                <svg viewBox="0 0 24 24" width="22" height="22" fill="#25d366" style="flex-shrink:0">
+                  <path d="M17.6 6.32A7.85 7.85 0 0 0 12.05 4c-4.38 0-7.93 3.55-7.93 7.92 0 1.4.37 2.76 1.06 3.96L4 20l4.2-1.1a7.93 7.93 0 0 0 3.84.98h.01c4.38 0 7.93-3.55 7.93-7.92 0-2.12-.82-4.1-2.32-5.59l-.06-.05Zm-5.55 12.18h-.01a6.6 6.6 0 0 1-3.36-.92l-.24-.14-2.49.65.67-2.43-.16-.25a6.58 6.58 0 0 1-1-3.49c0-3.64 2.96-6.6 6.6-6.6a6.55 6.55 0 0 1 4.66 1.93 6.55 6.55 0 0 1 1.93 4.66c0 3.64-2.96 6.6-6.6 6.6Zm3.62-4.94c-.2-.1-1.17-.58-1.36-.64-.18-.07-.31-.1-.45.1-.13.2-.51.64-.62.77-.12.13-.23.15-.43.05-.2-.1-.84-.31-1.6-.99-.59-.53-.99-1.18-1.1-1.38-.12-.2-.01-.31.09-.41.09-.09.2-.23.3-.35.1-.12.13-.2.2-.33.06-.13.03-.25-.02-.35-.05-.1-.45-1.08-.62-1.48-.16-.39-.33-.34-.45-.34-.12 0-.25-.02-.39-.02a.74.74 0 0 0-.54.25c-.18.2-.71.7-.71 1.7s.73 1.97.83 2.11c.1.13 1.43 2.19 3.47 3.07.48.21.86.33 1.16.43.49.16.93.13 1.28.08.39-.06 1.17-.48 1.34-.94.16-.46.16-.85.12-.94-.05-.08-.18-.13-.39-.23Z"/>
+                </svg>
+                Atendimento via WhatsApp
               </div>
-              <label class="cust-switch-wrap" style="flex-shrink:0;cursor:pointer;display:flex;align-items:center">
-                <input type="checkbox" id="toggleSmartAlerts" style="display:none" onchange="setSmartAlertsEnabled(this.checked)" checked>
-                <span class="cust-switch is-on" id="toggleSmartAlertsBox"></span>
-              </label>
+              <p style="font-size:13px;color:var(--text-secondary);margin-bottom:14px;line-height:1.5">
+                Dúvidas, questões técnicas ou conta. Atendimento humano <b>seg. a sex., das 9h às 19h</b>.
+              </p>
+              <a href="https://wa.me/5511996139101?text=Ol%C3%A1%2C%20sou%20usu%C3%A1rio%20do%20Apostack%20e%20gostaria%20de%20suporte." target="_blank" rel="noopener" class="btn-primary" style="display:inline-flex;align-items:center;gap:8px;text-decoration:none;background:#25d366;border-color:#25d366">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M17.6 6.32A7.85 7.85 0 0 0 12.05 4c-4.38 0-7.93 3.55-7.93 7.92 0 1.4.37 2.76 1.06 3.96L4 20l4.2-1.1a7.93 7.93 0 0 0 3.84.98h.01c4.38 0 7.93-3.55 7.93-7.92 0-2.12-.82-4.1-2.32-5.59l-.06-.05Zm-5.55 12.18h-.01a6.6 6.6 0 0 1-3.36-.92l-.24-.14-2.49.65.67-2.43-.16-.25a6.58 6.58 0 0 1-1-3.49c0-3.64 2.96-6.6 6.6-6.6a6.55 6.55 0 0 1 4.66 1.93 6.55 6.55 0 0 1 1.93 4.66c0 3.64-2.96 6.6-6.6 6.6Z"/></svg>
+                Falar com o suporte
+              </a>
             </div>
-          </div>
-
-          <!-- Suporte rapido via WhatsApp — visivel pra todos -->
-          <div class="form-card" style="border:1px solid rgba(34,197,94,0.25);background:linear-gradient(135deg,rgba(34,197,94,0.06),rgba(34,197,94,0.02))">
-            <div class="form-card-title" style="display:flex;align-items:center;gap:10px">
-              <svg viewBox="0 0 24 24" width="22" height="22" fill="#25d366" style="flex-shrink:0">
-                <path d="M17.6 6.32A7.85 7.85 0 0 0 12.05 4c-4.38 0-7.93 3.55-7.93 7.92 0 1.4.37 2.76 1.06 3.96L4 20l4.2-1.1a7.93 7.93 0 0 0 3.84.98h.01c4.38 0 7.93-3.55 7.93-7.92 0-2.12-.82-4.1-2.32-5.59l-.06-.05Zm-5.55 12.18h-.01a6.6 6.6 0 0 1-3.36-.92l-.24-.14-2.49.65.67-2.43-.16-.25a6.58 6.58 0 0 1-1-3.49c0-3.64 2.96-6.6 6.6-6.6a6.55 6.55 0 0 1 4.66 1.93 6.55 6.55 0 0 1 1.93 4.66c0 3.64-2.96 6.6-6.6 6.6Zm3.62-4.94c-.2-.1-1.17-.58-1.36-.64-.18-.07-.31-.1-.45.1-.13.2-.51.64-.62.77-.12.13-.23.15-.43.05-.2-.1-.84-.31-1.6-.99-.59-.53-.99-1.18-1.1-1.38-.12-.2-.01-.31.09-.41.09-.09.2-.23.3-.35.1-.12.13-.2.2-.33.06-.13.03-.25-.02-.35-.05-.1-.45-1.08-.62-1.48-.16-.39-.33-.34-.45-.34-.12 0-.25-.02-.39-.02a.74.74 0 0 0-.54.25c-.18.2-.71.7-.71 1.7s.73 1.97.83 2.11c.1.13 1.43 2.19 3.47 3.07.48.21.86.33 1.16.43.49.16.93.13 1.28.08.39-.06 1.17-.48 1.34-.94.16-.46.16-.85.12-.94-.05-.08-.18-.13-.39-.23Z"/>
-              </svg>
-              Atendimento via WhatsApp
-            </div>
-            <p style="font-size:13px;color:var(--text-secondary);margin-bottom:14px;line-height:1.5">
-              Nossa equipe está disponível para esclarecer dúvidas, resolver questões técnicas e auxiliar com sua conta. Atendimento humano de <b>segunda a sexta-feira, das 9h às 19h</b>.
-            </p>
-            <a href="https://wa.me/5511996139101?text=Ol%C3%A1%2C%20sou%20usu%C3%A1rio%20do%20Apostack%20e%20gostaria%20de%20suporte." target="_blank" rel="noopener" class="btn-primary" style="display:inline-flex;align-items:center;gap:8px;text-decoration:none;background:#25d366;border-color:#25d366">
-              <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M17.6 6.32A7.85 7.85 0 0 0 12.05 4c-4.38 0-7.93 3.55-7.93 7.92 0 1.4.37 2.76 1.06 3.96L4 20l4.2-1.1a7.93 7.93 0 0 0 3.84.98h.01c4.38 0 7.93-3.55 7.93-7.92 0-2.12-.82-4.1-2.32-5.59l-.06-.05Zm-5.55 12.18h-.01a6.6 6.6 0 0 1-3.36-.92l-.24-.14-2.49.65.67-2.43-.16-.25a6.58 6.58 0 0 1-1-3.49c0-3.64 2.96-6.6 6.6-6.6a6.55 6.55 0 0 1 4.66 1.93 6.55 6.55 0 0 1 1.93 4.66c0 3.64-2.96 6.6-6.6 6.6Z"/></svg>
-              Falar com o suporte
-            </a>
           </div>
 
           <!-- Zona de Perigo — visivel SO pra owner (acao destrutiva).
@@ -2128,6 +2114,23 @@ src="https://www.facebook.com/tr?id=1566054278577058&ev=PageView&noscript=1"
           </div>
         </div>
 
+        <!-- Toggle: alertas inteligentes no Dashboard (movido de Configurações) -->
+        <div class="form-card" style="margin-bottom:18px">
+          <div class="form-card-title">Notificações</div>
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:14px;padding:6px 0">
+            <div style="flex:1;min-width:0">
+              <div style="font-size:13.5px;font-weight:600;color:#fff;margin-bottom:3px">Alertas inteligentes no Dashboard</div>
+              <div style="font-size:12px;color:var(--text-secondary);line-height:1.5">
+                Mostra avisos quando você bate uma meta, seu ROI cai significativamente ou volta após muitos dias inativo. Desligue se preferir um dashboard 100% silencioso.
+              </div>
+            </div>
+            <label class="cust-switch-wrap" style="flex-shrink:0;cursor:pointer;display:flex;align-items:center">
+              <input type="checkbox" id="toggleSmartAlerts" style="display:none" onchange="setSmartAlertsEnabled(this.checked)" checked>
+              <span class="cust-switch is-on" id="toggleSmartAlertsBox"></span>
+            </label>
+          </div>
+        </div>
+
         <div id="cardCustomizerList" class="cust-list"></div>
       </div>
 
@@ -2546,8 +2549,8 @@ src="https://www.facebook.com/tr?id=1566054278577058&ev=PageView&noscript=1"
   </div>
 </div>
 
-<script src="config.js?v=235" defer></script>
-<script src="storage.js?v=235" defer></script>
-<script src="script.js?v=235" defer></script>
+<script src="config.js?v=236" defer></script>
+<script src="storage.js?v=236" defer></script>
+<script src="script.js?v=236" defer></script>
 </body>
 </html>
