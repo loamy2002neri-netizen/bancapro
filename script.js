@@ -2373,7 +2373,7 @@ const TOUR_STEPS = [
   {
     selector: '#sec-reports .page-header',
     title: 'Relatórios',
-    desc: 'Análise mensal completa: Receita vs Despesa, Distribuição de despesas e ROI por método. Exporte em PDF.',
+    desc: 'Análise completa com filtros de período (7d, 30d, 90d, ano, tudo ou personalizado) e categoria: Receita vs Despesa, Distribuição e ROI por categoria. Exporte em PDF ou Excel.',
     section: 'reports'
   },
   // ===== METAS =====
