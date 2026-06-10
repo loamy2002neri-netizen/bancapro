@@ -1597,6 +1597,13 @@ async function doRegister() {
         return;
       }
       if (data.session && data.user) {
+        // Checa se já tem assinatura ativa pelo email (caso tenha pago antes de criar conta)
+        try {
+          const jaAssinou = await hasActiveSubscription(email);
+          if (jaAssinou) {
+            showToast('Pagamento reconhecido! Sua assinatura já está ativa 🎉','success');
+          }
+        } catch(e){}
         await enterApp(data.user); // confirmação de email desligada → entra direto
       } else {
         showToast('Conta criada! Confirme pelo link enviado ao seu email para entrar.','success');
