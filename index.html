@@ -75,8 +75,8 @@ src="https://www.facebook.com/tr?id=1566054278577058&ev=PageView&noscript=1"
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
-<link rel="stylesheet" href="style.css?v=229"/>
-<link rel="stylesheet" href="light.css?v=229"/>
+<link rel="stylesheet" href="style.css?v=231"/>
+<link rel="stylesheet" href="light.css?v=231"/>
 </head>
 <body>
 
@@ -694,10 +694,10 @@ src="https://www.facebook.com/tr?id=1566054278577058&ev=PageView&noscript=1"
 
         <!-- SECONDARY KPIs -->
         <div class="stat-row" data-card="dash-stats">
-          <div class="stat-chip"><div class="stat-chip-label">Receita Total</div><div class="stat-chip-value" id="statReceitaTotal">R$ 24.360</div></div>
-          <div class="stat-chip"><div class="stat-chip-label">Lucro Hoje</div><div class="stat-chip-value" id="statLucroHoje" style="color:var(--green)">+R$ 840</div></div>
-          <div class="stat-chip"><div class="stat-chip-label">Lucro 7 dias</div><div class="stat-chip-value" id="statLucroSemanal" style="color:var(--green)">+R$ 4.120</div></div>
-          <div class="stat-chip"><div class="stat-chip-label">Lucro 30 dias</div><div class="stat-chip-value" id="statLucroMensal" style="color:var(--green)">+R$ 16.840</div></div>
+          <div class="stat-chip"><div class="stat-chip-label">Receita Total</div><div class="stat-chip-value" id="statReceitaTotal">R$ 0</div></div>
+          <div class="stat-chip"><div class="stat-chip-label">Lucro Hoje</div><div class="stat-chip-value" id="statLucroHoje" style="color:var(--green)">+R$ 0</div></div>
+          <div class="stat-chip"><div class="stat-chip-label">Lucro 7 dias</div><div class="stat-chip-value" id="statLucroSemanal" style="color:var(--green)">+R$ 0</div></div>
+          <div class="stat-chip"><div class="stat-chip-label">Lucro 30 dias</div><div class="stat-chip-value" id="statLucroMensal" style="color:var(--green)">+R$ 0</div></div>
           <div class="stat-chip"><div class="stat-chip-label">Categorias Ativas</div><div class="stat-chip-value" id="statMetodosAtivos">6 / 6</div></div>
           <div class="stat-chip"><div class="stat-chip-label">Transações</div><div class="stat-chip-value" id="statTransacoes">247</div></div>
           <div class="stat-chip"><div class="stat-chip-label">Metas</div><div class="stat-chip-value" id="statMetasAtingidas" style="color:var(--green)">4 de 5</div></div>
@@ -804,18 +804,6 @@ src="https://www.facebook.com/tr?id=1566054278577058&ev=PageView&noscript=1"
           </div>
         </div>
 
-        <!-- ALERTS -->
-        <div style="margin-top:20px">
-          <div class="alert-box warning">
-            <div><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div>
-            <div><div class="alert-title">iGaming — Alerta de Despesas</div>iGaming ultrapassou o limite de despesas em 24%. Revise sua estratégia para este método.</div>
-          </div>
-          <div class="alert-box success">
-            <div><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.5" fill="currentColor" stroke="none"/></svg></div>
-            <div><div class="alert-title">Meta Atingida!</div>Surebet atingiu R$5.220 de lucro este mês, superando a meta de R$5.000 em 4.4%!</div>
-          </div>
-        </div>
-
         <!-- RECENT TRANSACTIONS -->
         <div class="transactions-card" style="margin-top:20px">
           <div class="transactions-header">
@@ -824,14 +812,7 @@ src="https://www.facebook.com/tr?id=1566054278577058&ev=PageView&noscript=1"
           </div>
           <table class="tx-table">
             <thead><tr><th>Data</th><th>Descrição</th><th>Método</th><th>Tipo</th><th>Valor</th></tr></thead>
-            <tbody id="recentTxBody">
-              <tr><td>14/05</td><td>Lucro Surebet</td><td><span class="tx-method-pill">Surebet</span></td><td><span class="tx-type-badge income">↑ Entrada</span></td><td class="tx-amount income">+R$ 380,00</td></tr>
-              <tr><td>14/05</td><td>Taxa plataforma</td><td><span class="tx-method-pill">iGaming</span></td><td><span class="tx-type-badge expense">↓ Despesa</span></td><td class="tx-amount expense">-R$ 120,00</td></tr>
-              <tr><td>13/05</td><td>Aposta Delay</td><td><span class="tx-method-pill">Delay</span></td><td><span class="tx-type-badge income">↑ Entrada</span></td><td class="tx-amount income">+R$ 240,00</td></tr>
-              <tr><td>13/05</td><td>Freebet Convertida</td><td><span class="tx-method-pill">Freebet</span></td><td><span class="tx-type-badge income">↑ Entrada</span></td><td class="tx-amount income">+R$ 180,00</td></tr>
-              <tr><td>12/05</td><td>Despesa Geral</td><td><span class="tx-method-pill">Geral</span></td><td><span class="tx-type-badge expense">↓ Despesa</span></td><td class="tx-amount expense">-R$ 95,00</td></tr>
-              <tr><td>12/05</td><td>Duplo Green</td><td><span class="tx-method-pill">Duplo Green</span></td><td><span class="tx-type-badge income">↑ Entrada</span></td><td class="tx-amount income">+R$ 420,00</td></tr>
-            </tbody>
+            <tbody id="recentTxBody"></tbody>
           </table>
         </div>
       </div>
@@ -1337,13 +1318,13 @@ src="https://www.facebook.com/tr?id=1566054278577058&ev=PageView&noscript=1"
           </div>
         </div>
         <div class="kpi-grid">
-          <div class="kpi-card" style="--card-color:var(--green)"><div class="kpi-label">Atingidas</div><div class="kpi-value" id="goalsAtingidas">4</div><div class="kpi-change up" id="goalsAtingidasSub">de 5 metas</div></div>
-          <div class="kpi-card" style="--card-color:var(--yellow)"><div class="kpi-label">Em Progresso</div><div class="kpi-value" id="goalsProgresso">1</div><div class="kpi-change neutral">97.5% completo</div></div>
-          <div class="kpi-card" style="--card-color:var(--red)"><div class="kpi-label">Abaixo</div><div class="kpi-value" id="goalsAbaixo">1</div><div class="kpi-change down">iGaming em alerta</div></div>
-          <div class="kpi-card" style="--card-color:var(--accent)"><div class="kpi-label">Meta Total</div><div class="kpi-value" id="goalsMetaTotal">R$ 17.500</div><div class="kpi-change up">Alcançada</div></div>
+          <div class="kpi-card" style="--card-color:var(--green)"><div class="kpi-label">Atingidas</div><div class="kpi-value" id="goalsAtingidas">0</div><div class="kpi-change up" id="goalsAtingidasSub">de 0 metas</div></div>
+          <div class="kpi-card" style="--card-color:var(--yellow)"><div class="kpi-label">Em Progresso</div><div class="kpi-value" id="goalsProgresso">0</div><div class="kpi-change neutral">no período</div></div>
+          <div class="kpi-card" style="--card-color:var(--red)"><div class="kpi-label">Abaixo</div><div class="kpi-value" id="goalsAbaixo">0</div><div class="kpi-change down">precisam atenção</div></div>
+          <div class="kpi-card" style="--card-color:var(--accent)"><div class="kpi-label">Meta Total</div><div class="kpi-value" id="goalsMetaTotal">R$ 0</div><div class="kpi-change up">soma das ativas</div></div>
         </div>
         <div class="form-card">
-          <div class="form-card-title">Progresso das Metas — Maio 2026</div>
+          <div class="form-card-title">Progresso das suas metas</div>
           <div id="goalsList" style="display:flex;flex-direction:column;gap:16px"></div>
         </div>
       </div>
@@ -2565,8 +2546,8 @@ src="https://www.facebook.com/tr?id=1566054278577058&ev=PageView&noscript=1"
   </div>
 </div>
 
-<script src="config.js?v=229" defer></script>
-<script src="storage.js?v=229" defer></script>
-<script src="script.js?v=229" defer></script>
+<script src="config.js?v=231" defer></script>
+<script src="storage.js?v=231" defer></script>
+<script src="script.js?v=231" defer></script>
 </body>
 </html>
