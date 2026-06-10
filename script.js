@@ -1658,9 +1658,19 @@ function showLogin() { document.getElementById('loginForm').style.display='block
 (function autoDetectAuthMode(){
   function apply(){
     try {
-      const modo = (new URLSearchParams(location.search).get('modo') || '').toLowerCase();
-      if (modo === 'cadastro' || modo === 'register'){
-        setTimeout(() => { if (typeof showRegister === 'function') showRegister(); }, 100);
+      const params = new URLSearchParams(location.search);
+      const modo = (params.get('modo') || '').toLowerCase();
+      const assinaturaOk = params.get('assinatura') === 'ok';
+      if (modo === 'cadastro' || modo === 'register' || assinaturaOk){
+        setTimeout(() => {
+          if (typeof showRegister === 'function') showRegister();
+          if (assinaturaOk){
+            const banner = document.getElementById('paidSignupBanner');
+            if (banner) banner.style.display = 'block';
+            const email = document.getElementById('regEmail');
+            if (email) setTimeout(() => email.focus(), 200);
+          }
+        }, 100);
       } else if (modo === 'recuperar' || modo === 'reset'){
         setTimeout(() => { if (typeof showReset === 'function') showReset(); }, 100);
       }
