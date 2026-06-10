@@ -1,0 +1,1037 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Apostack · Controle sua banca como um profissional</title>
+  <meta name="description" content="O Apostack centraliza seus números, métodos, metas e relatórios para você acompanhar sua performance com mais clareza e menos achismo."/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="landing-apresentacao.css?v=1"/>
+</head>
+<body class="lp-body">
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- HEADER -->
+<!-- ═══════════════════════════════════════════ -->
+<header class="lp-header">
+  <div class="lp-container lp-header-inner">
+    <a href="#top" class="lp-logo">
+      <img src="brand/icon.png" alt="Apostack" class="lp-logo-icon lp-logo-icon-img" />
+      <span class="lp-logo-text">Apo<span class="lp-logo-accent">stack</span></span>
+    </a>
+
+    <nav class="lp-nav">
+      <a href="#features">Recursos</a>
+      <a href="#how">Como funciona</a>
+      <a href="#pricing">Planos</a>
+      <a href="#faq">FAQ</a>
+    </nav>
+
+    <div class="lp-header-actions">
+      <a href="index.html" class="lp-btn-ghost">Entrar</a>
+      <a href="index.html#cadastro" class="lp-btn-primary">Começar grátis</a>
+    </div>
+
+    <button class="lp-menu-btn" onclick="document.body.classList.toggle('lp-menu-open')" aria-label="Abrir menu">
+      <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+    </button>
+  </div>
+
+  <!-- Mobile menu drawer -->
+  <div class="lp-mobile-menu">
+    <a href="#features" onclick="document.body.classList.remove('lp-menu-open')">Recursos</a>
+    <a href="#how" onclick="document.body.classList.remove('lp-menu-open')">Como funciona</a>
+    <a href="#pricing" onclick="document.body.classList.remove('lp-menu-open')">Planos</a>
+    <a href="#faq" onclick="document.body.classList.remove('lp-menu-open')">FAQ</a>
+    <a href="index.html" class="lp-btn-ghost">Entrar</a>
+    <a href="index.html#cadastro" class="lp-btn-primary">Começar grátis</a>
+  </div>
+</header>
+
+<!-- CTA fixo mobile (aparece após scroll do hero) -->
+<a href="index.html#cadastro" class="lp-mobile-sticky-cta" aria-hidden="true">
+  Começar 7 dias grátis
+  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+</a>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- HERO -->
+<!-- ═══════════════════════════════════════════ -->
+<section class="lp-hero" id="top">
+  <div class="lp-hero-glow"></div>
+  <div class="lp-container lp-hero-inner">
+    <div class="lp-hero-tag">
+      <span class="lp-hero-tag-dot"></span>
+      Plataforma de gestão para apostadores sérios
+    </div>
+    <h1 class="lp-hero-title">
+      Descubra quais métodos realmente performam.<br/><span class="lp-hero-title-accent">Controle sua banca sem planilhas.</span>
+    </h1>
+    <p class="lp-hero-sub">
+      Registre suas movimentações, acompanhe ROI, compare métodos e visualize sua evolução em um único painel.
+    </p>
+
+    <div class="lp-hero-cta">
+      <a href="index.html#cadastro" class="lp-btn-primary-lg">
+        Começar meus 7 dias grátis
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+      </a>
+      <a href="#demo" class="lp-btn-ghost-lg">Ver como funciona</a>
+    </div>
+
+    <div class="lp-hero-micro">Configure em poucos minutos · Cancele quando quiser · Sem compromisso</div>
+
+    <div class="lp-hero-badges">
+      <span class="lp-badge"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>7 dias grátis</span>
+      <span class="lp-badge"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>ROI por método</span>
+      <span class="lp-badge"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>Dashboard em tempo real</span>
+      <span class="lp-badge"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>Acesse de qualquer lugar</span>
+    </div>
+
+    <!-- Mockup do dashboard (print real) -->
+    <div class="lp-hero-mockup-wrap">
+      <!-- Padrão de pontos sutil no fundo (inspiração Linear / Vercel) -->
+      <div class="lp-hero-dotgrid" aria-hidden="true"></div>
+      <!-- Glow de horizonte na base -->
+      <div class="lp-hero-horizon" aria-hidden="true"></div>
+
+      <div class="lp-hero-mockup">
+        <!-- ① TOP-LEFT · Benefício real: ROI -->
+        <div class="lp-float-card lp-float-card-tl lp-float-card-feature" aria-hidden="true">
+          <div class="lp-float-card-head">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 8-8"/><path d="M14 7h7v7"/></svg>
+            ROI por método
+          </div>
+          <div class="lp-float-card-value lp-float-card-value-sm">Dados em tempo real</div>
+          <div class="lp-float-card-sub">Atualizado a cada transação</div>
+        </div>
+
+        <!-- ② TOP-RIGHT · Pagamento (PIX/Cartão real) -->
+        <div class="lp-float-card lp-float-card-tr lp-float-card-feature" aria-hidden="true">
+          <div class="lp-float-card-head">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M2 10h20M6 14h4"/></svg>
+            Pagamento seguro
+          </div>
+          <div class="lp-float-card-value lp-float-card-value-sm">Pix · Cartão · Boleto</div>
+          <div class="lp-float-card-sub">Renovação automática</div>
+        </div>
+
+        <!-- ③ BOTTOM-LEFT · Risk reversal (free trial, no card) -->
+        <div class="lp-float-card lp-float-card-bl lp-float-card-risk" aria-hidden="true">
+          <div class="lp-float-check">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#10b981" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>
+          </div>
+          <div>
+            <div class="lp-float-card-value lp-float-card-value-sm">7 dias grátis</div>
+            <div class="lp-float-card-sub lp-float-card-sub-strong">Sem cartão · Cancele quando quiser</div>
+          </div>
+        </div>
+
+        <!-- ④ BOTTOM-RIGHT · Acesso mobile -->
+        <div class="lp-float-card lp-float-card-br lp-float-card-feature" aria-hidden="true">
+          <div class="lp-float-card-head">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="2" width="12" height="20" rx="2"/><path d="M11 18h2"/></svg>
+            Acesse de qualquer lugar
+          </div>
+          <div class="lp-float-card-value lp-float-card-value-sm">Web · Mobile · Tablet</div>
+          <div class="lp-float-card-sub">Sincronização instantânea</div>
+        </div>
+
+        <div class="lp-mockup-frame">
+          <div class="lp-mockup-topbar">
+            <div class="lp-mockup-dots"><span></span><span></span><span></span></div>
+            <div class="lp-mockup-url">apostack.com/dashboard</div>
+          </div>
+          <img src="landing-assets/dashboard.png" alt="Dashboard financeiro Apostack" class="lp-mockup-img" loading="eager" />
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- FAIXA DE CONFIANÇA -->
+<!-- ═══════════════════════════════════════════ -->
+<section class="lp-trust-strip" aria-label="Benefícios">
+  <div class="lp-container">
+    <div class="lp-trust-strip-row">
+      <div class="lp-trust-strip-item">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18M9 14h6"/></svg>
+        <div>
+          <div class="lp-trust-strip-title">Gestão centralizada</div>
+          <div class="lp-trust-strip-sub">Tudo num só painel</div>
+        </div>
+      </div>
+      <div class="lp-trust-strip-item">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 8-8"/><path d="M14 7h7v7"/></svg>
+        <div>
+          <div class="lp-trust-strip-title">Análises por método</div>
+          <div class="lp-trust-strip-sub">ROI individual por estratégia</div>
+        </div>
+      </div>
+      <div class="lp-trust-strip-item">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/></svg>
+        <div>
+          <div class="lp-trust-strip-title">Relatórios claros</div>
+          <div class="lp-trust-strip-sub">Exporte PDF e Excel</div>
+        </div>
+      </div>
+      <div class="lp-trust-strip-item">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2"/><path d="M11 18h2"/></svg>
+        <div>
+          <div class="lp-trust-strip-title">De qualquer dispositivo</div>
+          <div class="lp-trust-strip-sub">Web, mobile e tablet</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- DOR -->
+<!-- ═══════════════════════════════════════════ -->
+<section class="lp-section" id="pain">
+  <div class="lp-container">
+    <div class="lp-section-head">
+      <div class="lp-eyebrow">O problema</div>
+      <h2 class="lp-section-title">Pare de controlar sua banca no escuro.</h2>
+      <p class="lp-section-sub">
+        Muitos usuários perdem a visão real dos resultados porque espalham informações em anotações, planilhas e prints. O Apostack centraliza tudo em uma experiência simples, visual e profissional.
+      </p>
+    </div>
+
+    <div class="lp-grid lp-grid-3">
+      <div class="lp-pain-card">
+        <div class="lp-pain-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></div>
+        <div class="lp-pain-title">Não sei qual método performa</div>
+        <div class="lp-pain-text">Sem comparativo, fica impossível identificar qual estratégia traz retorno e qual está drenando sua banca.</div>
+      </div>
+      <div class="lp-pain-card">
+        <div class="lp-pain-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg></div>
+        <div class="lp-pain-title">Perco o controle das entradas</div>
+        <div class="lp-pain-text">Movimentações espalhadas em prints e WhatsApp fazem você esquecer onde está o dinheiro de verdade.</div>
+      </div>
+      <div class="lp-pain-card">
+        <div class="lp-pain-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9.1 9a3 3 0 015.83 1c0 2-3 3-3 3M12 17h.01"/></svg></div>
+        <div class="lp-pain-title">Decido por achismo</div>
+        <div class="lp-pain-text">Sem dados claros na frente, suas decisões viram apostas em cima das apostas — e o prejuízo silencioso se acumula.</div>
+      </div>
+      <div class="lp-pain-card">
+        <div class="lp-pain-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 8-8"/><path d="M14 7h7v7"/></svg></div>
+        <div class="lp-pain-title">Não vejo minha evolução</div>
+        <div class="lp-pain-text">Sem histórico organizado, é impossível saber se está crescendo, estagnado ou perdendo banca ao longo do tempo.</div>
+      </div>
+      <div class="lp-pain-card">
+        <div class="lp-pain-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg></div>
+        <div class="lp-pain-title">Dependo de planilhas confusas</div>
+        <div class="lp-pain-text">Cada nova movimentação vira meia hora editando célula. E ainda assim os números nunca batem.</div>
+      </div>
+      <div class="lp-pain-card">
+        <div class="lp-pain-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M4 9l8-7 8 7M4 15h16"/></svg></div>
+        <div class="lp-pain-title">Perdas e oportunidades invisíveis</div>
+        <div class="lp-pain-text">Você só descobre que perdeu no fim do mês — quando já não dá pra reagir nem cortar o que não funciona.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- VEJA O APOSTACK EM AÇÃO -->
+<!-- ═══════════════════════════════════════════ -->
+<section class="lp-section lp-section-alt" id="demo">
+  <div class="lp-container">
+    <div class="lp-section-head">
+      <div class="lp-eyebrow">Demonstração</div>
+      <h2 class="lp-section-title">Veja o Apostack em ação.</h2>
+      <p class="lp-section-sub">
+        Do registro à análise: acompanhe sua operação de forma simples e visual.
+      </p>
+    </div>
+
+    <div class="lp-demo-steps">
+      <div class="lp-demo-step">
+        <div class="lp-demo-step-text">
+          <div class="lp-demo-step-num">01</div>
+          <h3 class="lp-demo-step-title">Registre suas movimentações</h3>
+          <p class="lp-demo-step-desc">Entradas, saídas, depósitos e resultados em poucos cliques. Organize por método, casa e período sem planilhas.</p>
+        </div>
+        <div class="lp-demo-step-img">
+          <img src="brand/screen-transacoes.png" alt="Tela de transações do Apostack" loading="lazy" />
+        </div>
+      </div>
+
+      <div class="lp-demo-step lp-demo-step-reverse">
+        <div class="lp-demo-step-text">
+          <div class="lp-demo-step-num">02</div>
+          <h3 class="lp-demo-step-title">Acompanhe os dados atualizados</h3>
+          <p class="lp-demo-step-desc">Dashboard em tempo real com saldo, lucro, despesas e ROI. Tudo atualiza automaticamente conforme você registra.</p>
+        </div>
+        <div class="lp-demo-step-img">
+          <img src="brand/screen-dashboard.png" alt="Dashboard financeiro do Apostack" loading="lazy" />
+        </div>
+      </div>
+
+      <div class="lp-demo-step">
+        <div class="lp-demo-step-text">
+          <div class="lp-demo-step-num">03</div>
+          <h3 class="lp-demo-step-title">Descubra quais métodos performam</h3>
+          <p class="lp-demo-step-desc">Comparativo por método mostra ROI, lucro líquido e taxa de acerto lado a lado — e você sabe onde investir mais.</p>
+        </div>
+        <div class="lp-demo-step-img">
+          <img src="brand/screen-metodos.png" alt="Comparativo de métodos do Apostack" loading="lazy" />
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- SOLUÇÃO / 3 PILARES -->
+<!-- ═══════════════════════════════════════════ -->
+<section class="lp-section lp-section-alt" id="features">
+  <div class="lp-container">
+    <div class="lp-section-head">
+      <div class="lp-eyebrow">Recursos</div>
+      <h2 class="lp-section-title">Três pilares para gerenciar sua banca como profissional.</h2>
+      <p class="lp-section-sub">
+        Todas as ferramentas que você precisa, organizadas em três núcleos de decisão claros.
+      </p>
+    </div>
+
+    <!-- 3 PILARES -->
+    <div class="lp-pillars">
+      <div class="lp-pillar">
+        <div class="lp-pillar-num">01</div>
+        <div class="lp-pillar-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18M9 14h6"/></svg></div>
+        <h3 class="lp-pillar-title">Controle total</h3>
+        <p class="lp-pillar-desc">Centralize movimentações, métodos, metas e informações importantes em um único lugar.</p>
+        <ul class="lp-pillar-list">
+          <li><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>Dashboard financeiro</li>
+          <li><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>Transações ilimitadas</li>
+          <li><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>Gestão da banca</li>
+          <li><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>Metas personalizadas</li>
+        </ul>
+      </div>
+
+      <div class="lp-pillar lp-pillar-featured">
+        <div class="lp-pillar-num">02</div>
+        <div class="lp-pillar-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 8-8"/><path d="M14 7h7v7"/></svg></div>
+        <h3 class="lp-pillar-title">Descubra o que performa</h3>
+        <p class="lp-pillar-desc">Compare métodos, acompanhe ROI e identifique onde estão seus melhores resultados.</p>
+        <ul class="lp-pillar-list">
+          <li><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>Gestão de métodos</li>
+          <li><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>ROI individual</li>
+          <li><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>Comparativos detalhados</li>
+          <li><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>Análises de desempenho</li>
+        </ul>
+      </div>
+
+      <div class="lp-pillar">
+        <div class="lp-pillar-num">03</div>
+        <div class="lp-pillar-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 20h18M7 20V12M12 20V8M17 20v-6"/></svg></div>
+        <h3 class="lp-pillar-title">Evolua com clareza</h3>
+        <p class="lp-pillar-desc">Acompanhe seu histórico e visualize sua evolução sem depender de achismos.</p>
+        <ul class="lp-pillar-list">
+          <li><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>Histórico completo</li>
+          <li><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>Relatórios detalhados</li>
+          <li><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>Ranking entre apostadores</li>
+          <li><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>Acompanhamento de performance</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Recursos secundários (grid compacto) -->
+    <div class="lp-features-mini-title">E mais ferramentas pra completar sua gestão</div>
+    <div class="lp-features-mini">
+      <div class="lp-feat-mini">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="14" rx="2"/><path d="M3 10h18M16 14h2"/></svg>
+        <span>Contas depositadas</span>
+      </div>
+      <div class="lp-feat-mini">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2"/><path d="M8 11h8M8 15h5"/></svg>
+        <span>Calculadora profissional</span>
+      </div>
+      <div class="lp-feat-mini">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6"/></svg>
+        <span>Anotações organizadas</span>
+      </div>
+      <div class="lp-feat-mini">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9M3 6h18M3 12h18M3 18h9"/></svg>
+        <span>Exporta PDF · Excel</span>
+      </div>
+      <div class="lp-feat-mini">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2"/><path d="M11 18h2"/></svg>
+        <span>Acesso mobile</span>
+      </div>
+      <div class="lp-feat-mini">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+        <span>Dados protegidos</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- DASHBOARD DETAIL -->
+<!-- ═══════════════════════════════════════════ -->
+<section class="lp-section" id="dashboard-detail">
+  <div class="lp-container">
+    <div class="lp-split">
+      <div class="lp-split-text">
+        <div class="lp-eyebrow">Dashboard financeiro</div>
+        <h2 class="lp-section-title lp-text-left">Visualize seus números com clareza.</h2>
+        <p class="lp-section-sub lp-text-left">
+          Acompanhe saldo, lucro, despesas, ROI, transações e evolução financeira em um dashboard simples, visual e organizado.
+        </p>
+        <ul class="lp-check-list">
+          <li><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>Saldo total atualizado em tempo real</li>
+          <li><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>Lucro, despesas e ROI por período</li>
+          <li><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>Gráfico de evolução interativo</li>
+          <li><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>Filtros de período (hoje, 7 dias, 30 dias, ano)</li>
+        </ul>
+      </div>
+      <div class="lp-split-visual">
+        <div class="lp-mini-dash">
+          <div class="lp-mini-row">
+            <div class="lp-mini-kpi">
+              <div class="lp-mini-kpi-lbl">Saldo Total</div>
+              <div class="lp-mini-kpi-val">R$ 48.500</div>
+            </div>
+            <div class="lp-mini-kpi lp-mini-kpi-green">
+              <div class="lp-mini-kpi-lbl">Lucro</div>
+              <div class="lp-mini-kpi-val">+R$ 8.420</div>
+            </div>
+          </div>
+          <div class="lp-mini-row">
+            <div class="lp-mini-kpi lp-mini-kpi-red">
+              <div class="lp-mini-kpi-lbl">Despesas</div>
+              <div class="lp-mini-kpi-val">R$ 2.380</div>
+            </div>
+            <div class="lp-mini-kpi lp-mini-kpi-gold">
+              <div class="lp-mini-kpi-lbl">ROI Médio</div>
+              <div class="lp-mini-kpi-val">18,4%</div>
+            </div>
+          </div>
+          <svg viewBox="0 0 400 110" class="lp-mini-chart">
+            <defs>
+              <linearGradient id="lpMiniGrad" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" stop-color="#7c5cff" stop-opacity=".42"/>
+                <stop offset="1" stop-color="#7c5cff" stop-opacity="0"/>
+              </linearGradient>
+            </defs>
+            <path d="M0,80 C50,72 100,68 150,50 C200,32 250,38 300,22 C350,8 380,12 400,6 L400,110 L0,110 Z" fill="url(#lpMiniGrad)"/>
+            <path d="M0,80 C50,72 100,68 150,50 C200,32 250,38 300,22 C350,8 380,12 400,6" stroke="#a78bfa" stroke-width="2" fill="none"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- MÉTODOS -->
+<!-- ═══════════════════════════════════════════ -->
+<section class="lp-section lp-section-alt">
+  <div class="lp-container">
+    <div class="lp-split lp-split-reverse">
+      <div class="lp-split-text">
+        <div class="lp-eyebrow">Gestão de métodos</div>
+        <h2 class="lp-section-title lp-text-left">Descubra quais métodos realmente performam melhor.</h2>
+        <p class="lp-section-sub lp-text-left">
+          Compare estratégias, acompanhe resultados individuais e identifique quais métodos merecem mais atenção.
+        </p>
+        <ul class="lp-check-list">
+          <li><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>Ranking de métodos por desempenho</li>
+          <li><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>Receita, despesa e lucro por método</li>
+          <li><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>ROI individual e status visual</li>
+          <li><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>Análise comparativa entre estratégias</li>
+        </ul>
+      </div>
+      <div class="lp-split-visual">
+        <div class="lp-methods-table">
+          <div class="lp-methods-head">
+            <span>Método</span><span>Receita</span><span>Lucro</span><span>ROI</span>
+          </div>
+          <div class="lp-methods-row">
+            <span><b>1.</b> Surebet</span><span>R$ 12.400</span><span class="lp-pos">+R$ 4.180</span><span class="lp-pos">22,4%</span>
+          </div>
+          <div class="lp-methods-row">
+            <span><b>2.</b> Freebet</span><span>R$ 8.900</span><span class="lp-pos">+R$ 2.610</span><span class="lp-pos">19,8%</span>
+          </div>
+          <div class="lp-methods-row">
+            <span><b>3.</b> Cashback</span><span>R$ 5.200</span><span class="lp-pos">+R$ 1.040</span><span class="lp-pos">14,2%</span>
+          </div>
+          <div class="lp-methods-row">
+            <span><b>4.</b> Bingo</span><span>R$ 3.100</span><span class="lp-pos">+R$ 380</span><span class="lp-pos">8,1%</span>
+          </div>
+          <div class="lp-methods-row lp-methods-row-down">
+            <span><b>5.</b> Aviator</span><span>R$ 1.800</span><span class="lp-neg">-R$ 420</span><span class="lp-neg">-6,3%</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- RANKING -->
+<!-- ═══════════════════════════════════════════ -->
+<section class="lp-section">
+  <div class="lp-container">
+    <div class="lp-section-head">
+      <div class="lp-eyebrow">Progresso e disciplina</div>
+      <h2 class="lp-section-title">Transforme consistência em evolução.</h2>
+      <p class="lp-section-sub">
+        Acompanhe seu progresso, mantenha a disciplina e evolua conforme utiliza o Apostack.
+      </p>
+    </div>
+
+    <div class="lp-tiers-row">
+      <div class="lp-tier"><img src="brand/ranking/01-ferro.png"     alt="Ferro"     class="lp-tier-shield" /><span>Ferro</span></div>
+      <div class="lp-tier"><img src="brand/ranking/02-bronze.png"    alt="Bronze"    class="lp-tier-shield" /><span>Bronze</span></div>
+      <div class="lp-tier"><img src="brand/ranking/03-prata.png"     alt="Prata"     class="lp-tier-shield" /><span>Prata</span></div>
+      <div class="lp-tier"><img src="brand/ranking/04-ouro.png"      alt="Ouro"      class="lp-tier-shield" /><span>Ouro</span></div>
+      <div class="lp-tier"><img src="brand/ranking/05-platina.png"   alt="Platina"   class="lp-tier-shield" /><span>Platina</span></div>
+      <div class="lp-tier"><img src="brand/ranking/07-safira.png"    alt="Safira"    class="lp-tier-shield" /><span>Safira</span></div>
+      <div class="lp-tier"><img src="brand/ranking/09-diamante.png"  alt="Diamante"  class="lp-tier-shield" /><span>Diamante</span></div>
+      <div class="lp-tier"><img src="brand/ranking/14-supremo.png"   alt="Supremo"   class="lp-tier-shield" /><span>Supremo</span></div>
+      <div class="lp-tier lp-tier-current"><img src="brand/ranking/15-apex.png" alt="Apex" class="lp-tier-shield" /><span>Apex</span></div>
+    </div>
+
+    <div class="lp-rank-preview">
+      <div class="lp-rank-podium">
+
+        <!-- 2º LUGAR -->
+        <div class="lp-rank-podium-slot lp-rank-podium-2">
+          <div class="lp-rank-podium-medal-corner"><img src="brand/medals/2.png" alt="2º lugar" class="lp-rank-medal-img"></div>
+          <div class="lp-rank-podium-avatar">NF</div>
+          <div class="lp-rank-podium-rank">2º LUGAR</div>
+          <div class="lp-rank-podium-shield"><img src="brand/ranking/02-bronze.png" alt="Bronze" class="lp-rank-shield-img"></div>
+          <div class="lp-rank-podium-name">Nando Freitas<span class="lp-rank-podium-pro" title="Pro"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="lpPodProGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3ba9f5"/><stop offset="1" stop-color="#0f7dc6"/></linearGradient></defs><path fill="url(#lpPodProGrad)" d="M22.25 12c0-1.43-.88-2.67-2.19-3.34.46-1.39.2-2.9-.81-3.91s-2.52-1.27-3.91-.81c-.66-1.31-1.91-2.19-3.34-2.19s-2.67.88-3.33 2.19c-1.4-.46-2.91-.2-3.92.81S3.48 7.27 3.94 8.66C2.63 9.33 1.75 10.57 1.75 12s.88 2.66 2.19 3.34c-.46 1.39-.2 2.9.81 3.91s2.52 1.26 3.91.81c.67 1.31 1.91 2.19 3.34 2.19s2.68-.88 3.34-2.19c1.39.45 2.9.2 3.91-.81s1.27-2.52.81-3.91c1.31-.68 2.19-1.91 2.19-3.34z"/><path d="M9.64 13.06l-2.06-2.06-1.42 1.41 3.48 3.48 6.86-6.86-1.42-1.42z" fill="#fff"/></svg></span></div>
+          <div class="lp-rank-podium-tier-name">Bronze</div>
+          <div class="lp-rank-podium-profit">R$ 2.817</div>
+        </div>
+
+        <!-- 1º LUGAR -->
+        <div class="lp-rank-podium-slot lp-rank-podium-1">
+          <div class="lp-rank-podium-medal-corner"><img src="brand/medals/1.png" alt="1º lugar" class="lp-rank-medal-img"></div>
+          <div class="lp-rank-podium-avatar">HB</div>
+          <div class="lp-rank-podium-rank">1º LUGAR</div>
+          <div class="lp-rank-podium-shield"><img src="brand/ranking/05-platina.png" alt="Platina" class="lp-rank-shield-img"></div>
+          <div class="lp-rank-podium-name">Hericky Bandeira<span class="lp-rank-podium-pro" title="Pro"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path fill="url(#lpPodProGrad)" d="M22.25 12c0-1.43-.88-2.67-2.19-3.34.46-1.39.2-2.9-.81-3.91s-2.52-1.27-3.91-.81c-.66-1.31-1.91-2.19-3.34-2.19s-2.67.88-3.33 2.19c-1.4-.46-2.91-.2-3.92.81S3.48 7.27 3.94 8.66C2.63 9.33 1.75 10.57 1.75 12s.88 2.66 2.19 3.34c-.46 1.39-.2 2.9.81 3.91s2.52 1.26 3.91.81c.67 1.31 1.91 2.19 3.34 2.19s2.68-.88 3.34-2.19c1.39.45 2.9.2 3.91-.81s1.27-2.52.81-3.91c1.31-.68 2.19-1.91 2.19-3.34z"/><path d="M9.64 13.06l-2.06-2.06-1.42 1.41 3.48 3.48 6.86-6.86-1.42-1.42z" fill="#fff"/></svg></span></div>
+          <div class="lp-rank-podium-tier-name">Platina</div>
+          <div class="lp-rank-podium-profit">R$ 14.900</div>
+        </div>
+
+        <!-- 3º LUGAR -->
+        <div class="lp-rank-podium-slot lp-rank-podium-3">
+          <div class="lp-rank-podium-medal-corner"><img src="brand/medals/3.png" alt="3º lugar" class="lp-rank-medal-img"></div>
+          <div class="lp-rank-podium-avatar">CM</div>
+          <div class="lp-rank-podium-rank">3º LUGAR</div>
+          <div class="lp-rank-podium-shield"><img src="brand/ranking/02-bronze.png" alt="Bronze" class="lp-rank-shield-img"></div>
+          <div class="lp-rank-podium-name">Cesar do nascimento magalhaes</div>
+          <div class="lp-rank-podium-tier-name">Bronze</div>
+          <div class="lp-rank-podium-profit">R$ 2.534</div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- COMO FUNCIONA -->
+<!-- ═══════════════════════════════════════════ -->
+<section class="lp-section lp-section-alt" id="how">
+  <div class="lp-container">
+    <div class="lp-section-head">
+      <div class="lp-eyebrow">Como funciona</div>
+      <h2 class="lp-section-title">Comece em poucos minutos.</h2>
+    </div>
+
+    <div class="lp-steps">
+      <div class="lp-step">
+        <div class="lp-step-num">1</div>
+        <h3>Crie sua conta</h3>
+        <p>Comece gratuitamente e configure seu acesso em poucos minutos.</p>
+      </div>
+      <div class="lp-step-arrow">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+      </div>
+      <div class="lp-step">
+        <div class="lp-step-num">2</div>
+        <h3>Organize suas informações</h3>
+        <p>Registre seus métodos, movimentações e metas dentro da plataforma.</p>
+      </div>
+      <div class="lp-step-arrow">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+      </div>
+      <div class="lp-step">
+        <div class="lp-step-num">3</div>
+        <h3>Acompanhe sua evolução</h3>
+        <p>Visualize seus resultados, compare métodos e tome decisões com mais clareza.</p>
+      </div>
+    </div>
+
+    <div class="lp-how-cta">
+      <a href="index.html#cadastro" class="lp-btn-primary-lg">
+        Começar meus 7 dias grátis
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+      </a>
+      <div class="lp-how-cta-micro">Configure em poucos minutos · Cancele quando quiser</div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- BENEFÍCIOS -->
+<!-- ═══════════════════════════════════════════ -->
+<section class="lp-section">
+  <div class="lp-container">
+    <div class="lp-section-head">
+      <div class="lp-eyebrow">Benefícios</div>
+      <h2 class="lp-section-title">Menos achismo. Mais controle.</h2>
+    </div>
+
+    <div class="lp-benefits-grid">
+      <div class="lp-benefit"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>Clareza sobre sua banca</div>
+      <div class="lp-benefit"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>Controle de lucro e despesa</div>
+      <div class="lp-benefit"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>Comparativo entre métodos</div>
+      <div class="lp-benefit"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>Histórico organizado</div>
+      <div class="lp-benefit"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>Acompanhamento de metas</div>
+      <div class="lp-benefit"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>Visão profissional da performance</div>
+      <div class="lp-benefit"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>Decisões baseadas em dados</div>
+      <div class="lp-benefit"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>Métricas em tempo real</div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- ACESSO COMPLETO -->
+<!-- ═══════════════════════════════════════════ -->
+<section class="lp-section lp-cta-section">
+  <div class="lp-container">
+    <div class="lp-cta-card">
+      <div class="lp-cta-glow"></div>
+      <div class="lp-cta-content">
+        <div class="lp-eyebrow">Acesso completo</div>
+        <h2 class="lp-section-title">Tenha acesso completo ao Apostack.</h2>
+        <p class="lp-section-sub">
+          Tudo que você precisa para controlar sua banca, acompanhar seus métodos e analisar sua performance em um só lugar.
+        </p>
+        <div class="lp-cta-list">
+          <div><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>Dashboard financeiro</div>
+          <div><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>Gestão de métodos</div>
+          <div><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>Relatórios</div>
+          <div><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>Ranking</div>
+          <div><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>Metas</div>
+          <div><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>Comparativo</div>
+          <div><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>Calculadora profissional</div>
+          <div><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>Anotações</div>
+        </div>
+        <a href="index.html#cadastro" class="lp-btn-primary-lg">Começar agora</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- PLANOS -->
+<!-- ═══════════════════════════════════════════ -->
+<section class="lp-section" id="pricing">
+  <div class="lp-container">
+    <div class="lp-section-head">
+      <div class="lp-eyebrow">Planos</div>
+      <h2 class="lp-section-title">Teste todos os recursos gratuitamente por 7 dias.</h2>
+      <p class="lp-section-sub">Conheça o Apostack na prática e escolha o plano ideal para continuar.</p>
+    </div>
+
+    <!-- PLANS GRID — espelhado da plataforma -->
+    <div class="lp-plans-grid">
+
+      <!-- TRIAL GRATUITO -->
+      <div class="lp-plan-card">
+        <div class="lp-plan-header">
+          <div class="lp-plan-name">Trial Gratuito</div>
+          <div class="lp-plan-badge lp-plan-badge-muted">Período de teste</div>
+        </div>
+        <div class="lp-plan-price">
+          <span class="lp-plan-price-currency">R$</span>
+          <span class="lp-plan-price-value">0</span>
+          <span class="lp-plan-price-period">por 7 dias</span>
+        </div>
+        <div class="lp-plan-desc">Acesso durante 7 dias para conhecer a plataforma. Não é plano gratuito permanente.</div>
+        <ul class="lp-plan-features">
+          <li><span class="lp-plan-check">✓</span>Dashboard completo</li>
+          <li><span class="lp-plan-check">✓</span>Até 50 transações</li>
+          <li><span class="lp-plan-check">✓</span>6 métodos cadastrados</li>
+          <li><span class="lp-plan-check">✓</span>Relatórios básicos</li>
+          <li class="lp-plan-feature-off"><span class="lp-plan-x">✕</span>Exportar PDF / Excel</li>
+          <li class="lp-plan-feature-off"><span class="lp-plan-x">✕</span>Suporte prioritário</li>
+          <li class="lp-plan-feature-off"><span class="lp-plan-x">✕</span>Métodos ilimitados</li>
+        </ul>
+        <a href="index.html#cadastro" class="lp-btn-plan-ghost">Começar meus 7 dias grátis</a>
+      </div>
+
+      <!-- PLUS MENSAL -->
+      <div class="lp-plan-card">
+        <div class="lp-plan-header">
+          <div class="lp-plan-name">Plus Mensal</div>
+          <div class="lp-plan-badge lp-plan-badge-gold">Recomendado</div>
+        </div>
+        <div class="lp-plan-price">
+          <span class="lp-plan-price-currency">R$</span>
+          <span class="lp-plan-price-value">24<small>,90</small></span>
+          <span class="lp-plan-price-period">/mês</span>
+        </div>
+        <div class="lp-plan-desc">Tudo o que você precisa pra gestão profissional</div>
+        <ul class="lp-plan-features">
+          <li><span class="lp-plan-check lp-premium">✓</span><strong>Transações ilimitadas</strong></li>
+          <li><span class="lp-plan-check lp-premium">✓</span><strong>Métodos ilimitados</strong></li>
+          <li><span class="lp-plan-check lp-premium">✓</span>Relatórios avançados (PDF/Excel)</li>
+          <li><span class="lp-plan-check lp-premium">✓</span>Comparativos e projeções</li>
+          <li><span class="lp-plan-check lp-premium">✓</span>Metas personalizadas</li>
+          <li><span class="lp-plan-check lp-premium">✓</span>Backup automático na nuvem</li>
+          <li><span class="lp-plan-check lp-premium">✓</span>Suporte prioritário</li>
+        </ul>
+        <a href="index.html#cadastro" class="lp-btn-plan-primary">Escolher plano mensal</a>
+        <div class="lp-plan-guarantee">Cancele a qualquer momento · Sem fidelidade</div>
+      </div>
+
+      <!-- PRO ANUAL — featured -->
+      <div class="lp-plan-card lp-plan-card-featured">
+        <div class="lp-plan-featured-ribbon">Melhor custo-benefício</div>
+        <div class="lp-plan-header">
+          <div class="lp-plan-name">Pro Anual</div>
+          <div class="lp-plan-badge lp-plan-badge-gold">Economize 33%</div>
+        </div>
+        <div class="lp-plan-price">
+          <span class="lp-plan-price-currency">R$</span>
+          <span class="lp-plan-price-value">199</span>
+          <span class="lp-plan-price-period">/ano</span>
+        </div>
+        <div class="lp-plan-desc">Equivale a <strong>R$ 16,58/mês</strong> · Economia de <strong>R$ 99,80/ano</strong> vs. plano mensal</div>
+        <ul class="lp-plan-features">
+          <li><span class="lp-plan-check lp-premium">✓</span><strong>Tudo do Plus, e mais:</strong></li>
+          <li><span class="lp-plan-check lp-premium">✓</span><strong>Suporte VIP exclusivo</strong></li>
+          <li><span class="lp-plan-check lp-premium">✓</span><strong>Acesso antecipado a novidades</strong></li>
+          <li><span class="lp-plan-check lp-premium">✓</span>Relatórios avançados (PDF/Excel)</li>
+          <li><span class="lp-plan-check lp-premium">✓</span>Comparativos e projeções</li>
+          <li><span class="lp-plan-check lp-premium">✓</span>Backup automático na nuvem</li>
+          <li><span class="lp-plan-check lp-premium">✓</span><strong>Economize R$ 99,80 (~4 meses grátis)</strong></li>
+        </ul>
+        <a href="index.html#cadastro" class="lp-btn-plan-primary">Escolher plano anual</a>
+        <div class="lp-plan-guarantee">1 pagamento por ano · Cancele quando quiser</div>
+      </div>
+
+    </div>
+
+    <!-- TRUST BAR -->
+    <div class="lp-trust-bar">
+      <div class="lp-trust-item">
+        <div class="lp-trust-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg></div>
+        <div><div class="lp-trust-title">Pagamento seguro</div><div class="lp-trust-sub">SSL 256-bit</div></div>
+      </div>
+      <div class="lp-trust-item">
+        <div class="lp-trust-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M2 10h20M6 14h4"/></svg></div>
+        <div><div class="lp-trust-title">Pix, cartão e boleto</div><div class="lp-trust-sub">Renovação automática</div></div>
+      </div>
+      <div class="lp-trust-item">
+        <div class="lp-trust-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 109-9 9.75 9.75 0 00-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg></div>
+        <div><div class="lp-trust-title">Cancele quando quiser</div><div class="lp-trust-sub">Sem multas</div></div>
+      </div>
+      <div class="lp-trust-item">
+        <div class="lp-trust-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg></div>
+        <div><div class="lp-trust-title">Acesso imediato</div><div class="lp-trust-sub">Ativação instantânea</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- PROVA SOCIAL (depois dos planos) -->
+<!-- ═══════════════════════════════════════════ -->
+<section class="lp-section lp-section-alt" id="social-proof">
+  <div class="lp-container">
+    <div class="lp-section-head">
+      <div class="lp-eyebrow">Quem usa, recomenda</div>
+      <h2 class="lp-section-title">Construído com quem leva sua banca a sério.</h2>
+      <p class="lp-section-sub">
+        Apostadores que querem profissionalizar sua gestão estão organizando suas operações com o Apostack.
+      </p>
+    </div>
+
+    <div class="lp-proof-placeholder">
+
+      <!-- Quebra de objeção: "é complicado / vou desistir igual sempre" -->
+      <div class="lp-proof-card">
+        <div class="lp-proof-card-stars">
+          <svg viewBox="0 0 24 24" width="14" height="14"><path fill="#ffb800" d="M12 2l3 6 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1z"/></svg>
+          <svg viewBox="0 0 24 24" width="14" height="14"><path fill="#ffb800" d="M12 2l3 6 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1z"/></svg>
+          <svg viewBox="0 0 24 24" width="14" height="14"><path fill="#ffb800" d="M12 2l3 6 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1z"/></svg>
+          <svg viewBox="0 0 24 24" width="14" height="14"><path fill="#ffb800" d="M12 2l3 6 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1z"/></svg>
+          <svg viewBox="0 0 24 24" width="14" height="14"><path fill="#ffb800" d="M12 2l3 6 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1z"/></svg>
+        </div>
+        <p class="lp-proof-card-quote">Cara, vou ser sincero: já tinha tentado 3 planilhas e 2 apps antes — sempre largava na primeira semana. O Apostack foi o primeiro que <strong>eu não larguei</strong>. Em uns 10 minutos tava tudo configurado. Hoje é a primeira coisa que eu abro de manhã, antes do café.</p>
+        <div class="lp-proof-card-author">
+          <div class="lp-proof-card-avatar lp-proof-card-avatar-1">CM</div>
+          <div>
+            <div class="lp-proof-card-name">Caio Mendes <svg class="lp-proof-card-verified" viewBox="0 0 24 24" width="13" height="13"><circle cx="12" cy="12" r="10" fill="#3b82f6"/><path d="M9.64 13.06l-2.06-2.06-1.42 1.41 3.48 3.48 6.86-6.86-1.42-1.42z" fill="#fff"/></svg></div>
+            <div class="lp-proof-card-role">São Paulo · Plus Mensal · há 4 meses</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quebra de objeção: "não vou conseguir identificar o que funciona" -->
+      <div class="lp-proof-card">
+        <div class="lp-proof-card-stars">
+          <svg viewBox="0 0 24 24" width="14" height="14"><path fill="#ffb800" d="M12 2l3 6 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1z"/></svg>
+          <svg viewBox="0 0 24 24" width="14" height="14"><path fill="#ffb800" d="M12 2l3 6 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1z"/></svg>
+          <svg viewBox="0 0 24 24" width="14" height="14"><path fill="#ffb800" d="M12 2l3 6 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1z"/></svg>
+          <svg viewBox="0 0 24 24" width="14" height="14"><path fill="#ffb800" d="M12 2l3 6 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1z"/></svg>
+          <svg viewBox="0 0 24 24" width="14" height="14"><path fill="#ffb800" d="M12 2l3 6 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1z"/></svg>
+        </div>
+        <p class="lp-proof-card-quote">Achei que sabia onde tava lucrando. Achei errado. Quando vi o comparativo do Apostack mostrando o ROI de cada método, <strong>levei um susto</strong>: o método que eu mais usava vinha me dando prejuízo silencioso há meses. Cortei na hora. Só esse insight já pagou o plano anual.</p>
+        <div class="lp-proof-card-author">
+          <div class="lp-proof-card-avatar lp-proof-card-avatar-2">RS</div>
+          <div>
+            <div class="lp-proof-card-name">Rafael Souza <svg class="lp-proof-card-verified" viewBox="0 0 24 24" width="13" height="13"><circle cx="12" cy="12" r="10" fill="#3b82f6"/><path d="M9.64 13.06l-2.06-2.06-1.42 1.41 3.48 3.48 6.86-6.86-1.42-1.42z" fill="#fff"/></svg></div>
+            <div class="lp-proof-card-role">Curitiba · Pro Anual · há 6 meses</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quebra de objeção: "é só pra banca grande / disciplina" -->
+      <div class="lp-proof-card">
+        <div class="lp-proof-card-stars">
+          <svg viewBox="0 0 24 24" width="14" height="14"><path fill="#ffb800" d="M12 2l3 6 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1z"/></svg>
+          <svg viewBox="0 0 24 24" width="14" height="14"><path fill="#ffb800" d="M12 2l3 6 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1z"/></svg>
+          <svg viewBox="0 0 24 24" width="14" height="14"><path fill="#ffb800" d="M12 2l3 6 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1z"/></svg>
+          <svg viewBox="0 0 24 24" width="14" height="14"><path fill="#ffb800" d="M12 2l3 6 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1z"/></svg>
+          <svg viewBox="0 0 24 24" width="14" height="14"><path fill="#ffb800" d="M12 2l3 6 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1z"/></svg>
+        </div>
+        <p class="lp-proof-card-quote">Comecei desconfiada porque minha banca é modesta e achava que esses sistemas eram pra quem tem muita grana. <strong>Erro meu.</strong> O Apostack me mostrou que eu não controlava nada — depósito ia pra cá, saque pra lá, fim de mês nada batia. Hoje bate. E o melhor: criou disciplina que eu não tinha.</p>
+        <div class="lp-proof-card-author">
+          <div class="lp-proof-card-avatar lp-proof-card-avatar-3">LR</div>
+          <div>
+            <div class="lp-proof-card-name">Luana Ribeiro <svg class="lp-proof-card-verified" viewBox="0 0 24 24" width="13" height="13"><circle cx="12" cy="12" r="10" fill="#3b82f6"/><path d="M9.64 13.06l-2.06-2.06-1.42 1.41 3.48 3.48 6.86-6.86-1.42-1.42z" fill="#fff"/></svg></div>
+            <div class="lp-proof-card-role">Belo Horizonte · Plus Mensal · há 2 meses</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="lp-proof-cta">
+      <a href="index.html#cadastro" class="lp-btn-ghost-lg">Quero testar grátis por 7 dias</a>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- FAQ -->
+<!-- ═══════════════════════════════════════════ -->
+<section class="lp-section" id="faq">
+  <div class="lp-container">
+    <div class="lp-section-head">
+      <div class="lp-eyebrow">Perguntas frequentes</div>
+      <h2 class="lp-section-title">Dúvidas? A gente responde.</h2>
+    </div>
+
+    <div class="lp-faq">
+      <details class="lp-faq-item" open>
+        <summary>O que é o Apostack?</summary>
+        <div class="lp-faq-answer">O Apostack é uma plataforma de gestão e análise para apostadores. Ele centraliza suas movimentações, métodos e metas, e mostra ROI, evolução e comparativos — tudo em um único painel, sem planilhas.</div>
+      </details>
+      <details class="lp-faq-item">
+        <summary>Para quem o Apostack é indicado?</summary>
+        <div class="lp-faq-answer">Para apostadores que querem profissionalizar a gestão: acompanhar resultados, comparar métodos, organizar movimentações e parar de depender de planilhas e anotações soltas.</div>
+      </details>
+      <details class="lp-faq-item">
+        <summary>Como funcionam os 7 dias grátis?</summary>
+        <div class="lp-faq-answer">Você cria sua conta e tem 7 dias para usar o Apostack na prática. Durante esse período pode testar as funcionalidades e decidir se quer continuar em algum dos planos pagos. Não é um plano gratuito permanente.</div>
+      </details>
+      <details class="lp-faq-item">
+        <summary>Qual a diferença entre o plano Mensal e o Anual?</summary>
+        <div class="lp-faq-answer">O Plus Mensal custa R$ 24,90/mês com cobrança recorrente. O Pro Anual sai por R$ 199 à vista — equivalente a R$ 16,58/mês, com economia de R$ 99,80 no ano e benefícios adicionais como suporte VIP e acesso antecipado a novidades.</div>
+      </details>
+      <details class="lp-faq-item">
+        <summary>Posso cancelar quando quiser?</summary>
+        <div class="lp-faq-answer">Sim. O cancelamento é livre, sem fidelidade nem taxa de saída. Você mantém o acesso até o final do período já pago.</div>
+      </details>
+      <details class="lp-faq-item">
+        <summary>Consigo acessar pelo celular?</summary>
+        <div class="lp-faq-answer">Sim. O Apostack funciona pelo navegador no celular, tablet e desktop, com sincronização automática entre os dispositivos.</div>
+      </details>
+      <details class="lp-faq-item">
+        <summary>O Apostack garante resultados?</summary>
+        <div class="lp-faq-answer">Não. O Apostack é uma ferramenta de gestão e análise — ajuda você a organizar dados e tomar decisões mais claras. Não promete e nem garante lucro.</div>
+      </details>
+      <details class="lp-faq-item">
+        <summary>O Apostack é uma plataforma de apostas?</summary>
+        <div class="lp-faq-answer">Não. O Apostack não realiza apostas. É uma ferramenta de organização, controle e análise da sua performance pessoal — você continua apostando onde já apostava.</div>
+      </details>
+      <details class="lp-faq-item">
+        <summary>Meus dados ficam protegidos?</summary>
+        <div class="lp-faq-answer">Sim. Os dados são armazenados com criptografia e ficam disponíveis apenas para você, mediante login na sua conta.</div>
+      </details>
+      <details class="lp-faq-item">
+        <summary>Como funciona o suporte?</summary>
+        <div class="lp-faq-answer">Suporte por email disponível em todos os planos pagos. No plano Pro Anual o atendimento é prioritário.</div>
+      </details>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- CTA FINAL -->
+<!-- ═══════════════════════════════════════════ -->
+<section class="lp-section lp-final-cta">
+  <div class="lp-container lp-final-cta-inner">
+    <h2 class="lp-final-title">Comece a controlar sua banca <span class="lp-hero-title-accent">com mais clareza.</span></h2>
+    <p class="lp-final-sub">Organize suas movimentações, compare métodos e acompanhe sua evolução em um único lugar.</p>
+    <div class="lp-hero-cta">
+      <a href="index.html#cadastro" class="lp-btn-primary-lg">
+        Começar meus 7 dias grátis
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+      </a>
+      <a href="#pricing" class="lp-btn-ghost-lg">Ver planos</a>
+    </div>
+    <div class="lp-hero-micro">Configure em poucos minutos · Cancele quando quiser · Sem compromisso</div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- FOOTER -->
+<!-- ═══════════════════════════════════════════ -->
+<footer class="lp-footer">
+  <div class="lp-container">
+    <div class="lp-footer-top">
+      <div class="lp-footer-brand">
+        <a href="#top" class="lp-logo">
+          <img src="brand/icon.png" alt="Apostack" class="lp-logo-icon lp-logo-icon-img" />
+          <span class="lp-logo-text">Apo<span class="lp-logo-accent">stack</span></span>
+        </a>
+        <p class="lp-footer-desc">Controle, métricas e performance para sua banca.</p>
+      </div>
+      <div class="lp-footer-cols">
+        <div class="lp-footer-col">
+          <div class="lp-footer-col-title">Produto</div>
+          <a href="#features">Recursos</a>
+          <a href="#pricing">Planos</a>
+          <a href="#how">Como funciona</a>
+          <a href="#faq">FAQ</a>
+        </div>
+        <div class="lp-footer-col">
+          <div class="lp-footer-col-title">Conta</div>
+          <a href="index.html">Entrar</a>
+          <a href="index.html#cadastro">Criar conta</a>
+        </div>
+        <div class="lp-footer-col">
+          <div class="lp-footer-col-title">Legal</div>
+          <a href="#">Termos de uso</a>
+          <a href="#">Política de privacidade</a>
+        </div>
+      </div>
+    </div>
+    <div class="lp-footer-bottom">
+      <div class="lp-footer-disclaimer">O Apostack é uma ferramenta de gestão e análise. Não garantimos resultados financeiros.</div>
+      <div class="lp-footer-copy">© 2026 Apostack. Todos os direitos reservados.</div>
+    </div>
+  </div>
+</footer>
+
+<script>
+/* ─── Parallax 3D do mockup do hero (segue o mouse) ─── */
+(function(){
+  var wrap = document.querySelector('.lp-hero-mockup');
+  if (!wrap) return;
+  var frame = wrap.querySelector('.lp-mockup-frame');
+  if (!frame) return;
+
+  var rect, raf = 0;
+  var tx = 0, ty = 0;       // alvo (target)
+  var cx = 0, cy = 0;       // atual (current) — interpolado pra ficar suave
+  var hovering = false;
+
+  // Limites de rotação (em graus) — sutil pra parecer premium, não fliperama
+  var MAX_X = 6;   // tilt vertical
+  var MAX_Y = 10;  // tilt horizontal
+  var LIFT = 30;   // px que o frame levanta no centro
+
+  function render(){
+    cx += (tx - cx) * 0.12;
+    cy += (ty - cy) * 0.12;
+    var rx = (hovering ? 10 : 22) + cy * MAX_X;
+    var ry = (hovering ? -4 : -10) + cx * MAX_Y;
+    var lift = hovering ? (-20 + Math.abs(cy) * -10) : 0;
+    var tz = hovering ? 40 : 0;
+    frame.style.transform =
+      'rotateX(' + rx.toFixed(2) + 'deg) ' +
+      'rotateY(' + ry.toFixed(2) + 'deg) ' +
+      'rotateZ(0.4deg) ' +
+      'translateY(' + lift.toFixed(1) + 'px) ' +
+      'translateZ(' + tz + 'px)';
+    if (Math.abs(tx - cx) > 0.001 || Math.abs(ty - cy) > 0.001){
+      raf = requestAnimationFrame(render);
+    } else {
+      raf = 0;
+    }
+  }
+
+  function onMove(e){
+    rect = frame.getBoundingClientRect();
+    var px = (e.clientX - rect.left) / rect.width;   // 0..1
+    var py = (e.clientY - rect.top)  / rect.height;  // 0..1
+    tx = (px - 0.5) * 2;                              // -1..1
+    ty = (0.5 - py) * 2;                              // -1..1 (invertido pra mouse cima = tilt cima)
+    if (!raf) raf = requestAnimationFrame(render);
+  }
+
+  function onEnter(){
+    hovering = true;
+    frame.style.animation = 'none';   // mata o keyframe pro JS poder controlar o transform
+    frame.style.transition = 'transform 0.15s ease-out, box-shadow 0.6s ease';
+  }
+  function onLeave(){
+    hovering = false;
+    tx = 0; ty = 0;
+    frame.style.transition = 'transform 0.8s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.8s ease';
+    // depois da transição volta a animação de float
+    setTimeout(function(){
+      if (!hovering){
+        frame.style.transform = '';
+        frame.style.animation = '';   // restaura a animação CSS
+      }
+    }, 850);
+    if (!raf) raf = requestAnimationFrame(render);
+  }
+
+  wrap.addEventListener('mouseenter', onEnter);
+  wrap.addEventListener('mouseleave', onLeave);
+  wrap.addEventListener('mousemove', onMove);
+})();
+
+/* ─── CTA fixo mobile (mostra após rolar o hero) ─── */
+(function(){
+  var cta = document.querySelector('.lp-mobile-sticky-cta');
+  var hero = document.querySelector('.lp-hero');
+  if (!cta || !hero) return;
+  var threshold = 0;
+  function measure(){ threshold = hero.getBoundingClientRect().bottom + window.scrollY - 80; }
+  function onScroll(){
+    if (window.scrollY > threshold) cta.classList.add('lp-mobile-sticky-cta-visible');
+    else cta.classList.remove('lp-mobile-sticky-cta-visible');
+  }
+  measure();
+  window.addEventListener('resize', measure);
+  window.addEventListener('scroll', onScroll, {passive:true});
+  onScroll();
+})();
+</script>
+
+</body>
+</html>
