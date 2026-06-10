@@ -4561,43 +4561,37 @@ function _daysSince(dateStr){
 }
 
 function computeSmartAlerts(){
+  // Apenas alertas com VALOR REAL — sem nag, sem 'cobranca'.
+  // User pode desativar tudo em Personalizar (flag abaixo).
+  try {
+    if (localStorage.getItem('bancapro-smart-alerts-off') === '1') return [];
+  } catch(e){}
+
   const alerts = [];
   const txs = (typeof transactions !== 'undefined' && Array.isArray(transactions)) ? transactions : [];
-  const acc = (typeof accounts !== 'undefined' && Array.isArray(accounts)) ? accounts : [];
   const gls = (typeof goals !== 'undefined' && Array.isArray(goals)) ? goals : [];
   const monthYear = new Date().toISOString().slice(0,7);
 
-  // 1. INATIVIDADE — sem transacao ha X dias
-  if (txs.length > 0){
-    const sorted = txs.slice().sort((a,b) => (b.date || '').localeCompare(a.date || ''));
-    const lastDate = sorted[0]?.date;
-    const days = _daysSince(lastDate);
-    if (days !== null){
-      if (days >= 14){
+  // 1. META BATIDA — celebra conquista (mais importante)
+  if (gls.length > 0 && txs.length > 0){
+    const totalLucro = txs.reduce((s,t) => s + (t.type === 'income' ? (parseFloat(t.value)||0) : -(parseFloat(t.value)||0)), 0);
+    gls.forEach(g => {
+      const target = parseFloat(g.target) || 0;
+      if (target > 0 && totalLucro >= target){
         alerts.push({
-          id: 'inactive-14d-' + monthYear,
-          priority: 3,
-          icon: '👋',
-          color: '#a78bfa',
-          title: 'Que bom te ver de volta!',
-          desc: 'Você não lança transação há ' + days + ' dias. Atualize seus saldos e continue de onde parou.',
-          action: { label: 'Lançar transação', fn: 'openTxModal()' }
-        });
-      } else if (days >= 3){
-        alerts.push({
-          id: 'inactive-3d-' + monthYear,
-          priority: 4,
-          icon: '⏰',
-          color: '#3b82f6',
-          title: 'Sem aposta há ' + days + ' dias',
-          desc: 'Tem alguma aposta nova pra registrar? Mantém seu controle em dia.',
-          action: { label: 'Lançar agora', fn: 'openTxModal()' }
+          id: 'goal-' + (g.id || g.name) + '-' + monthYear,
+          priority: 1,
+          icon: '🎯',
+          color: '#10b981',
+          title: 'Meta batida: ' + (g.name || 'Meta'),
+          desc: 'Você ultrapassou R$ ' + target.toLocaleString('pt-BR') + ' de lucro. Continue assim!',
+          action: { label: 'Ver metas', fn: "goTo('goals')" }
         });
       }
-    }
+    });
   }
 
-  // 2. ROI CAIU — compara 7 dias com 7 dias anteriores
+  // 2. ROI CAIU significativamente — alerta de problema real
   if (txs.length >= 10){
     const today = new Date(); today.setHours(0,0,0,0);
     const d7  = new Date(today); d7.setDate(today.getDate() - 7);
@@ -4630,52 +4624,24 @@ function computeSmartAlerts(){
     }
   }
 
-  // 3. META ATINGIDA recentemente
-  if (gls.length > 0 && txs.length > 0){
-    const totalLucro = txs.reduce((s,t) => s + (t.type === 'income' ? (parseFloat(t.value)||0) : -(parseFloat(t.value)||0)), 0);
-    gls.forEach(g => {
-      const target = parseFloat(g.target) || 0;
-      if (target > 0 && totalLucro >= target){
-        alerts.push({
-          id: 'goal-' + (g.id || g.name) + '-' + monthYear,
-          priority: 1,
-          icon: '🎯',
-          color: '#10b981',
-          title: 'Meta batida: ' + (g.name || 'Meta'),
-          desc: 'Você ultrapassou R$ ' + target.toLocaleString('pt-BR') + ' de lucro. Continue assim!',
-          action: { label: 'Ver metas', fn: "goTo('goals')" }
-        });
-      }
-    });
+  // 3. BEM-VINDO DE VOLTA — apenas apos >=14 dias inativo (sumiu mesmo)
+  if (txs.length > 0){
+    const sorted = txs.slice().sort((a,b) => (b.date || '').localeCompare(a.date || ''));
+    const lastDate = sorted[0]?.date;
+    const days = _daysSince(lastDate);
+    if (days !== null && days >= 14){
+      alerts.push({
+        id: 'inactive-14d-' + monthYear,
+        priority: 3,
+        icon: '👋',
+        color: '#a78bfa',
+        title: 'Que bom te ver de volta!',
+        desc: 'Faz ' + days + ' dias desde sua última transação. Bora atualizar?',
+        action: { label: 'Lançar agora', fn: 'openTxModal()' }
+      });
+    }
   }
 
-  // 4. DICA: sem meta cadastrada (apos 5+ txs)
-  if (gls.length === 0 && txs.length >= 5){
-    alerts.push({
-      id: 'tip-no-goals',
-      priority: 5,
-      icon: '💡',
-      color: '#8b5cf6',
-      title: 'Cadastre uma meta',
-      desc: 'Definir uma meta mensal te dá clareza sobre quanto falta pra bater seu objetivo.',
-      action: { label: 'Criar meta', fn: "goTo('goals')" }
-    });
-  }
-
-  // 5. DICA: sem contas depositadas (apos 3+ txs)
-  if (acc.length === 0 && txs.length >= 3){
-    alerts.push({
-      id: 'tip-no-accounts',
-      priority: 6,
-      icon: '💰',
-      color: '#6366f1',
-      title: 'Anote suas contas depositadas',
-      desc: 'Cadastre quanto tem em cada casa pra não esquecer dinheiro parado.',
-      action: { label: 'Adicionar conta', fn: "goTo('accounts')" }
-    });
-  }
-
-  // Ordena por prioridade (1 = mais importante)
   alerts.sort((a,b) => (a.priority||99) - (b.priority||99));
   return alerts;
 }
@@ -4685,7 +4651,8 @@ function renderSmartAlerts(){
   if (!wrap) return;
   const dismissed = _smartAlertsDismissedSet();
   const all = computeSmartAlerts();
-  const visible = all.filter(a => !dismissed.has(a.id)).slice(0, 3);
+  // Max 1 alerta visivel — manter dashboard CALMO. Mostra o de maior prioridade.
+  const visible = all.filter(a => !dismissed.has(a.id)).slice(0, 1);
   if (visible.length === 0){
     wrap.style.display = 'none';
     wrap.innerHTML = '';
@@ -4715,6 +4682,37 @@ function renderSmartAlerts(){
   if (document.readyState !== 'loading') setTimeout(safeRender, 800);
   else document.addEventListener('DOMContentLoaded', () => setTimeout(safeRender, 800));
   setInterval(safeRender, 60000);
+})();
+
+// Toggle on/off em Configuracoes — desliga tudo se user nao quiser
+function setSmartAlertsEnabled(enabled){
+  try { localStorage.setItem('bancapro-smart-alerts-off', enabled ? '0' : '1'); } catch(e){}
+  // Atualiza visual do switch (.cust-switch)
+  const box = document.getElementById('toggleSmartAlertsBox');
+  if (box){
+    if (enabled) box.classList.add('is-on');
+    else box.classList.remove('is-on');
+  }
+  // Re-renderiza ja
+  renderSmartAlerts();
+}
+
+// Aplica estado inicial do toggle ao carregar
+(function initSmartAlertsToggle(){
+  function apply(){
+    try {
+      const off = localStorage.getItem('bancapro-smart-alerts-off') === '1';
+      const cb = document.getElementById('toggleSmartAlerts');
+      const box = document.getElementById('toggleSmartAlertsBox');
+      if (cb) cb.checked = !off;
+      if (box){
+        if (off) box.classList.remove('is-on');
+        else box.classList.add('is-on');
+      }
+    } catch(e){}
+  }
+  if (document.readyState !== 'loading') setTimeout(apply, 200);
+  else document.addEventListener('DOMContentLoaded', () => setTimeout(apply, 200));
 })();
 
 // Banner explicativo da aba 'Contas Depositadas' — pode ser dispensado

@@ -40,8 +40,8 @@ src="https://www.facebook.com/tr?id=859710540533085&ev=PageView&noscript=1"
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
-<link rel="stylesheet" href="style.css?v=215"/>
-<link rel="stylesheet" href="light.css?v=215"/>
+<link rel="stylesheet" href="style.css?v=216"/>
+<link rel="stylesheet" href="light.css?v=216"/>
 </head>
 <body>
 
@@ -1621,6 +1621,23 @@ src="https://www.facebook.com/tr?id=859710540533085&ev=PageView&noscript=1"
             <a href="mailto:suporteapostack@gmail.com?subject=Suporte%20Apostack" class="btn-primary" style="display:inline-block;text-decoration:none">✉️ suporteapostack@gmail.com</a>
           </div>
 
+          <!-- Toggle: alertas inteligentes no Dashboard -->
+          <div class="form-card">
+            <div class="form-card-title">Notificações</div>
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:14px;padding:6px 0">
+              <div style="flex:1;min-width:0">
+                <div style="font-size:13.5px;font-weight:600;color:#fff;margin-bottom:3px">Alertas inteligentes no Dashboard</div>
+                <div style="font-size:12px;color:var(--text-secondary);line-height:1.5">
+                  Mostra avisos quando você bate uma meta, seu ROI cai significativamente ou volta após muitos dias inativo. Desligue se preferir um dashboard 100% silencioso.
+                </div>
+              </div>
+              <label class="cust-switch-wrap" style="flex-shrink:0;cursor:pointer;display:flex;align-items:center">
+                <input type="checkbox" id="toggleSmartAlerts" style="display:none" onchange="setSmartAlertsEnabled(this.checked)" checked>
+                <span class="cust-switch is-on" id="toggleSmartAlertsBox"></span>
+              </label>
+            </div>
+          </div>
+
           <!-- Suporte rapido via WhatsApp — visivel pra todos -->
           <div class="form-card" style="border:1px solid rgba(34,197,94,0.25);background:linear-gradient(135deg,rgba(34,197,94,0.06),rgba(34,197,94,0.02))">
             <div class="form-card-title" style="display:flex;align-items:center;gap:10px">
@@ -2476,8 +2493,8 @@ src="https://www.facebook.com/tr?id=859710540533085&ev=PageView&noscript=1"
   </div>
 </div>
 
-<script src="config.js?v=215" defer></script>
-<script src="storage.js?v=215" defer></script>
-<script src="script.js?v=215" defer></script>
+<script src="config.js?v=216" defer></script>
+<script src="storage.js?v=216" defer></script>
+<script src="script.js?v=216" defer></script>
 </body>
 </html>
