@@ -1646,6 +1646,22 @@ async function logout() {
 }
 
 function showLogin() { document.getElementById('loginForm').style.display='block'; document.getElementById('registerForm').style.display='none'; document.getElementById('resetForm').style.display='none'; }
+// Quando user vem da landing via /?modo=cadastro -> abre direto o form
+// de criar conta. /?modo=recuperar -> abre form de recuperar senha.
+(function autoDetectAuthMode(){
+  function apply(){
+    try {
+      const modo = (new URLSearchParams(location.search).get('modo') || '').toLowerCase();
+      if (modo === 'cadastro' || modo === 'register'){
+        setTimeout(() => { if (typeof showRegister === 'function') showRegister(); }, 100);
+      } else if (modo === 'recuperar' || modo === 'reset'){
+        setTimeout(() => { if (typeof showReset === 'function') showReset(); }, 100);
+      }
+    } catch(e){}
+  }
+  if (document.readyState !== 'loading') apply();
+  else document.addEventListener('DOMContentLoaded', apply);
+})();
 function togglePw(btn, id) {
   const inp = document.getElementById(id); if(!inp) return;
   const show = inp.type === 'password';
