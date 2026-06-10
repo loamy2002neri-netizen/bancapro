@@ -114,6 +114,13 @@ let sbClient = null;
 let currentUserId = null;
 let currentAuthUser = null;
 
+// Helper: flags de onboarding (tour, welcome) sufixadas com userId.
+// Antes eram globais e mantinham flag entre contas — usuario novo no mesmo
+// browser nao via tour porque flag do user anterior estava setada.
+function onboardingKey(base){
+  return currentUserId ? base + '-' + currentUserId : base;
+}
+
 // Cria (uma vez) o cliente Supabase a partir das chaves em config.js
 function getSb() {
   if (sbClient) return sbClient;
@@ -2485,13 +2492,13 @@ function closeTour() {
   document.getElementById('tourBackdrop').hidden = true;
   document.getElementById('tourSpotlight').hidden = true;
   document.getElementById('tourTooltip').hidden = true;
-  try { localStorage.setItem('bancapro-tour-done', '1'); } catch(e){}
+  try { localStorage.setItem(onboardingKey('bancapro-tour-done'), '1'); } catch(e){}
 }
 
 function maybeStartTour() {
   try {
     // Se ja marcado como visto, nao mostra
-    if (localStorage.getItem('bancapro-tour-done') === '1') return;
+    if (localStorage.getItem(onboardingKey('bancapro-tour-done')) === '1') return;
     // Veteranos: usuario que ja tem 3+ transacoes claramente nao precisa
     // de tour (ja entendeu o app). Marca como visto silenciosamente
     // pra nao incomodar nas proximas sessoes.
@@ -2499,11 +2506,22 @@ function maybeStartTour() {
     if (typeof transactions !== 'undefined' && Array.isArray(transactions)) txCount = transactions.length;
     else { try { txCount = (JSON.parse(localStorage.getItem('bancapro-transactions') || '[]')||[]).length; } catch(e){} }
     if (txCount >= 3){
-      try { localStorage.setItem('bancapro-tour-done', '1'); } catch(e){}
+      try { localStorage.setItem(onboardingKey('bancapro-tour-done'), '1'); } catch(e){}
       return;
     }
-    // Usuario novo (zero ou poucas transacoes) — mostra o tour
-    setTimeout(startTour, 1500);
+    // Usuario novo (zero ou poucas transacoes) — mostra o tour.
+    // Se welcome modal estiver aberto, espera ele fechar — senao briga de
+    // z-index faz o welcome tapar o tour e o user nao ve nada.
+    function tryStart(){
+      const w = document.getElementById('welcomeModal');
+      const welcomeOpen = w && getComputedStyle(w).display !== 'none';
+      if (welcomeOpen) {
+        setTimeout(tryStart, 500);
+        return;
+      }
+      startTour();
+    }
+    setTimeout(tryStart, 1500);
   } catch(e){}
 }
 
@@ -4534,7 +4552,7 @@ function closeWelcomeModal(ev){
   if (!el) return;
   el.classList.remove('open');
   el.style.display = 'none';
-  try { localStorage.setItem('bancapro-welcome-seen', '1'); } catch(e){}
+  try { localStorage.setItem(onboardingKey('bancapro-welcome-seen'), '1'); } catch(e){}
 }
 document.addEventListener('keydown', e => {
   if (e.key === 'Escape'){
@@ -4546,7 +4564,7 @@ document.addEventListener('keydown', e => {
 // Mostra o welcome 1x na 1a visita autenticada
 function maybeShowWelcome(){
   try {
-    if (localStorage.getItem('bancapro-welcome-seen') === '1') return;
+    if (localStorage.getItem(onboardingKey('bancapro-welcome-seen')) === '1') return;
     // So mostra se ja tiver email (= logado)
     const email = (localStorage.getItem('bancapro-user-email')||'').trim();
     if (!email) return;
@@ -4556,7 +4574,7 @@ function maybeShowWelcome(){
     if (typeof transactions !== 'undefined' && Array.isArray(transactions)) txCount = transactions.length;
     else { try { txCount = (JSON.parse(localStorage.getItem('bancapro-transactions') || '[]')||[]).length; } catch(e){} }
     if (txCount >= 1){
-      try { localStorage.setItem('bancapro-welcome-seen', '1'); } catch(e){}
+      try { localStorage.setItem(onboardingKey('bancapro-welcome-seen'), '1'); } catch(e){}
       return;
     }
     // Delay pequeno pra UI hidratar
@@ -4614,8 +4632,8 @@ function updateOnboardingCard(){
   // Regra: aparece UMA UNICA VEZ na vida do usuario.
   // Se ja foi visto (em qualquer momento), nunca mais mostra.
   try {
-    if (localStorage.getItem('bancapro-onboarding-dismissed') === '1' ||
-        localStorage.getItem('bancapro-onboarding-shown') === '1'){
+    if (localStorage.getItem(onboardingKey('bancapro-onboarding-dismissed')) === '1' ||
+        localStorage.getItem(onboardingKey('bancapro-onboarding-shown')) === '1'){
       card.style.display = 'none';
       return;
     }
@@ -4625,7 +4643,7 @@ function updateOnboardingCard(){
   const doneCount = Object.keys(done).length;
   card.style.display = '';
   // Marca como ja exibido pra nao reaparecer em sessoes futuras
-  try { localStorage.setItem('bancapro-onboarding-shown', '1'); } catch(e){}
+  try { localStorage.setItem(onboardingKey('bancapro-onboarding-shown'), '1'); } catch(e){}
   // Marca steps concluidos
   card.querySelectorAll('.onboarding-step').forEach(step => {
     const k = step.getAttribute('data-step');
@@ -4641,7 +4659,7 @@ function updateOnboardingCard(){
 }
 
 function dismissOnboarding(){
-  try { localStorage.setItem('bancapro-onboarding-dismissed', '1'); } catch(e){}
+  try { localStorage.setItem(onboardingKey('bancapro-onboarding-dismissed'), '1'); } catch(e){}
   const card = document.getElementById('onboardingCard');
   if (card) card.style.display = 'none';
 }
@@ -8839,7 +8857,7 @@ function rankRenderDashCard(profit, currentTier, board_users){
 //  FAQ — accordion da Central de Ajuda
 // ══════════════════════════════════════════════
 function restartTour(){
-  try { localStorage.removeItem('bancapro-tour-done'); } catch(e){}
+  try { localStorage.removeItem(onboardingKey('bancapro-tour-done')); } catch(e){}
   if (typeof startTour === 'function') startTour();
 }
 
