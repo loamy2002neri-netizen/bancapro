@@ -1524,13 +1524,15 @@
    ═══════════════════════════════════════════════ */
 
 /* Configurações: 2 colunas no desktop, 1 no celular */
-/* align-items:start impede cards de esticarem (evita espaço vazio embaixo dos cards menores) */
-/* grid-auto-flow:dense permite preencher gaps quando há cards de tamanhos desbalanceados */
-.settings-grid { display:grid; grid-template-columns:1fr 1fr; gap:22px 24px; align-items:start; grid-auto-flow:dense; }
-.settings-grid > .form-card { margin:0; align-self:start; }
-.settings-grid > div:not(.form-card) { margin:0; }
-/* Card/wrapper que ocupa as 2 colunas (full-width inside settings grid) */
-.settings-grid .card-full { grid-column: 1 / -1; }
+/* Multi-column layout: empilha cards verticalmente em N colunas e o
+   browser balanceia as alturas — elimina o espaço vazio que sobrava
+   embaixo do card menor quando o vizinho era muito mais alto. */
+.settings-grid { column-count:2; column-gap:24px; }
+.settings-grid > * { break-inside:avoid; -webkit-column-break-inside:avoid; page-break-inside:avoid; margin-bottom:22px; display:block; }
+.settings-grid > *:last-child { margin-bottom:0; }
+.settings-grid > .form-card { margin-bottom:22px; }
+/* Card/wrapper que ocupa TODAS as colunas (full-width inside settings grid) */
+.settings-grid .card-full { column-span:all; -webkit-column-span:all; }
 
 /* Evita "blowout" de grid: cards de gráfico podem encolher até o container
    (sem isso, o gráfico empurra o card para fora da tela no celular) */
@@ -1559,7 +1561,7 @@ html { -webkit-text-size-adjust:100%; text-size-adjust:100%; }
 
 @media (max-width:768px) {
   /* Configurações empilha em 1 coluna */
-  .settings-grid { grid-template-columns:1fr; }
+  .settings-grid { column-count:1; }
 
   /* Campos com >=16px evitam o ZOOM automático do iOS ao focar */
   .form-input, .form-select, textarea,
