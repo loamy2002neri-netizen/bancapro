@@ -2351,8 +2351,8 @@ const TOUR_STEPS = [
   // ===== MÉTODOS =====
   {
     selector: '#sec-methods .page-header',
-    title: 'Gestão de Métodos',
-    desc: 'Acompanhe a performance de cada estratégia: Surebet, Freebet, iGaming, Stake, etc. Ranking e gráfico mostram qual te dá mais lucro.',
+    title: 'Gestão de Categoria',
+    desc: 'Acompanhe a performance de cada esporte: Futebol, Basquete, Tênis, MMA/UFC, E-sports, Cassino. Ranking e gráfico mostram em qual você lucra mais.',
     section: 'methods'
   },
   // ===== TRANSAÇÕES =====
