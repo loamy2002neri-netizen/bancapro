@@ -15,7 +15,7 @@
 (function smartRedirect(){
   try {
     // Se URL tem ?modo=X, user veio da landing intencionalmente — fica
-    if (location.search && /\bmodo=(cadastro|register|recuperar|reset)\b/i.test(location.search)) return;
+    if (location.search && /\bmodo=(cadastro|register|recuperar|reset|login|entrar)\b/i.test(location.search)) return;
     // Se URL tem ?assinatura=ok (retorno do Kirvano) — fica
     if (/\bassinatura=ok\b/.test(location.search)) return;
     // Procura token Supabase no localStorage (key: sb-<projectRef>-auth-token)
@@ -75,8 +75,8 @@ src="https://www.facebook.com/tr?id=1566054278577058&ev=PageView&noscript=1"
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
-<link rel="stylesheet" href="style.css?v=224"/>
-<link rel="stylesheet" href="light.css?v=224"/>
+<link rel="stylesheet" href="style.css?v=225"/>
+<link rel="stylesheet" href="light.css?v=225"/>
 </head>
 <body>
 
@@ -2561,8 +2561,8 @@ src="https://www.facebook.com/tr?id=1566054278577058&ev=PageView&noscript=1"
   </div>
 </div>
 
-<script src="config.js?v=224" defer></script>
-<script src="storage.js?v=224" defer></script>
-<script src="script.js?v=224" defer></script>
+<script src="config.js?v=225" defer></script>
+<script src="storage.js?v=225" defer></script>
+<script src="script.js?v=225" defer></script>
 </body>
 </html>
