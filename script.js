@@ -4641,6 +4641,16 @@ function updateOnboardingCard(){
   const done = getOnboardingProgress();
   const totalSteps = 5;
   const doneCount = Object.keys(done).length;
+  // Tudo concluido (caso comum: usuario veterano abrindo conta nova ou admin):
+  // nao mostra o card e marca como dismissed pra nao reaparecer.
+  if (doneCount >= totalSteps){
+    card.style.display = 'none';
+    try {
+      localStorage.setItem(onboardingKey('bancapro-onboarding-dismissed'), '1');
+      localStorage.setItem(onboardingKey('bancapro-onboarding-shown'), '1');
+    } catch(e){}
+    return;
+  }
   card.style.display = '';
   // Marca como ja exibido pra nao reaparecer em sessoes futuras
   try { localStorage.setItem(onboardingKey('bancapro-onboarding-shown'), '1'); } catch(e){}
