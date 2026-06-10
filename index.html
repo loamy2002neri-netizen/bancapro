@@ -40,8 +40,8 @@ src="https://www.facebook.com/tr?id=859710540533085&ev=PageView&noscript=1"
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
-<link rel="stylesheet" href="style.css?v=217"/>
-<link rel="stylesheet" href="light.css?v=217"/>
+<link rel="stylesheet" href="style.css?v=218"/>
+<link rel="stylesheet" href="light.css?v=218"/>
 </head>
 <body>
 
@@ -1122,6 +1122,39 @@ src="https://www.facebook.com/tr?id=859710540533085&ev=PageView&noscript=1"
             </div>
           </div>
         </div>
+
+        <!-- ═══ FILTROS AVANÇADOS ═══ -->
+        <div class="reports-filters" id="reportFilters">
+          <div class="rf-row rf-row-period">
+            <div class="rf-label">Período</div>
+            <div class="rf-period-buttons">
+              <button class="rf-period-btn" data-period="month" onclick="setReportFilter('period','month')">Este mês</button>
+              <button class="rf-period-btn" data-period="7d" onclick="setReportFilter('period','7d')">7 dias</button>
+              <button class="rf-period-btn is-active" data-period="30d" onclick="setReportFilter('period','30d')">30 dias</button>
+              <button class="rf-period-btn" data-period="90d" onclick="setReportFilter('period','90d')">90 dias</button>
+              <button class="rf-period-btn" data-period="year" onclick="setReportFilter('period','year')">Este ano</button>
+              <button class="rf-period-btn" data-period="all" onclick="setReportFilter('period','all')">Tudo</button>
+              <button class="rf-period-btn rf-period-custom" data-period="custom" onclick="toggleReportCustomPeriod()">Personalizado…</button>
+            </div>
+            <div class="rf-custom-inputs" id="reportCustomInputs" style="display:none">
+              <input type="date" id="reportDateFrom" onchange="setReportFilter('customFrom', this.value)"/>
+              <span style="color:var(--text-muted)">até</span>
+              <input type="date" id="reportDateTo" onchange="setReportFilter('customTo', this.value)"/>
+            </div>
+          </div>
+          <div class="rf-row rf-row-category">
+            <div class="rf-label">Categorias</div>
+            <div class="rf-category-chips" id="reportCategoryChips"></div>
+          </div>
+          <div class="rf-row rf-row-summary">
+            <div class="rf-summary" id="reportSummary">—</div>
+            <button class="rf-clear-btn" id="reportClearBtn" onclick="clearReportFilters()" style="display:none">
+              <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+              Limpar filtros
+            </button>
+          </div>
+        </div>
+
         <div class="chart-card" data-card="rep-evo">
           <div class="chart-header"><div><div class="chart-title">Receita vs Despesas vs Lucro</div><div class="chart-subtitle">Evolução mensal completa</div></div></div>
           <div id="reportChartWrap" style="position:relative;width:100%;height:320px">
@@ -2493,8 +2526,8 @@ src="https://www.facebook.com/tr?id=859710540533085&ev=PageView&noscript=1"
   </div>
 </div>
 
-<script src="config.js?v=217" defer></script>
-<script src="storage.js?v=217" defer></script>
-<script src="script.js?v=217" defer></script>
+<script src="config.js?v=218" defer></script>
+<script src="storage.js?v=218" defer></script>
+<script src="script.js?v=218" defer></script>
 </body>
 </html>

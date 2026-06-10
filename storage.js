@@ -78,7 +78,8 @@ window.Storage = (function(){
       'bancapro-onboarding-shown',
       'bancapro-accounts-info-dismissed',
       'bancapro-smart-alerts-dismissed',
-      'bancapro-smart-alerts-off'
+      'bancapro-smart-alerts-off',
+      'bancapro-report-filters'
     ]
   };
 

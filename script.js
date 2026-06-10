@@ -5988,14 +5988,207 @@ function getMonthAggregatesFromTx() {
   return map;
 }
 
+// ══════════════════════════════════════════════
+//  FILTROS AVANCADOS — Relatorios
+// ══════════════════════════════════════════════
+var reportFilters = { period: '30d', customFrom: '', customTo: '', categories: [] };
+(function loadReportFilters(){
+  try {
+    const raw = localStorage.getItem('bancapro-report-filters');
+    if (raw){
+      const obj = JSON.parse(raw);
+      if (obj && typeof obj === 'object'){
+        reportFilters = Object.assign(reportFilters, obj);
+      }
+    }
+  } catch(e){}
+})();
+function saveReportFilters(){
+  try { localStorage.setItem('bancapro-report-filters', JSON.stringify(reportFilters)); } catch(e){}
+}
+
+// Calcula intervalo de datas baseado no preset
+function _reportDateRange(){
+  const today = new Date(); today.setHours(0,0,0,0);
+  const toKey = (d) => d.toISOString().slice(0,10);
+  let from = null, to = toKey(today);
+  switch (reportFilters.period){
+    case '7d': {
+      const d = new Date(today); d.setDate(today.getDate() - 6);
+      from = toKey(d); break;
+    }
+    case '30d': {
+      const d = new Date(today); d.setDate(today.getDate() - 29);
+      from = toKey(d); break;
+    }
+    case '90d': {
+      const d = new Date(today); d.setDate(today.getDate() - 89);
+      from = toKey(d); break;
+    }
+    case 'month': {
+      const d = new Date(today.getFullYear(), today.getMonth(), 1);
+      from = toKey(d); break;
+    }
+    case 'year': {
+      const d = new Date(today.getFullYear(), 0, 1);
+      from = toKey(d); break;
+    }
+    case 'all': {
+      from = null; to = null; break;
+    }
+    case 'custom': {
+      from = reportFilters.customFrom || null;
+      to = reportFilters.customTo || null;
+      break;
+    }
+  }
+  return { from, to };
+}
+
+// Retorna transactions filtradas pelos filtros do relatorio
+function getFilteredReportTxs(){
+  if (typeof transactions === 'undefined' || !Array.isArray(transactions)) return [];
+  const { from, to } = _reportDateRange();
+  const cats = reportFilters.categories || [];
+  return transactions.filter(t => {
+    if (!t || !t.date) return false;
+    if (from && t.date < from) return false;
+    if (to && t.date > to) return false;
+    if (cats.length && cats.indexOf(t.method) < 0) return false;
+    return true;
+  });
+}
+
+function setReportFilter(key, value){
+  if (key === 'period'){
+    reportFilters.period = value;
+    if (value !== 'custom'){
+      // Esconde inputs custom se trocar pra outro preset
+      const ci = document.getElementById('reportCustomInputs');
+      if (ci) ci.style.display = 'none';
+    }
+  } else if (key === 'customFrom'){
+    reportFilters.customFrom = value;
+    reportFilters.period = 'custom';
+  } else if (key === 'customTo'){
+    reportFilters.customTo = value;
+    reportFilters.period = 'custom';
+  }
+  saveReportFilters();
+  refreshReportFiltersUI();
+  // Re-renderiza todos os charts com filtros aplicados
+  try { buildReportCharts(); } catch(e){}
+}
+
+function toggleReportCategory(category){
+  const idx = reportFilters.categories.indexOf(category);
+  if (idx >= 0) reportFilters.categories.splice(idx, 1);
+  else reportFilters.categories.push(category);
+  saveReportFilters();
+  refreshReportFiltersUI();
+  try { buildReportCharts(); } catch(e){}
+}
+
+function toggleReportCustomPeriod(){
+  const el = document.getElementById('reportCustomInputs');
+  if (!el) return;
+  const showing = el.style.display !== 'none';
+  el.style.display = showing ? 'none' : 'flex';
+  if (!showing && (!reportFilters.customFrom || !reportFilters.customTo)){
+    // Preencher com valores default ao abrir
+    const today = new Date();
+    const d30 = new Date(today); d30.setDate(today.getDate() - 30);
+    if (!reportFilters.customFrom) reportFilters.customFrom = d30.toISOString().slice(0,10);
+    if (!reportFilters.customTo) reportFilters.customTo = today.toISOString().slice(0,10);
+    const f = document.getElementById('reportDateFrom');
+    const t = document.getElementById('reportDateTo');
+    if (f) f.value = reportFilters.customFrom;
+    if (t) t.value = reportFilters.customTo;
+  }
+}
+
+function clearReportFilters(){
+  reportFilters = { period: '30d', customFrom: '', customTo: '', categories: [] };
+  saveReportFilters();
+  refreshReportFiltersUI();
+  try { buildReportCharts(); } catch(e){}
+}
+
+// Atualiza visual: chips ativos, contador, botao limpar
+function refreshReportFiltersUI(){
+  // Botoes de periodo
+  document.querySelectorAll('.rf-period-btn').forEach(b => {
+    const p = b.getAttribute('data-period');
+    if (p === reportFilters.period) b.classList.add('is-active');
+    else b.classList.remove('is-active');
+  });
+  // Inputs custom
+  const f = document.getElementById('reportDateFrom');
+  const t = document.getElementById('reportDateTo');
+  if (f && reportFilters.customFrom) f.value = reportFilters.customFrom;
+  if (t && reportFilters.customTo) t.value = reportFilters.customTo;
+  if (reportFilters.period === 'custom'){
+    const ci = document.getElementById('reportCustomInputs');
+    if (ci) ci.style.display = 'flex';
+  }
+  // Chips de categoria
+  const chipsEl = document.getElementById('reportCategoryChips');
+  if (chipsEl && typeof METHODS_CATALOG !== 'undefined' && Array.isArray(METHODS_CATALOG)){
+    chipsEl.innerHTML = METHODS_CATALOG.map(m => {
+      const isActive = reportFilters.categories.indexOf(m.name) >= 0;
+      return '<button class="rf-chip' + (isActive ? ' is-active' : '') + '"'
+        + ' onclick="toggleReportCategory(\'' + m.name.replace(/'/g, "\\'") + '\')">'
+        + '<span class="rf-chip-icon">' + (m.icon || '•') + '</span>'
+        + escapeHtml(m.name)
+        + '</button>';
+    }).join('');
+  }
+  // Sumario
+  const sumEl = document.getElementById('reportSummary');
+  if (sumEl){
+    const total = (typeof transactions !== 'undefined') ? transactions.length : 0;
+    const filtered = getFilteredReportTxs().length;
+    if (filtered === total){
+      sumEl.innerHTML = 'Mostrando todas as <b>' + total + '</b> transações';
+    } else {
+      sumEl.innerHTML = 'Mostrando <b>' + filtered + '</b> de ' + total + ' transações';
+    }
+  }
+  // Botao limpar so aparece se ha filtros ativos
+  const clearBtn = document.getElementById('reportClearBtn');
+  if (clearBtn){
+    const hasFilters = reportFilters.period !== '30d' || reportFilters.categories.length > 0
+      || reportFilters.customFrom || reportFilters.customTo;
+    clearBtn.style.display = hasFilters ? '' : 'none';
+  }
+}
+
 function buildReportCharts() {
   // Distribuicao de Lucro (donut) — agora no Relatorios.
   // A canvas #pieChart foi MOVIDA do dashboard pra ca, entao precisamos
   // chamar a builder ao abrir Relatorios.
   if (typeof buildDashboardPieChart === 'function') buildDashboardPieChart();
 
-  // 1) LINE CHART — Receita vs Despesas vs Lucro mês a mês
-  const aggregates = getMonthAggregatesFromTx();
+  // Atualiza UI de filtros (chips, sumario, etc) antes de renderizar
+  try { refreshReportFiltersUI(); } catch(e){}
+
+  // Pega txs filtradas (periodo + categorias selecionadas)
+  // Salva original pra restaurar depois caso buildDashboardPieChart precise
+  const _filteredTxs = getFilteredReportTxs();
+
+  // 1) LINE CHART — Receita vs Despesas vs Lucro mês a mês (com filtros)
+  const aggregates = (function(){
+    const map = {};
+    _filteredTxs.forEach(t => {
+      const ym = (t.date||'').slice(0,7);
+      if (!ym) return;
+      if (!map[ym]) map[ym] = { receita:0, despesas:0, lucro:0 };
+      if (t.type === 'income')  map[ym].receita  += t.value;
+      if (t.type === 'expense') map[ym].despesas += t.value;
+      map[ym].lucro = map[ym].receita - map[ym].despesas;
+    });
+    return map;
+  })();
   const months = Object.keys(aggregates).sort();
   const monthNames = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
   const labels = months.map(ym => {
@@ -6039,7 +6232,7 @@ function buildReportCharts() {
 
   // 2) DONUT — Distribuição de DESPESAS por método (QUALQUER método, inclusive "Geral"/custom)
   const expenseByMethod = {};
-  transactions.forEach(t => {
+  _filteredTxs.forEach(t => {
     if(t.type==='expense') {
       expenseByMethod[t.method] = (expenseByMethod[t.method] || 0) + t.value;
     }
