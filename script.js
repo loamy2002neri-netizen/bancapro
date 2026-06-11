@@ -2922,8 +2922,137 @@ function isoDateLocal(d){ d = d || new Date(); return d.getFullYear()+'-'+String
 // ID da transacao sendo editada (null = criacao nova)
 let _editingTxId = null;
 
+// ══════════════════════════════════════════════
+//  COMPROVANTES — anexo de imagem por transação
+//  - 1 imagem por tx (igual Mobills)
+//  - Comprime automatico (max 1024px, JPEG 0.75) ~80KB por imagem
+//  - Armazena como base64 dentro da tx.attachment
+//  - Fullscreen ao clicar
+// ══════════════════════════════════════════════
+
+// Buffer do comprovante da tx atualmente sendo cadastrada/editada (base64 data URL)
+let _pendingTxAttachment = null;
+
+const TX_ATTACHMENT_MAX_DIM = 1024;
+const TX_ATTACHMENT_QUALITY = 0.75;
+const TX_ATTACHMENT_MAX_INPUT_SIZE = 5 * 1024 * 1024; // 5MB
+
+async function handleTxAttachment(event){
+  const file = event.target.files && event.target.files[0];
+  if (!file) return;
+  if (file.size > TX_ATTACHMENT_MAX_INPUT_SIZE){
+    showToast('Imagem muito grande. Limite: 5MB.', 'error');
+    event.target.value = '';
+    return;
+  }
+  if (!/^image\/(jpeg|png|webp)$/.test(file.type)){
+    showToast('Use uma imagem JPG, PNG ou WEBP.', 'error');
+    event.target.value = '';
+    return;
+  }
+  try {
+    showToast('Comprimindo imagem…', 'info');
+    const compressed = await _compressImage(file);
+    _pendingTxAttachment = compressed;
+    _renderTxAttachmentUI();
+    showToast('Comprovante anexado!', 'success');
+  } catch(e){
+    console.warn('handleTxAttachment', e);
+    showToast('Não foi possível processar a imagem.', 'error');
+  }
+  event.target.value = '';
+}
+
+function _compressImage(file){
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onerror = () => reject(new Error('read error'));
+    reader.onload = () => {
+      const img = new Image();
+      img.onerror = () => reject(new Error('image load error'));
+      img.onload = () => {
+        try {
+          let { width, height } = img;
+          if (width > TX_ATTACHMENT_MAX_DIM || height > TX_ATTACHMENT_MAX_DIM){
+            const ratio = Math.min(TX_ATTACHMENT_MAX_DIM / width, TX_ATTACHMENT_MAX_DIM / height);
+            width = Math.round(width * ratio);
+            height = Math.round(height * ratio);
+          }
+          const canvas = document.createElement('canvas');
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, width, height);
+          const dataUrl = canvas.toDataURL('image/jpeg', TX_ATTACHMENT_QUALITY);
+          resolve(dataUrl);
+        } catch(e){ reject(e); }
+      };
+      img.src = reader.result;
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+function _renderTxAttachmentUI(){
+  const empty = document.getElementById('txAttachmentEmpty');
+  const preview = document.getElementById('txAttachmentPreview');
+  const img = document.getElementById('txAttachmentImg');
+  const sizeEl = document.getElementById('txAttachmentSize');
+  if (!empty || !preview) return;
+  if (_pendingTxAttachment){
+    empty.style.display = 'none';
+    preview.style.display = 'block';
+    if (img) img.src = _pendingTxAttachment;
+    if (sizeEl){
+      // base64 string ~= 4/3 do tamanho real
+      const approxBytes = Math.round(_pendingTxAttachment.length * 0.75);
+      const kb = (approxBytes / 1024).toFixed(0);
+      sizeEl.textContent = `~${kb} KB`;
+    }
+  } else {
+    empty.style.display = 'block';
+    preview.style.display = 'none';
+    if (img) img.src = '';
+  }
+}
+
+function removeTxAttachment(){
+  _pendingTxAttachment = null;
+  _renderTxAttachmentUI();
+}
+
+function openTxAttachmentFullscreen(){
+  if (!_pendingTxAttachment) return;
+  _openAttachmentFullscreen(_pendingTxAttachment);
+}
+
+function _openAttachmentFullscreen(dataUrl){
+  const wrap = document.getElementById('attachmentFullscreen');
+  const img = document.getElementById('attachmentFullscreenImg');
+  const dl = document.getElementById('attachmentDownloadBtn');
+  if (!wrap || !img) return;
+  img.src = dataUrl;
+  if (dl) dl.href = dataUrl;
+  wrap.style.display = 'flex';
+}
+
+function closeAttachmentFullscreen(){
+  const wrap = document.getElementById('attachmentFullscreen');
+  if (wrap) wrap.style.display = 'none';
+}
+
+// Permite ESC fechar fullscreen
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape'){
+    const wrap = document.getElementById('attachmentFullscreen');
+    if (wrap && wrap.style.display !== 'none') closeAttachmentFullscreen();
+  }
+});
+
 function openTxModal() {
   _editingTxId = null;
+  _pendingTxAttachment = null;
+  _renderTxAttachmentUI();
   setTxModalMode('create');
   document.getElementById('txType').value = 'income';
   document.getElementById('txValue').value = '';
@@ -2937,6 +3066,8 @@ function openTxModal() {
 }
 function openTxModalExpense() {
   _editingTxId = null;
+  _pendingTxAttachment = null;
+  _renderTxAttachmentUI();
   setTxModalMode('create');
   document.getElementById('txType').value = 'expense';
   document.getElementById('txValue').value = '';
@@ -2951,6 +3082,9 @@ function openTxModalExpense() {
 function closeTxModal() {
   document.getElementById('txModal').classList.remove('open');
   _editingTxId = null;
+  _pendingTxAttachment = null;
+  const fileInput = document.getElementById('txAttachmentFile');
+  if (fileInput) fileInput.value = '';
 }
 
 // Abre o modal preenchido com dados da transacao pra edicao
@@ -2958,6 +3092,8 @@ function editTransaction(id){
   const tx = transactions.find(t => t.id === id);
   if (!tx) { showToast('Transação não encontrada','error'); return; }
   _editingTxId = id;
+  _pendingTxAttachment = tx.attachment || null;
+  _renderTxAttachmentUI();
   setTxModalMode('edit');
   document.getElementById('txType').value = tx.type;
   document.getElementById('txValue').value = tx.value;
@@ -2994,12 +3130,15 @@ function saveTransaction() {
   const desc = document.getElementById('txDesc').value || (type==='income'?'Entrada':'Despesa');
   const nowIso = isoDateLocal();
 
+  // Comprovante anexado (null se nenhum). attachment = base64 data URL ou null.
+  const attachment = _pendingTxAttachment || null;
+
   // Edicao: atualiza a tx existente sem mexer no id nem created_at
   if (_editingTxId){
     const idx = transactions.findIndex(t => t.id === _editingTxId);
     if (idx >= 0){
       transactions[idx] = Object.assign({}, transactions[idx], {
-        date: dateVal, desc, method, type, value: val
+        date: dateVal, desc, method, type, value: val, attachment
         // Mantem id e created_at originais (importante pro anti-backdate do ranking)
       });
       closeTxModal();
@@ -3015,7 +3154,7 @@ function saveTransaction() {
   // Criacao nova
   // created_at = momento real em que a transacao foi cadastrada (NAO eh o tx.date, que pode ser backdated)
   // Usado pelo ranking HOJE pra evitar que tx backdated (date=ontem, registrada hoje) vaze pro topo de hoje.
-  transactions.unshift({id:Date.now(), date:dateVal, desc, method, type, value:val, created_at:nowIso});
+  transactions.unshift({id:Date.now(), date:dateVal, desc, method, type, value:val, created_at:nowIso, attachment});
   closeTxModal();
   // Avisa o usuario quando ele backdata pra outro dia — explica que NAO conta pro HOJE
   if (dateVal !== nowIso){

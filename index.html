@@ -80,8 +80,8 @@ src="https://www.facebook.com/tr?id=1566054278577058&ev=PageView&noscript=1"
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
-<link rel="stylesheet" href="style.css?v=244"/>
-<link rel="stylesheet" href="light.css?v=244"/>
+<link rel="stylesheet" href="style.css?v=246"/>
+<link rel="stylesheet" href="light.css?v=246"/>
 </head>
 <body>
 
@@ -210,10 +210,42 @@ src="https://www.facebook.com/tr?id=1566054278577058&ev=PageView&noscript=1"
       <label class="form-label">Descrição</label>
       <input class="form-input" type="text" placeholder="Descreva a transação..." id="txDesc"/>
     </div>
+    <div class="form-group">
+      <label class="form-label">Comprovante <span style="color:var(--text-muted);font-weight:400">(opcional)</span></label>
+      <input type="file" id="txAttachmentFile" accept="image/jpeg,image/png,image/webp" style="display:none" onchange="handleTxAttachment(event)"/>
+      <div id="txAttachmentEmpty">
+        <button type="button" class="btn-ghost" style="width:100%;padding:10px;display:flex;align-items:center;justify-content:center;gap:8px" onclick="document.getElementById('txAttachmentFile').click()">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.48"/></svg>
+          Anexar comprovante
+        </button>
+        <div style="font-size:11.5px;color:var(--text-muted);margin-top:6px;text-align:center">Print da aposta, resultado, saque… JPG/PNG até 5MB</div>
+      </div>
+      <div id="txAttachmentPreview" style="display:none">
+        <div style="position:relative;border-radius:10px;overflow:hidden;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.02)">
+          <img id="txAttachmentImg" style="width:100%;max-height:200px;object-fit:contain;display:block;cursor:zoom-in" onclick="openTxAttachmentFullscreen()"/>
+          <button type="button" onclick="removeTxAttachment()" style="position:absolute;top:8px;right:8px;width:30px;height:30px;border-radius:50%;background:rgba(0,0,0,.6);border:1px solid rgba(255,255,255,.2);color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center" title="Remover">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:6px">
+          <span id="txAttachmentSize" style="font-size:11.5px;color:var(--text-muted)"></span>
+          <button type="button" onclick="document.getElementById('txAttachmentFile').click()" style="background:none;border:none;color:var(--accent);font-size:12px;cursor:pointer;font-weight:600">Trocar imagem</button>
+        </div>
+      </div>
+    </div>
     <div class="modal-actions">
       <button class="btn-ghost" onclick="closeTxModal()">Cancelar</button>
       <button class="btn-primary" style="width:auto;padding:9px 20px" onclick="saveTransaction()">Salvar →</button>
     </div>
+  </div>
+</div>
+
+<!-- Visualizador fullscreen do comprovante -->
+<div id="attachmentFullscreen" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:10000;align-items:center;justify-content:center;flex-direction:column;padding:20px" onclick="closeAttachmentFullscreen()">
+  <img id="attachmentFullscreenImg" style="max-width:100%;max-height:85vh;object-fit:contain;border-radius:8px"/>
+  <div style="margin-top:18px;display:flex;gap:10px">
+    <a id="attachmentDownloadBtn" download="comprovante.jpg" style="padding:10px 20px;background:var(--accent);color:#fff;border-radius:8px;text-decoration:none;font-weight:600;font-size:14px" onclick="event.stopPropagation()">⬇ Baixar</a>
+    <button onclick="event.stopPropagation();closeAttachmentFullscreen()" style="padding:10px 20px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);color:#fff;border-radius:8px;cursor:pointer;font-weight:600;font-size:14px">Fechar</button>
   </div>
 </div>
 
@@ -2557,8 +2589,8 @@ src="https://www.facebook.com/tr?id=1566054278577058&ev=PageView&noscript=1"
   </div>
 </div>
 
-<script src="config.js?v=244" defer></script>
-<script src="storage.js?v=244" defer></script>
-<script src="script.js?v=244" defer></script>
+<script src="config.js?v=246" defer></script>
+<script src="storage.js?v=246" defer></script>
+<script src="script.js?v=246" defer></script>
 </body>
 </html>
