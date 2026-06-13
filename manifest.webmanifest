@@ -1,0 +1,82 @@
+{
+  "name": "Apostack — Controle Financeiro",
+  "short_name": "Apostack",
+  "description": "Aplicativo de controle financeiro pessoal por categoria. Acompanhe receitas, despesas, metas e relatórios em um painel claro.",
+  "lang": "pt-BR",
+  "dir": "ltr",
+  "start_url": "/?utm_source=pwa",
+  "scope": "/",
+  "id": "/?source=pwa",
+  "display": "standalone",
+  "display_override": ["standalone", "minimal-ui", "browser"],
+  "orientation": "portrait",
+  "theme_color": "#060d18",
+  "background_color": "#060d18",
+  "categories": ["finance", "productivity", "business"],
+  "icons": [
+    {
+      "src": "/brand/icon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/brand/icon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/brand/icon.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/brand/icon.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/brand/screen-dashboard.png",
+      "type": "image/png",
+      "sizes": "375x812",
+      "form_factor": "narrow",
+      "label": "Dashboard com saldo, lucro, despesas e ROI"
+    },
+    {
+      "src": "/brand/screen-metodos.png",
+      "type": "image/png",
+      "sizes": "375x812",
+      "form_factor": "narrow",
+      "label": "Gestão por categoria com ranking"
+    },
+    {
+      "src": "/brand/screen-relatorios.png",
+      "type": "image/png",
+      "sizes": "375x812",
+      "form_factor": "narrow",
+      "label": "Relatórios com filtros e gráficos"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Nova transação",
+      "short_name": "Transação",
+      "description": "Registrar uma nova entrada ou despesa",
+      "url": "/?action=new-tx",
+      "icons": [{ "src": "/brand/icon.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Relatórios",
+      "short_name": "Relatórios",
+      "description": "Ver análise completa",
+      "url": "/?tab=reports",
+      "icons": [{ "src": "/brand/icon.png", "sizes": "192x192" }]
+    }
+  ],
+  "prefer_related_applications": false
+}

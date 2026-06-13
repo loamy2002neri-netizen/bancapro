@@ -57,6 +57,10 @@
 <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=()"/>
 <title>Apostack — Gestão Financeira</title>
 <link rel="icon" type="image/png" id="appFavicon" href="brand/icon.png"/>
+<!-- PWA: manifest + apple-touch-icon pra instalacao na tela inicial e empacotamento Android (TWA) -->
+<link rel="manifest" href="/manifest.webmanifest"/>
+<link rel="apple-touch-icon" href="/brand/icon.png"/>
+<link rel="apple-touch-icon" sizes="180x180" href="/brand/icon.png"/>
 
 <!-- Meta Pixel Code -->
 <script>
@@ -80,8 +84,8 @@ src="https://www.facebook.com/tr?id=1566054278577058&ev=PageView&noscript=1"
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
-<link rel="stylesheet" href="style.css?v=246"/>
-<link rel="stylesheet" href="light.css?v=246"/>
+<link rel="stylesheet" href="style.css?v=247"/>
+<link rel="stylesheet" href="light.css?v=247"/>
 </head>
 <body>
 
@@ -2589,8 +2593,27 @@ src="https://www.facebook.com/tr?id=1566054278577058&ev=PageView&noscript=1"
   </div>
 </div>
 
-<script src="config.js?v=246" defer></script>
-<script src="storage.js?v=246" defer></script>
-<script src="script.js?v=246" defer></script>
+<script src="config.js?v=247" defer></script>
+<script src="storage.js?v=247" defer></script>
+<script src="script.js?v=247" defer></script>
+
+<!-- ════════════════════════════════════════════
+     Service Worker — habilita PWA instalavel
+     + caching offline + pre-requisito pra TWA/Play Store.
+     Registro com defer, sem bloquear render.
+     ════════════════════════════════════════════ -->
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js', { scope: '/' })
+      .then(reg => {
+        console.log('[PWA] Service Worker registrado:', reg.scope);
+      })
+      .catch(err => {
+        console.warn('[PWA] Falha ao registrar Service Worker:', err);
+      });
+  });
+}
+</script>
 </body>
 </html>
