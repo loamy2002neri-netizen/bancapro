@@ -198,18 +198,38 @@ function applyBlob(blob) {
 // FIX: merge inteligente — preserva itens locais que ainda nao foram pra cloud
 // e funde com cloud por ID. Em caso de conflito, vence o mais recente.
 async function pullUserData(userId) {
-  // 1. Salva snapshot do que tem em local AGORA (antes de baixar cloud).
-  //    Esse snapshot pode conter tx ainda nao sincronizadas (push pendente
-  //    que ficou no ar do uso anterior).
+  // BUG CRITICO ANTERIOR (vazamento entre contas):
+  //   Snapshot do localStorage + merge fazia tx de USER A vazar pra USER B
+  //   no mesmo browser. Cenario: A loga, cadastra tx, sai. B loga no mesmo
+  //   aparelho. pullUserData(B) snapshotava tx de A que ainda estava em
+  //   localStorage (logout falhou ou foi parcial) -> merge -> B via tx de A.
+  //
+  //   LGPD violation grave. Reportado por usuario real.
+  //
+  // FIX: snapshot SO eh confiavel se foi do MESMO userId. Salvamos o
+  //   userId-owner do localStorage atual. Se nao bate com quem vai pullar,
+  //   descarta snapshot — sem merge. Cloud vira fonte unica de verdade.
+  const OWNER_KEY = 'bancapro-local-owner-userid';
+  const previousOwner = (() => {
+    try { return localStorage.getItem(OWNER_KEY); } catch(e){ return null; }
+  })();
+  const sameOwner = previousOwner && previousOwner === String(userId);
+
+  // 1. Salva snapshot SO SE o localStorage atual pertence ao mesmo user
+  //    Caso contrario, descarta — nao corremos risco de merge cross-user.
   const localBefore = {};
-  SYNC_KEYS.forEach(k => {
-    try { const v = localStorage.getItem(k); if (v != null) localBefore[k] = v; } catch(e){}
-  });
-  const hadPendingPush = (() => {
+  if (sameOwner) {
+    SYNC_KEYS.forEach(k => {
+      try { const v = localStorage.getItem(k); if (v != null) localBefore[k] = v; } catch(e){}
+    });
+  }
+  const hadPendingPush = sameOwner && (() => {
     try { return localStorage.getItem('bancapro-push-pending-' + userId) === '1'; } catch(e){ return false; }
   })();
 
   clearUserLocal();
+  // Marca novo dono do localStorage — TODO push subsequente eh dele
+  try { localStorage.setItem(OWNER_KEY, String(userId)); } catch(e){}
 
   // 2. Baixa cloud
   let cloudBlob = null;
