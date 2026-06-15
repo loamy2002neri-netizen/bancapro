@@ -3567,7 +3567,9 @@ function renderAllTransactions(currentBalance) {
     const arrow = t.type==='income' ? '↑ Entrada' : '↓ Despesa';
     const balanceNow = balanceMap[t.id] || 0;
     const tag = inferTag(t);
-    return `<tr draggable="true" data-tx-id="${t.id}" ondragstart="txDragStart(event)" ondragover="txDragOver(event)" ondragleave="txDragLeave(event)" ondrop="txDrop(event)" ondragend="txDragEnd(event)">
+    const isSelected = _bulkSelectedTxIds.has(String(t.id));
+    return `<tr draggable="true" data-tx-id="${t.id}" ondragstart="txDragStart(event)" ondragover="txDragOver(event)" ondragleave="txDragLeave(event)" ondrop="txDrop(event)" ondragend="txDragEnd(event)" ${isSelected ? 'style="background:rgba(239,68,68,0.08)"' : ''}>
+      <td data-label="" style="text-align:center"><input type="checkbox" class="bulk-tx-checkbox" data-tx-id="${t.id}" ${isSelected ? 'checked' : ''} onchange="bulkToggleTx('${t.id}', this.checked)" onclick="event.stopPropagation()" style="cursor:pointer;width:16px;height:16px"/></td>
       <td data-label="" class="tx-drag-handle" title="Arraste pra reordenar" aria-label="Arrastar transação">⋮⋮</td>
       <td data-label="Data">${dateBR(t.date)}</td>
       <td data-label="Descrição">${escapeHtml(t.desc)}</td>
@@ -3583,6 +3585,95 @@ function renderAllTransactions(currentBalance) {
     </tr>`;
   }).join('');
   body.innerHTML = rows;
+  _bulkUpdateUI();
+}
+
+// ══════════════════════════════════════════════
+//  BULK DELETE — selecionar varias tx e apagar de uma vez
+//  Util pra limpar contaminacao de bug antigo de sync OU faxina geral.
+// ══════════════════════════════════════════════
+const _bulkSelectedTxIds = new Set();
+
+function bulkToggleTx(id, checked){
+  const sid = String(id);
+  if (checked) _bulkSelectedTxIds.add(sid);
+  else _bulkSelectedTxIds.delete(sid);
+  // Destaca/limpa a row visualmente
+  const row = document.querySelector('tr[data-tx-id="' + id + '"]');
+  if (row) row.style.background = checked ? 'rgba(239,68,68,0.08)' : '';
+  _bulkUpdateUI();
+}
+
+function bulkSelectAll(){
+  // Seleciona TODAS as tx visiveis (respeitando filtro atual)
+  const filtered = getFilteredTransactions();
+  filtered.forEach(t => _bulkSelectedTxIds.add(String(t.id)));
+  // Atualiza checkboxes na tela
+  document.querySelectorAll('.bulk-tx-checkbox').forEach(cb => {
+    cb.checked = true;
+    const row = cb.closest('tr');
+    if (row) row.style.background = 'rgba(239,68,68,0.08)';
+  });
+  const headerCb = document.getElementById('bulkSelectAllHeader');
+  if (headerCb) headerCb.checked = true;
+  _bulkUpdateUI();
+}
+
+function bulkClearSelection(){
+  _bulkSelectedTxIds.clear();
+  document.querySelectorAll('.bulk-tx-checkbox').forEach(cb => {
+    cb.checked = false;
+    const row = cb.closest('tr');
+    if (row) row.style.background = '';
+  });
+  const headerCb = document.getElementById('bulkSelectAllHeader');
+  if (headerCb) headerCb.checked = false;
+  _bulkUpdateUI();
+}
+
+function bulkToggleAllHeader(checked){
+  if (checked) bulkSelectAll();
+  else bulkClearSelection();
+}
+
+function _bulkUpdateUI(){
+  const count = _bulkSelectedTxIds.size;
+  const bar = document.getElementById('bulkActionBar');
+  const countEl = document.getElementById('bulkSelectedCount');
+  const delCountEl = document.getElementById('bulkDeleteCount');
+  if (countEl) countEl.textContent = count;
+  if (delCountEl) delCountEl.textContent = count;
+  if (bar){
+    if (count > 0){
+      bar.style.display = 'flex';
+    } else {
+      bar.style.display = 'none';
+    }
+  }
+}
+
+async function bulkDeleteSelected(){
+  const count = _bulkSelectedTxIds.size;
+  if (count === 0) { showToast('Nenhuma transação selecionada.', 'info'); return; }
+
+  // Confirmacao com nome custom da quantidade
+  const ok = await customConfirm(
+    `Apagar ${count} transação(ões) selecionada(s)? Isso não pode ser desfeito.`,
+    '⚠️ Apagar em lote',
+    `Apagar ${count}`
+  );
+  if (!ok) return;
+
+  const idsToDelete = new Set([..._bulkSelectedTxIds].map(String));
+  const beforeLen = transactions.length;
+  transactions = transactions.filter(t => !idsToDelete.has(String(t.id)));
+  const deletedCount = beforeLen - transactions.length;
+
+  _bulkSelectedTxIds.clear();
+  recomputeAll();
+  persistState();
+
+  showToast(`${deletedCount} transação(ões) apagada(s).`, 'success');
 }
 
 // ══════════════════════════════════════════════

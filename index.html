@@ -84,8 +84,8 @@ src="https://www.facebook.com/tr?id=1566054278577058&ev=PageView&noscript=1"
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
-<link rel="stylesheet" href="style.css?v=247"/>
-<link rel="stylesheet" href="light.css?v=247"/>
+<link rel="stylesheet" href="style.css?v=249"/>
+<link rel="stylesheet" href="light.css?v=249"/>
 </head>
 <body>
 
@@ -928,8 +928,21 @@ src="https://www.facebook.com/tr?id=1566054278577058&ev=PageView&noscript=1"
             <div class="transactions-header-title">Todas as Transações</div>
             <div style="font-size:12px;color:var(--text-muted)"><span id="txCountLabel">0</span> registros</div>
           </div>
+
+          <!-- Barra de selecao multipla — aparece quando ha tx selecionadas -->
+          <div id="bulkActionBar" style="display:none;background:linear-gradient(135deg,rgba(239,68,68,0.10),rgba(220,38,38,0.05));border:1px solid rgba(239,68,68,0.25);border-radius:10px;padding:10px 14px;margin-bottom:12px;display:none;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
+            <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+              <span style="font-weight:700;color:#fca5a5;font-size:14px"><span id="bulkSelectedCount">0</span> selecionada(s)</span>
+              <button type="button" onclick="bulkSelectAll()" style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);color:#fff;padding:6px 12px;border-radius:6px;font-size:12px;cursor:pointer;font-weight:600">Selecionar todas visíveis</button>
+              <button type="button" onclick="bulkClearSelection()" style="background:none;border:none;color:#94a3b8;font-size:12px;cursor:pointer;text-decoration:underline">Limpar seleção</button>
+            </div>
+            <button type="button" onclick="bulkDeleteSelected()" style="background:#dc2626;border:0;color:#fff;padding:8px 16px;border-radius:8px;font-size:13px;cursor:pointer;font-weight:700;display:inline-flex;align-items:center;gap:6px">
+              🗑️ Apagar <span id="bulkDeleteCount">0</span> transação(ões)
+            </button>
+          </div>
+
           <table class="tx-table">
-            <thead><tr><th style="width:32px"></th><th>Data</th><th>Descrição</th><th>Categoria</th><th>Método</th><th>Tipo</th><th>Valor</th><th>Saldo</th><th></th></tr></thead>
+            <thead><tr><th style="width:32px"><input type="checkbox" id="bulkSelectAllHeader" onchange="bulkToggleAllHeader(this.checked)" title="Selecionar todas visíveis" style="cursor:pointer"/></th><th style="width:32px"></th><th>Data</th><th>Descrição</th><th>Categoria</th><th>Método</th><th>Tipo</th><th>Valor</th><th>Saldo</th><th></th></tr></thead>
             <tbody id="txTableBody"></tbody>
           </table>
         </div>
@@ -2593,9 +2606,9 @@ src="https://www.facebook.com/tr?id=1566054278577058&ev=PageView&noscript=1"
   </div>
 </div>
 
-<script src="config.js?v=247" defer></script>
-<script src="storage.js?v=247" defer></script>
-<script src="script.js?v=247" defer></script>
+<script src="config.js?v=249" defer></script>
+<script src="storage.js?v=249" defer></script>
+<script src="script.js?v=249" defer></script>
 
 <!-- ════════════════════════════════════════════
      Service Worker — habilita PWA instalavel
