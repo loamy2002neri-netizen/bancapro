@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<title>Apostack — Testes de Sync</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'SF Mono',Consolas,Monaco,monospace;background:#060d18;color:#e2e8f0;padding:24px;line-height:1.5}
+  h1{font-size:22px;font-weight:700;margin-bottom:8px;color:#fff}
+  .sub{font-size:13px;color:#94a3b8;margin-bottom:24px}
+  .btn{background:#7c5cff;color:#fff;border:0;padding:12px 24px;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit}
+  .btn:hover{background:#6b4dff}
+  .btn:disabled{opacity:.5;cursor:wait}
+  #summary{margin:24px 0;padding:16px;background:#0a0c1c;border:1px solid rgba(255,255,255,.08);border-radius:10px;font-size:14px}
+  #summary.ok{border-color:rgba(34,197,94,.4);background:rgba(34,197,94,.06)}
+  #summary.fail{border-color:rgba(239,68,68,.4);background:rgba(239,68,68,.06)}
+  .test{padding:12px 14px;margin:8px 0;border-radius:8px;border-left:3px solid #475569;background:rgba(255,255,255,.02)}
+  .test.pass{border-color:#22c55e;background:rgba(34,197,94,.05)}
+  .test.fail{border-color:#ef4444;background:rgba(239,68,68,.06)}
+  .test-name{font-weight:600;color:#fff;font-size:13.5px}
+  .test-info{font-size:12px;color:#94a3b8;margin-top:4px}
+  .test.fail .test-info{color:#fca5a5}
+  .badge{display:inline-block;padding:2px 8px;border-radius:6px;font-size:11px;font-weight:700;margin-right:8px;letter-spacing:.5px}
+  .badge.pass{background:#22c55e;color:#000}
+  .badge.fail{background:#ef4444;color:#fff}
+  pre{background:rgba(0,0,0,.4);padding:8px;border-radius:6px;font-size:11px;color:#fbbf24;margin-top:6px;overflow-x:auto}
+</style>
+</head>
+<body>
+
+<h1>🧪 Apostack — Testes de Sync</h1>
+<div class="sub">Cobre cenários que já quebraram em produção + casos críticos. Roda 100% local (sem Supabase).</div>
+
+<button class="btn" id="runBtn" onclick="runAllTests()">▶ Rodar testes</button>
+
+<div id="summary" style="display:none"></div>
+<div id="results"></div>
+
+<!-- ════════════════════════════════════════
+     Mock DOM: enterApp() e saveTransaction() leem esses IDs do app real.
+     Sem eles, dão crash com "Cannot read 'style' of null".
+     Não renderizamos visual, só fornecemos o esqueleto.
+     ════════════════════════════════════════ -->
+<div id="mockDOM" style="display:none">
+  <div id="authScreen"></div>
+  <div id="appLayout"></div>
+  <div id="welcomeModal"></div>
+  <div id="onboardingCard"></div>
+  <div id="tourBackdrop" hidden></div>
+  <div id="tourTooltip" hidden></div>
+  <div id="tourSpotlight" hidden></div>
+  <div id="attachmentFullscreen"></div>
+  <img id="attachmentFullscreenImg"/>
+  <a id="attachmentDownloadBtn" download="x.jpg" href="#"></a>
+  <div id="paidSignupBanner"></div>
+  <div id="sidebarUserRole"></div>
+  <div id="sidebarUserName"></div>
+  <div id="sidebarUserAvatar"></div>
+  <div id="sidebarLogoText"></div>
+  <input id="settingsUserName" value=""/>
+  <input id="settingsUserEmail" value=""/>
+  <input id="regEmail" value=""/>
+  <div id="recentTxBody"></div>
+
+  <!-- Modal tx -->
+  <div id="txModal" class="modal-overlay">
+    <select id="txType"><option value="income">income</option><option value="expense">expense</option></select>
+    <input id="txValue" type="number"/>
+    <input id="txDate" type="date"/>
+    <select id="txMethod">
+      <option>Futebol</option><option>Basquete</option><option>Tênis</option>
+      <option>MMA/UFC</option><option>E-sports</option><option>Cassino</option>
+    </select>
+    <input id="txDesc"/>
+    <input id="txAttachmentFile" type="file"/>
+    <div id="txAttachmentEmpty"></div>
+    <div id="txAttachmentPreview"></div>
+    <img id="txAttachmentImg"/>
+    <span id="txAttachmentSize"></span>
+  </div>
+
+  <!-- KPIs do dashboard -->
+  <div id="statReceitaTotal">R$ 0</div>
+  <div id="statLucroHoje">+R$ 0</div>
+  <div id="statLucroSemanal">+R$ 0</div>
+  <div id="statLucroMensal">+R$ 0</div>
+  <div id="goalsAtingidas">0</div>
+  <div id="goalsAtingidasSub"></div>
+  <div id="goalsProgresso">0</div>
+  <div id="goalsAbaixo">0</div>
+  <div id="goalsMetaTotal">R$ 0</div>
+</div>
+
+<!-- Carrega o app real -->
+<script src="../config.js"></script>
+<script src="../storage.js"></script>
+<script src="../script.js"></script>
+
+<script>
+// ══════════════════════════════════════════════
+//  Framework mini de testes
+// ══════════════════════════════════════════════
+const tests = [];
+function test(name, fn){ tests.push({ name, fn }); }
+function assertEq(actual, expected, msg){
+  const a = JSON.stringify(actual), e = JSON.stringify(expected);
+  if (a !== e) throw new Error((msg || 'assertEq') + ' — esperava ' + e + ', recebeu ' + a);
+}
+function assert(cond, msg){
+  if (!cond) throw new Error(msg || 'assert falhou');
+}
+function sleep(ms){ return new Promise(r => setTimeout(r, ms)); }
+function resetState(){
+  // Limpa tudo que pode contaminar testes
+  const keys = [];
+  for (let i = 0; i < localStorage.length; i++){
+    const k = localStorage.key(i);
+    if (k && (k.startsWith('bancapro') || k.startsWith('sb-'))) keys.push(k);
+  }
+  keys.forEach(k => localStorage.removeItem(k));
+  // Force Supabase desabilitado pra testes 100% locais
+  window.SUPABASE_URL = null;
+  window.SUPABASE_ANON_KEY = null;
+}
+
+// Em vez de chamar enterApp (que dispara cadeia de render frágil sem DOM completo),
+// testamos diretamente pullUserData + Storage. Foco no que importa: sync + ownership.
+
+function getTxs(){
+  return JSON.parse(localStorage.getItem('bancapro-transactions') || '[]');
+}
+function setTxs(arr){
+  localStorage.setItem('bancapro-transactions', JSON.stringify(arr));
+}
+function makeTx(id, desc, value){
+  return { id, date: new Date().toISOString().slice(0,10), desc, method:'Futebol', type:'income', value, created_at: new Date().toISOString() };
+}
+async function pullAs(userId){
+  // Seta currentUserId via window pra função funcionar (let global existe no closure do script)
+  // pullUserData usa o parâmetro, não currentUserId, então OK
+  await window.pullUserData(userId);
+}
+
+// ══════════════════════════════════════════════
+//  TESTES
+// ══════════════════════════════════════════════
+
+test('Bug a9defb7: User B NÃO pode ver tx de User A após pull', async () => {
+  resetState();
+  // Simula que User A acabou de cadastrar tx (não foi sincronizado, não fez logout completo)
+  setTxs([ makeTx(1, 'SECRETA_DE_A', 999) ]);
+  localStorage.setItem('bancapro-local-owner-userid', 'user-A');
+
+  // User B chega no app e pullUserData(user-B) roda
+  await window.pullUserData('user-B');
+  await sleep(100);
+
+  const bTxs = getTxs();
+  assert(!bTxs.some(t => t.desc === 'SECRETA_DE_A'), '🚨 VAZAMENTO: tx de A não pode estar pra B');
+  assertEq(localStorage.getItem('bancapro-local-owner-userid'), 'user-B', 'owner = B após pull');
+});
+
+test('Owner do localStorage é setado após pullUserData', async () => {
+  resetState();
+  await window.pullUserData('user-X');
+  await sleep(100);
+  assertEq(localStorage.getItem('bancapro-local-owner-userid'), 'user-X', 'owner = X');
+});
+
+test('Mesmo user re-pullando: tx local NÃO é destruída', async () => {
+  resetState();
+  // User 1 tem tx local
+  setTxs([ makeTx(100, 'tx_persistente', 50) ]);
+  localStorage.setItem('bancapro-local-owner-userid', 'user-1');
+
+  // User 1 re-loga (ex: refresh do app)
+  await window.pullUserData('user-1');
+  await sleep(100);
+
+  const txs = getTxs();
+  assert(txs.some(t => t.desc === 'tx_persistente'), 'tx do mesmo user deve persistir após re-pull');
+});
+
+test('Pull SEM owner anterior: aceita cloud sem merge cruzado', async () => {
+  resetState();
+  // Não tem owner setado (primeira instalação)
+  setTxs([ makeTx(50, 'tx_orfa', 25) ]); // tx que ficou de quem sabe quem
+  await window.pullUserData('user-fresh');
+  await sleep(100);
+  // tx órfã NÃO deve aparecer (sem owner = não confiável)
+  const txs = getTxs();
+  assert(!txs.some(t => t.desc === 'tx_orfa'), 'tx órfã (sem owner) não pode contaminar user novo');
+});
+
+test('Storage.clearUserData() limpa identity + data sem tocar settings', async () => {
+  resetState();
+  // Seta uma flag de settings (tema)
+  localStorage.setItem('bancapro-theme', 'dark');
+  localStorage.setItem('bancapro-transactions', '[{"id":1,"desc":"x"}]');
+  localStorage.setItem('bancapro-user-email', 'old@test.com');
+
+  if (window.Storage && window.Storage.clearUserData){
+    window.Storage.clearUserData();
+  } else {
+    throw new Error('Storage.clearUserData não existe');
+  }
+
+  assertEq(localStorage.getItem('bancapro-transactions'), null, 'transactions limpas');
+  assertEq(localStorage.getItem('bancapro-user-email'), null, 'email limpo');
+  assertEq(localStorage.getItem('bancapro-theme'), 'dark', 'tema (settings) preservado');
+});
+
+// ══════════════════════════════════════════════
+//  Runner
+// ══════════════════════════════════════════════
+async function runAllTests(){
+  const btn = document.getElementById('runBtn');
+  const summary = document.getElementById('summary');
+  const results = document.getElementById('results');
+  btn.disabled = true;
+  btn.textContent = '⏳ Rodando…';
+  results.innerHTML = '';
+  summary.style.display = 'none';
+  summary.className = '';
+
+  let pass = 0, fail = 0;
+  const t0 = Date.now();
+
+  for (const t of tests){
+    const div = document.createElement('div');
+    div.className = 'test';
+    div.innerHTML = '<div class="test-name"><span class="badge">…</span>' + t.name + '</div>';
+    results.appendChild(div);
+
+    try {
+      await t.fn();
+      pass++;
+      div.classList.add('pass');
+      div.querySelector('.badge').className = 'badge pass';
+      div.querySelector('.badge').textContent = 'PASS';
+    } catch(e){
+      fail++;
+      div.classList.add('fail');
+      div.querySelector('.badge').className = 'badge fail';
+      div.querySelector('.badge').textContent = 'FAIL';
+      const info = document.createElement('div');
+      info.className = 'test-info';
+      info.textContent = e.message;
+      div.appendChild(info);
+      if (e.stack){
+        const pre = document.createElement('pre');
+        pre.textContent = e.stack.split('\n').slice(0,3).join('\n');
+        div.appendChild(pre);
+      }
+    }
+  }
+
+  const elapsed = ((Date.now() - t0)/1000).toFixed(2);
+  summary.style.display = 'block';
+  summary.className = fail === 0 ? 'ok' : 'fail';
+  summary.innerHTML =
+    '<strong>' + (fail === 0 ? '✅ TODOS OS TESTES PASSARAM' : '🚨 ' + fail + ' TESTE(S) FALHARAM') +
+    '</strong><br>' + pass + ' passaram · ' + fail + ' falharam · ' + tests.length + ' total · ' + elapsed + 's';
+
+  btn.disabled = false;
+  btn.textContent = '▶ Rodar testes novamente';
+}
+</script>
+
+</body>
+</html>
