@@ -470,6 +470,24 @@ async function enterApp(user) {
     // Zona de Perigo (Apagar todos os dados) — so owner
     const dangerZone = document.getElementById('dangerZoneCard');
     if (dangerZone) dangerZone.style.display = isOwner ? '' : 'none';
+    // Botao de debug do ranking — so owner
+    const rfb = document.getElementById('rankingFixBlock');
+    if (rfb) rfb.style.display = isOwner ? '' : 'none';
+  } catch(e){}
+
+  // SYNC AUTOMATICO do nome no ranking: se localStorage tem nome diferente
+  // do que está no auth.users.raw_user_meta_data, atualiza. Resolve o bug
+  // "ranking mostra email-prefix em vez do nome real" sem precisar de botao.
+  try {
+    const sb = getSb();
+    const localName = (localStorage.getItem('bancapro-user-name') || '').trim();
+    const metaName = (user.user_metadata && user.user_metadata.name || '').trim();
+    if (sb && localName && localName !== metaName){
+      console.log('[ranking-sync] atualizando metadata:', metaName, '->', localName);
+      sb.auth.updateUser({ data: { name: localName } })
+        .then(() => sb.auth.refreshSession())
+        .catch(e => console.warn('[ranking-sync] falhou:', e));
+    }
   } catch(e){}
   // Registra a indicação (?ref) e libera o painel do afiliado.
   // RESTRICAO: 'Minhas Indicacoes' agora aparece SOMENTE pra afiliados VIP
