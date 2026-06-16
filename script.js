@@ -3164,7 +3164,17 @@ function setTxModalMode(mode){
   }
 }
 
+// Mutex anti-double-click: se user clicar 2x rapidos em 'Salvar',
+// previne duplicar a transacao com IDs diferentes (Date.now() ms-precision).
+let _savingTransaction = false;
+
 function saveTransaction() {
+  // Anti-double-click — early return se save em curso
+  if (_savingTransaction) return;
+  _savingTransaction = true;
+  // Sempre destrava no fim (mesmo se return early)
+  setTimeout(() => { _savingTransaction = false; }, 800);
+
   const val = parseFloat(document.getElementById('txValue').value);
   if(!val || val <= 0) { showToast('Informe um valor válido!','error'); return; }
   const dateVal = document.getElementById('txDate').value;
