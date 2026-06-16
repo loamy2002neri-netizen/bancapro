@@ -8497,6 +8497,27 @@ function rankBuildLeaderboard(youProfit, youName, source){
   });
   const all = base.map(u => Object.assign({ isYou: false }, u));
 
+  // WORKAROUND ranking name bug: se o display_name na entrada do user logado
+  // bate com o prefixo do email (sinal de fallback da RPC), sobrescreve com
+  // o nome correto do localStorage. Garante que pelo menos PRA ELE aparece
+  // o nome certo enquanto resolvemos a raiz no Supabase.
+  try {
+    const myEmail = (currentAuthUser && currentAuthUser.email || localStorage.getItem('bancapro-user-email') || '').toLowerCase();
+    const localName = (localStorage.getItem('bancapro-user-name') || '').trim();
+    if (myEmail && localName) {
+      const emailPrefix = myEmail.split('@')[0].toLowerCase();
+      all.forEach(u => {
+        // Match por email se a entrada do leaderboard tiver email
+        const matchByEmail = u.email && u.email.toLowerCase() === myEmail;
+        // Match por nome se for parecido com email-prefix (caso typical do bug)
+        const nameIsPrefix = u.name && rankNormalizeName(u.name) === emailPrefix;
+        if (matchByEmail || nameIsPrefix){
+          u.name = localName;
+        }
+      });
+    }
+  } catch(e){ console.warn('Override nome ranking falhou:', e); }
+
   // Donos (admin) NUNCA aparecem no ranking — nem pra si mesmos.
   // Bug anterior: usuario admin se via como participante do ranking porque o
   // codigo abaixo empurrava `me` pro array sem checar OWNER_EMAILS.
