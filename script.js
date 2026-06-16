@@ -5690,6 +5690,55 @@ function updateUserName() {
   document.getElementById('sidebarUserName').textContent = document.getElementById('settingsUserName').value || 'Apostador';
 }
 
+// Funcao debug exposta pra console: roda no DevTools pra ver o estado
+// real do Supabase metadata + forca o sync do nome. Util quando ranking
+// continua mostrando email-prefix mesmo apos Salvar Alteracoes.
+window.fixMyRankingName = async function(forceName){
+  console.log('🔧 fixMyRankingName: começando…');
+  const sb = (typeof getSb === 'function') ? getSb() : null;
+  if (!sb) {
+    console.warn('❌ Supabase não configurado (modo local). Ranking público só funciona com Supabase.');
+    return { ok: false, reason: 'no_supabase' };
+  }
+  const localName = forceName || (localStorage.getItem('bancapro-user-name') || '').trim();
+  if (!localName) {
+    console.warn('❌ Nenhum nome em localStorage. Defina em Configurações > Nome primeiro.');
+    return { ok: false, reason: 'no_local_name' };
+  }
+  console.log('📋 Nome local que vou sincronizar:', JSON.stringify(localName));
+
+  // Estado atual do user no auth
+  const { data: before } = await sb.auth.getUser();
+  console.log('👤 Auth user ANTES:', {
+    email: before?.user?.email,
+    meta_name: before?.user?.user_metadata?.name,
+    raw_meta_name: before?.user?.raw_user_meta_data?.name
+  });
+
+  // Tenta atualizar
+  const { data: upd, error: updErr } = await sb.auth.updateUser({ data: { name: localName } });
+  if (updErr) {
+    console.error('❌ Erro no updateUser:', updErr);
+    return { ok: false, reason: 'update_error', error: updErr.message };
+  }
+
+  // Refresh session pra garantir
+  const { data: after } = await sb.auth.getUser();
+  console.log('👤 Auth user DEPOIS:', {
+    meta_name: after?.user?.user_metadata?.name
+  });
+
+  // Re-fetch leaderboard
+  try {
+    const { data: lb } = await sb.rpc('get_leaderboard');
+    const me = lb && lb.find(r => r.email === after?.user?.email);
+    console.log('🏆 Sua entrada no leaderboard agora:', me);
+  } catch(e){ console.warn('Não consegui re-fetch leaderboard:', e); }
+
+  console.log('✅ Sync feito. Recarregue a página (F5) pra ver o nome atualizado no Ranking.');
+  return { ok: true, name: localName, updated: !!upd?.user };
+};
+
 async function saveProfile() {
   const name  = document.getElementById('settingsUserName').value.trim() || 'Admin';
   const email = document.getElementById('settingsUserEmail').value.trim();
