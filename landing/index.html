@@ -21,7 +21,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
-  <link rel="stylesheet" href="/landing.css?v=247"/>
+  <link rel="stylesheet" href="/landing.css?v=250"/>
 
   <!-- Meta Pixel Code -->
   <script>
@@ -1316,6 +1316,187 @@
     }, { threshold: 0.3 });
     obs.observe(pricing);
   }
+})();
+</script>
+
+<!-- ════════════════════════════════════════════
+     POPUP DE PROVA SOCIAL PREMIUM
+     Avatar com gradiente roxo + glassmorphism + glow sutil
+     ════════════════════════════════════════════ -->
+<style>
+#socialProofPopup {
+  position: fixed;
+  bottom: 28px;
+  left: 28px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 18px 12px 12px;
+  border-radius: 16px;
+  background: linear-gradient(135deg, rgba(15,17,35,0.92) 0%, rgba(20,15,40,0.88) 100%);
+  border: 1px solid rgba(167,139,250,0.18);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  backdrop-filter: saturate(180%) blur(20px);
+  box-shadow:
+    0 20px 50px -10px rgba(0,0,0,0.6),
+    0 0 0 1px rgba(124,92,255,0.06),
+    0 0 40px -10px rgba(167,139,250,0.25),
+    inset 0 1px 0 rgba(255,255,255,0.04);
+  color: #fff;
+  font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
+  z-index: 9000;
+  opacity: 0;
+  transform: translateY(16px) scale(0.96);
+  transition: opacity .45s cubic-bezier(.16,1,.3,1), transform .45s cubic-bezier(.16,1,.3,1);
+  pointer-events: none;
+  max-width: 92vw;
+  letter-spacing: -0.01em;
+}
+#socialProofPopup.show {
+  opacity: 1 !important;
+  transform: translateY(0) scale(1) !important;
+}
+
+/* Avatar circular com gradiente roxo + iniciais */
+#socialProofPopup .sp-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #7c5cff 0%, #a78bfa 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13.5px;
+  font-weight: 800;
+  color: #fff;
+  flex-shrink: 0;
+  box-shadow:
+    0 6px 16px -4px rgba(124,92,255,0.5),
+    inset 0 1px 0 rgba(255,255,255,0.2);
+  letter-spacing: 0;
+}
+
+/* Texto */
+#socialProofPopup .sp-text { display:flex; flex-direction:column; gap:2px; min-width:0 }
+#socialProofPopup .sp-name {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: #fff;
+  line-height: 1.25;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+#socialProofPopup .sp-name .sp-action-inline {
+  color: #cbd5e1;
+  font-weight: 500;
+}
+#socialProofPopup .sp-time {
+  font-size: 11px;
+  color: #94a3b8;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+#socialProofPopup .sp-time::before {
+  content: '';
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #22c55e;
+  box-shadow: 0 0 8px rgba(34,197,94,0.6);
+  animation: spPulse 2s ease-in-out infinite;
+}
+
+@keyframes spPulse {
+  0%, 100% { opacity: 1; transform: scale(1) }
+  50% { opacity: 0.6; transform: scale(0.85) }
+}
+
+@media (max-width: 640px){
+  #socialProofPopup { left:14px; right:14px; bottom:18px; padding:10px 14px 10px 10px; gap:11px }
+  #socialProofPopup .sp-avatar { width:36px; height:36px; font-size:12.5px }
+  #socialProofPopup .sp-name { font-size:13px }
+  #socialProofPopup .sp-time { font-size:10.5px }
+}
+</style>
+
+<div id="socialProofPopup">
+  <div class="sp-avatar" id="socialProofAvatar">RP</div>
+  <div class="sp-text">
+    <div class="sp-name"><span id="socialProofName">Rodrigo P.</span> <span class="sp-action-inline" id="socialProofAction">ativou o plano Pro</span></div>
+    <div class="sp-time" id="socialProofTime">há instantes</div>
+  </div>
+</div>
+
+<script>
+(function socialProof(){
+  // Nomes brasileiros comuns + ações no nicho. Tom premium e relevante.
+  const people = [
+    { name: 'Rodrigo P.',   action: 'ativou o plano Pro' },
+    { name: 'Lucas M.',     action: 'assinou o plano anual' },
+    { name: 'João S.',      action: 'começou o trial grátis' },
+    { name: 'Mateus R.',    action: 'ativou o plano Pro' },
+    { name: 'Pedro H.',     action: 'assinou o Plus mensal' },
+    { name: 'Felipe A.',    action: 'começou o trial grátis' },
+    { name: 'Gabriel V.',   action: 'ativou o plano Pro' },
+    { name: 'Bruno C.',     action: 'assinou o plano anual' },
+    { name: 'Diego F.',     action: 'cadastrou primeira aposta' },
+    { name: 'Thiago L.',    action: 'ativou o plano Plus' },
+    { name: 'Vinicius B.',  action: 'assinou o plano anual' },
+    { name: 'Caio M.',      action: 'começou o trial grátis' },
+    { name: 'Rafael D.',    action: 'ativou o plano Pro' },
+    { name: 'Henrique S.',  action: 'assinou o Plus mensal' },
+    { name: 'Igor T.',      action: 'configurou sua banca' },
+    { name: 'Leonardo G.',  action: 'ativou o plano Plus' },
+    { name: 'Marcelo K.',   action: 'assinou o plano anual' },
+    { name: 'Daniel R.',    action: 'começou o trial grátis' },
+    { name: 'Eduardo P.',   action: 'ativou o plano Pro' },
+    { name: 'André M.',     action: 'configurou sua banca' }
+  ];
+
+  const timeLabels = ['há instantes','há 1 min','há 3 min','há 7 min','há 12 min','há 18 min'];
+
+  const popup = document.getElementById('socialProofPopup');
+  const nameEl = document.getElementById('socialProofName');
+  const actionEl = document.getElementById('socialProofAction');
+  const avatarEl = document.getElementById('socialProofAvatar');
+  const timeEl = document.getElementById('socialProofTime');
+  if (!popup || !nameEl || !actionEl || !avatarEl || !timeEl) return;
+
+  // Extrai iniciais (RP de "Rodrigo P.")
+  function initials(name){
+    const parts = name.replace('.', '').trim().split(/\s+/);
+    if (parts.length >= 2) return (parts[0][0] + parts[1][0]).toUpperCase();
+    return parts[0].slice(0, 2).toUpperCase();
+  }
+
+  let lastIdx = -1;
+  function pickRandom(){
+    let i;
+    do { i = Math.floor(Math.random() * people.length); } while (i === lastIdx);
+    lastIdx = i;
+    return people[i];
+  }
+
+  function showOne(){
+    const person = pickRandom();
+    nameEl.textContent = person.name;
+    actionEl.textContent = person.action;
+    avatarEl.textContent = initials(person.name);
+    timeEl.textContent = timeLabels[Math.floor(Math.random() * timeLabels.length)];
+    popup.classList.add('show');
+    setTimeout(() => {
+      popup.classList.remove('show');
+    }, 4800);
+  }
+
+  // Primeira aparicao apos 6s (deixa user ler hero primeiro)
+  setTimeout(showOne, 6000);
+  // Cicla: 11s entre cada (4.8s visivel + 6.2s escondido)
+  setInterval(showOne, 11000);
 })();
 </script>
 
