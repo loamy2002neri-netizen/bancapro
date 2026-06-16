@@ -5715,10 +5715,24 @@ async function saveProfile() {
     localStorage.setItem('bancapro-user-name', name);
     if(email) localStorage.setItem('bancapro-user-email', email);
   } catch(e) {}
+
+  // CRITICO: sincroniza nome com auth metadata do Supabase.
+  // Sem isso, RPC get_leaderboard cai no fallback do email-prefix
+  // e ranking mostra "kingmetodoss" em vez de "Loamy neri".
+  try {
+    const sb = getSb();
+    if (sb) {
+      const { error: metaErr } = await sb.auth.updateUser({ data: { name } });
+      if (metaErr) console.warn('Erro ao atualizar nome no Supabase:', metaErr.message);
+    }
+  } catch(e) { console.warn('Erro updateUser metadata:', e); }
+
   if (typeof schedulePush === 'function') schedulePush();
   updateUserName();
   // Atualiza avatar (inicial)
   document.querySelectorAll('.user-avatar').forEach(el => { el.textContent = name.charAt(0).toUpperCase(); });
+  // Re-fetch leaderboard pra refletir nome novo
+  try { if (typeof renderUserRanking === 'function'){ const rs = document.getElementById('sec-ranking'); if (rs && rs.classList.contains('active')) setTimeout(renderUserRanking, 800); } } catch(e){}
   // limpa os campos de senha
   ['settingsCurPwd','settingsNewPwd','settingsNewPwd2'].forEach(id => { const e=document.getElementById(id); if(e) e.value=''; });
   showToast(wantsPwd ? 'Perfil e senha atualizados com sucesso!' : 'Perfil atualizado com sucesso!','success');
