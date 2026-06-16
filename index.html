@@ -84,8 +84,8 @@ src="https://www.facebook.com/tr?id=1566054278577058&ev=PageView&noscript=1"
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
-<link rel="stylesheet" href="style.css?v=249"/>
-<link rel="stylesheet" href="light.css?v=249"/>
+<link rel="stylesheet" href="style.css?v=253"/>
+<link rel="stylesheet" href="light.css?v=253"/>
 </head>
 <body>
 
@@ -1713,6 +1713,12 @@ src="https://www.facebook.com/tr?id=1566054278577058&ev=PageView&noscript=1"
               <div class="pw-wrap"><input class="form-input" type="password" placeholder="Digite a nova senha de novo" id="settingsNewPwd2" autocomplete="new-password"/><button type="button" class="pw-toggle" onclick="togglePw(this,'settingsNewPwd2')" aria-label="Mostrar senha"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8S1 12 1 12z"/><circle cx="12" cy="12" r="3"/></svg></button></div>
             </div>
             <button class="btn-primary" onclick="saveProfile()">Salvar Alterações</button>
+
+            <!-- Botao de emergencia: forca sync do nome no ranking publico -->
+            <button type="button" onclick="forceFixRankingName(this)" style="width:100%;margin-top:10px;background:rgba(124,92,255,.12);border:1px solid rgba(124,92,255,.3);color:#a78bfa;padding:10px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit">
+              🔧 Forçar atualizar nome no Ranking
+            </button>
+            <div style="font-size:11.5px;color:var(--text-muted);margin-top:6px;text-align:center">Use se seu nome no ranking estiver aparecendo errado (tipo o email)</div>
           </div>
 
           <div class="form-card sub-mgmt-card">
@@ -2606,9 +2612,9 @@ src="https://www.facebook.com/tr?id=1566054278577058&ev=PageView&noscript=1"
   </div>
 </div>
 
-<script src="config.js?v=249" defer></script>
-<script src="storage.js?v=249" defer></script>
-<script src="script.js?v=249" defer></script>
+<script src="config.js?v=253" defer></script>
+<script src="storage.js?v=253" defer></script>
+<script src="script.js?v=253" defer></script>
 
 <!-- ════════════════════════════════════════════
      Service Worker — habilita PWA instalavel

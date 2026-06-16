@@ -5690,6 +5690,63 @@ function updateUserName() {
   document.getElementById('sidebarUserName').textContent = document.getElementById('settingsUserName').value || 'Apostador';
 }
 
+// Botao em Configuracoes > Perfil: forca sync do nome no ranking.
+// Usado quando ranking continua mostrando email-prefix mesmo apos
+// "Salvar Alteracoes" (cache de JWT do Supabase + RPC).
+window.forceFixRankingName = async function(btn){
+  const origText = btn.textContent;
+  btn.disabled = true;
+  btn.style.opacity = '.7';
+  btn.textContent = '⏳ Sincronizando…';
+  try {
+    const sb = (typeof getSb === 'function') ? getSb() : null;
+    if (!sb) {
+      showToast('Ranking público só funciona com Supabase configurado.', 'error');
+      return;
+    }
+    const name = (localStorage.getItem('bancapro-user-name') || '').trim() ||
+                 (document.getElementById('settingsUserName')?.value || '').trim();
+    if (!name) {
+      showToast('Defina seu nome em "Nome" primeiro.', 'error');
+      return;
+    }
+
+    // 1. Update auth metadata
+    const { error: e1 } = await sb.auth.updateUser({ data: { name } });
+    if (e1){ showToast('Erro ao atualizar: ' + e1.message, 'error'); return; }
+
+    // 2. CRITICO: refresh da sessão pra invalidar JWT antigo no cache
+    //    Sem isso, a RPC get_leaderboard continua vendo metadata velho.
+    try {
+      await sb.auth.refreshSession();
+    } catch(e){ console.warn('refreshSession falhou:', e); }
+
+    // 3. Tenta também upsert direto em tabela de profile pública, se existir
+    //    (algumas instalações têm tabela "profiles" separada do auth)
+    try {
+      const { data: user } = await sb.auth.getUser();
+      if (user?.user?.id){
+        await sb.from('profiles').upsert({
+          id: user.user.id,
+          display_name: name,
+          updated_at: new Date().toISOString()
+        }, { onConflict: 'id' }).then(() => {}).catch(() => {});
+      }
+    } catch(e){ /* tabela pode não existir, ok */ }
+
+    // 4. Re-render ranking se aberto
+    try { if (typeof renderUserRanking === 'function') renderUserRanking(); } catch(e){}
+
+    showToast('✅ Nome sincronizado! Recarregue o ranking (F5) pra ver.', 'success');
+  } catch(e){
+    showToast('Erro inesperado: ' + e.message, 'error');
+  } finally {
+    btn.disabled = false;
+    btn.style.opacity = '1';
+    btn.textContent = origText;
+  }
+};
+
 // Funcao debug exposta pra console: roda no DevTools pra ver o estado
 // real do Supabase metadata + forca o sync do nome. Util quando ranking
 // continua mostrando email-prefix mesmo apos Salvar Alteracoes.
