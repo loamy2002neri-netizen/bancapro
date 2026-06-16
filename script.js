@@ -1830,6 +1830,14 @@ async function doReset() {
 }
 
 async function logout() {
+  // CRITICO (anti-race): cancela qualquer push agendado ANTES de limpar
+  // localStorage. Sem isso, setTimeout de schedulePush pode disparar nos
+  // ~250ms entre clearUserLocal e location.reload, enviando blob VAZIO
+  // pro Supabase e sobrescrevendo dados legítimos do user na cloud.
+  try { clearTimeout(_pushTimer); } catch(e){}
+  try { clearTimeout(_retryTimer); } catch(e){}
+  _pendingPush = false;
+
   const sb = getSb();
   try { if (sb) await sb.auth.signOut(); } catch(e){}
   try { localStorage.removeItem(LOCAL_SESSION_KEY); } catch(e){}

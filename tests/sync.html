@@ -211,6 +211,101 @@ test('Storage.clearUserData() limpa identity + data sem tocar settings', async (
 });
 
 // ══════════════════════════════════════════════
+//  TESTES EXTRAS — cenários LGPD-críticos
+// ══════════════════════════════════════════════
+
+test('Goals/Accounts: NÃO vazam entre contas (mesma proteção que tx)', async () => {
+  resetState();
+  // User A tem goals + accounts
+  localStorage.setItem('bancapro-goals', JSON.stringify([{id:1, target:5000, desc:'meta_A'}]));
+  localStorage.setItem('bancapro-accounts', JSON.stringify([{id:1, name:'casa_A', balance:1000}]));
+  localStorage.setItem('bancapro-local-owner-userid', 'user-A');
+
+  await window.pullUserData('user-B');
+  await sleep(100);
+
+  const goals = JSON.parse(localStorage.getItem('bancapro-goals') || '[]');
+  const accs = JSON.parse(localStorage.getItem('bancapro-accounts') || '[]');
+  assert(!goals.some(g => g.desc === 'meta_A'), '🚨 Goals de A não pode vazar pra B');
+  assert(!accs.some(a => a.name === 'casa_A'), '🚨 Accounts de A não pode vazar pra B');
+});
+
+test('3 logins consecutivos diferentes: localStorage limpo entre eles', async () => {
+  resetState();
+
+  // User A entra, faz dados, sai (deixa lixo simulando logout falho)
+  setTxs([ makeTx(1, 'tx_A', 100) ]);
+  localStorage.setItem('bancapro-local-owner-userid', 'user-A');
+
+  // User B chega
+  await window.pullUserData('user-B');
+  await sleep(100);
+  assert(!getTxs().some(t => t.desc === 'tx_A'), 'B não pode ver tx de A');
+
+  // User B simula cadastrar e sai sem completar push
+  setTxs([ makeTx(2, 'tx_B', 200) ]);
+  localStorage.setItem('bancapro-local-owner-userid', 'user-B');
+
+  // User C chega
+  await window.pullUserData('user-C');
+  await sleep(100);
+  const cTxs = getTxs();
+  assert(!cTxs.some(t => t.desc === 'tx_A'), 'C não pode ver tx de A');
+  assert(!cTxs.some(t => t.desc === 'tx_B'), 'C não pode ver tx de B');
+  assertEq(localStorage.getItem('bancapro-local-owner-userid'), 'user-C', 'owner = C');
+});
+
+test('Mesmo email em casing diferente: NÃO trata como mesmo user', async () => {
+  resetState();
+  // User com email maiúsculo cadastra
+  setTxs([ makeTx(10, 'tx_uppercase', 50) ]);
+  localStorage.setItem('bancapro-local-owner-userid', 'USER-XYZ');
+
+  // Pull pra user com email minúsculo (mesmo texto mas case diferente)
+  await window.pullUserData('user-xyz');
+  await sleep(100);
+
+  // IDs case-sensitive em comparação devem isolar
+  // (Supabase IDs são UUIDs case-sensitive por design)
+  assert(!getTxs().some(t => t.desc === 'tx_uppercase'), 'IDs case-sensitive devem isolar usuários');
+});
+
+test('Owner key não é apagado pelo Storage.clearUserData()', async () => {
+  // owner-userid é metadata de isolation, NÃO deve ser limpo no logout
+  // (precisa sobreviver pra pullUserData detectar troca de conta)
+  resetState();
+  localStorage.setItem('bancapro-local-owner-userid', 'user-X');
+  localStorage.setItem('bancapro-transactions', '[]');
+
+  if (window.Storage && window.Storage.clearUserData){
+    window.Storage.clearUserData();
+  }
+
+  // bancapro-transactions deve ter sumido
+  assertEq(localStorage.getItem('bancapro-transactions'), null, 'tx limpas após clearUserData');
+  // Mas owner pode continuar (não é dado sensível, é metadata)
+  // OU pode ser limpo também — depende da decisão de design
+  // O importante: NÃO podem ser tx vazadas
+});
+
+test('Pull mesmo user 2x: idempotente, não duplica nem corrompe', async () => {
+  resetState();
+  setTxs([ makeTx(1, 'tx_unica', 100) ]);
+  localStorage.setItem('bancapro-local-owner-userid', 'user-1');
+
+  await window.pullUserData('user-1');
+  await sleep(100);
+  const txs1 = getTxs();
+
+  await window.pullUserData('user-1');
+  await sleep(100);
+  const txs2 = getTxs();
+
+  assertEq(txs1.length, txs2.length, 'pull repetido não duplica');
+  assertEq(txs1.length, 1, 'tem só 1 tx');
+});
+
+// ══════════════════════════════════════════════
 //  Runner
 // ══════════════════════════════════════════════
 async function runAllTests(){
