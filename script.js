@@ -1768,17 +1768,20 @@ async function doLogin() {
 async function doRegister() {
   const name = (document.getElementById('regName').value || '').trim();
   const email = (document.getElementById('regEmail').value || '').trim().toLowerCase();
+  const phoneRaw = (document.getElementById('regPhone') || {}).value || '';
+  const phone = normalizePhoneE164BR(phoneRaw); // ex: +5511999999999
   const password = document.getElementById('regPassword').value || '';
   const password2 = (document.getElementById('regPassword2') || {}).value || '';
   if (!name || !email || !password) { showToast('Preencha nome, email e senha.','error'); return; }
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { showToast('Email inválido.','error'); return; }
+  if (!phone) { showToast('Celular inválido. Use DDD + número, ex: (11) 99999-9999','error'); return; }
   if (password.length < 6) { showToast('A senha precisa de pelo menos 6 caracteres.','error'); return; }
   if (password !== password2) { showToast('As senhas não conferem. Digite a mesma nos dois campos.','error'); return; }
   const sb = getSb();
   if (sb) {
     showToast('Criando conta…','info');
     try {
-      const { data, error } = await sb.auth.signUp({ email, password, options: { data: { name } } });
+      const { data, error } = await sb.auth.signUp({ email, password, options: { data: { name, phone } } });
       if (error) {
         const m = String(error.message || '').toLowerCase();
         if (m.includes('registered') || m.includes('already')) showToast('Esse email já tem conta. Faça login.','error');
@@ -1806,7 +1809,7 @@ async function doRegister() {
     const salt = randomId();
     const passHash = await hashPassword(password, salt);
     const id = randomId();
-    users.push({ id, name, email, salt, passHash });
+    users.push({ id, name, email, phone, salt, passHash });
     localSetUsers(users);
     try { localStorage.setItem(LOCAL_SESSION_KEY, id); } catch(e){}
     try { sessionStorage.setItem('apostack-signup-name', name); } catch(e){}
@@ -1884,6 +1887,23 @@ function togglePw(btn, id) {
   btn.textContent = '👁';
   btn.style.opacity = show ? '1' : '';   // olho "aceso" quando a senha está visível
   btn.setAttribute('aria-label', show ? 'Ocultar senha' : 'Mostrar senha');
+}
+
+// Mascara automatica de celular BR: (XX) XXXXX-XXXX (celular) ou (XX) XXXX-XXXX (fixo)
+function maskPhoneInput(input){
+  if(!input) return;
+  const digits = String(input.value || '').replace(/\D/g, '').slice(0, 11);
+  let out = digits;
+  if (digits.length > 0) out = '(' + digits.slice(0, 2);
+  if (digits.length >= 3 && digits.length <= 6) out = '(' + digits.slice(0,2) + ') ' + digits.slice(2);
+  else if (digits.length >= 7 && digits.length <= 10) out = '(' + digits.slice(0,2) + ') ' + digits.slice(2,6) + '-' + digits.slice(6);
+  else if (digits.length === 11) out = '(' + digits.slice(0,2) + ') ' + digits.slice(2,7) + '-' + digits.slice(7);
+  input.value = out;
+}
+function normalizePhoneE164BR(masked){
+  const digits = String(masked || '').replace(/\D/g, '');
+  if (digits.length < 10 || digits.length > 11) return '';
+  return '+55' + digits;
 }
 function showRegister() { document.getElementById('loginForm').style.display='none'; document.getElementById('registerForm').style.display='block'; document.getElementById('resetForm').style.display='none'; }
 function showReset() { document.getElementById('loginForm').style.display='none'; document.getElementById('registerForm').style.display='none'; document.getElementById('resetForm').style.display='block'; const r=document.getElementById('recoveryForm'); if(r) r.style.display='none'; }
