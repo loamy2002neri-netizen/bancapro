@@ -5,7 +5,8 @@
       "namespace": "android_app",
       "package_name": "com.apostack.app",
       "sha256_cert_fingerprints": [
-        "5C:D6:06:5D:27:B4:92:44:5C:8F:84:5E:4E:5A:FA:50:21:F9:C6:44:95:B2:DC:1F:0A:49:F5:41:EE:F8:E0:AB"
+        "5C:D6:06:5D:27:B4:92:44:5C:8F:84:5E:4E:5A:FA:50:21:F9:C6:44:95:B2:DC:1F:0A:49:F5:41:EE:F8:E0:AB",
+        "F5:EE:4F:1D:40:5B:99:02:36:49:9D:EC:DE:F1:0E:0A:9A:78:9B:1B:7C:06:CF:52:8C:DF:B3:84:61:77:3E:09"
       ]
     }
   }
