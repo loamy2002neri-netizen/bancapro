@@ -1793,7 +1793,8 @@ async function doRegister() {
             showToast('Pagamento reconhecido! Sua assinatura já está ativa 🎉','success');
           }
         } catch(e){}
-        await enterApp(data.user); // confirmação de email desligada → entra direto
+        try { sessionStorage.setItem('apostack-signup-name', name); } catch(e){}
+        window.location.href = '/obrigado';
       } else {
         showToast('Conta criada! Confirme pelo link enviado ao seu email para entrar.','success');
         showLogin();
@@ -1808,8 +1809,8 @@ async function doRegister() {
     users.push({ id, name, email, salt, passHash });
     localSetUsers(users);
     try { localStorage.setItem(LOCAL_SESSION_KEY, id); } catch(e){}
-    showToast('Conta criada com sucesso! 🎉','success');
-    await enterApp({ id, email, user_metadata: { name } });
+    try { sessionStorage.setItem('apostack-signup-name', name); } catch(e){}
+    window.location.href = '/obrigado';
   }
 }
 
