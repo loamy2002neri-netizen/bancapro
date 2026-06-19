@@ -751,11 +751,23 @@ async function renderAdminUsers() {
       const last = u.last_sign_in_at ? new Date(u.last_sign_in_at).toLocaleDateString('pt-BR') : '—';
       const emailAttr = escapeHtml(u.email || '');
       const statusAttr = escapeHtml(u.status || '');
+      // Celular: vem como +5511999999999 — exibe (11) 99999-9999 e link WhatsApp clicavel
+      let phoneCell = '—';
+      if (u.phone) {
+        const digits = String(u.phone).replace(/\D/g,'');
+        const local = digits.startsWith('55') ? digits.slice(2) : digits;
+        let mask = u.phone;
+        if (local.length === 11) mask = '(' + local.slice(0,2) + ') ' + local.slice(2,7) + '-' + local.slice(7);
+        else if (local.length === 10) mask = '(' + local.slice(0,2) + ') ' + local.slice(2,6) + '-' + local.slice(6);
+        const waUrl = 'https://wa.me/' + digits;
+        phoneCell = `<a href="${waUrl}" target="_blank" rel="noopener" title="Abrir no WhatsApp" style="color:#25D366;text-decoration:none;font-weight:600">${escapeHtml(mask)}</a>`;
+      }
       const editBtn = u.email
         ? `<button class="btn-ghost" style="padding:5px 14px;font-size:12px" data-email="${emailAttr}" data-status="${statusAttr}" onclick="openEditUser(this)">✏️ Editar</button>`
         : '';
       return `<tr>
         <td data-label="E-mail">${escapeHtml(u.email || '—')}</td>
+        <td data-label="Celular">${phoneCell}</td>
         <td data-label="Status"><span style="color:${st.c};font-weight:600">${st.t}</span></td>
         <td data-label="Plano">${escapeHtml(u.plan || '—')}</td>
         <td data-label="Cadastro">${created}</td>
@@ -764,7 +776,7 @@ async function renderAdminUsers() {
       </tr>`;
     }).join('');
     el.innerHTML = `<div style="overflow-x:auto"><table class="admin-table">
-      <thead><tr><th>E-mail</th><th>Status</th><th>Plano</th><th>Cadastro</th><th>Último acesso</th><th style="text-align:right">Ações</th></tr></thead>
+      <thead><tr><th>E-mail</th><th>Celular</th><th>Status</th><th>Plano</th><th>Cadastro</th><th>Último acesso</th><th style="text-align:right">Ações</th></tr></thead>
       <tbody>${rows}</tbody></table></div>`;
   } catch(e) {
     el.innerHTML = '<div class="empty-state-sub">Erro ao carregar usuários.</div>';
