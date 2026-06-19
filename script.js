@@ -1781,6 +1781,15 @@ async function doRegister() {
   if (sb) {
     showToast('Criando conta…','info');
     try {
+      // Bloqueia telefone duplicado (1 celular = 1 conta)
+      try {
+        const { data: dup, error: rpcErr } = await sb.rpc('phone_exists', { p_phone: phone });
+        // Se a RPC nao existe ainda, ignora — bloqueio so ativa depois que o SQL for criado
+        if (!rpcErr && dup === true) {
+          showToast('Esse celular já está em uso por outra conta. Use outro número.','error');
+          return;
+        }
+      } catch(e){ /* sem RPC ou rede off — segue */ }
       const { data, error } = await sb.auth.signUp({ email, password, options: { data: { name, phone } } });
       if (error) {
         const m = String(error.message || '').toLowerCase();
@@ -1806,6 +1815,7 @@ async function doRegister() {
   } else {
     const users = localGetUsers();
     if (users.some(x => x.email === email)) { showToast('Esse email já tem conta. Faça login.','error'); return; }
+    if (users.some(x => x.phone === phone)) { showToast('Esse celular já está em uso por outra conta. Use outro número.','error'); return; }
     const salt = randomId();
     const passHash = await hashPassword(password, salt);
     const id = randomId();
