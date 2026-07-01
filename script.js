@@ -459,6 +459,8 @@ async function enterApp(user) {
   loadPersistedState();
   loadAccounts();
   loadProfile();
+  // Auto-recupera categorias que voltaram ao padrao mas ainda existem nas transacoes
+  try { reconcileCatalogFromTransactions(); } catch(e){}
   rebuildMethodSelector();
   initCharts();
   renderGoals();
@@ -3335,6 +3337,46 @@ const DEFAULT_METHODS_CATALOG = [
   {name:'Cassino',     icon:'🎰', color:'#f43f5e', color2:'#e11d48', meta:1500},
 ];
 let METHODS_CATALOG = JSON.parse(JSON.stringify(DEFAULT_METHODS_CATALOG));
+
+// ── AUTO-RECUPERACAO de categorias (heal do bug de reset) ──
+// Bug real: um pull de sync sem o catalogo na cloud fazia METHODS_CATALOG
+// voltar pro DEFAULT. As transacoes MANTINHAM o nome original da categoria
+// (campo t.method), entao davam pra reconstruir o catalogo a partir delas.
+//
+// Trava de seguranca: so recupera se o catalogo esta EXATAMENTE no default
+// (assinatura do reset). Se o user tem qualquer categoria custom, respeitamos
+// o catalogo dele como esta — inclusive remocoes deliberadas.
+function _catalogIsExactlyDefault(){
+  try {
+    if (!Array.isArray(METHODS_CATALOG) || METHODS_CATALOG.length !== DEFAULT_METHODS_CATALOG.length) return false;
+    const def = DEFAULT_METHODS_CATALOG.map(m => m.name).slice().sort().join('||');
+    const cur = METHODS_CATALOG.map(m => m.name).slice().sort().join('||');
+    return def === cur;
+  } catch(e){ return false; }
+}
+function reconcileCatalogFromTransactions(){
+  try {
+    if (!Array.isArray(transactions) || transactions.length === 0) return false;
+    if (!_catalogIsExactlyDefault()) return false; // catalogo intacto → nao mexe
+    const known = new Set(METHODS_CATALOG.map(m => m.name));
+    const missing = [];
+    const seen = new Set();
+    transactions.forEach(t => {
+      const n = t && t.method;
+      if (!n || known.has(n) || seen.has(n)) return;
+      seen.add(n); missing.push(n);
+    });
+    if (missing.length === 0) return false;
+    const pal = ['#6366f1','#f59e0b','#22c55e','#f43f5e','#8b5cf6','#06b6d4','#ec4899','#14b8a6','#84cc16'];
+    missing.forEach((name, i) => {
+      const c = pal[i % pal.length];
+      METHODS_CATALOG.push({ name, icon:'🎯', color:c, color2:c, meta:0 });
+    });
+    if (typeof persistState === 'function') persistState(); // salva local + sync cloud
+    console.log('[reconcile] categorias recuperadas das transacoes:', missing);
+    return true;
+  } catch(e){ console.warn('reconcileCatalog', e); return false; }
+}
 
 // Helpers de formatação
 function fmtBRL(v, withSign=false) {
