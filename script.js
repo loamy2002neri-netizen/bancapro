@@ -2494,9 +2494,12 @@ function applyPeriodToKPIs(p) {
     fromStr = d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
     periodLabel = 'Últimos 7 dias';
   } else if(p === 'month') {
-    fromStr = now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0')+'-01';
-    const monthNames = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
-    periodLabel = monthNames[now.getMonth()] + ' ' + now.getFullYear();
+    // "30 dias" = ULTIMOS 30 DIAS CORRIDOS (nao o mes-calendario).
+    // Bug corrigido: antes era o 1o dia do mes, entao ao virar o mes tudo
+    // zerava mesmo com dados de ontem. Agora acompanha a janela movel.
+    const d = new Date(now); d.setDate(d.getDate()-29);
+    fromStr = d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+    periodLabel = 'Últimos 30 dias';
   } else if(p === 'year') {
     fromStr = now.getFullYear()+'-01-01';
     periodLabel = 'Ano de ' + now.getFullYear();
@@ -3432,9 +3435,13 @@ function recomputeAll() {
   const weekStartStr = weekStart.getFullYear() + '-' +
     String(weekStart.getMonth()+1).padStart(2,'0') + '-' +
     String(weekStart.getDate()).padStart(2,'0');
-  // Mês atual = primeiro dia do mês
-  const monthStartStr = now.getFullYear() + '-' +
-    String(now.getMonth()+1).padStart(2,'0') + '-01';
+  // "30 dias" = ultimos 30 dias corridos (NAO o mes-calendario).
+  // Bug corrigido: antes usava o 1o dia do mes, entao ao virar o mes o chip
+  // "Lucro 30 dias" zerava mesmo com transacoes de ontem.
+  const mesStart = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 29);
+  const monthStartStr = mesStart.getFullYear() + '-' +
+    String(mesStart.getMonth()+1).padStart(2,'0') + '-' +
+    String(mesStart.getDate()).padStart(2,'0');
 
   const signed = t => t.type==='income' ? t.value : -t.value;
   const lucroHoje    = transactions.filter(t => t.date === todayStr).reduce((s,t)=>s+signed(t), 0);
