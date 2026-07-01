@@ -296,6 +296,33 @@ async function pullUserData(userId) {
     } catch(e) { console.warn('merge ' + k, e); }
   });
 
+  // 4b. PRESERVA config nao-array quando a cloud NAO tem (evita reset ao padrao).
+  //     Bug real: usuario customizava categorias, mas num pull onde o cloudBlob
+  //     vinha sem 'bancapro-methods-catalog' (push que falhou / blob antigo),
+  //     clearUserLocal() apagava o catalogo local e ele voltava ao DEFAULT.
+  //     Regra: se local tinha valor e a cloud nao tem (ou veio vazio), mantem o local.
+  const PRESERVE_IF_CLOUD_MISSING = [
+    'bancapro-methods-catalog',
+    'bancapro-methods-compare',
+    'bancapro-saldo-inicial'
+  ];
+  PRESERVE_IF_CLOUD_MISSING.forEach(k => {
+    try {
+      const cloudHas = cloudBlob && cloudBlob[k] != null && String(cloudBlob[k]).trim() !== '';
+      const localVal = localBefore[k];
+      const localHas = localVal != null && String(localVal).trim() !== '';
+      // Pra arrays (catalog/compare): so preserva se o local tinha itens de verdade
+      let localMeaningful = localHas;
+      if (localHas && (k === 'bancapro-methods-catalog' || k === 'bancapro-methods-compare')) {
+        try { const a = JSON.parse(localVal); localMeaningful = Array.isArray(a) && a.length > 0; } catch(e){ localMeaningful = false; }
+      }
+      if (!cloudHas && localMeaningful) {
+        localStorage.setItem(k, localVal);
+        merged = true;
+      }
+    } catch(e){ console.warn('preserve ' + k, e); }
+  });
+
   // 5. Se houve merge OU havia push pendente, agenda novo push pra mandar tudo pra cloud
   if (merged || hadPendingPush) {
     console.log('[pullUserData] merge detectado, agendando push pra sincronizar');
