@@ -4595,7 +4595,10 @@ function renderAccounts() {
         <div class="account-head">
           <div class="house-logo" style="--house-color:${a.color};background:${a.color}">${escapeHtml(a.initials)}</div>
           <div style="min-width:0;flex:1">
-            <div class="house-name">${escapeHtml(a.house)}${a.nickname ? ` <span style="font-weight:600;color:var(--accent2);font-size:0.85em">· ${escapeHtml(a.nickname)}</span>` : ''}</div>
+            <div class="house-name-row">
+              <span class="house-name">${escapeHtml(a.house)}</span>
+              ${a.nickname ? `<span class="account-nickname" title="${escapeHtml(a.nickname)}">${escapeHtml(a.nickname)}</span>` : ''}
+            </div>
             <div class="house-meta">Atualizado em ${dateStr}</div>
           </div>
         </div>

@@ -1074,7 +1074,19 @@
     box-shadow:0 4px 12px rgba(0,0,0,0.2);
   }
   .house-name { font-size:15px; font-weight:700; letter-spacing:-0.2px; }
-  .house-meta { font-size:11px; color:var(--text-muted); margin-top:2px; }
+  .house-name-row { display:flex; align-items:center; gap:7px; flex-wrap:wrap; row-gap:4px; }
+  .account-nickname {
+    display:inline-flex; align-items:center;
+    font-size:11px; font-weight:700;
+    color:#c4b5fd;
+    background:rgba(139,92,246,0.16);
+    border:1px solid rgba(139,92,246,0.34);
+    padding:2px 9px; border-radius:999px;
+    letter-spacing:0.2px;
+    max-width:100%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+    line-height:1.5;
+  }
+  .house-meta { font-size:11px; color:var(--text-muted); margin-top:3px; }
   .account-balance {
     font-size:24px; font-weight:800; letter-spacing:-0.5px; margin-bottom:4px;
   }
@@ -1171,6 +1183,11 @@
   /* Light theme */
   html.light .account-card { background:#ffffff !important; }
   html.light .account-note { background:#f8fafc !important; }
+  html.light .account-nickname {
+    color:#6d28d9;
+    background:rgba(124,58,237,0.10);
+    border-color:rgba(124,58,237,0.28);
+  }
   html.light .house-selector { background:#f8fafc !important; }
   html.light .house-option { background:#ffffff !important; }
   html.light .account-quick-btn { background:#f8fafc !important; }
