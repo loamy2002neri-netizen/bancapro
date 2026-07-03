@@ -4292,6 +4292,7 @@ function openAccountModal(accountId) {
     document.getElementById('accountAmount').value = a.balance;
     document.getElementById('accountDate').value = a.date;
     document.getElementById('accountNote').value = a.note || '';
+    const nickEl = document.getElementById('accountNickname'); if(nickEl) nickEl.value = a.nickname || '';
   } else {
     titleEl.textContent = '🏦 Nova Conta Depositada';
     subEl.textContent   = 'Registre o saldo que você tem numa casa de aposta';
@@ -4303,6 +4304,7 @@ function openAccountModal(accountId) {
     dateInput.value = today; dateInput.max = today;
     document.getElementById('accountNote').value = '';
     document.getElementById('customHouseName').value = '';
+    const nickEl = document.getElementById('accountNickname'); if(nickEl) nickEl.value = '';
   }
   renderHouseSelector();
   document.getElementById('accountModal').classList.add('open');
@@ -4449,20 +4451,27 @@ async function saveAccount() {
   if(isNaN(amount) || amount < 0) { showToast('Informe um saldo válido!','error'); return; }
   const date = document.getElementById('accountDate').value || isoDateLocal();
   const note = document.getElementById('accountNote').value.trim();
+  const nickname = (document.getElementById('accountNickname')?.value || '').trim();
 
   if(editingAccountId) {
     const a = accounts.find(x => x.id === editingAccountId);
     if(a) {
       a.house = house; a.customName = customName; a.color = color; a.initials = initials;
-      a.balance = amount; a.date = date; a.note = note;
+      a.nickname = nickname; a.balance = amount; a.date = date; a.note = note;
     }
-    showToast(`Conta "${house}" atualizada!`,'success');
+    showToast(`Conta "${house}${nickname ? ' · ' + nickname : ''}" atualizada!`,'success');
   } else {
-    // Conflito: já existe conta dessa casa?
-    const existing = accounts.find(x => x.house.toLowerCase() === house.toLowerCase());
+    // Multiplas contas na MESMA casa sao permitidas (bonus, CPF de familiar, etc).
+    // So considera duplicata se casa + apelido forem IGUAIS — ai oferece substituir.
+    const existing = accounts.find(x =>
+      x.house.toLowerCase() === house.toLowerCase() &&
+      String(x.nickname || '').toLowerCase() === nickname.toLowerCase()
+    );
     if(existing) {
+      const rotulo = house + (nickname ? ' · ' + nickname : '');
       const ok = await customConfirm(
-        `Já existe uma conta na ${house} com saldo de R$ ${existing.balance.toFixed(2)}. Deseja substituir pelo novo saldo de R$ ${amount.toFixed(2)}?`,
+        `Já existe uma conta "${rotulo}" com saldo de R$ ${existing.balance.toFixed(2)}. Deseja substituir pelo novo saldo de R$ ${amount.toFixed(2)}?` +
+        (nickname ? '' : '\n\nDica: adicione um Apelido diferente pra cadastrar como uma conta separada.'),
         'Conta já cadastrada',
         'Substituir',
         false
@@ -4470,15 +4479,15 @@ async function saveAccount() {
       if(!ok) return;
       existing.balance = amount; existing.date = date; existing.note = note;
       existing.color = color; existing.initials = initials;
-      showToast(`Saldo da ${house} atualizado!`,'success');
+      showToast(`Saldo da ${rotulo} atualizado!`,'success');
     } else {
       accounts.push({
         id: Date.now(),
-        house, customName, color, initials,
+        house, customName, color, initials, nickname,
         balance: amount, date, note,
         createdAt: Date.now()
       });
-      showToast(`Conta na ${house} cadastrada com R$ ${amount.toFixed(2)}!`,'success');
+      showToast(`Conta na ${house}${nickname ? ' · ' + nickname : ''} cadastrada com R$ ${amount.toFixed(2)}!`,'success');
     }
   }
   closeAccountModal();
@@ -4558,7 +4567,7 @@ function renderAccounts() {
   // Filtro + sort
   const q = (document.getElementById('accountSearch')?.value || '').toLowerCase().trim();
   const sortMode = document.getElementById('accountSort')?.value || 'value-desc';
-  let list = accounts.filter(a => !q || a.house.toLowerCase().includes(q) || (a.note||'').toLowerCase().includes(q));
+  let list = accounts.filter(a => !q || a.house.toLowerCase().includes(q) || (a.nickname||'').toLowerCase().includes(q) || (a.note||'').toLowerCase().includes(q));
   switch(sortMode) {
     case 'value-desc': list.sort((a,b) => b.balance - a.balance); break;
     case 'value-asc':  list.sort((a,b) => a.balance - b.balance); break;
@@ -4586,7 +4595,7 @@ function renderAccounts() {
         <div class="account-head">
           <div class="house-logo" style="--house-color:${a.color};background:${a.color}">${escapeHtml(a.initials)}</div>
           <div style="min-width:0;flex:1">
-            <div class="house-name">${escapeHtml(a.house)}</div>
+            <div class="house-name">${escapeHtml(a.house)}${a.nickname ? ` <span style="font-weight:600;color:var(--accent2);font-size:0.85em">· ${escapeHtml(a.nickname)}</span>` : ''}</div>
             <div class="house-meta">Atualizado em ${dateStr}</div>
           </div>
         </div>
@@ -4615,11 +4624,12 @@ function renderAccounts() {
 
 function exportAccountsCSV() {
   if(accounts.length === 0) { showToast('Nenhuma conta para exportar.','error'); return; }
-  const headers = ['Casa de Aposta','Saldo (R$)','Última atualização','Observação'];
+  const headers = ['Casa de Aposta','Apelido','Saldo (R$)','Última atualização','Observação'];
   let csv = '\uFEFF' + headers.join(';') + '\n';
   accounts.forEach(a => {
     const row = [
       `"${a.house.replace(/"/g,'""')}"`,
+      `"${(a.nickname||'').replace(/"/g,'""')}"`,
       a.balance.toFixed(2).replace('.', ','),
       dateBR(a.date),
       `"${(a.note||'').replace(/"/g,'""')}"`
@@ -4627,7 +4637,7 @@ function exportAccountsCSV() {
     csv += row.join(';') + '\n';
   });
   const total = accounts.reduce((s,a) => s + a.balance, 0);
-  csv += '\n;TOTAL;' + total.toFixed(2).replace('.',',') + ';\n';
+  csv += '\n;;TOTAL;' + total.toFixed(2).replace('.',',') + ';\n';
   const blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
   const url = URL.createObjectURL(blob);
   const link = document.createElement('a');
