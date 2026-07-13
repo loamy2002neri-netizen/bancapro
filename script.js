@@ -574,7 +574,8 @@ async function cachePlanLabel(user){
         try {
           const { data } = await sb.from('subscribers').select('status,plan,valid_until')
             .eq('email', email).maybeSingle();
-          const naoExpirou = !data || !data.valid_until || new Date(data.valid_until).getTime() > Date.now();
+          const _exp = data ? validUntilExpiry(data.valid_until) : null;
+          const naoExpirou = !data || _exp == null || _exp > Date.now();
           if (data && data.status === 'active' && naoExpirou){
             const planName = data.plan || '';
             label = /anual|annual|yearly/i.test(planName) ? 'Pro' : 'Plus';
@@ -595,6 +596,21 @@ async function cachePlanLabel(user){
   } catch(e){}
 }
 
+// Converte valid_until em timestamp de EXPIRACAO respeitando o dia local.
+// BUG FIX (fuso): valid_until date-only (ex: '2026-08-03') virava meia-noite UTC,
+// que no Brasil e 21:00 do dia ANTERIOR — o acesso expirava 3h mais cedo e o
+// paywall aparecia "antes do dia". Date-only agora vale ate 23:59:59 local.
+function validUntilExpiry(validUntil){
+  if (!validUntil) return null;
+  const s = String(validUntil);
+  if (/^\d{4}-\d{2}-\d{2}$/.test(s)) {
+    const [y, m, d] = s.split('-').map(Number);
+    return new Date(y, m - 1, d, 23, 59, 59, 999).getTime(); // fim do dia LOCAL
+  }
+  const t = new Date(s).getTime();
+  return isFinite(t) ? t : null;
+}
+
 async function hasActiveSubscription(email) {
   const sb = getSb();
   if (!sb || !email) return false;
@@ -602,8 +618,9 @@ async function hasActiveSubscription(email) {
     const { data, error } = await sb.from('subscribers').select('status,valid_until').eq('email', email.toLowerCase()).maybeSingle();
     if (error) return false;
     if (!data || data.status !== 'active') return false;
-    // acesso com prazo (liberação manual por X dias): expira na data
-    if (data.valid_until && new Date(data.valid_until).getTime() < Date.now()) return false;
+    // acesso com prazo (liberação manual por X dias): expira no FIM do dia local
+    const exp = validUntilExpiry(data.valid_until);
+    if (exp != null && exp < Date.now()) return false;
     return true;
   } catch(e) { return false; }
 }
@@ -1570,12 +1587,13 @@ async function renderSubscriptionCard() {
     try {
       const { data } = await sb.from('subscribers').select('status,plan,updated_at,valid_until')
         .eq('email', (user.email || '').toLowerCase()).maybeSingle();
-      const naoExpirou = !data || !data.valid_until || new Date(data.valid_until).getTime() > Date.now();
+      const _exp2 = data ? validUntilExpiry(data.valid_until) : null;
+      const naoExpirou = !data || _exp2 == null || _exp2 > Date.now();
       if (data && data.status === 'active' && naoExpirou) {
         isActive = true;
         planName = data.plan || 'Plus';
         if (data.valid_until) {
-          validUntil = new Date(data.valid_until); // liberação manual com prazo
+          validUntil = new Date(validUntilExpiry(data.valid_until)); // liberação manual: fim do dia local
         } else {
           const isAnnual = /anual|annual|yearly/i.test(planName);
           const base = data.updated_at ? new Date(data.updated_at) : new Date();
