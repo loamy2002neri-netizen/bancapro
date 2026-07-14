@@ -11,7 +11,7 @@
 //  mas nao obrigatorio. Aqui melhora UX e habilita "instavel" no Chrome.
 // ══════════════════════════════════════════════
 
-const VERSION = 'apostack-v1';
+const VERSION = 'apostack-v2';
 const STATIC_CACHE = `${VERSION}-static`;
 const RUNTIME_CACHE = `${VERSION}-runtime`;
 
@@ -79,8 +79,16 @@ self.addEventListener('fetch', event => {
     return;
   }
 
-  // CSS/JS/imagens: stale-while-revalidate
-  if (['style', 'script', 'image', 'font'].includes(req.destination)) {
+  // CSS/JS: network-first — logica e estilo DEVEM chegar frescos quando online.
+  // Antes era stale-while-revalidate: servia a versao velha primeiro, entao fixes
+  // criticos (ex: paywall) so pegavam na SEGUNDA abertura. Agora online = codigo novo.
+  if (['style', 'script'].includes(req.destination)) {
+    event.respondWith(networkFirst(req));
+    return;
+  }
+
+  // Imagens/fontes: stale-while-revalidate (nao afetam logica, prioriza velocidade)
+  if (['image', 'font'].includes(req.destination)) {
     event.respondWith(staleWhileRevalidate(req));
     return;
   }
