@@ -611,18 +611,49 @@ function validUntilExpiry(validUntil){
   return isFinite(t) ? t : null;
 }
 
+// Cache "ultimo status confirmado" por email. Usado como rede de seguranca
+// quando a consulta ao Supabase FALHA (instabilidade de infra/rede): em vez de
+// bloquear o cliente pagante, mantemos o acesso pelo prazo de tolerancia.
+function _subCacheKey(email){ return 'bancapro-sub-ok-' + String(email || '').toLowerCase(); }
+const _SUB_GRACE_MS = 5 * 86400000; // 5 dias de tolerancia offline / infra instavel
+function _recentlyConfirmedActive(email){
+  try {
+    const t = parseInt(localStorage.getItem(_subCacheKey(email)) || '0', 10);
+    return t > 0 && (Date.now() - t) < _SUB_GRACE_MS;
+  } catch(e){ return false; }
+}
+
 async function hasActiveSubscription(email) {
   const sb = getSb();
   if (!sb || !email) return false;
+  const key = _subCacheKey(email);
   try {
     const { data, error } = await sb.from('subscribers').select('status,valid_until').eq('email', email.toLowerCase()).maybeSingle();
-    if (error) return false;
-    if (!data || data.status !== 'active') return false;
+    if (error) {
+      // FALHA de infra (Supabase instavel/rede): NAO trava o pagante.
+      // Cai pro ultimo status ATIVO confirmado nos ultimos 5 dias.
+      console.warn('hasActiveSubscription: erro na consulta, usando cache', error);
+      return _recentlyConfirmedActive(email);
+    }
+    if (!data || data.status !== 'active') {
+      // Resposta LIMPA dizendo que nao e assinante -> limpa cache e bloqueia
+      try { localStorage.removeItem(key); } catch(e){}
+      return false;
+    }
     // acesso com prazo (liberação manual por X dias): expira no FIM do dia local
     const exp = validUntilExpiry(data.valid_until);
-    if (exp != null && exp < Date.now()) return false;
+    if (exp != null && exp < Date.now()) {
+      try { localStorage.removeItem(key); } catch(e){}
+      return false;
+    }
+    // CONFIRMADO ativo -> cacheia o carimbo de tempo pra sobreviver a falhas futuras
+    try { localStorage.setItem(key, String(Date.now())); } catch(e){}
     return true;
-  } catch(e) { return false; }
+  } catch(e) {
+    // Excecao (rede caiu no meio): fallback pro cache, nao bloqueia
+    console.warn('hasActiveSubscription: excecao, usando cache', e);
+    return _recentlyConfirmedActive(email);
+  }
 }
 
 async function checkAccess(user) {
