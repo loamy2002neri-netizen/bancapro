@@ -623,45 +623,70 @@ function _recentlyConfirmedActive(email){
   } catch(e){ return false; }
 }
 
-async function hasActiveSubscription(email) {
+// Estado REAL da assinatura no banco. Retorna:
+//   'active'   -> resposta limpa: assinante em dia
+//   'inactive' -> resposta limpa: NAO e assinante (ou prazo expirou)
+//   'unknown'  -> nao deu pra saber (infra/rede falhou) — com 1 retry antes
+// REGRA DE OURO: so bloqueamos com 'inactive'. 'unknown' NUNCA bloqueia pagante.
+async function fetchSubscriptionState(email) {
   const sb = getSb();
-  if (!sb || !email) return false;
+  if (!sb || !email) return 'unknown';
   const key = _subCacheKey(email);
-  try {
-    const { data, error } = await sb.from('subscribers').select('status,valid_until').eq('email', email.toLowerCase()).maybeSingle();
-    if (error) {
-      // FALHA de infra (Supabase instavel/rede): NAO trava o pagante.
-      // Cai pro ultimo status ATIVO confirmado nos ultimos 5 dias.
-      console.warn('hasActiveSubscription: erro na consulta, usando cache', error);
-      return _recentlyConfirmedActive(email);
+  for (let attempt = 0; attempt < 2; attempt++) {
+    try {
+      const { data, error } = await sb.from('subscribers')
+        .select('status,valid_until').eq('email', email.toLowerCase()).maybeSingle();
+      if (error) {
+        if (attempt === 0) { await new Promise(r => setTimeout(r, 700)); continue; }
+        console.warn('fetchSubscriptionState: erro apos retry', error);
+        return 'unknown';
+      }
+      if (!data || data.status !== 'active') {
+        try { localStorage.removeItem(key); } catch(e){}
+        return 'inactive';
+      }
+      const exp = validUntilExpiry(data.valid_until);
+      if (exp != null && exp < Date.now()) {
+        try { localStorage.removeItem(key); } catch(e){}
+        return 'inactive';
+      }
+      // CONFIRMADO ativo -> cacheia carimbo (rede de seguranca pra falhas futuras)
+      try { localStorage.setItem(key, String(Date.now())); } catch(e){}
+      return 'active';
+    } catch(e) {
+      if (attempt === 0) { await new Promise(r => setTimeout(r, 700)); continue; }
+      console.warn('fetchSubscriptionState: excecao apos retry', e);
+      return 'unknown';
     }
-    if (!data || data.status !== 'active') {
-      // Resposta LIMPA dizendo que nao e assinante -> limpa cache e bloqueia
-      try { localStorage.removeItem(key); } catch(e){}
-      return false;
-    }
-    // acesso com prazo (liberação manual por X dias): expira no FIM do dia local
-    const exp = validUntilExpiry(data.valid_until);
-    if (exp != null && exp < Date.now()) {
-      try { localStorage.removeItem(key); } catch(e){}
-      return false;
-    }
-    // CONFIRMADO ativo -> cacheia o carimbo de tempo pra sobreviver a falhas futuras
-    try { localStorage.setItem(key, String(Date.now())); } catch(e){}
-    return true;
-  } catch(e) {
-    // Excecao (rede caiu no meio): fallback pro cache, nao bloqueia
-    console.warn('hasActiveSubscription: excecao, usando cache', e);
-    return _recentlyConfirmedActive(email);
   }
+  return 'unknown';
+}
+
+async function hasActiveSubscription(email) {
+  const st = await fetchSubscriptionState(email);
+  if (st === 'active') return true;
+  if (st === 'inactive') return false;
+  return _recentlyConfirmedActive(email); // unknown -> cache recente conta como ativo
 }
 
 async function checkAccess(user) {
   if (!getSb()) return true;                 // modo local: sem bloqueio
   const email = (user && user.email || '').toLowerCase();
   if (OWNER_EMAILS.includes(email)) return true;
-  if (await hasActiveSubscription(email)) return true;
-  // Trial: 7 dias desde a criação da conta (não dá pra burlar limpando o navegador)
+
+  const st = await fetchSubscriptionState(email);
+  if (st === 'active') return true;
+
+  if (st === 'unknown') {
+    // NAO conseguimos verificar (Supabase instavel). NUNCA travamos por duvida:
+    // um cliente pagante jamais pode ver o paywall por falha nossa. Liberamos —
+    // assim que uma consulta voltar a funcionar, o acesso e reavaliado de verdade.
+    console.warn('checkAccess: estado indeterminado, liberando acesso (fail-open)');
+    return true;
+  }
+
+  // st === 'inactive' (resposta LIMPA do banco): so aqui pode bloquear.
+  // Trial: 7 dias desde a criação da conta.
   try {
     const created = user && user.created_at ? new Date(user.created_at).getTime() : 0;
     if (created && (Date.now() - created) < TRIAL_DAYS * 86400000) return true;
