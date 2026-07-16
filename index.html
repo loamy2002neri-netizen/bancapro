@@ -38,6 +38,37 @@
   } catch(e){ /* qualquer erro: deixa carregar normal */ }
 })();
 </script>
+<!-- ════════════════════════════════════════════
+     KILL SWITCH DO SERVICE WORKER ANTIGO (roda 1x por cliente)
+     Motivo: o SW antigo servia script.js em cache (stale-while-revalidate),
+     entao o fix critico do paywall NAO chegava — clientes pagantes seguiam
+     bloqueados mesmo com a correcao no ar. Aqui a gente desregistra o SW
+     velho, limpa TODOS os caches e recarrega UMA unica vez. Depois o
+     registro normal instala o SW novo (network-first). Flag no localStorage
+     garante que roda so uma vez por dispositivo.
+     ════════════════════════════════════════════ -->
+<script>
+(function forceFreshCode(){
+  var FLAG = 'apostack-sw-reset-20260714';
+  try {
+    if (localStorage.getItem(FLAG)) return;            // ja resetou nesse device
+    if (!('serviceWorker' in navigator)) { localStorage.setItem(FLAG,'1'); return; }
+    navigator.serviceWorker.getRegistrations().then(function(regs){
+      var tinhaSW = regs.length > 0;
+      return Promise.all(regs.map(function(r){ return r.unregister(); }))
+        .then(function(){
+          if (!('caches' in window)) return tinhaSW;
+          return caches.keys()
+            .then(function(keys){ return Promise.all(keys.map(function(k){ return caches.delete(k); })); })
+            .then(function(){ return tinhaSW; });
+        });
+    }).then(function(tinhaSW){
+      try { localStorage.setItem(FLAG,'1'); } catch(e){}
+      if (tinhaSW) location.reload();                  // 1 reload limpo, ja sem SW velho
+    }).catch(function(){ try { localStorage.setItem(FLAG,'1'); } catch(e){} });
+  } catch(e){ try { localStorage.setItem(FLAG,'1'); } catch(e2){} }
+})();
+</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
 <meta name="theme-color" content="#060d18"/>
 <meta name="color-scheme" content="dark light"/>
