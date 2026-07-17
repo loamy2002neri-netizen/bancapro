@@ -1606,18 +1606,23 @@ async function handleReturnFromCheckout() {
         const p = new URLSearchParams(location.search).get('plano');
         if (p === 'anual') { value = 199; plan = 'Pro Anual'; }
       } catch(e){}
-      fbq('track', 'Subscribe', {
-        value: value,
-        currency: 'BRL',
-        predicted_ltv: value * 6,
-        content_name: 'Apostack ' + plan
-      });
-      // Purchase como fallback (alguns templates de campanha usam Purchase)
-      fbq('track', 'Purchase', {
-        value: value,
-        currency: 'BRL',
-        content_name: 'Apostack ' + plan
-      });
+      // O app interno nao carrega mais o Meta Pixel (removido). Purchase/Subscribe
+      // do assinante ja sao disparados pelo Kirvano no pixel do gestor. Guard
+      // mantido: se algum dia o pixel voltar pro app, esses eventos voltam sozinhos.
+      if (typeof fbq === 'function') {
+        fbq('track', 'Subscribe', {
+          value: value,
+          currency: 'BRL',
+          predicted_ltv: value * 6,
+          content_name: 'Apostack ' + plan
+        });
+        // Purchase como fallback (alguns templates de campanha usam Purchase)
+        fbq('track', 'Purchase', {
+          value: value,
+          currency: 'BRL',
+          content_name: 'Apostack ' + plan
+        });
+      }
     }
   } catch(e){}
   for (let i = 0; i < 8; i++) {
