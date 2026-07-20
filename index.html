@@ -49,7 +49,7 @@
      ════════════════════════════════════════════ -->
 <script>
 (function forceFreshCode(){
-  var FLAG = 'apostack-sw-reset-20260715';
+  var FLAG = 'apostack-sw-reset-20260720';
   try {
     if (localStorage.getItem(FLAG)) return;            // ja resetou nesse device
     if (!('serviceWorker' in navigator)) { localStorage.setItem(FLAG,'1'); return; }
@@ -100,8 +100,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
-<link rel="stylesheet" href="style.css?v=20260715"/>
-<link rel="stylesheet" href="light.css?v=20260715"/>
+<link rel="stylesheet" href="style.css?v=20260720"/>
+<link rel="stylesheet" href="light.css?v=20260720"/>
 </head>
 <body>
 
@@ -2523,13 +2523,13 @@
         <div class="paywall-hero-sparkle paywall-hero-sparkle-3"></div>
         <div class="paywall-hero-sparkle paywall-hero-sparkle-4"></div>
       </div>
-      <div class="paywall-badge">VOCÊ COMPLETOU 7 DIAS DE TESTE</div>
-      <h1 class="paywall-title">Continue evoluindo com<br/><span class="paywall-title-accent">controle, dados e clareza</span></h1>
-      <p class="paywall-sub">Os 7 dias mostraram o que dá para fazer com o Apostack. Mantenha seu progresso, suas métricas e seu ranking ativos — sem interrupção.</p>
+      <div class="paywall-badge" id="paywallBadge">7 DIAS DE GARANTIA — REEMBOLSO TOTAL</div>
+      <h1 class="paywall-title" id="paywallTitle">Comece agora com<br/><span class="paywall-title-accent">controle, dados e clareza</span></h1>
+      <p class="paywall-sub" id="paywallSub">Assine e use o Apostack completo. Se em 7 dias não for pra você, devolvemos 100% do valor — sem burocracia.</p>
     </div>
 
     <div class="paywall-stats">
-      <div class="paywall-stats-title">Seu progresso nos 7 dias</div>
+      <div class="paywall-stats-title" id="paywallStatsTitle">Seu progresso até aqui</div>
       <div class="paywall-stats-row">
         <div class="paywall-stat">
           <div class="paywall-stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17V3M3 7l4-4 4 4M17 7v14M13 17l4 4 4-4"/></svg></div>
@@ -2638,9 +2638,9 @@
   </div>
 </div>
 
-<script src="config.js?v=20260715" defer></script>
-<script src="storage.js?v=20260715" defer></script>
-<script src="script.js?v=20260715" defer></script>
+<script src="config.js?v=20260720" defer></script>
+<script src="storage.js?v=20260720" defer></script>
+<script src="script.js?v=20260720" defer></script>
 
 <!-- ════════════════════════════════════════════
      Service Worker — habilita PWA instalavel

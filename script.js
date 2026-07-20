@@ -582,11 +582,8 @@ async function cachePlanLabel(user){
           }
         } catch(e){}
       }
-      // Fallback pro Trial se ainda tá nos 7 dias iniciais
-      if (label === 'Free' && user && user.created_at){
-        const end = new Date(new Date(user.created_at).getTime() + TRIAL_DAYS * 86400000);
-        if (end.getTime() > Date.now()) label = 'Trial';
-      }
+      // Fallback pro Trial — so pra contas legadas (criadas antes do corte)
+      if (label === 'Free' && trialAindaValido(user)) label = 'Trial';
     }
 
     try { localStorage.setItem('bancapro-plan-label', label); } catch(e){}
@@ -686,11 +683,9 @@ async function checkAccess(user) {
   }
 
   // st === 'inactive' (resposta LIMPA do banco): so aqui pode bloquear.
-  // Trial: 7 dias desde a criação da conta.
-  try {
-    const created = user && user.created_at ? new Date(user.created_at).getTime() : 0;
-    if (created && (Date.now() - created) < TRIAL_DAYS * 86400000) return true;
-  } catch(e) {}
+  // Trial LEGADO: so contas criadas antes do corte ainda tem 7 dias livres.
+  // Conta nova assina direto (garantia de reembolso de 7 dias no lugar do teste).
+  if (trialAindaValido(user)) return true;
   return false;
 }
 
@@ -733,6 +728,19 @@ function populatePaywallStats(){
 function showPaywall() {
   const el = document.getElementById('paywallOverlay');
   if (el) el.style.display = 'flex';
+  // Copy do paywall muda conforme o usuario:
+  //  • conta LEGADA (teve trial): "voce completou 7 dias de teste"
+  //  • conta NOVA (sem trial): vende a garantia de 7 dias / reembolso
+  try {
+    const teveTrial = (typeof currentAuthUser !== 'undefined') && userHasTrial(currentAuthUser);
+    if (teveTrial) {
+      setTextSafe('paywallBadge', 'VOCÊ COMPLETOU 7 DIAS DE TESTE');
+      const t = document.getElementById('paywallTitle');
+      if (t) t.innerHTML = 'Continue evoluindo com<br/><span class="paywall-title-accent">controle, dados e clareza</span>';
+      setTextSafe('paywallSub', 'Os 7 dias mostraram o que dá para fazer com o Apostack. Mantenha seu progresso, suas métricas e seu ranking ativos — sem interrupção.');
+      setTextSafe('paywallStatsTitle', 'Seu progresso nos 7 dias');
+    }
+  } catch(e){}
   populatePaywallStats();
 }
 function hidePaywall() { const el = document.getElementById('paywallOverlay'); if (el) el.style.display = 'none'; }
@@ -1663,9 +1671,11 @@ async function renderSubscriptionCard() {
       }
     } catch(e) {}
   }
-  if (!isActive && user && user.created_at) {
-    const end = new Date(new Date(user.created_at).getTime() + TRIAL_DAYS * 86400000);
-    if (end.getTime() > Date.now()) { isTrial = true; validUntil = end; planName = 'Trial Gratuito'; }
+  // Trial LEGADO (so contas criadas antes do corte)
+  if (!isActive && trialAindaValido(user)) {
+    isTrial = true;
+    validUntil = new Date(Date.parse(user.created_at) + TRIAL_DAYS * 86400000);
+    planName = 'Trial Gratuito';
   }
   // Dono: sempre ativo
   if (!isActive && !isTrial && user && typeof OWNER_EMAILS !== 'undefined' && OWNER_EMAILS.includes((user.email||'').toLowerCase())) {
@@ -4938,6 +4948,26 @@ const TRIAL_DAYS = 7;
 const SUBSCRIPTION_PRICE = 24.90;
 const SUBSCRIPTION_PRICE_ANNUAL = 199;
 
+// ── FIM DO TRIAL GRATUITO ──
+// A partir desta data, conta NOVA nao ganha mais 7 dias livres: assina direto.
+// A garantia de reembolso de 7 dias (pos-compra) substitui o teste gratuito.
+// Quem criou conta ANTES do corte mantem o trial ate o fim — sem quebrar promessa.
+const TRIAL_CUTOFF_MS = Date.parse('2026-07-20T15:45:00Z');
+function userHasTrial(user){
+  try {
+    const created = user && user.created_at ? Date.parse(user.created_at) : NaN;
+    if (!isFinite(created)) return false;
+    return created < TRIAL_CUTOFF_MS;          // so contas antigas tem trial
+  } catch(e){ return false; }
+}
+function trialAindaValido(user){
+  try {
+    if (!userHasTrial(user)) return false;
+    const created = Date.parse(user.created_at);
+    return (Date.now() - created) < TRIAL_DAYS * 86400000;
+  } catch(e){ return false; }
+}
+
 // Resolve a data de inicio do trial com PRIORIDADE pro user.created_at do Supabase.
 // Bug que existia: localStorage 'bancapro-trial-start' setado em sessao antiga (modo demo)
 // nao era resetado quando o user criava conta nova — entao "trial acabou" aparecia
@@ -5568,6 +5598,13 @@ document.addEventListener('DOMContentLoaded', () => setTimeout(updateAllUpgradeU
 function updateTrialBanner() {
   const startEl = document.getElementById('trialDaysLeft');
   if(!startEl) return; // não estamos na seção
+  // Trial descontinuado: conta nova nao tem contagem regressiva (assina direto).
+  // So contas legadas (antes do corte) ainda veem o banner de dias restantes.
+  if (typeof currentAuthUser !== 'undefined' && currentAuthUser && !userHasTrial(currentAuthUser)) {
+    const box = startEl.closest('.trial-banner, .trial-card, [data-card="trial"]');
+    if (box) box.style.display = 'none';
+    return;
+  }
   const start = loadTrialState();
   const now = new Date();
   const msPerDay = 1000 * 60 * 60 * 24;
