@@ -60,9 +60,36 @@ Deno.serve(async (req) => {
   // ════════════════════════════════════════════════════
   const payload: Record<string, unknown> = { email, status, updated_at: new Date().toISOString() };
   if (plan) payload.plan = plan;
-  // Assinatura recorrente NAO tem prazo manual. Ao ATIVAR, limpa valid_until
-  // residual de liberacao antiga que bloqueava o pagante quando a data passava.
-  if (status === "active") payload.valid_until = null;
+
+  // JANELA DE ACESSO POR PAGAMENTO
+  // ------------------------------------------------------------------
+  // Antes: ao ativar, gravava valid_until = null (acesso sem prazo). Como
+  // CANCEL/EXPIRED nao desativam mais ninguem (correcao de 20/07 — o Kirvano
+  // manda esses eventos no FIM DO CICLO, derrubando pagante), quem pagou UMA
+  // vez ficava 'active' pra sempre e seguia usando de graca.
+  // Agora: cada pagamento aprovado da uma janela de acesso. Renovou, a data
+  // anda pra frente; parou de pagar, expira sozinho. Sem depender do CANCEL.
+  // A folga cobre atraso de renovacao / webhook que demora a chegar.
+  if (status === "active") {
+    const GRACA_DIAS = 7;
+    const p = String(plan || "").toLowerCase();
+    const anual = /anual|ano\b|year|annual/.test(p) || amount >= 100;
+    const dias = (anual ? 365 : 30) + GRACA_DIAS;
+    const novoPrazo = Date.now() + dias * 86400000;
+
+    // NUNCA encurta um prazo ja concedido (liberacao manual longa, plano anual
+    // cujo evento veio sem nome/valor). Fica sempre a data MAIOR.
+    let prazoFinal = novoPrazo;
+    try {
+      const { data: atual } = await supabase.from("subscribers")
+        .select("valid_until").eq("email", email).maybeSingle();
+      const antigo = atual?.valid_until ? Date.parse(String(atual.valid_until)) : NaN;
+      if (isFinite(antigo) && antigo > prazoFinal) prazoFinal = antigo;
+    } catch (e) { console.warn("nao deu pra ler valid_until atual:", e); }
+
+    payload.valid_until = new Date(prazoFinal).toISOString();
+    console.log(`acesso liberado ate ${payload.valid_until} (${anual ? "anual" : "mensal"}) | email: ${email}`);
+  }
 
   const { error } = await supabase.from("subscribers")
     .upsert(payload, { onConflict: "email" });
