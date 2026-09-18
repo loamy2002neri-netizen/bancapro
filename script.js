@@ -9822,6 +9822,7 @@ function grpRenderDono(){
          +     '<button class="btn-ghost grp-btn-sm" onclick="grpCopiarCodigo(\'' + grpEsc(g.codigo) + '\')">Copiar código</button>'
          +     '<button class="btn-ghost grp-btn-sm" onclick="grpVerRanking(\'' + g.id + '\',true)">Ver ranking</button>'
          +     '<button class="btn-ghost grp-btn-sm" onclick="grpAbrirFaixas(\'' + g.id + '\')">Faixas</button>'
+         +     '<button class="btn-ghost grp-btn-sm grp-btn-apagar" onclick="grpExcluir(\'' + g.id + '\',\'' + grpEsc(g.nome).replace(/'/g, "\\'") + '\')">Apagar</button>'
          +   '</div>'
          + '</div>'
          + '<div class="grp-painel" id="grp-painel-' + g.id + '"></div>';
@@ -10034,5 +10035,26 @@ async function grpSalvarFaixas(id){
     showToast('Faixas salvas! 🏆', 'success');
     var box = document.getElementById('grp-painel-' + id);
     if (box){ box.innerHTML = ''; box.dataset.aberto = ''; }
+  } catch(e){ showToast(grpMsgErro(e), 'error'); }
+}
+
+// Apagar o proprio grupo. Acao destrutiva: pede confirmacao com o nome
+// digitado, porque leva os alunos e as faixas junto (cascade no banco).
+async function grpExcluir(id, nome){
+  var g = (_grpCache.dono || []).filter(function(x){ return x.id === id; })[0];
+  var n = (g && Number(g.membros)) || 0;
+  var aviso = 'Apagar o grupo "' + nome + '"?\n\n'
+            + (n > 0 ? ('Os ' + n + (n === 1 ? ' aluno sai' : ' alunos saem') + ' do ranking e as faixas de premiação somem. ')
+                     : 'As faixas de premiação somem. ')
+            + 'O código deixa de funcionar e isso não tem volta.\n\n'
+            + 'O histórico de cada aluno no app dele continua intacto.';
+  if (!confirm(aviso)) return;
+  var sb = getSb();
+  if (!sb) return;
+  try {
+    var r = await sb.rpc('excluir_grupo_ranking', { p_grupo_id: id });
+    if (r.error) throw r.error;
+    showToast('Grupo apagado.', 'success');
+    await renderGrupos();
   } catch(e){ showToast(grpMsgErro(e), 'error'); }
 }

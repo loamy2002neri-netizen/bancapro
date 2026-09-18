@@ -4918,3 +4918,4 @@ html { -webkit-text-size-adjust:100%; text-size-adjust:100%; }
   .grp-btn,.grp-row .form-input{width:100%}
   .grp-faixa-meta{max-width:110px}
 }
+.grp-btn-apagar{color:var(--red)}
