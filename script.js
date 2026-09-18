@@ -4948,16 +4948,20 @@ const TRIAL_DAYS = 7;
 const SUBSCRIPTION_PRICE = 24.90;
 const SUBSCRIPTION_PRICE_ANNUAL = 199;
 
-// ── FIM DO TRIAL GRATUITO ──
-// A partir desta data, conta NOVA nao ganha mais 7 dias livres: assina direto.
-// A garantia de reembolso de 7 dias (pos-compra) substitui o teste gratuito.
-// Quem criou conta ANTES do corte mantem o trial ate o fim — sem quebrar promessa.
-const TRIAL_CUTOFF_MS = Date.parse('2026-07-20T15:45:00Z');
+// ── TRIAL GRATUITO DE 7 DIAS ──
+// Regra do negocio (17/09/26): quem assina direto o Apostack, sem vir do King
+// Metodos, tem 7 dias livres pra experimentar e depois passa a pagar. Quem vem
+// do King Metodos ganha 1 MES de cortesia — mas isso e concedido pelo webhook
+// (grava valid_until na tabela subscribers), nao aqui.
+// Historico: entre 20/07 e 17/09/26 o trial ficou desligado pra conta nova
+// (vendia com garantia de reembolso no lugar do teste). Voltou a valer.
+const TRIAL_CUTOFF_MS = null;                 // null = todo mundo tem trial
 function userHasTrial(user){
   try {
     const created = user && user.created_at ? Date.parse(user.created_at) : NaN;
     if (!isFinite(created)) return false;
-    return created < TRIAL_CUTOFF_MS;          // so contas antigas tem trial
+    if (TRIAL_CUTOFF_MS == null) return true;  // trial ligado pra todos
+    return created < TRIAL_CUTOFF_MS;          // (corte desligado hoje)
   } catch(e){ return false; }
 }
 function trialAindaValido(user){
