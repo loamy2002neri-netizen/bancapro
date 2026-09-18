@@ -343,3 +343,34 @@ begin
   return query select v_id, v_nome, v_cod;
 end;
 $fn$;
+
+-- ─── FIX 18/09/26: "column reference grupo_id is ambiguous" ───
+-- A funcao devolve uma coluna chamada grupo_id (RETURNS TABLE) e a tabela
+-- ranking_group_members tambem tem grupo_id. No "on conflict (grupo_id, email)"
+-- o Postgres nao sabia a qual das duas o nome se referia e quebrava na hora
+-- de entrar no grupo. Solucao: apontar o conflito pelo NOME DA CHAVE em vez
+-- de listar colunas — sem ambiguidade e sem mudar a assinatura da funcao
+-- (o app continua lendo .nome normalmente).
+create or replace function public.entrar_no_grupo_ranking(p_codigo text)
+returns table(grupo_id uuid, nome text)
+language plpgsql security definer set search_path = public, auth as $fn$
+declare
+  v_eu   text := public.quem_sou_eu();
+  v_cod  text := upper(btrim(coalesce(p_codigo, '')));
+  v_id   uuid;
+  v_nome text;
+  v_dono text;
+begin
+  if v_eu = '' then raise exception 'precisa estar logado'; end if;
+  select g.id, g.nome, g.dono_email into v_id, v_nome, v_dono
+    from public.ranking_groups g where g.codigo = v_cod;
+  if v_id is null then raise exception 'codigo nao encontrado'; end if;
+  if lower(v_dono) = v_eu then raise exception 'voce e o dono desse grupo'; end if;
+
+  insert into public.ranking_group_members (grupo_id, email)
+  values (v_id, v_eu)
+  on conflict on constraint ranking_group_members_pkey do nothing;
+
+  return query select v_id, v_nome;
+end;
+$fn$;
