@@ -292,3 +292,19 @@ grant execute on function public.entrar_no_grupo_ranking(text)     to authentica
 grant execute on function public.grupos_que_participo()            to authenticated;
 grant execute on function public.sair_do_grupo_ranking(uuid)       to authenticated;
 grant execute on function public.ranking_do_grupo(uuid)            to authenticated;
+
+-- ─── Apagar um grupo (so o dono) ───
+-- Faltava na primeira versao: grupo criado por engano ficava preso pra sempre
+-- e ainda ocupava uma das 5 vagas. O cascade leva membros e faixas junto.
+create or replace function public.excluir_grupo_ranking(p_grupo_id uuid)
+returns void
+language plpgsql security definer set search_path = public, auth as $fn$
+declare v_eu text := public.quem_sou_eu();
+begin
+  if v_eu = '' then raise exception 'precisa estar logado'; end if;
+  delete from public.ranking_groups g
+   where g.id = p_grupo_id and lower(g.dono_email) = v_eu;
+end;
+$fn$;
+
+grant execute on function public.excluir_grupo_ranking(uuid) to authenticated;
