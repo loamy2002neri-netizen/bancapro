@@ -308,3 +308,38 @@ end;
 $fn$;
 
 grant execute on function public.excluir_grupo_ranking(uuid) to authenticated;
+
+-- ─── Criar grupo vira beneficio de AFILIADO (18/09/26) ───
+-- Quem monta ranking de comunidade e parceiro cadastrado, nao qualquer
+-- usuario. A tela esconde o card, mas quem barra de verdade e isto aqui.
+-- O dono do Apostack (is_owner_email) passa sempre.
+create or replace function public.criar_grupo_ranking(p_nome text)
+returns table(id uuid, nome text, codigo text)
+language plpgsql security definer set search_path = public, auth as $fn$
+declare
+  v_eu   text := public.quem_sou_eu();
+  v_nome text := btrim(coalesce(p_nome, ''));
+  v_id   uuid;
+  v_cod  text;
+begin
+  if v_eu = '' then raise exception 'precisa estar logado'; end if;
+
+  if not (public.is_owner_email(v_eu)
+          or exists (select 1 from public.affiliates a where lower(a.email) = v_eu)) then
+    raise exception 'so afiliado cria grupo';
+  end if;
+
+  if v_nome = '' then raise exception 'o grupo precisa de um nome'; end if;
+  if length(v_nome) > 60 then v_nome := left(v_nome, 60); end if;
+  if (select count(*) from public.ranking_groups g where lower(g.dono_email) = v_eu) >= 5 then
+    raise exception 'limite de 5 grupos por conta';
+  end if;
+
+  v_cod := public.gera_codigo_grupo();
+  insert into public.ranking_groups (nome, dono_email, codigo)
+  values (v_nome, v_eu, v_cod)
+  returning ranking_groups.id into v_id;
+
+  return query select v_id, v_nome, v_cod;
+end;
+$fn$;

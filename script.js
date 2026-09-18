@@ -9774,6 +9774,7 @@ async function renderGrupos(){
   }
   partEl.innerHTML = '<div class="grp-loading">Carregando…</div>';
   meusEl.innerHTML = '';
+  grpLiberarCriacao();
   try {
     var r1 = await sb.rpc('meus_grupos_ranking');
     var r2 = await sb.rpc('grupos_que_participo');
@@ -9901,6 +9902,7 @@ function grpMsgErro(e){
   if (/codigo nao encontrado/i.test(m))   return 'Código não encontrado. Confira com o dono do grupo.';
   if (/voce e o dono/i.test(m))           return 'Você é o dono desse grupo — ele já aparece em "Meus grupos".';
   if (/limite de 5 grupos/i.test(m))      return 'Você já tem 5 grupos, que é o limite por conta.';
+  if (/so afiliado cria grupo/i.test(m))  return 'Criar grupo é liberado só para afiliados. Fale com o suporte para virar parceiro.';
   if (/precisa estar logado/i.test(m))    return 'Faça login para usar os grupos.';
   if (/esse grupo nao e seu|sem acesso/i.test(m)) return 'Esse grupo não é seu.';
   return m || 'Não deu certo. Tente de novo.';
@@ -10061,4 +10063,32 @@ async function grpExcluir(id, nome){
     showToast('Grupo apagado.', 'success');
     await renderGrupos();
   } catch(e){ showToast(grpMsgErro(e), 'error'); }
+}
+
+// Criar grupo e' beneficio de AFILIADO (decidido em 18/09/26): quem monta
+// ranking de comunidade e' parceiro cadastrado, nao qualquer usuario. Aqui
+// so escondemos/mostramos o card — quem barra de verdade e a funcao
+// criar_grupo_ranking no banco, que confere a tabela affiliates.
+async function grpLiberarCriacao(){
+  var card = document.getElementById('grpCriarCard');
+  if (!card) return;
+  var ehAfiliado = false;
+  try {
+    var email = ((currentAuthUser && currentAuthUser.email)
+                 || localStorage.getItem('bancapro-user-email') || '').toLowerCase();
+    if (typeof OWNER_EMAILS !== 'undefined' && OWNER_EMAILS.indexOf(email) >= 0) ehAfiliado = true;
+  } catch(e){}
+  if (!ehAfiliado){
+    var sb = getSb();
+    if (sb){
+      try {
+        var r = await sb.rpc('get_my_affiliate');
+        ehAfiliado = !!(r && r.data && r.data.length);
+      } catch(e){
+        // rede falhou: usa o ultimo estado conhecido em vez de sumir com o card
+        try { ehAfiliado = localStorage.getItem('bancapro-is-affiliate') === '1'; } catch(e2){}
+      }
+    }
+  }
+  card.style.display = ehAfiliado ? '' : 'none';
 }
