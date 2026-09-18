@@ -9881,7 +9881,11 @@ async function grpEntrar(){
 }
 
 async function grpSair(id){
-  if (!confirm('Sair deste grupo? O dono deixa de ver seus resultados.')) return;
+  var ok = await customConfirm(
+    'Você sai do ranking e o dono deixa de ver seus resultados.\n\n'
+    + 'Seus dados no app continuam como estão — nada é apagado. Se quiser voltar, é só entrar de novo com o código.',
+    'Sair do grupo', 'Sair', true);
+  if (!ok) return;
   var sb = getSb();
   if (!sb) return;
   try {
@@ -10038,17 +10042,17 @@ async function grpSalvarFaixas(id){
   } catch(e){ showToast(grpMsgErro(e), 'error'); }
 }
 
-// Apagar o proprio grupo. Acao destrutiva: pede confirmacao com o nome
-// digitado, porque leva os alunos e as faixas junto (cascade no banco).
+// Apagar o proprio grupo. Acao destrutiva (cascade leva alunos e faixas),
+// entao usa o modal do app com o tamanho do estrago escrito na frente.
 async function grpExcluir(id, nome){
   var g = (_grpCache.dono || []).filter(function(x){ return x.id === id; })[0];
   var n = (g && Number(g.membros)) || 0;
-  var aviso = 'Apagar o grupo "' + nome + '"?\n\n'
-            + (n > 0 ? ('Os ' + n + (n === 1 ? ' aluno sai' : ' alunos saem') + ' do ranking e as faixas de premiação somem. ')
+  var aviso = (n > 0 ? ('Os ' + n + (n === 1 ? ' aluno sai' : ' alunos saem') + ' do ranking e as faixas de premiação somem. ')
                      : 'As faixas de premiação somem. ')
             + 'O código deixa de funcionar e isso não tem volta.\n\n'
             + 'O histórico de cada aluno no app dele continua intacto.';
-  if (!confirm(aviso)) return;
+  var ok = await customConfirm(aviso, 'Apagar “' + nome + '”?', 'Apagar grupo', true);
+  if (!ok) return;
   var sb = getSb();
   if (!sb) return;
   try {

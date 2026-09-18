@@ -4919,3 +4919,5 @@ html { -webkit-text-size-adjust:100%; text-size-adjust:100%; }
   .grp-faixa-meta{max-width:110px}
 }
 .grp-btn-apagar{color:var(--red)}
+/* Mensagem do modal de confirmação respeita as quebras de linha do texto */
+#confirmMessage{white-space:pre-line}
