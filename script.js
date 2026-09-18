@@ -486,6 +486,8 @@ async function enterApp(user) {
   try { cachePlanLabel(user); } catch(e){}
   // Onboarding: mostra welcome modal na 1a visita autenticada
   try { if (typeof maybeShowWelcome === 'function') maybeShowWelcome(); } catch(e){}
+  // Chegou por um link de convite de grupo? pergunta depois que a tela assentou
+  setTimeout(function(){ try { if (typeof grpConviteDoLink === 'function') grpConviteDoLink(); } catch(e){} }, 1200);
   // Tour guiado de 12 passos pra usuarios novos (zero/poucas transacoes).
   // Veteranos sao auto-marcados como "ja viu" silenciosamente.
   try { if (typeof maybeStartTour === 'function') maybeStartTour(); } catch(e){}
@@ -2077,6 +2079,15 @@ try {
   if (_refParam && _refParam.trim()) localStorage.setItem('bancapro-ref', _refParam.trim());
 } catch(e){}
 
+// Captura o ?grupo= do link de convite do grupo. Guarda pra perguntar DEPOIS
+// do login — quem chega pelo link muitas vezes nem tem conta ainda.
+try {
+  const _grpParam = new URLSearchParams(location.search).get('grupo');
+  if (_grpParam && _grpParam.trim()){
+    localStorage.setItem('bancapro-grupo-convite', _grpParam.trim().toUpperCase());
+  }
+} catch(e){}
+
 // Modo demo (?demo=1&tab=NAME) — usado pra screenshots da landing page
 (function demoMode(){
   try{
@@ -2465,6 +2476,7 @@ function mobileNav(tab){
     accounts:   'accounts',
     settings:   'settings',
     anotacoes:  'anotacoes',
+    grupos:     'grupos',
     goals:      'goals',
     reports:    'reports',
     compare:    'compare',
@@ -2517,6 +2529,7 @@ function mobileNavMore(){
       + '  <button class="mms-item" onclick="mobileNav(\'compare\')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h7M3 12h11M3 18h6"/><path d="M17 4l4 4-4 4"/></svg>Comparativo</button>'
       + '  <button class="mms-item" onclick="mobileNav(\'calc\')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 7h8M8 11h2M12 11h2M16 11h0M8 15h2M12 15h2M16 15h0M8 19h2M12 19h2M16 19h0"/></svg>Calculadora</button>'
       + '  <button class="mms-item" onclick="mobileNav(\'anotacoes\')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h12l4 4v12H4z"/><path d="M16 4v4h4M8 12h8M8 16h6"/></svg>Anotações</button>'
+      + '  <button class="mms-item" onclick="mobileNav(\'grupos\')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2"/><circle cx="9.5" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>Grupos</button>'
       + '  <button class="mms-item" onclick="mobileNav(\'settings\')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 00.3 1.8l.1.1a2 2 0 11-2.8 2.8l-.1-.1a1.7 1.7 0 00-1.8-.3 1.7 1.7 0 00-1 1.5V21a2 2 0 11-4 0v-.1a1.7 1.7 0 00-1-1.5 1.7 1.7 0 00-1.8.3l-.1.1a2 2 0 11-2.8-2.8l.1-.1a1.7 1.7 0 00.3-1.8 1.7 1.7 0 00-1.5-1H3a2 2 0 110-4h.1a1.7 1.7 0 001.5-1 1.7 1.7 0 00-.3-1.8l-.1-.1a2 2 0 112.8-2.8l.1.1a1.7 1.7 0 001.8.3h0a1.7 1.7 0 001-1.5V3a2 2 0 114 0v.1a1.7 1.7 0 001 1.5 1.7 1.7 0 001.8-.3l.1-.1a2 2 0 112.8 2.8l-.1.1a1.7 1.7 0 00-.3 1.8v0a1.7 1.7 0 001.5 1H21a2 2 0 110 4h-.1a1.7 1.7 0 00-1.5 1z"/></svg>Configurações</button>'
       + '  <button class="mms-item" onclick="mobileNav(\'help\')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>Ajuda</button>'
       + '  <button class="mms-item mms-item-accent" onclick="mobileNav(\'personalizar\')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l2.4 4.8L20 9l-4 4 .9 5.5L12 16l-4.9 2.5L8 13 4 9l5.6-1.2z"/></svg>Personalizar</button>'
@@ -9820,7 +9833,8 @@ function grpRenderDono(){
          +     '<div class="grp-item-sub">' + n + (n === 1 ? ' aluno' : ' alunos') + ' · código <b class="grp-cod">' + grpEsc(g.codigo) + '</b></div>'
          +   '</div>'
          +   '<div class="grp-item-acoes">'
-         +     '<button class="btn-ghost grp-btn-sm" onclick="grpCopiarCodigo(\'' + grpEsc(g.codigo) + '\')">Copiar código</button>'
+         +     '<button class="btn-primary grp-btn-sm" onclick="grpCopiarConvite(\'' + grpEsc(g.codigo) + '\',\'' + grpEsc(g.nome).replace(/'/g, "\\'") + '\')">Copiar convite</button>'
+         +     '<button class="btn-ghost grp-btn-sm" onclick="grpCopiarCodigo(\'' + grpEsc(g.codigo) + '\')">Só o código</button>'
          +     '<button class="btn-ghost grp-btn-sm" onclick="grpVerRanking(\'' + g.id + '\',true)">Ver ranking</button>'
          +     '<button class="btn-ghost grp-btn-sm" onclick="grpAbrirFaixas(\'' + g.id + '\')">Faixas</button>'
          +     '<button class="btn-ghost grp-btn-sm grp-btn-apagar" onclick="grpExcluir(\'' + g.id + '\',\'' + grpEsc(g.nome).replace(/'/g, "\\'") + '\')">Apagar</button>'
@@ -10091,4 +10105,50 @@ async function grpLiberarCriacao(){
     }
   }
   card.style.display = ehAfiliado ? '' : 'none';
+}
+
+// Convite de grupo por link: apostack.com/?grupo=CODIGO
+// O dono manda o link no grupo dele; quem clica cai aqui depois de logar.
+// NAO entra sozinho de propósito — a pessoa precisa ver o que está aceitando,
+// porque a partir dali o dono passa a enxergar o lucro dela.
+async function grpConviteDoLink(){
+  var cod = null;
+  try { cod = localStorage.getItem('bancapro-grupo-convite'); } catch(e){}
+  if (!cod) return;
+  var sb = getSb();
+  if (!sb) return;
+
+  var ok = false;
+  try {
+    ok = await customConfirm(
+      'Você foi convidado para um ranking de grupo (código ' + cod + ').\n\n'
+      + 'Entrando, o dono do grupo passa a ver seu nome e o lucro que você registrar a partir de hoje. '
+      + 'Ele não vê suas transações, não mexe na sua conta, e você pode sair quando quiser.',
+      'Entrar no grupo?', 'Entrar', false);
+  } catch(e){ ok = false; }
+
+  // Independente da resposta, o convite nao fica perseguindo a pessoa
+  try { localStorage.removeItem('bancapro-grupo-convite'); } catch(e){}
+  if (!ok) return;
+
+  try {
+    var r = await sb.rpc('entrar_no_grupo_ranking', { p_codigo: cod });
+    if (r.error) throw r.error;
+    var nome = (r.data && r.data[0] && r.data[0].nome) || 'grupo';
+    showToast('Você entrou em ' + nome + '! 🎯', 'success');
+    if (typeof goTo === 'function') goTo('grupos');
+  } catch(e){ showToast(grpMsgErro(e), 'error'); }
+}
+
+// Link pronto pra o dono mandar no WhatsApp do grupo dele
+function grpLinkConvite(codigo){
+  return location.origin + '/?grupo=' + codigo;
+}
+async function grpCopiarConvite(codigo, nome){
+  var link = grpLinkConvite(codigo);
+  var msg = 'Entra no ranking do ' + nome + ' no Apostack e concorre às premiações: ' + link;
+  try {
+    await navigator.clipboard.writeText(msg);
+    showToast('Convite copiado! É só colar no grupo. 📋', 'success');
+  } catch(e){ showToast(link, 'info'); }
 }

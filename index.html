@@ -14,6 +14,18 @@
 <script>
 (function smartRedirect(){
   try {
+    // GUARDA OS CODIGOS ANTES DE QUALQUER REDIRECIONAMENTO.
+    // Bug antigo: visitante SEM conta que chegava por link de indicacao era
+    // mandado pra /landing e o ?ref= morria no caminho — o afiliado perdia a
+    // comissao de todo mundo que ainda nao tinha cadastro. O mesmo valia pro
+    // convite de grupo. Aqui salvamos antes do replace; o script.js usa depois.
+    try {
+      var _q = new URLSearchParams(location.search);
+      var _r = _q.get('ref');
+      if (_r && _r.trim()) localStorage.setItem('bancapro-ref', _r.trim());
+      var _g = _q.get('grupo');
+      if (_g && _g.trim()) localStorage.setItem('bancapro-grupo-convite', _g.trim().toUpperCase());
+    } catch(e){}
     // Se URL tem ?modo=X, user veio da landing intencionalmente — fica
     if (location.search && /\bmodo=(cadastro|register|recuperar|reset|login|entrar)\b/i.test(location.search)) return;
     // Se URL tem ?assinatura=ok (retorno do Kirvano) — fica
@@ -100,8 +112,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
-<link rel="stylesheet" href="style.css?v=262"/>
-<link rel="stylesheet" href="light.css?v=262"/>
+<link rel="stylesheet" href="style.css?v=263"/>
+<link rel="stylesheet" href="light.css?v=263"/>
 </head>
 <body>
 
@@ -2672,9 +2684,9 @@
   </div>
 </div>
 
-<script src="config.js?v=262" defer></script>
-<script src="storage.js?v=262" defer></script>
-<script src="script.js?v=262" defer></script>
+<script src="config.js?v=263" defer></script>
+<script src="storage.js?v=263" defer></script>
+<script src="script.js?v=263" defer></script>
 
 <!-- ════════════════════════════════════════════
      Service Worker — habilita PWA instalavel

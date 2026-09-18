@@ -28,7 +28,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
-  <link rel="stylesheet" href="/landing.css?v=262"/>
+  <link rel="stylesheet" href="/landing.css?v=263"/>
 
   <!-- Meta Pixel Code -->
   <script>
@@ -49,6 +49,21 @@
   <!-- End Meta Pixel Code -->
 </head>
 <body class="lp-body">
+<script>
+// Guarda codigo de indicacao (?ref) e convite de grupo (?grupo) quando a
+// pessoa cai direto na pagina de vendas. Sem isto, quem chega pelo link de
+// um afiliado e so depois se cadastra entrava "sem dono" — e o afiliado
+// perdia a comissao.
+(function(){
+  try {
+    var q = new URLSearchParams(location.search);
+    var r = q.get('ref');
+    if (r && r.trim()) localStorage.setItem('bancapro-ref', r.trim());
+    var g = q.get('grupo');
+    if (g && g.trim()) localStorage.setItem('bancapro-grupo-convite', g.trim().toUpperCase());
+  } catch(e){}
+})();
+</script>
 <!-- Google Tag Manager (noscript) -->
 <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-MZK3KB8X"
 height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
