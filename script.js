@@ -486,8 +486,16 @@ async function enterApp(user) {
   try { cachePlanLabel(user); } catch(e){}
   // Onboarding: mostra welcome modal na 1a visita autenticada
   try { if (typeof maybeShowWelcome === 'function') maybeShowWelcome(); } catch(e){}
-  // Chegou por um link de convite de grupo? pergunta depois que a tela assentou
-  setTimeout(function(){ try { if (typeof grpConviteDoLink === 'function') grpConviteDoLink(); } catch(e){} }, 1200);
+  // Chegou por um link de convite de grupo? pergunta depois que a tela assentou.
+  // Se nao veio por convite, tenta a entrada automatica no grupo de quem indicou.
+  setTimeout(function(){
+    try {
+      var temConvite = false;
+      try { temConvite = !!localStorage.getItem('bancapro-grupo-convite'); } catch(e){}
+      if (temConvite && typeof grpConviteDoLink === 'function') grpConviteDoLink();
+      else if (typeof grpEntrarPeloAfiliado === 'function') grpEntrarPeloAfiliado();
+    } catch(e){}
+  }, 1200);
   // Tour guiado de 12 passos pra usuarios novos (zero/poucas transacoes).
   // Veteranos sao auto-marcados como "ja viu" silenciosamente.
   try { if (typeof maybeStartTour === 'function') maybeStartTour(); } catch(e){}
@@ -2236,7 +2244,10 @@ function goTo(section, el) {
   if(section === 'reports') setTimeout(initReportCharts, 100);
   if(section === 'compare') setTimeout(initCompareChart, 100);
   if(section === 'methods') setTimeout(initMethodEvolution, 100);
-  if(section === 'ranking') setTimeout(function(){ if(typeof renderUserRanking==='function') renderUserRanking(); }, 60);
+  if(section === 'ranking') setTimeout(function(){
+    if(typeof renderUserRanking==='function') renderUserRanking();
+    if(typeof renderRankingGrupos==='function') renderRankingGrupos();
+  }, 60);
   else if(typeof rankStopLivePolling === 'function') rankStopLivePolling(); // para polling ao sair da aba ranking
   if(section === 'dashboard') setTimeout(function(){ if(typeof rankUpdateDashCard==='function') rankUpdateDashCard(); }, 100);
   if(section === 'grupos') setTimeout(function(){ if(typeof renderGrupos==='function') renderGrupos(); }, 60);
@@ -9942,36 +9953,7 @@ async function grpVerRanking(id, ehDono){
     var f = await sb.rpc('faixas_do_grupo', { p_grupo_id: id });
     var faixas = (f && f.data) || [];
 
-    var html = '<div class="grp-rank-wrap"><table class="grp-rank">'
-             + '<thead><tr><th>#</th><th>Aluno</th><th class="grp-num">Lucro</th><th>Faixa</th><th>Próxima</th></tr></thead><tbody>';
-    linhas.forEach(function(l, i){
-      var lucro = Number(l.lucro) || 0;
-      var medalha = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : (i + 1);
-      var quem = grpEsc(l.display_name || '—');
-      if (ehDono && l.email) quem += '<div class="grp-email">' + grpEsc(l.email) + '</div>';
-      html += '<tr>'
-           +   '<td class="grp-pos">' + medalha + '</td>'
-           +   '<td>' + quem + '<div class="grp-desde">desde ' + grpData(l.entrou_em) + '</div></td>'
-           +   '<td class="grp-num ' + (lucro >= 0 ? 'grp-pos-v' : 'grp-neg-v') + '">' + grpMoeda(lucro) + '</td>'
-           +   '<td>' + (l.premio_atingido
-                  ? '<span class="grp-badge">' + grpEsc(l.premio_atingido) + '</span><div class="grp-desde">' + grpMoeda(l.faixa_atingida) + '</div>'
-                  : '<span class="grp-badge-off">—</span>') + '</td>'
-           +   '<td>' + (l.proxima_faixa
-                  ? grpMoeda(l.proxima_faixa) + '<div class="grp-desde">faltam ' + grpMoeda(Number(l.proxima_faixa) - lucro) + '</div>'
-                  : '<span class="grp-desde">todas batidas</span>') + '</td>'
-           + '</tr>';
-    });
-    html += '</tbody></table></div>';
-
-    if (faixas.length){
-      html += '<div class="grp-faixas-resumo"><b>Premiação:</b> ' + faixas.map(function(x){
-        return grpEsc(x.premio) + ' aos ' + grpMoeda(x.meta);
-      }).join(' · ') + '</div>';
-    } else if (ehDono){
-      html += '<div class="grp-faixas-resumo">Você ainda não cadastrou as faixas de premiação. Clique em <b>Faixas</b> para definir.</div>';
-    }
-    html += '<div class="grp-rodape">Lucro contado a partir do dia em que cada aluno entrou no grupo.</div>';
-    box.innerHTML = html;
+    box.innerHTML = grpHtmlRanking(linhas, faixas, ehDono);
   } catch(e){
     box.innerHTML = '<div class="grp-vazio">' + grpEsc(grpMsgErro(e)) + '</div>';
   }
@@ -10151,4 +10133,118 @@ async function grpCopiarConvite(codigo, nome){
     await navigator.clipboard.writeText(msg);
     showToast('Convite copiado! É só colar no grupo. 📋', 'success');
   } catch(e){ showToast(link, 'info'); }
+}
+
+// Monta a tabela do ranking de um grupo. Usada em dois lugares: no painel
+// da aba Grupos (gestao) e dentro da aba Ranking (onde o aluno realmente olha).
+function grpHtmlRanking(linhas, faixas, ehDono){
+  var html = '<div class="grp-rank-wrap"><table class="grp-rank">'
+           + '<thead><tr><th>#</th><th>Aluno</th><th class="grp-num">Lucro</th><th>Faixa</th><th>Próxima</th></tr></thead><tbody>';
+  var meuEmail = '';
+  try { meuEmail = ((currentAuthUser && currentAuthUser.email)
+                    || localStorage.getItem('bancapro-user-email') || '').toLowerCase(); } catch(e){}
+  var meuNome = '';
+  try { meuNome = (localStorage.getItem('bancapro-display-name') || '').toLowerCase(); } catch(e){}
+
+  (linhas || []).forEach(function(l, i){
+    var lucro = Number(l.lucro) || 0;
+    var medalha = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : (i + 1);
+    var quem = grpEsc(l.display_name || '—');
+    if (ehDono && l.email) quem += '<div class="grp-email">' + grpEsc(l.email) + '</div>';
+    // destaca a linha da propria pessoa pra ela se achar na lista
+    var souEu = (l.email && meuEmail && String(l.email).toLowerCase() === meuEmail)
+             || (!l.email && meuNome && String(l.display_name || '').toLowerCase() === meuNome);
+    if (souEu) quem += ' <span class="grp-voce">VOCÊ</span>';
+    html += '<tr' + (souEu ? ' class="grp-linha-voce"' : '') + '>'
+         +   '<td class="grp-pos">' + medalha + '</td>'
+         +   '<td>' + quem + '<div class="grp-desde">desde ' + grpData(l.entrou_em) + '</div></td>'
+         +   '<td class="grp-num ' + (lucro >= 0 ? 'grp-pos-v' : 'grp-neg-v') + '">' + grpMoeda(lucro) + '</td>'
+         +   '<td>' + (l.premio_atingido
+                ? '<span class="grp-badge">' + grpEsc(l.premio_atingido) + '</span><div class="grp-desde">' + grpMoeda(l.faixa_atingida) + '</div>'
+                : '<span class="grp-badge-off">—</span>') + '</td>'
+         +   '<td>' + (l.proxima_faixa
+                ? grpMoeda(l.proxima_faixa) + '<div class="grp-desde">faltam ' + grpMoeda(Number(l.proxima_faixa) - lucro) + '</div>'
+                : '<span class="grp-desde">todas batidas</span>') + '</td>'
+         + '</tr>';
+  });
+  html += '</tbody></table></div>';
+
+  if (faixas && faixas.length){
+    html += '<div class="grp-faixas-resumo"><b>Premiação:</b> ' + faixas.map(function(x){
+      return grpEsc(x.premio) + ' aos ' + grpMoeda(x.meta);
+    }).join(' · ') + '</div>';
+  } else if (ehDono){
+    html += '<div class="grp-faixas-resumo">Você ainda não cadastrou as faixas de premiação. Abra a aba <b>Grupos</b> e clique em <b>Faixas</b>.</div>';
+  }
+  html += '<div class="grp-rodape">Lucro contado a partir do dia em que cada aluno entrou no grupo.</div>';
+  return html;
+}
+
+// ─── Ranking dos grupos DENTRO da aba Ranking ───
+// Pedido dos afiliados (18/09/26): o pessoal deles quer ver o ranking da
+// comunidade onde já olha ranking, e não escondido numa aba separada.
+async function renderRankingGrupos(){
+  var box = document.getElementById('rankGrupoBox');
+  if (!box) return;
+  var sb = getSb();
+  if (!sb){ box.innerHTML = ''; return; }
+  try {
+    var r1 = await sb.rpc('grupos_que_participo');
+    var r2 = await sb.rpc('meus_grupos_ranking');
+    var participo = (r1 && r1.data) || [];
+    var meus      = (r2 && r2.data) || [];
+
+    var lista = [];
+    participo.forEach(function(g){ lista.push({ id: g.id, nome: g.nome, dono: false }); });
+    meus.forEach(function(g){ lista.push({ id: g.id, nome: g.nome, dono: true }); });
+    if (!lista.length){ box.innerHTML = ''; return; }
+
+    var partes = [];
+    for (var i = 0; i < lista.length; i++){
+      var g = lista[i];
+      var rr = await sb.rpc('ranking_do_grupo', { p_grupo_id: g.id });
+      var linhas = (rr && rr.data) || [];
+      var ff = await sb.rpc('faixas_do_grupo', { p_grupo_id: g.id });
+      var faixas = (ff && ff.data) || [];
+      partes.push(
+        '<div class="grp-rank-card">'
+        + '<div class="grp-rank-card-head">'
+        +   '<div class="grp-rank-card-nome">' + grpEsc(g.nome) + '</div>'
+        +   '<div class="grp-rank-card-tag">' + (g.dono ? 'seu grupo' : 'você participa') + '</div>'
+        + '</div>'
+        + (linhas.length
+            ? grpHtmlRanking(linhas, faixas, g.dono)
+            : '<div class="grp-vazio">Ninguém entrou nesse grupo ainda.</div>')
+        + '</div>');
+    }
+    box.innerHTML = partes.join('');
+  } catch(e){
+    console.warn('renderRankingGrupos:', e);
+    box.innerHTML = '';
+  }
+}
+
+// Entrada automatica no grupo de quem indicou (pedido dos afiliados, 18/09/26).
+// Quem se cadastra pelo link do afiliado cai direto no ranking dele — sem
+// digitar codigo. O banco resolve o vinculo (tabela referrals -> grupo do
+// indicador); aqui a gente so avisa a pessoa UMA vez, porque a partir dali o
+// dono passa a ver o lucro dela. Avisar nao e opcional: e o minimo decente.
+async function grpEntrarPeloAfiliado(){
+  var sb = getSb();
+  if (!sb) return;
+  try {
+    var r = await sb.rpc('entrar_no_grupo_do_indicador');
+    if (r.error || !r.data || !r.data.length) return;
+    var g = r.data[0];
+    var nome = g.nome || 'grupo';
+    var chave = 'bancapro-avisou-grupo-' + (g.grupo_id || nome);
+    try { if (localStorage.getItem(chave) === '1') return; } catch(e){}
+    try { localStorage.setItem(chave, '1'); } catch(e){}
+    await customConfirm(
+      'Você entrou no ranking do ' + nome + ', da pessoa que te indicou o Apostack.\n\n'
+      + 'O dono do grupo vê seu nome e o lucro que você registrar a partir de hoje. '
+      + 'Ele não vê suas transações nem mexe na sua conta.\n\n'
+      + 'Não quer participar? Abra a aba Grupos e toque em Sair.',
+      'Você está no ranking do grupo', 'Entendi', false);
+  } catch(e){ /* nunca atrapalha a entrada no app */ }
 }

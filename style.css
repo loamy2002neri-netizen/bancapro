@@ -4921,3 +4921,15 @@ html { -webkit-text-size-adjust:100%; text-size-adjust:100%; }
 .grp-btn-apagar{color:var(--red)}
 /* Mensagem do modal de confirmação respeita as quebras de linha do texto */
 #confirmMessage{white-space:pre-line}
+
+/* Ranking do grupo dentro da aba Ranking */
+.grp-rank-card{background:var(--bg-card);border:1px solid var(--border);border-radius:16px;
+  padding:16px 18px;margin-bottom:16px;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+.grp-rank-card-head{display:flex;align-items:center;justify-content:space-between;gap:10px;
+  flex-wrap:wrap;margin-bottom:10px}
+.grp-rank-card-nome{font-weight:800;font-size:16px;color:var(--text-primary)}
+.grp-rank-card-tag{font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:var(--text-muted);
+  border:1px solid var(--border);border-radius:999px;padding:3px 10px}
+.grp-voce{display:inline-block;font-size:10px;font-weight:800;letter-spacing:.5px;
+  background:var(--accent);color:#fff;border-radius:999px;padding:2px 7px;vertical-align:middle}
+.grp-linha-voce td{background:rgba(247,147,30,.06)}

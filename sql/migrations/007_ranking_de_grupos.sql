@@ -374,3 +374,41 @@ begin
   return query select v_id, v_nome;
 end;
 $fn$;
+
+-- ─── Entrada automatica no grupo de quem indicou (18/09/26) ───
+-- Pedido dos afiliados: quem se cadastra pelo link deles tem que cair no
+-- ranking deles sem digitar codigo. O vinculo ja existe na tabela referrals;
+-- aqui a gente so pega o grupo mais antigo do indicador e insere a pessoa.
+-- Idempotente: pode rodar em todo login sem duplicar.
+create or replace function public.entrar_no_grupo_do_indicador()
+returns table(grupo_id uuid, nome text)
+language plpgsql security definer set search_path = public, auth as $fn$
+declare
+  v_eu   text := public.quem_sou_eu();
+  v_dono text;
+  v_id   uuid;
+  v_nome text;
+begin
+  if v_eu = '' then return; end if;
+  select lower(r.referrer_email) into v_dono
+    from public.referrals r
+   where lower(r.referred_email) = v_eu and r.referrer_email is not null
+   limit 1;
+  if v_dono is null or v_dono = v_eu then return; end if;
+
+  select g.id, g.nome into v_id, v_nome
+    from public.ranking_groups g
+   where lower(g.dono_email) = v_dono
+   order by g.criado_em
+   limit 1;
+  if v_id is null then return; end if;
+
+  insert into public.ranking_group_members (grupo_id, email)
+  values (v_id, v_eu)
+  on conflict on constraint ranking_group_members_pkey do nothing;
+
+  return query select v_id, v_nome;
+end;
+$fn$;
+
+grant execute on function public.entrar_no_grupo_do_indicador() to authenticated;
