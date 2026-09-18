@@ -100,8 +100,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
-<link rel="stylesheet" href="style.css?v=258"/>
-<link rel="stylesheet" href="light.css?v=258"/>
+<link rel="stylesheet" href="style.css?v=259"/>
+<link rel="stylesheet" href="light.css?v=259"/>
 </head>
 <body>
 
@@ -544,6 +544,7 @@
       <div class="nav-item" onclick="goTo('settings',this)"><span class="nav-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 01-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg></span>Configurações</div>
       <div class="nav-item" onclick="goTo('help',this)"><span class="nav-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></span>Ajuda</div>
       <div class="nav-item" id="navAfiliado" onclick="goTo('afiliado',this)" style="display:none"><span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg></span>Minhas Indicações</div>
+      <div class="nav-item" onclick="goTo('grupos',this)"><span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2"/><circle cx="9.5" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg></span>Grupos</div>
       <div class="nav-item" id="navAdmin" onclick="goTo('admin',this)" style="display:none"><span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M12 2l8 4v6c0 5-3.5 9-8 10-4.5-1-8-5-8-10V6l8-4z"/><path d="M9 12l2 2 4-4"/></svg></span>Admin</div>
       <div class="nav-item" id="navAfiliados" onclick="goTo('afiliados',this)" style="display:none"><span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg></span>Afiliados</div>
     </div>
@@ -2339,6 +2340,37 @@
         </div>
       </div>
 
+      <!-- ═══ GRUPOS (ranking fechado de comunidade) ═══ -->
+      <div class="section" id="sec-grupos">
+        <div class="page-header">
+          <div class="page-title">Grupos</div>
+          <div class="page-subtitle">Ranking fechado da sua comunidade, com faixas de premiação</div>
+        </div>
+
+        <div class="form-card">
+          <div class="form-card-title">Entrar em um grupo</div>
+          <div class="grp-hint">Recebeu um código do dono do seu grupo? Digite abaixo para entrar no ranking dele.</div>
+          <div class="grp-row">
+            <input class="form-input grp-code-input" id="grpCodigoInput" maxlength="6" placeholder="EX: K7P2QX" oninput="this.value=this.value.toUpperCase().replace(/[^A-Z0-9]/g,'')">
+            <button class="btn-primary grp-btn" onclick="grpEntrar()">Entrar</button>
+          </div>
+          <div class="grp-aviso">Ao entrar, o dono do grupo passa a ver seu nome e o lucro que você registrar <b>a partir de hoje</b>. Ele não vê suas transações nem consegue alterar nada na sua conta — e você pode sair quando quiser.</div>
+        </div>
+
+        <div id="grpParticipando"></div>
+
+        <div class="form-card">
+          <div class="form-card-title">Tenho uma comunidade</div>
+          <div class="grp-hint">Crie o grupo, defina as faixas de premiação e passe o código para seus alunos.</div>
+          <div class="grp-row">
+            <input class="form-input" id="grpNomeInput" maxlength="60" placeholder="Nome do grupo (ex: Time King Métodos)">
+            <button class="btn-primary grp-btn" onclick="grpCriar()">Criar</button>
+          </div>
+        </div>
+
+        <div id="grpMeusGrupos"></div>
+      </div>
+
     </div><!-- /page-content -->
 
     <!-- ═══ BOTTOM TAB BAR (MOBILE — feel like a native app) ═══ -->
@@ -2638,9 +2670,9 @@
   </div>
 </div>
 
-<script src="config.js?v=258" defer></script>
-<script src="storage.js?v=258" defer></script>
-<script src="script.js?v=258" defer></script>
+<script src="config.js?v=259" defer></script>
+<script src="storage.js?v=259" defer></script>
+<script src="script.js?v=259" defer></script>
 
 <!-- ════════════════════════════════════════════
      Service Worker — habilita PWA instalavel

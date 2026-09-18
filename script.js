@@ -2219,7 +2219,7 @@ function goTo(section, el) {
       if(n.textContent.toLowerCase().includes(section.toLowerCase())) n.classList.add('active');
     });
   }
-  const labels = {dashboard:'Dashboard',methods:'Categoria',transactions:'Transações',accounts:'Contas Depositadas',recharge:'Assinatura',reports:'Relatórios',goals:'Metas',compare:'Comparativo',calculadora:'Calculadora',anotacoes:'Anotações',ranking:'Ranking',settings:'Configurações',help:'Ajuda',admin:'Admin',afiliado:'Minhas Indicações',afiliados:'Afiliados',personalizar:'Personalizar'};
+  const labels = {dashboard:'Dashboard',methods:'Categoria',transactions:'Transações',accounts:'Contas Depositadas',recharge:'Assinatura',reports:'Relatórios',goals:'Metas',compare:'Comparativo',calculadora:'Calculadora',anotacoes:'Anotações',ranking:'Ranking',grupos:'Grupos',settings:'Configurações',help:'Ajuda',admin:'Admin',afiliado:'Minhas Indicações',afiliados:'Afiliados',personalizar:'Personalizar'};
   var _bc = document.getElementById('breadcrumb'); if(_bc) _bc.textContent = labels[section] || section;
   closeSidebar();
   if(section === 'reports') setTimeout(initReportCharts, 100);
@@ -2228,6 +2228,7 @@ function goTo(section, el) {
   if(section === 'ranking') setTimeout(function(){ if(typeof renderUserRanking==='function') renderUserRanking(); }, 60);
   else if(typeof rankStopLivePolling === 'function') rankStopLivePolling(); // para polling ao sair da aba ranking
   if(section === 'dashboard') setTimeout(function(){ if(typeof rankUpdateDashCard==='function') rankUpdateDashCard(); }, 100);
+  if(section === 'grupos') setTimeout(function(){ if(typeof renderGrupos==='function') renderGrupos(); }, 60);
   if(section === 'recharge') setTimeout(updateTrialBanner, 50);
   if(section === 'settings') { setTimeout(renderSubscriptionCard, 50); setTimeout(applyAvatar, 50); }
   if(section === 'personalizar') setTimeout(renderCardCustomizer, 50);
@@ -9738,4 +9739,300 @@ function toggleFaq(btn){
     const all = item.parentElement ? item.parentElement.querySelectorAll('.help-faq-item.is-open') : [];
     all.forEach(it => { if (it !== item){ it.classList.remove('is-open'); const b = it.querySelector('.help-faq-q'); if (b) b.setAttribute('aria-expanded','false'); } });
   }
+}
+
+// ══════════════════════════════════════════════════════════════
+//  GRUPOS — ranking fechado de comunidade
+//  Pedido dos donos de grupo (18/09/26): acompanhar o lucro dos alunos
+//  e premiar por faixa (10k, 50k, 100k...). Regras:
+//    • metrica = lucro acumulado a partir da data em que o aluno entrou
+//    • cada dono define as proprias faixas
+//    • sobre os alunos o dono so OBSERVA (nao remove, nao edita)
+//  Tudo passa pelas funcoes do banco (migration 007), que conferem
+//  quem esta chamando — a tela aqui e so a cara disso.
+// ══════════════════════════════════════════════════════════════
+var _grpCache = { dono: [], membro: [] };
+
+function grpMoeda(v){
+  try { return fmtBRL(Number(v) || 0); } catch(e){ return 'R$ ' + (Number(v)||0).toFixed(2); }
+}
+function grpEsc(s){
+  try { return escapeHtml(String(s == null ? '' : s)); }
+  catch(e){ return String(s == null ? '' : s).replace(/[&<>"]/g, function(c){
+    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
+}
+
+async function renderGrupos(){
+  var partEl = document.getElementById('grpParticipando');
+  var meusEl = document.getElementById('grpMeusGrupos');
+  if (!partEl || !meusEl) return;
+  var sb = getSb();
+  if (!sb){
+    meusEl.innerHTML = '<div class="form-card"><div class="grp-hint">Os grupos precisam de conta na nuvem para funcionar. Faça login para usar essa parte.</div></div>';
+    partEl.innerHTML = '';
+    return;
+  }
+  partEl.innerHTML = '<div class="grp-loading">Carregando…</div>';
+  meusEl.innerHTML = '';
+  try {
+    var r1 = await sb.rpc('meus_grupos_ranking');
+    var r2 = await sb.rpc('grupos_que_participo');
+    _grpCache.dono   = (r1 && r1.data) || [];
+    _grpCache.membro = (r2 && r2.data) || [];
+    grpRenderMembro();
+    grpRenderDono();
+  } catch(e){
+    console.warn('renderGrupos:', e);
+    partEl.innerHTML = '<div class="form-card"><div class="grp-hint">Não deu para carregar seus grupos agora. Tente de novo em instantes.</div></div>';
+  }
+}
+
+function grpRenderMembro(){
+  var el = document.getElementById('grpParticipando');
+  if (!el) return;
+  if (!_grpCache.membro.length){ el.innerHTML = ''; return; }
+  var html = '<div class="form-card"><div class="form-card-title">Grupos que você participa</div>';
+  _grpCache.membro.forEach(function(g){
+    html += '<div class="grp-item">'
+         +   '<div class="grp-item-main"><div class="grp-item-nome">' + grpEsc(g.nome) + '</div>'
+         +     '<div class="grp-item-sub">desde ' + grpData(g.entrou_em) + '</div></div>'
+         +   '<div class="grp-item-acoes">'
+         +     '<button class="btn-ghost grp-btn-sm" onclick="grpVerRanking(\'' + g.id + '\',false)">Ver ranking</button>'
+         +     '<button class="btn-ghost grp-btn-sm" onclick="grpSair(\'' + g.id + '\')">Sair</button>'
+         +   '</div>'
+         + '</div>'
+         + '<div class="grp-painel" id="grp-painel-' + g.id + '"></div>';
+  });
+  el.innerHTML = html + '</div>';
+}
+
+function grpRenderDono(){
+  var el = document.getElementById('grpMeusGrupos');
+  if (!el) return;
+  if (!_grpCache.dono.length){ el.innerHTML = ''; return; }
+  var html = '<div class="form-card"><div class="form-card-title">Meus grupos</div>';
+  _grpCache.dono.forEach(function(g){
+    var n = Number(g.membros) || 0;
+    html += '<div class="grp-item">'
+         +   '<div class="grp-item-main">'
+         +     '<div class="grp-item-nome">' + grpEsc(g.nome) + '</div>'
+         +     '<div class="grp-item-sub">' + n + (n === 1 ? ' aluno' : ' alunos') + ' · código <b class="grp-cod">' + grpEsc(g.codigo) + '</b></div>'
+         +   '</div>'
+         +   '<div class="grp-item-acoes">'
+         +     '<button class="btn-ghost grp-btn-sm" onclick="grpCopiarCodigo(\'' + grpEsc(g.codigo) + '\')">Copiar código</button>'
+         +     '<button class="btn-ghost grp-btn-sm" onclick="grpVerRanking(\'' + g.id + '\',true)">Ver ranking</button>'
+         +     '<button class="btn-ghost grp-btn-sm" onclick="grpAbrirFaixas(\'' + g.id + '\')">Faixas</button>'
+         +   '</div>'
+         + '</div>'
+         + '<div class="grp-painel" id="grp-painel-' + g.id + '"></div>';
+  });
+  el.innerHTML = html + '</div>';
+}
+
+function grpData(iso){
+  try {
+    var d = new Date(iso);
+    return d.toLocaleDateString('pt-BR', { day:'2-digit', month:'2-digit', year:'numeric' });
+  } catch(e){ return '—'; }
+}
+
+function grpCopiarCodigo(cod){
+  try {
+    navigator.clipboard.writeText(cod);
+    showToast('Código ' + cod + ' copiado! 📋', 'success');
+  } catch(e){ showToast('Código: ' + cod, 'info'); }
+}
+
+async function grpCriar(){
+  var inp = document.getElementById('grpNomeInput');
+  var nome = (inp && inp.value || '').trim();
+  if (!nome){ showToast('Dê um nome ao grupo.', 'error'); return; }
+  var sb = getSb();
+  if (!sb){ showToast('Precisa estar logado na nuvem.', 'error'); return; }
+  try {
+    var r = await sb.rpc('criar_grupo_ranking', { p_nome: nome });
+    if (r.error) throw r.error;
+    if (inp) inp.value = '';
+    var cod = (r.data && r.data[0] && r.data[0].codigo) || '';
+    showToast('Grupo criado! Código: ' + cod, 'success');
+    await renderGrupos();
+  } catch(e){
+    showToast(grpMsgErro(e), 'error');
+  }
+}
+
+async function grpEntrar(){
+  var inp = document.getElementById('grpCodigoInput');
+  var cod = (inp && inp.value || '').trim().toUpperCase();
+  if (cod.length < 4){ showToast('Digite o código do grupo.', 'error'); return; }
+  var sb = getSb();
+  if (!sb){ showToast('Precisa estar logado na nuvem.', 'error'); return; }
+  try {
+    var r = await sb.rpc('entrar_no_grupo_ranking', { p_codigo: cod });
+    if (r.error) throw r.error;
+    var nome = (r.data && r.data[0] && r.data[0].nome) || 'grupo';
+    if (inp) inp.value = '';
+    showToast('Você entrou em ' + nome + '! 🎯', 'success');
+    await renderGrupos();
+  } catch(e){
+    showToast(grpMsgErro(e), 'error');
+  }
+}
+
+async function grpSair(id){
+  if (!confirm('Sair deste grupo? O dono deixa de ver seus resultados.')) return;
+  var sb = getSb();
+  if (!sb) return;
+  try {
+    var r = await sb.rpc('sair_do_grupo_ranking', { p_grupo_id: id });
+    if (r.error) throw r.error;
+    showToast('Você saiu do grupo.', 'success');
+    await renderGrupos();
+  } catch(e){ showToast(grpMsgErro(e), 'error'); }
+}
+
+function grpMsgErro(e){
+  var m = (e && (e.message || e.msg)) || '';
+  if (/codigo nao encontrado/i.test(m))   return 'Código não encontrado. Confira com o dono do grupo.';
+  if (/voce e o dono/i.test(m))           return 'Você é o dono desse grupo — ele já aparece em "Meus grupos".';
+  if (/limite de 5 grupos/i.test(m))      return 'Você já tem 5 grupos, que é o limite por conta.';
+  if (/precisa estar logado/i.test(m))    return 'Faça login para usar os grupos.';
+  if (/esse grupo nao e seu|sem acesso/i.test(m)) return 'Esse grupo não é seu.';
+  return m || 'Não deu certo. Tente de novo.';
+}
+
+// ─── Painel: ranking do grupo ───
+async function grpVerRanking(id, ehDono){
+  var box = document.getElementById('grp-painel-' + id);
+  if (!box) return;
+  if (box.dataset.aberto === 'ranking'){ box.innerHTML = ''; box.dataset.aberto = ''; return; }
+  box.dataset.aberto = 'ranking';
+  box.innerHTML = '<div class="grp-loading">Carregando ranking…</div>';
+  var sb = getSb();
+  if (!sb) return;
+  try {
+    var r = await sb.rpc('ranking_do_grupo', { p_grupo_id: id });
+    if (r.error) throw r.error;
+    var linhas = r.data || [];
+    if (!linhas.length){
+      box.innerHTML = '<div class="grp-vazio">Ninguém entrou nesse grupo ainda. Compartilhe o código com seus alunos.</div>';
+      return;
+    }
+    var f = await sb.rpc('faixas_do_grupo', { p_grupo_id: id });
+    var faixas = (f && f.data) || [];
+
+    var html = '<div class="grp-rank-wrap"><table class="grp-rank">'
+             + '<thead><tr><th>#</th><th>Aluno</th><th class="grp-num">Lucro</th><th>Faixa</th><th>Próxima</th></tr></thead><tbody>';
+    linhas.forEach(function(l, i){
+      var lucro = Number(l.lucro) || 0;
+      var medalha = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : (i + 1);
+      var quem = grpEsc(l.display_name || '—');
+      if (ehDono && l.email) quem += '<div class="grp-email">' + grpEsc(l.email) + '</div>';
+      html += '<tr>'
+           +   '<td class="grp-pos">' + medalha + '</td>'
+           +   '<td>' + quem + '<div class="grp-desde">desde ' + grpData(l.entrou_em) + '</div></td>'
+           +   '<td class="grp-num ' + (lucro >= 0 ? 'grp-pos-v' : 'grp-neg-v') + '">' + grpMoeda(lucro) + '</td>'
+           +   '<td>' + (l.premio_atingido
+                  ? '<span class="grp-badge">' + grpEsc(l.premio_atingido) + '</span><div class="grp-desde">' + grpMoeda(l.faixa_atingida) + '</div>'
+                  : '<span class="grp-badge-off">—</span>') + '</td>'
+           +   '<td>' + (l.proxima_faixa
+                  ? grpMoeda(l.proxima_faixa) + '<div class="grp-desde">faltam ' + grpMoeda(Number(l.proxima_faixa) - lucro) + '</div>'
+                  : '<span class="grp-desde">todas batidas</span>') + '</td>'
+           + '</tr>';
+    });
+    html += '</tbody></table></div>';
+
+    if (faixas.length){
+      html += '<div class="grp-faixas-resumo"><b>Premiação:</b> ' + faixas.map(function(x){
+        return grpEsc(x.premio) + ' aos ' + grpMoeda(x.meta);
+      }).join(' · ') + '</div>';
+    } else if (ehDono){
+      html += '<div class="grp-faixas-resumo">Você ainda não cadastrou as faixas de premiação. Clique em <b>Faixas</b> para definir.</div>';
+    }
+    html += '<div class="grp-rodape">Lucro contado a partir do dia em que cada aluno entrou no grupo.</div>';
+    box.innerHTML = html;
+  } catch(e){
+    box.innerHTML = '<div class="grp-vazio">' + grpEsc(grpMsgErro(e)) + '</div>';
+  }
+}
+
+// ─── Painel: faixas de premiação (só o dono) ───
+async function grpAbrirFaixas(id){
+  var box = document.getElementById('grp-painel-' + id);
+  if (!box) return;
+  if (box.dataset.aberto === 'faixas'){ box.innerHTML = ''; box.dataset.aberto = ''; return; }
+  box.dataset.aberto = 'faixas';
+  box.innerHTML = '<div class="grp-loading">Carregando faixas…</div>';
+  var sb = getSb();
+  if (!sb) return;
+  try {
+    var r = await sb.rpc('faixas_do_grupo', { p_grupo_id: id });
+    if (r.error) throw r.error;
+    var faixas = (r.data || []).map(function(x){ return { meta: Number(x.meta), premio: x.premio }; });
+    if (!faixas.length){
+      faixas = [ { meta: 10000, premio: 'Pulseira' },
+                 { meta: 50000, premio: 'Placa' },
+                 { meta: 100000, premio: 'Troféu' } ];
+    }
+    box.innerHTML = '<div class="grp-faixas-edit" id="grp-faixas-' + id + '"></div>'
+                  + '<div class="grp-faixas-acoes">'
+                  +   '<button class="btn-ghost grp-btn-sm" onclick="grpAddFaixa(\'' + id + '\')">+ Faixa</button>'
+                  +   '<button class="btn-primary grp-btn-sm" onclick="grpSalvarFaixas(\'' + id + '\')">Salvar faixas</button>'
+                  + '</div>'
+                  + '<div class="grp-rodape">Sugestão inicial preenchida. Ajuste os valores e os prêmios do seu jeito — cada grupo tem a própria campanha.</div>';
+    grpDesenharFaixas(id, faixas);
+  } catch(e){
+    box.innerHTML = '<div class="grp-vazio">' + grpEsc(grpMsgErro(e)) + '</div>';
+  }
+}
+
+function grpDesenharFaixas(id, faixas){
+  var el = document.getElementById('grp-faixas-' + id);
+  if (!el) return;
+  el.innerHTML = faixas.map(function(f, i){
+    return '<div class="grp-faixa-linha">'
+         +   '<input class="form-input grp-faixa-meta" type="number" min="1" step="100" value="' + (Number(f.meta)||0) + '" placeholder="Meta em R$">'
+         +   '<input class="form-input grp-faixa-premio" maxlength="60" value="' + grpEsc(f.premio || '') + '" placeholder="Prêmio (pulseira, placa...)">'
+         +   '<button class="btn-ghost grp-faixa-x" onclick="this.parentNode.remove()" title="Remover">✕</button>'
+         + '</div>';
+  }).join('');
+}
+
+function grpAddFaixa(id){
+  var el = document.getElementById('grp-faixas-' + id);
+  if (!el) return;
+  var div = document.createElement('div');
+  div.className = 'grp-faixa-linha';
+  div.innerHTML = '<input class="form-input grp-faixa-meta" type="number" min="1" step="100" placeholder="Meta em R$">'
+                + '<input class="form-input grp-faixa-premio" maxlength="60" placeholder="Prêmio (pulseira, placa...)">'
+                + '<button class="btn-ghost grp-faixa-x" onclick="this.parentNode.remove()" title="Remover">✕</button>';
+  el.appendChild(div);
+}
+
+async function grpSalvarFaixas(id){
+  var el = document.getElementById('grp-faixas-' + id);
+  if (!el) return;
+  var faixas = [];
+  var vistos = {};
+  var linhas = el.querySelectorAll('.grp-faixa-linha');
+  for (var i = 0; i < linhas.length; i++){
+    var meta = parseFloat(linhas[i].querySelector('.grp-faixa-meta').value);
+    var premio = (linhas[i].querySelector('.grp-faixa-premio').value || '').trim();
+    if (!isFinite(meta) || meta <= 0) continue;
+    if (!premio) premio = 'Prêmio';
+    if (vistos[meta]){ showToast('Tem duas faixas com o mesmo valor (' + grpMoeda(meta) + ').', 'error'); return; }
+    vistos[meta] = 1;
+    faixas.push({ meta: meta, premio: premio });
+  }
+  if (!faixas.length){ showToast('Cadastre pelo menos uma faixa.', 'error'); return; }
+  if (faixas.length > 12){ showToast('Máximo de 12 faixas.', 'error'); return; }
+  var sb = getSb();
+  if (!sb) return;
+  try {
+    var r = await sb.rpc('definir_faixas_grupo', { p_grupo_id: id, p_faixas: faixas });
+    if (r.error) throw r.error;
+    showToast('Faixas salvas! 🏆', 'success');
+    var box = document.getElementById('grp-painel-' + id);
+    if (box){ box.innerHTML = ''; box.dataset.aberto = ''; }
+  } catch(e){ showToast(grpMsgErro(e), 'error'); }
 }
