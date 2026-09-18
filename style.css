@@ -4933,3 +4933,8 @@ html { -webkit-text-size-adjust:100%; text-size-adjust:100%; }
 .grp-voce{display:inline-block;font-size:10px;font-weight:800;letter-spacing:.5px;
   background:var(--accent);color:#fff;border-radius:999px;padding:2px 7px;vertical-align:middle}
 .grp-linha-voce td{background:rgba(247,147,30,.06)}
+/* Selo de prêmio dentro da linha do ranking do grupo */
+.grp-badge-inline{margin-left:8px;font-size:10px;padding:2px 8px}
+/* O pódio dentro do card do grupo não precisa da margem do pódio global */
+.grp-rank-card .rank-podium{margin-top:4px}
+.grp-rank-card .rank-list{margin-top:14px}

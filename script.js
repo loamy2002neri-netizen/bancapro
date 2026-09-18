@@ -10213,7 +10213,7 @@ async function renderRankingGrupos(){
         +   '<div class="grp-rank-card-tag">' + (g.dono ? 'seu grupo' : 'você participa') + '</div>'
         + '</div>'
         + (linhas.length
-            ? grpHtmlRanking(linhas, faixas, g.dono)
+            ? grpHtmlPodio(linhas, faixas, g.dono)
             : '<div class="grp-vazio">Ninguém entrou nesse grupo ainda.</div>')
         + '</div>');
     }
@@ -10247,4 +10247,88 @@ async function grpEntrarPeloAfiliado(){
       + 'Não quer participar? Abra a aba Grupos e toque em Sair.',
       'Você está no ranking do grupo', 'Entendi', false);
   } catch(e){ /* nunca atrapalha a entrada no app */ }
+}
+
+// Ranking do grupo com a MESMA cara do ranking geral: podio de 3 + lista de
+// "demais classificados". Pedido dos afiliados (18/09/26) — eles queriam ver
+// os leads deles no mesmo formato, nao numa tabelinha diferente.
+// Reaproveita os helpers e o CSS do ranking geral (rank-podium, rank-row...).
+function grpHtmlPodio(linhas, faixas, ehDono){
+  var tem = function(f){ return typeof window[f] === 'function'; };
+  // Se por algum motivo os helpers do ranking nao existirem, cai na tabela
+  if (!tem('rankComputeCurrent') || !tem('rankShieldSVG') || !tem('rankFormatValue')){
+    return grpHtmlRanking(linhas, faixas, ehDono);
+  }
+  var meuEmail = '';
+  try { meuEmail = ((currentAuthUser && currentAuthUser.email)
+                    || localStorage.getItem('bancapro-user-email') || '').toLowerCase(); } catch(e){}
+
+  var itens = (linhas || []).map(function(l){
+    return {
+      nome: l.display_name || '—',
+      email: l.email,
+      lucro: Number(l.lucro) || 0,
+      premio: l.premio_atingido,
+      proxima: l.proxima_faixa,
+      souEu: !!(l.email && meuEmail && String(l.email).toLowerCase() === meuEmail)
+    };
+  });
+
+  function iniciais(n){ return tem('rankUserInitials') ? rankUserInitials(n) : String(n||'?').slice(0,2).toUpperCase(); }
+  function medalha(p){ return tem('rankMedalSVG') ? rankMedalSVG(p) : ''; }
+  var rotulos = { 1:'1º LUGAR', 2:'2º LUGAR', 3:'3º LUGAR' };
+
+  var html = '';
+
+  // ── Pódio (só faz sentido com 3 ou mais) ──
+  if (itens.length >= 3){
+    html += '<div class="rank-podium" style="display:grid">';
+    [2,1,3].forEach(function(pos){
+      var u = itens[pos - 1];
+      var t = rankComputeCurrent(u.lucro).current;
+      html += '<div class="rank-podium-slot rank-podium-' + pos + (u.souEu ? ' is-you' : '') + '">'
+           +   '<div class="rank-podium-medal-corner">' + medalha(pos) + '</div>'
+           +   '<div class="rank-podium-avatar">' + grpEsc(iniciais(u.nome)) + '</div>'
+           +   '<div class="rank-podium-rank">' + rotulos[pos] + '</div>'
+           +   '<div class="rank-podium-shield rank-shield">' + rankShieldSVG(t) + '</div>'
+           +   '<div class="rank-podium-name">' + grpEsc(u.nome) + (u.souEu ? ' <b>VOCÊ</b>' : '') + '</div>'
+           +   '<div class="rank-podium-tier-name">' + grpEsc(u.premio || t.name) + '</div>'
+           +   '<div class="rank-podium-profit">' + rankFormatValue(u.lucro) + '</div>'
+           + '</div>';
+    });
+    html += '</div>';
+  }
+
+  // ── Lista dos demais (ou de todos, quando nao ha pódio) ──
+  var resto = itens.length >= 3 ? itens.slice(3) : itens;
+  if (resto.length){
+    html += '<div class="rank-list"><div class="rank-list-head">'
+         +    '<div class="rank-list-title">' + (itens.length >= 3 ? 'Demais classificados' : 'Classificação') + '</div>'
+         +  '</div>';
+    resto.forEach(function(u, i){
+      var posicao = (itens.length >= 3 ? 4 : 1) + i;
+      var t = rankComputeCurrent(u.lucro).current;
+      html += '<div class="rank-row' + (u.souEu ? ' is-you' : '') + '">'
+           +   '<div class="rank-row-pos">#' + posicao + '</div>'
+           +   '<div class="rank-row-avatar">' + grpEsc(iniciais(u.nome)) + '</div>'
+           +   '<div class="rank-row-name">' + grpEsc(u.nome) + (u.souEu ? '<b>VOCÊ</b>' : '')
+           +     (u.premio ? '<span class="grp-badge grp-badge-inline">' + grpEsc(u.premio) + '</span>' : '')
+           +   '</div>'
+           +   '<div class="rank-row-tier"><span class="rank-shield">' + rankShieldSVG(t) + '</span>'
+           +     '<span class="rank-row-tier-name">' + grpEsc(t.name) + '</span></div>'
+           +   '<div class="rank-row-profit">' + rankFormatValue(u.lucro) + '</div>'
+           + '</div>';
+    });
+    html += '</div>';
+  }
+
+  if (faixas && faixas.length){
+    html += '<div class="grp-faixas-resumo"><b>Premiação:</b> ' + faixas.map(function(x){
+      return grpEsc(x.premio) + ' aos ' + grpMoeda(x.meta);
+    }).join(' · ') + '</div>';
+  } else if (ehDono){
+    html += '<div class="grp-faixas-resumo">Você ainda não cadastrou as faixas de premiação. Abra a aba <b>Grupos</b> e clique em <b>Faixas</b>.</div>';
+  }
+  html += '<div class="grp-rodape">Lucro contado a partir do dia em que cada aluno entrou no grupo.</div>';
+  return html;
 }
