@@ -866,8 +866,9 @@ async function renderAdminUsers() {
     if (!data.length) { el.innerHTML = '<div class="empty-state-sub">Nenhum usuário cadastrado ainda.</div>'; return; }
     // guarda a lista completa pra busca filtrar sem ir no banco de novo
     _adminUsuarios = data;
-    adminPreencherPlanos();   // opcoes do filtro saem dos planos que existem de verdade
-    adminAplicarFiltros();    // respeita busca/filtros que ja estavam na tela
+    adminPreencherPlanos();     // opcoes do filtro saem dos planos que existem de verdade
+    adminAtualizarContadores(); // numero dentro de cada chip de status
+    adminAplicarFiltros();      // respeita busca/filtros que ja estavam na tela
   } catch(e) {
     el.innerHTML = '<div class="empty-state-sub">Erro ao carregar usuários.</div>';
   }
@@ -10453,4 +10454,18 @@ function adminLimparBusca(){
   }
   adminAplicarFiltros();
   if (inp) inp.focus();
+}
+
+// Contador dentro de cada chip de status — vira um resumo da base de uma olhada
+function adminAtualizarContadores(){
+  var chips = document.querySelectorAll('#admChipsStatus .adm-chip');
+  if (!chips.length) return;
+  for (var i = 0; i < chips.length; i++){
+    var st = chips[i].getAttribute('data-status') || '';
+    var n = st
+      ? _adminUsuarios.filter(function(u){ return String(u.status || '') === st; }).length
+      : _adminUsuarios.length;
+    var span = chips[i].querySelector('.adm-chip-num');
+    if (span) span.textContent = n;
+  }
 }
