@@ -2274,7 +2274,7 @@ function goTo(section, el) {
   if(section === 'recharge') setTimeout(updateTrialBanner, 50);
   if(section === 'settings') { setTimeout(renderSubscriptionCard, 50); setTimeout(applyAvatar, 50); }
   if(section === 'personalizar') setTimeout(renderCardCustomizer, 50);
-  if(section === 'admin') setTimeout(() => { renderAdminStats(); renderAdminUsers(); renderRankingModeration(); renderAdminErrors(); }, 50);
+  if(section === 'admin') setTimeout(() => { renderAdminStats(); renderAdminUsers(); renderRankingModeration(); renderAdminErrors(); if(typeof mailCarregarHistorico==='function') mailCarregarHistorico(); }, 50);
   // Recalcula banners/avisos do trial pra evitar duplicacao em features Pro
   setTimeout(() => { if (typeof updateAllUpgradeUI === 'function') updateAllUpgradeUI(); }, 30);
   if(section === 'afiliados') setTimeout(() => { renderAffiliatesAdmin(); renderWithdrawalsAdmin(); if (typeof renderAffWithdrawalsAdmin === 'function') renderAffWithdrawalsAdmin(); }, 50);
@@ -10468,4 +10468,97 @@ function adminAtualizarContadores(){
     var span = chips[i].querySelector('.adm-chip-num');
     if (span) span.textContent = n;
   }
+}
+
+// ══════════════════════════════════════════════════════════════
+//  DISPARO DE E-MAIL (painel do dono)
+//  Chama a Edge Function "disparo-email", que envia pelo Resend.
+//  Aqui nao existe chave nenhuma: a credencial vive so no painel do
+//  Supabase. O app so manda assunto, texto e publico.
+// ══════════════════════════════════════════════════════════════
+function mailLerCampos(){
+  var a = (document.getElementById('mailAssunto') || {}).value || '';
+  var m = (document.getElementById('mailCorpo')   || {}).value || '';
+  var p = (document.getElementById('mailPublico') || {}).value || 'todos';
+  return { assunto: a.trim(), mensagem: m.trim(), publico: p };
+}
+
+function mailStatus(txt, erro){
+  var el = document.getElementById('mailStatus');
+  if (!el) return;
+  el.textContent = txt || '';
+  el.style.color = erro ? 'var(--red)' : 'var(--text-muted)';
+}
+
+async function mailChamar(payload){
+  var sb = getSb();
+  if (!sb) { mailStatus('Precisa do banco na nuvem.', true); return null; }
+  try {
+    var r = await sb.functions.invoke('disparo-email', { body: payload });
+    if (r.error) throw r.error;
+    return r.data;
+  } catch(e){
+    var msg = (e && (e.message || e.error)) || 'falhou';
+    if (/segredos|RESEND/i.test(String(msg))) {
+      mailStatus('Faltam as chaves do e-mail no painel do Supabase (RESEND_API_KEY, EMAIL_REMETENTE, EMAIL_SECRET).', true);
+    } else if (/permiss/i.test(String(msg))) {
+      mailStatus('Só a conta dona pode disparar.', true);
+    } else {
+      mailStatus('Não deu certo: ' + msg, true);
+    }
+    return null;
+  }
+}
+
+// Teste primeiro: manda so pra quem esta logado, pra ver como chega
+async function mailEnviarTeste(){
+  var c = mailLerCampos();
+  if (!c.assunto || !c.mensagem){ mailStatus('Preencha assunto e mensagem.', true); return; }
+  mailStatus('Enviando teste…');
+  var r = await mailChamar({ assunto: c.assunto, mensagem: c.mensagem, publico: c.publico, teste: true });
+  if (r) mailStatus('Teste enviado pro seu e-mail. Confira como chegou (inclusive se caiu no spam) antes de disparar pra base.');
+}
+
+async function mailDispararGeral(){
+  var c = mailLerCampos();
+  if (!c.assunto || !c.mensagem){ mailStatus('Preencha assunto e mensagem.', true); return; }
+
+  var quem = c.publico === 'ativos' ? 'todos os assinantes ativos'
+           : c.publico === 'vencendo' ? 'quem vence nos próximos 7 dias'
+           : 'TODOS os usuários cadastrados';
+
+  var ok = await customConfirm(
+    'Vai sair um e-mail para ' + quem + ' com o assunto:\n\n"' + c.assunto + '"\n\n'
+    + 'E-mail enviado não volta atrás. Se ainda não mandou o teste pra você mesmo, cancele e mande primeiro.',
+    'Disparar para a base?', 'Disparar agora', true);
+  if (!ok) return;
+
+  mailStatus('Disparando… não feche a página.');
+  var r = await mailChamar({ assunto: c.assunto, mensagem: c.mensagem, publico: c.publico });
+  if (r){
+    mailStatus('Enviados: ' + r.enviados + (r.falhas ? ' · falhas: ' + r.falhas : '')
+               + (r.aviso ? ' · ' + r.aviso : ''));
+    mailCarregarHistorico();
+  }
+}
+
+async function mailCarregarHistorico(){
+  var el = document.getElementById('mailHistorico');
+  var sb = getSb();
+  if (!el || !sb) return;
+  try {
+    var r = await sb.rpc('meus_disparos_email');
+    var lista = (r && r.data) || [];
+    if (!lista.length){ el.innerHTML = ''; return; }
+    el.innerHTML = '<div class="grp-rodape" style="margin-bottom:6px">Últimos disparos</div>'
+      + '<div class="grp-rank-wrap"><table class="grp-rank"><thead><tr>'
+      + '<th>Quando</th><th>Assunto</th><th>Público</th><th class="grp-num">Enviados</th></tr></thead><tbody>'
+      + lista.map(function(d){
+          return '<tr><td>' + grpData(d.criado_em) + '</td>'
+               + '<td>' + grpEsc(d.assunto) + '</td>'
+               + '<td>' + grpEsc(d.publico) + '</td>'
+               + '<td class="grp-num">' + d.enviados + (d.falhas ? ' <span style="color:var(--red)">(' + d.falhas + ' falhas)</span>' : '') + '</td></tr>';
+        }).join('')
+      + '</tbody></table></div>';
+  } catch(e){ el.innerHTML = ''; }
 }

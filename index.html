@@ -112,8 +112,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
-<link rel="stylesheet" href="style.css?v=269"/>
-<link rel="stylesheet" href="light.css?v=269"/>
+<link rel="stylesheet" href="style.css?v=270"/>
+<link rel="stylesheet" href="light.css?v=270"/>
 </head>
 <body>
 
@@ -1874,6 +1874,36 @@
         </div>
 
         <div class="form-card" style="margin-top:16px">
+          <div class="form-card-title">✉️ Disparo de e-mail</div>
+          <div class="grp-hint">Comunicado para a base. Quem clicou em "não quero mais receber" fica de fora automaticamente.</div>
+
+          <div class="form-group">
+            <label class="form-label">Assunto</label>
+            <input class="form-input" id="mailAssunto" maxlength="120" placeholder="Ex: Novidade no Apostack: ranking do seu grupo">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Mensagem</label>
+            <textarea class="form-input" id="mailCorpo" rows="7" placeholder="Escreva como se estivesse falando com uma pessoa só. Linha em branco separa parágrafo."></textarea>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Para quem</label>
+            <select class="form-input adm-select" id="mailPublico" style="max-width:320px">
+              <option value="todos">Todos os usuários</option>
+              <option value="ativos">Só assinantes ativos</option>
+              <option value="vencendo">Só quem vence nos próximos 7 dias</option>
+            </select>
+          </div>
+
+          <div class="adm-toolbar" style="margin-top:4px">
+            <button class="btn-ghost adm-limpar" onclick="mailEnviarTeste()">Enviar teste pra mim</button>
+            <button class="btn-primary adm-limpar" onclick="mailDispararGeral()">Disparar</button>
+          </div>
+          <div id="mailStatus" class="adm-info"></div>
+
+          <div id="mailHistorico" style="margin-top:14px"></div>
+        </div>
+
+        <div class="form-card" style="margin-top:16px">
           <div class="form-card-title">🐞 Erros recentes</div>
           <div id="adminErrors">
             <div class="empty-state-sub">Carregando…</div>
@@ -2720,9 +2750,9 @@
   </div>
 </div>
 
-<script src="config.js?v=269" defer></script>
-<script src="storage.js?v=269" defer></script>
-<script src="script.js?v=269" defer></script>
+<script src="config.js?v=270" defer></script>
+<script src="storage.js?v=270" defer></script>
+<script src="script.js?v=270" defer></script>
 
 <!-- ════════════════════════════════════════════
      Service Worker — habilita PWA instalavel
