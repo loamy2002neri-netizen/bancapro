@@ -866,7 +866,8 @@ async function renderAdminUsers() {
     if (!data.length) { el.innerHTML = '<div class="empty-state-sub">Nenhum usuário cadastrado ainda.</div>'; return; }
     // guarda a lista completa pra busca filtrar sem ir no banco de novo
     _adminUsuarios = data;
-    adminPintarUsuarios(data);
+    adminPreencherPlanos();   // opcoes do filtro saem dos planos que existem de verdade
+    adminAplicarFiltros();    // respeita busca/filtros que ja estavam na tela
   } catch(e) {
     el.innerHTML = '<div class="empty-state-sub">Erro ao carregar usuários.</div>';
   }
@@ -10351,40 +10352,105 @@ function grpHtmlPodio(linhas, faixas, ehDono){
   return html;
 }
 
-// ─── Busca de usuário no painel Admin ───
-// Filtra a lista que ja esta em memoria: nao vai no banco a cada tecla.
-// Procura por email, celular (com ou sem mascara) e plano.
-function adminBuscarUsuario(){
-  var inp  = document.getElementById('adminBuscaEmail');
-  var info = document.getElementById('adminBuscaInfo');
-  var termo = (inp && inp.value || '').trim().toLowerCase();
-  var total = _adminUsuarios.length;
+// ─── Filtros do painel Admin (status, plano, ordem) ───
+// Tudo roda em cima da lista ja carregada: sem ida ao banco a cada clique.
+var _admStatus = '';
 
-  if (!termo){
-    adminPintarUsuarios(_adminUsuarios);
-    if (info) info.textContent = '';
-    return;
-  }
+function admChipStatus(btn){
+  var chips = document.querySelectorAll('#admChipsStatus .adm-chip');
+  for (var i = 0; i < chips.length; i++) chips[i].classList.remove('is-on');
+  btn.classList.add('is-on');
+  _admStatus = btn.getAttribute('data-status') || '';
+  adminAplicarFiltros();
+}
+
+// Monta o seletor de planos a partir do que existe de verdade na base
+function adminPreencherPlanos(){
+  var sel = document.getElementById('admFiltroPlano');
+  if (!sel) return;
+  var atual = sel.value;
+  var planos = {};
+  _adminUsuarios.forEach(function(u){
+    var p = (u.plan || '').trim();
+    if (p) planos[p] = 1;
+  });
+  var nomes = Object.keys(planos).sort();
+  sel.innerHTML = '<option value="">Todos os planos</option>'
+                + '<option value="__sem__">Sem plano</option>'
+                + nomes.map(function(p){
+                    return '<option value="' + escapeHtml(p) + '">' + escapeHtml(p) + '</option>';
+                  }).join('');
+  if (atual) sel.value = atual;
+}
+
+function _admData(v){ var t = v ? Date.parse(v) : NaN; return isFinite(t) ? t : 0; }
+
+function adminAplicarFiltros(){
+  var inp   = document.getElementById('adminBuscaEmail');
+  var info  = document.getElementById('adminBuscaInfo');
+  var selP  = document.getElementById('admFiltroPlano');
+  var selO  = document.getElementById('admOrdem');
+  var termo = (inp && inp.value || '').trim().toLowerCase();
+  var plano = (selP && selP.value) || '';
+  var ordem = (selO && selO.value) || 'cadastro_desc';
+  var total = _adminUsuarios.length;
   var soDigitos = termo.replace(/\D/g, '');
-  var achados = _adminUsuarios.filter(function(u){
+
+  var lista = _adminUsuarios.filter(function(u){
+    // status
+    if (_admStatus && String(u.status || '') !== _admStatus) return false;
+    // plano
+    var p = (u.plan || '').trim();
+    if (plano === '__sem__' && p) return false;
+    if (plano && plano !== '__sem__' && p !== plano) return false;
+    // termo livre
+    if (!termo) return true;
     var email = String(u.email || '').toLowerCase();
-    var plano = String(u.plan || '').toLowerCase();
     var fone  = String(u.phone || '').replace(/\D/g, '');
     return email.indexOf(termo) >= 0
-        || plano.indexOf(termo) >= 0
+        || p.toLowerCase().indexOf(termo) >= 0
         || (soDigitos.length >= 4 && fone.indexOf(soDigitos) >= 0);
   });
-  adminPintarUsuarios(achados);
+
+  lista = lista.slice().sort(function(a, b){
+    switch (ordem){
+      case 'cadastro_asc':  return _admData(a.created_at) - _admData(b.created_at);
+      case 'acesso_desc':   return _admData(b.last_sign_in_at) - _admData(a.last_sign_in_at);
+      case 'acesso_asc':    return _admData(a.last_sign_in_at) - _admData(b.last_sign_in_at);
+      case 'email_asc':     return String(a.email||'').localeCompare(String(b.email||''));
+      default:              return _admData(b.created_at) - _admData(a.created_at);
+    }
+  });
+
+  adminPintarUsuarios(lista);
+
   if (info){
-    info.textContent = achados.length
-      ? achados.length + ' de ' + total + (achados.length === 1 ? ' usuário encontrado' : ' usuários encontrados')
-      : 'Nenhum resultado para "' + termo + '". Confira se o e-mail está escrito igual ao do cadastro.';
+    var filtrando = termo || plano || _admStatus;
+    if (!filtrando){ info.textContent = ''; }
+    else if (!lista.length){
+      info.textContent = termo
+        ? 'Nenhum resultado para "' + termo + '". Confira se o e-mail está escrito igual ao do cadastro.'
+        : 'Nenhum usuário com esses filtros.';
+    } else {
+      info.textContent = lista.length + ' de ' + total
+        + (lista.length === 1 ? ' usuário' : ' usuários');
+    }
   }
 }
 
+// Mantido: o nome antigo ainda e chamado em alguns lugares
+function adminBuscarUsuario(){ adminAplicarFiltros(); }
+
 function adminLimparBusca(){
-  var inp = document.getElementById('adminBuscaEmail');
-  if (inp) inp.value = '';
-  adminBuscarUsuario();
+  var inp  = document.getElementById('adminBuscaEmail');
+  var selP = document.getElementById('admFiltroPlano');
+  if (inp)  inp.value = '';
+  if (selP) selP.value = '';
+  _admStatus = '';
+  var chips = document.querySelectorAll('#admChipsStatus .adm-chip');
+  for (var i = 0; i < chips.length; i++){
+    chips[i].classList.toggle('is-on', !chips[i].getAttribute('data-status'));
+  }
+  adminAplicarFiltros();
   if (inp) inp.focus();
 }

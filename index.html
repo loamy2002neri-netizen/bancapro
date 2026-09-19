@@ -112,8 +112,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
-<link rel="stylesheet" href="style.css?v=266"/>
-<link rel="stylesheet" href="light.css?v=266"/>
+<link rel="stylesheet" href="style.css?v=267"/>
+<link rel="stylesheet" href="light.css?v=267"/>
 </head>
 <body>
 
@@ -1825,9 +1825,30 @@
           <div class="grp-hint">Digite o e-mail (ou parte dele) para achar alguém na lista abaixo. Também funciona por celular ou plano.</div>
           <div class="grp-row">
             <input class="form-input" id="adminBuscaEmail" type="search" placeholder="Ex: joao@gmail.com" autocomplete="off"
-                   oninput="adminBuscarUsuario()" onkeydown="if(event.key==='Enter')adminBuscarUsuario()">
+                   oninput="adminAplicarFiltros()" onkeydown="if(event.key==='Enter')adminAplicarFiltros()">
             <button class="btn-ghost grp-btn" onclick="adminLimparBusca()">Limpar</button>
           </div>
+
+          <div class="adm-chips" id="admChipsStatus">
+            <button class="adm-chip is-on" data-status="" onclick="admChipStatus(this)">Todos</button>
+            <button class="adm-chip" data-status="active" onclick="admChipStatus(this)">Ativos</button>
+            <button class="adm-chip" data-status="inactive" onclick="admChipStatus(this)">Inativos</button>
+            <button class="adm-chip" data-status="sem assinatura" onclick="admChipStatus(this)">Sem assinatura</button>
+          </div>
+
+          <div class="adm-filtros">
+            <select class="form-input adm-select" id="admFiltroPlano" onchange="adminAplicarFiltros()">
+              <option value="">Todos os planos</option>
+            </select>
+            <select class="form-input adm-select" id="admOrdem" onchange="adminAplicarFiltros()">
+              <option value="cadastro_desc">Cadastro · mais novo</option>
+              <option value="cadastro_asc">Cadastro · mais antigo</option>
+              <option value="acesso_desc">Último acesso · recente</option>
+              <option value="acesso_asc">Último acesso · sumido há mais tempo</option>
+              <option value="email_asc">E-mail · A a Z</option>
+            </select>
+          </div>
+
           <div id="adminBuscaInfo" class="grp-rodape"></div>
         </div>
 
@@ -2699,9 +2720,9 @@
   </div>
 </div>
 
-<script src="config.js?v=266" defer></script>
-<script src="storage.js?v=266" defer></script>
-<script src="script.js?v=266" defer></script>
+<script src="config.js?v=267" defer></script>
+<script src="storage.js?v=267" defer></script>
+<script src="script.js?v=267" defer></script>
 
 <!-- ════════════════════════════════════════════
      Service Worker — habilita PWA instalavel

@@ -4938,3 +4938,13 @@ html { -webkit-text-size-adjust:100%; text-size-adjust:100%; }
 /* O pódio dentro do card do grupo não precisa da margem do pódio global */
 .grp-rank-card .rank-podium{margin-top:4px}
 .grp-rank-card .rank-list{margin-top:14px}
+
+/* Filtros do painel Admin */
+.adm-chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.adm-chip{background:transparent;border:1px solid var(--border);color:var(--text-secondary);
+  border-radius:999px;padding:6px 14px;font-size:12px;font-weight:600;cursor:pointer;transition:.15s}
+.adm-chip:hover{border-color:var(--accent);color:var(--text-primary)}
+.adm-chip.is-on{background:var(--accent);border-color:var(--accent);color:#fff}
+.adm-filtros{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
+.adm-select{flex:1;min-width:190px;max-width:280px}
+@media (max-width:640px){ .adm-select{max-width:none} }
