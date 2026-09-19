@@ -4940,38 +4940,44 @@ html { -webkit-text-size-adjust:100%; text-size-adjust:100%; }
 .grp-rank-card .rank-list{margin-top:14px}
 
 
-/* ═══ Busca e filtros do painel Admin ═══ */
+/* ═══ Busca e filtros do painel Admin ═══
+   Uma linha só: busca + seletores + Limpar + chips de status. Em tela larga
+   tudo ocupa a faixa inteira (nada de buraco no meio do card); quando falta
+   largura, os chips descem primeiro e depois o resto empilha. */
 .adm-toolbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:14px}
 
-.adm-search{position:relative;flex:1 1 280px;min-width:220px;max-width:460px}
+.adm-search{position:relative;flex:1 1 300px;min-width:220px;max-width:560px}
 .adm-search .form-input{padding-left:40px}
-.adm-search .form-input::-webkit-search-cancel-button{filter:invert(.6)}
 .adm-search-ico{position:absolute;left:14px;top:50%;transform:translateY(-50%);
   width:16px;height:16px;color:var(--text-muted);pointer-events:none}
 
-.adm-select{flex:0 1 215px;min-width:180px;width:auto;
+.adm-select{flex:0 1 210px;min-width:175px;width:auto;
   appearance:none;-webkit-appearance:none;cursor:pointer;padding-right:34px;
   background-image:linear-gradient(45deg,transparent 50%,currentColor 50%),
                    linear-gradient(135deg,currentColor 50%,transparent 50%);
   background-position:calc(100% - 17px) center,calc(100% - 12px) center;
   background-size:5px 5px,5px 5px;background-repeat:no-repeat;color:var(--text-primary)}
 
-.adm-limpar{width:auto;margin-left:auto;padding:11px 20px;white-space:nowrap;font-size:13px}
+.adm-limpar{width:auto;padding:11px 20px;white-space:nowrap;font-size:13px}
 
-.adm-chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+/* Chips encostam na direita e esticam pra fechar a linha em telas largas */
+.adm-chips{display:flex;gap:8px;flex-wrap:wrap;margin-left:auto}
 .adm-chip{background:transparent;border:1px solid var(--glass-border);color:var(--text-secondary);
-  border-radius:999px;padding:8px 16px;font-size:13px;font-weight:600;cursor:pointer;
+  border-radius:999px;padding:9px 16px;font-size:13px;font-weight:600;cursor:pointer;
   transition:background .15s,border-color .15s,color .15s;line-height:1}
 .adm-chip:hover{border-color:var(--accent);color:var(--text-primary)}
 .adm-chip.is-on{background:var(--accent);border-color:var(--accent);color:#fff}
-.adm-chip-num{font-weight:700;opacity:.65;margin-left:4px;font-variant-numeric:tabular-nums}
+.adm-chip-num{font-weight:700;opacity:.6;margin-left:5px;font-variant-numeric:tabular-nums}
 .adm-chip.is-on .adm-chip-num{opacity:.85}
 
-.adm-info{margin-top:12px;font-size:12.5px;color:var(--text-muted);min-height:16px}
+/* Sem resultado na busca, a linha some — nao fica sobra branca no card */
+.adm-info{margin-top:12px;font-size:12.5px;color:var(--text-muted)}
+.adm-info:empty{display:none}
 
+@media (max-width:1100px){
+  .adm-chips{margin-left:0;width:100%}
+}
 @media (max-width:760px){
-  .adm-search,.adm-select{flex:1 1 100%;max-width:none}
-  .adm-limpar{margin-left:0;width:100%}
-  .adm-chips{gap:6px}
-  .adm-chip{padding:7px 13px;font-size:12px}
+  .adm-search,.adm-select,.adm-limpar{flex:1 1 100%;max-width:none;width:100%}
+  .adm-chip{padding:8px 13px;font-size:12px}
 }
