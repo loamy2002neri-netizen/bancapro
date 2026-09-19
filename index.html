@@ -112,8 +112,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
-<link rel="stylesheet" href="style.css?v=265"/>
-<link rel="stylesheet" href="light.css?v=265"/>
+<link rel="stylesheet" href="style.css?v=266"/>
+<link rel="stylesheet" href="light.css?v=266"/>
 </head>
 <body>
 
@@ -1821,6 +1821,17 @@
         </div>
 
         <div class="form-card" style="margin-top:16px">
+          <div class="form-card-title">🔎 Buscar usuário</div>
+          <div class="grp-hint">Digite o e-mail (ou parte dele) para achar alguém na lista abaixo. Também funciona por celular ou plano.</div>
+          <div class="grp-row">
+            <input class="form-input" id="adminBuscaEmail" type="search" placeholder="Ex: joao@gmail.com" autocomplete="off"
+                   oninput="adminBuscarUsuario()" onkeydown="if(event.key==='Enter')adminBuscarUsuario()">
+            <button class="btn-ghost grp-btn" onclick="adminLimparBusca()">Limpar</button>
+          </div>
+          <div id="adminBuscaInfo" class="grp-rodape"></div>
+        </div>
+
+        <div class="form-card" style="margin-top:16px">
           <div class="form-card-title">Usuários (<span id="adminUsersCount">—</span>)</div>
           <div id="adminUsers">
             <div class="empty-state-sub">Carregando…</div>
@@ -2688,9 +2699,9 @@
   </div>
 </div>
 
-<script src="config.js?v=265" defer></script>
-<script src="storage.js?v=265" defer></script>
-<script src="script.js?v=265" defer></script>
+<script src="config.js?v=266" defer></script>
+<script src="storage.js?v=266" defer></script>
+<script src="script.js?v=266" defer></script>
 
 <!-- ════════════════════════════════════════════
      Service Worker — habilita PWA instalavel

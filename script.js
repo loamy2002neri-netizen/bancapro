@@ -864,6 +864,26 @@ async function renderAdminUsers() {
     if (error || !data) { el.innerHTML = '<div class="empty-state-sub">Acesso restrito.</div>'; return; }
     if (countEl) countEl.textContent = data.length;
     if (!data.length) { el.innerHTML = '<div class="empty-state-sub">Nenhum usuário cadastrado ainda.</div>'; return; }
+    // guarda a lista completa pra busca filtrar sem ir no banco de novo
+    _adminUsuarios = data;
+    adminPintarUsuarios(data);
+  } catch(e) {
+    el.innerHTML = '<div class="empty-state-sub">Erro ao carregar usuários.</div>';
+  }
+}
+
+// Lista de usuarios em memoria — a busca filtra daqui, sem nova consulta
+var _adminUsuarios = [];
+
+function adminPintarUsuarios(lista){
+  const el = document.getElementById('adminUsers');
+  if (!el) return;
+  if (!lista.length){
+    el.innerHTML = '<div class="empty-state-sub">Nenhum usuário encontrado com esse termo.</div>';
+    return;
+  }
+  {
+    const data = lista;
     const rows = data.map(u => {
       const st = u.status === 'active' ? {c:'var(--green)',t:'Ativo'}
                : (u.status === 'sem assinatura' ? {c:'var(--text-muted)',t:'Sem assinatura'} : {c:'var(--red)',t:'Inativo'});
@@ -898,8 +918,6 @@ async function renderAdminUsers() {
     el.innerHTML = `<div style="overflow-x:auto"><table class="admin-table">
       <thead><tr><th>E-mail</th><th>Celular</th><th>Status</th><th>Plano</th><th>Cadastro</th><th>Último acesso</th><th style="text-align:right">Ações</th></tr></thead>
       <tbody>${rows}</tbody></table></div>`;
-  } catch(e) {
-    el.innerHTML = '<div class="empty-state-sub">Erro ao carregar usuários.</div>';
   }
 }
 
@@ -10331,4 +10349,42 @@ function grpHtmlPodio(linhas, faixas, ehDono){
   }
   html += '<div class="grp-rodape">Lucro contado a partir do dia em que cada aluno entrou no grupo.</div>';
   return html;
+}
+
+// ─── Busca de usuário no painel Admin ───
+// Filtra a lista que ja esta em memoria: nao vai no banco a cada tecla.
+// Procura por email, celular (com ou sem mascara) e plano.
+function adminBuscarUsuario(){
+  var inp  = document.getElementById('adminBuscaEmail');
+  var info = document.getElementById('adminBuscaInfo');
+  var termo = (inp && inp.value || '').trim().toLowerCase();
+  var total = _adminUsuarios.length;
+
+  if (!termo){
+    adminPintarUsuarios(_adminUsuarios);
+    if (info) info.textContent = '';
+    return;
+  }
+  var soDigitos = termo.replace(/\D/g, '');
+  var achados = _adminUsuarios.filter(function(u){
+    var email = String(u.email || '').toLowerCase();
+    var plano = String(u.plan || '').toLowerCase();
+    var fone  = String(u.phone || '').replace(/\D/g, '');
+    return email.indexOf(termo) >= 0
+        || plano.indexOf(termo) >= 0
+        || (soDigitos.length >= 4 && fone.indexOf(soDigitos) >= 0);
+  });
+  adminPintarUsuarios(achados);
+  if (info){
+    info.textContent = achados.length
+      ? achados.length + ' de ' + total + (achados.length === 1 ? ' usuário encontrado' : ' usuários encontrados')
+      : 'Nenhum resultado para "' + termo + '". Confira se o e-mail está escrito igual ao do cadastro.';
+  }
+}
+
+function adminLimparBusca(){
+  var inp = document.getElementById('adminBuscaEmail');
+  if (inp) inp.value = '';
+  adminBuscarUsuario();
+  if (inp) inp.focus();
 }
