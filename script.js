@@ -10594,39 +10594,118 @@ function grpFecharPerfil(){
   if (m) m.classList.remove('open');
 }
 
+
+// Card de perfil do membro dentro do grupo: foto, lucro, faixa e as
+// ultimas transacoes com comprovante. NAO mostra o valor da banca — quanto
+// a pessoa tem guardado nao e assunto do grupo, so o resultado dela.
+var _grpPerfilAtual = { grupo: null, membro: null };
+
 async function grpAbrirPerfil(grupoId, membroId, nome){
   var m    = document.getElementById('grpPerfilModal');
   var body = document.getElementById('grpPerfilCorpo');
   if (!m || !body) return;
-  document.getElementById('grpPerfilNome').textContent = nome || 'Perfil';
+  _grpPerfilAtual = { grupo: grupoId, membro: membroId };
+  document.getElementById('grpPerfilNome').textContent = 'Perfil';
+  var sub = document.getElementById('grpPerfilSub');
+  if (sub) sub.textContent = 'Resultado dentro do grupo';
   body.innerHTML = '<div class="grp-loading">Carregando…</div>';
   m.classList.add('open');
 
   var sb = getSb();
   if (!sb){ body.innerHTML = '<div class="grp-vazio">Disponível só com o banco na nuvem.</div>'; return; }
+
   try {
-    var r = await sb.rpc('transacoes_do_membro', { p_grupo_id: grupoId, p_membro_id: membroId, p_limite: 5 });
-    if (r.error) throw r.error;
-    var txs = r.data || [];
-    if (!txs.length){
-      body.innerHTML = '<div class="grp-vazio">Nenhuma transação registrada desde que entrou no grupo.</div>';
-      return;
+    var rp = await sb.rpc('perfil_do_membro', { p_grupo_id: grupoId, p_membro_id: membroId });
+    if (rp.error) throw rp.error;
+    var p = (rp.data && rp.data[0]) || null;
+    if (!p){ body.innerHTML = '<div class="grp-vazio">Não achei essa pessoa no grupo.</div>'; return; }
+
+    var rt = await sb.rpc('transacoes_do_membro', { p_grupo_id: grupoId, p_membro_id: membroId, p_limite: 5 });
+    var txs = (rt && rt.data) || [];
+
+    var lucro = Number(p.lucro) || 0;
+    var iniciais = (typeof rankUserInitials === 'function')
+      ? rankUserInitials(p.display_name || nome)
+      : String(p.display_name || nome || '?').slice(0, 2).toUpperCase();
+
+    var foto = p.avatar
+      ? '<img src="' + String(p.avatar).replace(/"/g, '&quot;') + '" alt="" class="grp-perfil-foto-img">'
+      : '<span class="grp-perfil-iniciais">' + grpEsc(iniciais) + '</span>';
+
+    var html =
+      '<div class="grp-perfil-topo">'
+      +  '<div class="grp-perfil-foto">' + foto + '</div>'
+      +  '<div class="grp-perfil-ident">'
+      +    '<div class="grp-perfil-nome">' + grpEsc(p.display_name || nome || '—') + '</div>'
+      +    '<div class="grp-desde">no grupo desde ' + grpData(p.entrou_em) + ' · '
+      +      (p.qtd_transacoes || 0) + (Number(p.qtd_transacoes) === 1 ? ' transação' : ' transações') + '</div>'
+      +  '</div>'
+      + '</div>'
+      + '<div class="grp-perfil-lucro ' + (lucro >= 0 ? 'grp-pos-v' : 'grp-neg-v') + '">'
+      +   (lucro >= 0 ? '+' : '−') + grpMoedaExata(lucro)
+      +   '<span class="grp-perfil-lucro-lbl">de lucro no grupo</span>'
+      + '</div>';
+
+    if (p.premio_atingido || p.proxima_faixa){
+      html += '<div class="grp-perfil-faixas">';
+      if (p.premio_atingido){
+        html += '<span class="grp-badge">' + grpEsc(p.premio_atingido) + '</span>'
+             +  '<span class="grp-desde"> conquistado aos ' + grpMoeda(p.faixa_atingida) + '</span>';
+      }
+      if (p.proxima_faixa){
+        html += '<div class="grp-desde" style="margin-top:6px">Faltam '
+             +  grpMoedaExata(Number(p.proxima_faixa) - lucro) + ' para a próxima faixa ('
+             +  grpMoeda(p.proxima_faixa) + ')</div>';
+      } else if (p.premio_atingido){
+        html += '<div class="grp-desde" style="margin-top:6px">Bateu todas as faixas do grupo.</div>';
+      }
+      html += '</div>';
     }
-    body.innerHTML = '<div class="grp-rank-wrap"><table class="grp-rank"><thead><tr>'
-      + '<th>Quando</th><th>O quê</th><th class="grp-num">Valor</th></tr></thead><tbody>'
-      + txs.map(function(t){
-          var entrada = String(t.tipo) === 'income';
-          var v = Number(t.valor) || 0;
-          var oque = grpEsc(t.descricao || t.metodo || (entrada ? 'Entrada' : 'Despesa'));
-          if (t.descricao && t.metodo) oque += '<div class="grp-desde">' + grpEsc(t.metodo) + '</div>';
-          return '<tr><td>' + grpData(t.quando) + '</td>'
-               + '<td>' + oque + '</td>'
-               + '<td class="grp-num ' + (entrada ? 'grp-pos-v' : 'grp-neg-v') + '">'
-               +   (entrada ? '+' : '−') + grpMoedaExata(v) + '</td></tr>';
-        }).join('')
-      + '</tbody></table></div>'
-      + '<div class="grp-rodape">Mostrando as 5 últimas, contadas a partir do dia em que entrou no grupo.</div>';
+
+    if (!txs.length){
+      html += '<div class="grp-vazio">Nenhuma transação registrada desde que entrou no grupo.</div>';
+    } else {
+      html += '<div class="grp-rodape" style="margin:14px 0 4px">Últimas transações</div>'
+           +  '<div class="grp-rank-wrap"><table class="grp-rank"><tbody>'
+           +  txs.map(function(t){
+                var entrada = String(t.tipo) === 'income';
+                var v = Number(t.valor) || 0;
+                var oque = grpEsc(t.descricao || t.metodo || (entrada ? 'Entrada' : 'Despesa'));
+                if (t.descricao && t.metodo) oque += '<div class="grp-desde">' + grpEsc(t.metodo) + '</div>';
+                var botao = t.tem_comprovante
+                  ? '<button class="grp-comprov" onclick="event.stopPropagation();grpVerComprovante(\'' + t.tx_id + '\')" title="Ver comprovante">📎</button>'
+                  : '';
+                return '<tr><td style="white-space:nowrap">' + grpData(t.quando) + '</td>'
+                     + '<td>' + oque + '</td>'
+                     + '<td style="width:34px;text-align:center">' + botao + '</td>'
+                     + '<td class="grp-num ' + (entrada ? 'grp-pos-v' : 'grp-neg-v') + '">'
+                     +   (entrada ? '+' : '−') + grpMoedaExata(v) + '</td></tr>';
+              }).join('')
+           +  '</tbody></table></div>';
+    }
+
+    html += '<div class="grp-rodape">Tudo contado a partir do dia em que entrou no grupo. O saldo da banca não é mostrado.</div>';
+    body.innerHTML = html;
   } catch(e){
     body.innerHTML = '<div class="grp-vazio">' + grpEsc(grpMsgErro(e)) + '</div>';
   }
+}
+
+// A imagem do comprovante so viaja quando alguem clica — uma de cada vez,
+// senao a lista ficaria pesada carregando foto que ninguem pediu.
+async function grpVerComprovante(txId){
+  var sb = getSb();
+  if (!sb || !_grpPerfilAtual.grupo) return;
+  try {
+    showToast('Abrindo comprovante…', 'info');
+    var r = await sb.rpc('comprovante_do_membro', {
+      p_grupo_id: _grpPerfilAtual.grupo,
+      p_membro_id: _grpPerfilAtual.membro,
+      p_tx_id: String(txId)
+    });
+    if (r.error) throw r.error;
+    if (!r.data){ showToast('Essa transação não tem comprovante.', 'info'); return; }
+    if (typeof _openAttachmentFullscreen === 'function') _openAttachmentFullscreen(r.data);
+    else window.open(r.data, '_blank');
+  } catch(e){ showToast(grpMsgErro(e), 'error'); }
 }
