@@ -9878,9 +9878,20 @@ function grpRenderDono(){
 
 function grpData(iso){
   try {
-    var d = new Date(iso);
+    if (!iso) return '—';
+    var s = String(iso);
+    // "2026-09-23" puro: monta a data no fuso LOCAL. Se deixar o new Date()
+    // interpretar, ele assume meia-noite UTC e no Brasil aparece um dia antes.
+    var m = s.match(/^(\d{4})-(\d{2})-(\d{2})/);
+    var d = m ? new Date(+m[1], +m[2] - 1, +m[3]) : new Date(s);
     return d.toLocaleDateString('pt-BR', { day:'2-digit', month:'2-digit', year:'numeric' });
   } catch(e){ return '—'; }
+}
+
+// Dinheiro sempre com os dois centavos — "R$ 840,5" parece erro de sistema
+function grpMoedaExata(v){
+  var n = Number(v) || 0;
+  return 'R$ ' + Math.abs(n).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 }
 
 function grpCopiarCodigo(cod){
@@ -9973,7 +9984,7 @@ async function grpVerRanking(id, ehDono){
     var f = await sb.rpc('faixas_do_grupo', { p_grupo_id: id });
     var faixas = (f && f.data) || [];
 
-    box.innerHTML = grpHtmlRanking(linhas, faixas, ehDono);
+    box.innerHTML = grpHtmlRanking(linhas, faixas, ehDono, id);
   } catch(e){
     box.innerHTML = '<div class="grp-vazio">' + grpEsc(grpMsgErro(e)) + '</div>';
   }
@@ -10124,8 +10135,9 @@ async function grpConviteDoLink(){
   try {
     ok = await customConfirm(
       'Você foi convidado para um ranking de grupo (código ' + cod + ').\n\n'
-      + 'Entrando, o dono do grupo passa a ver seu nome e o lucro que você registrar a partir de hoje. '
-      + 'Ele não vê suas transações, não mexe na sua conta, e você pode sair quando quiser.',
+      + 'Entrando, o dono do grupo e os colegas passam a ver seu nome, seu lucro e suas últimas transações — '
+      + 'tudo a partir de hoje, nada do que você registrou antes.\n\n'
+      + 'Ninguém de fora do grupo enxerga, ninguém mexe na sua conta, e você pode sair quando quiser.',
       'Entrar no grupo?', 'Entrar', false);
   } catch(e){ ok = false; }
 
@@ -10157,7 +10169,7 @@ async function grpCopiarConvite(codigo, nome){
 
 // Monta a tabela do ranking de um grupo. Usada em dois lugares: no painel
 // da aba Grupos (gestao) e dentro da aba Ranking (onde o aluno realmente olha).
-function grpHtmlRanking(linhas, faixas, ehDono){
+function grpHtmlRanking(linhas, faixas, ehDono, grupoId){
   var html = '<div class="grp-rank-wrap"><table class="grp-rank">'
            + '<thead><tr><th>#</th><th>Aluno</th><th class="grp-num">Lucro</th><th>Faixa</th><th>Próxima</th></tr></thead><tbody>';
   var meuEmail = '';
@@ -10175,7 +10187,8 @@ function grpHtmlRanking(linhas, faixas, ehDono){
     var souEu = (l.email && meuEmail && String(l.email).toLowerCase() === meuEmail)
              || (!l.email && meuNome && String(l.display_name || '').toLowerCase() === meuNome);
     if (souEu) quem += ' <span class="grp-voce">VOCÊ</span>';
-    html += '<tr' + (souEu ? ' class="grp-linha-voce"' : '') + '>'
+    html += '<tr class="grp-clicavel' + (souEu ? ' grp-linha-voce' : '') + '"'
+         + grpOnClickPerfil(grupoId, { nome: l.display_name, membro_id: l.membro_id }) + '>'
          +   '<td class="grp-pos">' + medalha + '</td>'
          +   '<td>' + quem + '<div class="grp-desde">desde ' + grpData(l.entrou_em) + '</div></td>'
          +   '<td class="grp-num ' + (lucro >= 0 ? 'grp-pos-v' : 'grp-neg-v') + '">' + grpMoeda(lucro) + '</td>'
@@ -10233,7 +10246,7 @@ async function renderRankingGrupos(){
         +   '<div class="grp-rank-card-tag">' + (g.dono ? 'seu grupo' : 'você participa') + '</div>'
         + '</div>'
         + (linhas.length
-            ? grpHtmlPodio(linhas, faixas, g.dono)
+            ? grpHtmlPodio(linhas, faixas, g.dono, g.id)
             : '<div class="grp-vazio">Ninguém entrou nesse grupo ainda.</div>')
         + '</div>');
     }
@@ -10262,8 +10275,9 @@ async function grpEntrarPeloAfiliado(){
     try { localStorage.setItem(chave, '1'); } catch(e){}
     await customConfirm(
       'Você entrou no ranking do ' + nome + ', da pessoa que te indicou o Apostack.\n\n'
-      + 'O dono do grupo vê seu nome e o lucro que você registrar a partir de hoje. '
-      + 'Ele não vê suas transações nem mexe na sua conta.\n\n'
+      + 'O dono do grupo e os colegas veem seu nome, seu lucro e suas últimas transações — '
+      + 'tudo a partir de hoje, nada do que você registrou antes. Ninguém de fora do grupo enxerga '
+      + 'e ninguém mexe na sua conta.\n\n'
       + 'Não quer participar? Abra a aba Grupos e toque em Sair.',
       'Você está no ranking do grupo', 'Entendi', false);
   } catch(e){ /* nunca atrapalha a entrada no app */ }
@@ -10273,11 +10287,11 @@ async function grpEntrarPeloAfiliado(){
 // "demais classificados". Pedido dos afiliados (18/09/26) — eles queriam ver
 // os leads deles no mesmo formato, nao numa tabelinha diferente.
 // Reaproveita os helpers e o CSS do ranking geral (rank-podium, rank-row...).
-function grpHtmlPodio(linhas, faixas, ehDono){
+function grpHtmlPodio(linhas, faixas, ehDono, grupoId){
   var tem = function(f){ return typeof window[f] === 'function'; };
   // Se por algum motivo os helpers do ranking nao existirem, cai na tabela
   if (!tem('rankComputeCurrent') || !tem('rankShieldSVG') || !tem('rankFormatValue')){
-    return grpHtmlRanking(linhas, faixas, ehDono);
+    return grpHtmlRanking(linhas, faixas, ehDono, grupoId);
   }
   var meuEmail = '';
   try { meuEmail = ((currentAuthUser && currentAuthUser.email)
@@ -10287,6 +10301,7 @@ function grpHtmlPodio(linhas, faixas, ehDono){
     return {
       nome: l.display_name || '—',
       email: l.email,
+      membro_id: l.membro_id,
       lucro: Number(l.lucro) || 0,
       premio: l.premio_atingido,
       proxima: l.proxima_faixa,
@@ -10306,7 +10321,7 @@ function grpHtmlPodio(linhas, faixas, ehDono){
     [2,1,3].forEach(function(pos){
       var u = itens[pos - 1];
       var t = rankComputeCurrent(u.lucro).current;
-      html += '<div class="rank-podium-slot rank-podium-' + pos + (u.souEu ? ' is-you' : '') + '">'
+      html += '<div class="rank-podium-slot rank-podium-' + pos + (u.souEu ? ' is-you' : '') + ' grp-clicavel"' + grpOnClickPerfil(grupoId, u) + '>'
            +   '<div class="rank-podium-medal-corner">' + medalha(pos) + '</div>'
            +   '<div class="rank-podium-avatar">' + grpEsc(iniciais(u.nome)) + '</div>'
            +   '<div class="rank-podium-rank">' + rotulos[pos] + '</div>'
@@ -10328,7 +10343,7 @@ function grpHtmlPodio(linhas, faixas, ehDono){
     resto.forEach(function(u, i){
       var posicao = (itens.length >= 3 ? 4 : 1) + i;
       var t = rankComputeCurrent(u.lucro).current;
-      html += '<div class="rank-row' + (u.souEu ? ' is-you' : '') + '">'
+      html += '<div class="rank-row grp-clicavel' + (u.souEu ? ' is-you' : '') + '"' + grpOnClickPerfil(grupoId, u) + '>'
            +   '<div class="rank-row-pos">#' + posicao + '</div>'
            +   '<div class="rank-row-avatar">' + grpEsc(iniciais(u.nome)) + '</div>'
            +   '<div class="rank-row-name">' + grpEsc(u.nome) + (u.souEu ? '<b>VOCÊ</b>' : '')
@@ -10561,4 +10576,57 @@ async function mailCarregarHistorico(){
         }).join('')
       + '</tbody></table></div>';
   } catch(e){ el.innerHTML = ''; }
+}
+
+// ─── Perfil do membro: últimas transações dentro do grupo ───
+// Só quem é do mesmo grupo consegue abrir (o banco confere de novo).
+// O identificador é um hash do e-mail: um aluno abre o perfil do colega
+// sem nunca receber o e-mail dele.
+function grpOnClickPerfil(grupoId, u){
+  if (!grupoId || !u || !u.membro_id) return '';
+  var nome = String(u.nome || '').replace(/'/g, "\'").replace(/"/g, '&quot;');
+  return ' onclick="grpAbrirPerfil(\'' + grupoId + '\',\'' + u.membro_id + '\',\'' + nome + '\')"'
+       + ' title="Ver últimas transações"';
+}
+
+function grpFecharPerfil(){
+  var m = document.getElementById('grpPerfilModal');
+  if (m) m.classList.remove('open');
+}
+
+async function grpAbrirPerfil(grupoId, membroId, nome){
+  var m    = document.getElementById('grpPerfilModal');
+  var body = document.getElementById('grpPerfilCorpo');
+  if (!m || !body) return;
+  document.getElementById('grpPerfilNome').textContent = nome || 'Perfil';
+  body.innerHTML = '<div class="grp-loading">Carregando…</div>';
+  m.classList.add('open');
+
+  var sb = getSb();
+  if (!sb){ body.innerHTML = '<div class="grp-vazio">Disponível só com o banco na nuvem.</div>'; return; }
+  try {
+    var r = await sb.rpc('transacoes_do_membro', { p_grupo_id: grupoId, p_membro_id: membroId, p_limite: 5 });
+    if (r.error) throw r.error;
+    var txs = r.data || [];
+    if (!txs.length){
+      body.innerHTML = '<div class="grp-vazio">Nenhuma transação registrada desde que entrou no grupo.</div>';
+      return;
+    }
+    body.innerHTML = '<div class="grp-rank-wrap"><table class="grp-rank"><thead><tr>'
+      + '<th>Quando</th><th>O quê</th><th class="grp-num">Valor</th></tr></thead><tbody>'
+      + txs.map(function(t){
+          var entrada = String(t.tipo) === 'income';
+          var v = Number(t.valor) || 0;
+          var oque = grpEsc(t.descricao || t.metodo || (entrada ? 'Entrada' : 'Despesa'));
+          if (t.descricao && t.metodo) oque += '<div class="grp-desde">' + grpEsc(t.metodo) + '</div>';
+          return '<tr><td>' + grpData(t.quando) + '</td>'
+               + '<td>' + oque + '</td>'
+               + '<td class="grp-num ' + (entrada ? 'grp-pos-v' : 'grp-neg-v') + '">'
+               +   (entrada ? '+' : '−') + grpMoedaExata(v) + '</td></tr>';
+        }).join('')
+      + '</tbody></table></div>'
+      + '<div class="grp-rodape">Mostrando as 5 últimas, contadas a partir do dia em que entrou no grupo.</div>';
+  } catch(e){
+    body.innerHTML = '<div class="grp-vazio">' + grpEsc(grpMsgErro(e)) + '</div>';
+  }
 }

@@ -4981,3 +4981,12 @@ html { -webkit-text-size-adjust:100%; text-size-adjust:100%; }
   .adm-search,.adm-select,.adm-limpar{flex:1 1 100%;max-width:none;width:100%}
   .adm-chip{padding:8px 13px;font-size:12px}
 }
+/* Linhas do ranking do grupo abrem o perfil do membro */
+.grp-clicavel{cursor:pointer}
+.grp-clicavel:hover{filter:brightness(1.12)}
+tr.grp-clicavel:hover td{background:rgba(255,255,255,.03)}
+/* Tabela dentro do modal de perfil: sem largura minima, senao o valor
+   fica escondido atras da rolagem lateral */
+#grpPerfilCorpo .grp-rank{min-width:0}
+#grpPerfilCorpo .grp-rank th,#grpPerfilCorpo .grp-rank td{padding:10px 6px}
+#grpPerfilCorpo .grp-rank td:first-child{white-space:nowrap}

@@ -112,8 +112,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
-<link rel="stylesheet" href="style.css?v=270"/>
-<link rel="stylesheet" href="light.css?v=270"/>
+<link rel="stylesheet" href="style.css?v=271"/>
+<link rel="stylesheet" href="light.css?v=271"/>
 </head>
 <body>
 
@@ -505,6 +505,18 @@
 <div class="toast-container" id="toastContainer"></div>
 
 <!-- CUSTOM CONFIRM MODAL -->
+<!-- PERFIL DO MEMBRO NO RANKING DO GRUPO -->
+<div class="modal-overlay" id="grpPerfilModal" onclick="if(event.target===this)grpFecharPerfil()">
+  <div class="modal" style="width:480px;max-width:94vw">
+    <div class="modal-title" id="grpPerfilNome">Perfil</div>
+    <div class="modal-sub" id="grpPerfilSub">Últimas transações desde que entrou no grupo</div>
+    <div id="grpPerfilCorpo"></div>
+    <div class="modal-actions">
+      <button class="btn-ghost" onclick="grpFecharPerfil()">Fechar</button>
+    </div>
+  </div>
+</div>
+
 <div class="modal-overlay" id="confirmModal">
   <div class="modal" style="width:440px">
     <div class="modal-title" id="confirmTitle">Confirmar ação</div>
@@ -2432,7 +2444,7 @@
             <input class="form-input grp-code-input" id="grpCodigoInput" maxlength="6" placeholder="EX: K7P2QX" oninput="this.value=this.value.toUpperCase().replace(/[^A-Z0-9]/g,'')">
             <button class="btn-primary grp-btn" onclick="grpEntrar()">Entrar</button>
           </div>
-          <div class="grp-aviso">Ao entrar, o dono do grupo passa a ver seu nome e o lucro que você registrar <b>a partir de hoje</b>. Ele não vê suas transações nem consegue alterar nada na sua conta — e você pode sair quando quiser.</div>
+          <div class="grp-aviso">Ao entrar, o dono do grupo e os colegas passam a ver seu nome, seu lucro e suas <b>últimas transações</b> — tudo contado <b>a partir de hoje</b>, nada do que você registrou antes. Ninguém de fora do grupo enxerga, ninguém mexe na sua conta, e você pode sair quando quiser.</div>
         </div>
 
         <div id="grpParticipando"></div>
@@ -2750,9 +2762,9 @@
   </div>
 </div>
 
-<script src="config.js?v=270" defer></script>
-<script src="storage.js?v=270" defer></script>
-<script src="script.js?v=270" defer></script>
+<script src="config.js?v=271" defer></script>
+<script src="storage.js?v=271" defer></script>
+<script src="script.js?v=271" defer></script>
 
 <!-- ════════════════════════════════════════════
      Service Worker — habilita PWA instalavel
