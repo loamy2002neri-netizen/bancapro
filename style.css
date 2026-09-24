@@ -4991,18 +4991,89 @@ tr.grp-clicavel:hover td{background:rgba(255,255,255,.03)}
 #grpPerfilCorpo .grp-rank th,#grpPerfilCorpo .grp-rank td{padding:10px 6px}
 #grpPerfilCorpo .grp-rank td:first-child{white-space:nowrap}
 
-/* Card de perfil do membro no grupo */
-.grp-perfil-topo{display:flex;align-items:center;gap:14px;margin-bottom:16px}
-.grp-perfil-foto{width:58px;height:58px;border-radius:50%;flex-shrink:0;overflow:hidden;
-  background:var(--bg-secondary);border:2px solid var(--border);
+
+/* ═══════════════════════════════════════════════════════════════
+   CARD DE PERFIL DO MEMBRO (grupo)
+   Hierarquia: quem é  →  quanto fez  →  onde chegou  →  o que fez.
+   O número do lucro é o herói da tela; o resto sustenta ele.
+   ═══════════════════════════════════════════════════════════════ */
+.gp{ animation:gpEntra .22s ease both }
+@keyframes gpEntra{ from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:none} }
+
+/* ── Cabeçalho ── */
+.gp-hero{position:relative;display:flex;align-items:center;gap:14px;
+  padding:16px 16px 18px;margin:-4px -4px 0;border-radius:14px;overflow:hidden;
+  background:linear-gradient(135deg,rgba(99,102,241,.14),rgba(139,92,246,.07) 55%,transparent);
+  border:1px solid var(--glass-border)}
+.gp-hero::after{content:'';position:absolute;right:-60px;top:-70px;width:190px;height:190px;
+  background:radial-gradient(circle,rgba(139,92,246,.20),transparent 70%);pointer-events:none}
+
+.gp-anel{position:relative;flex-shrink:0;width:72px;height:72px;border-radius:50%;
+  padding:2.5px;background:var(--anel,linear-gradient(135deg,#6366f1,#8b5cf6));
+  box-shadow:0 6px 18px rgba(0,0,0,.45)}
+.gp-avatar{width:100%;height:100%;border-radius:50%;overflow:hidden;background:var(--bg-card);
   display:flex;align-items:center;justify-content:center}
-.grp-perfil-foto-img{width:100%;height:100%;object-fit:cover;display:block}
-.grp-perfil-iniciais{font-weight:800;font-size:19px;color:var(--text-secondary)}
-.grp-perfil-nome{font-weight:800;font-size:17px;color:var(--text-primary);line-height:1.25}
-.grp-perfil-lucro{font-size:26px;font-weight:800;font-variant-numeric:tabular-nums;line-height:1.1}
-.grp-perfil-lucro-lbl{display:block;font-size:11px;font-weight:600;color:var(--text-muted);
-  text-transform:uppercase;letter-spacing:.5px;margin-top:4px}
-.grp-perfil-faixas{margin-top:14px;padding-top:12px;border-top:1px solid var(--border)}
-.grp-comprov{background:transparent;border:0;cursor:pointer;font-size:16px;line-height:1;
-  padding:4px;border-radius:6px;transition:.15s}
-.grp-comprov:hover{background:rgba(255,255,255,.07)}
+.gp-avatar img{width:100%;height:100%;object-fit:cover;display:block}
+.gp-iniciais{font-weight:800;font-size:23px;letter-spacing:.5px;color:var(--text-secondary)}
+
+.gp-ident{min-width:0;position:relative;z-index:1}
+.gp-nome{font-size:19px;font-weight:800;color:var(--text-primary);line-height:1.2;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.gp-chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.gp-chip{font-size:11px;font-weight:600;color:var(--text-secondary);
+  background:rgba(255,255,255,.05);border:1px solid var(--glass-border);
+  border-radius:999px;padding:4px 10px;white-space:nowrap}
+
+/* ── Lucro: o herói ── */
+.gp-lucro-box{margin-top:16px;padding:16px 18px;border-radius:14px;
+  background:var(--bg-secondary);border:1px solid var(--border);position:relative;overflow:hidden}
+.gp-lucro-box::before{content:'';position:absolute;inset:0;opacity:.6;
+  background:radial-gradient(120% 100% at 0% 0%,var(--brilho,rgba(16,185,129,.10)),transparent 60%)}
+.gp-lucro-lbl{position:relative;font-size:10.5px;font-weight:700;letter-spacing:1.1px;
+  text-transform:uppercase;color:var(--text-muted)}
+.gp-lucro{position:relative;font-size:31px;font-weight:800;line-height:1.15;margin-top:4px;
+  font-variant-numeric:tabular-nums;letter-spacing:-.6px}
+
+/* ── Faixa e progresso ── */
+.gp-faixa{margin-top:14px;padding:14px 16px;border-radius:14px;
+  background:var(--bg-secondary);border:1px solid var(--border)}
+.gp-faixa-topo{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.gp-premio{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:800;
+  color:#0b1220;background:linear-gradient(135deg,#fbbf24,#f59e0b);
+  border-radius:999px;padding:5px 12px;box-shadow:0 3px 10px rgba(245,158,11,.28)}
+.gp-prox{font-size:11.5px;color:var(--text-secondary);font-weight:600}
+.gp-rail{height:7px;border-radius:99px;background:rgba(255,255,255,.07);margin-top:11px;overflow:hidden}
+.gp-rail-fill{height:100%;border-radius:99px;
+  background:linear-gradient(90deg,#6366f1,#8b5cf6);transition:width .5s cubic-bezier(.2,.8,.2,1)}
+.gp-falta{margin-top:8px;font-size:11.5px;color:var(--text-muted)}
+
+/* ── Transações ── */
+.gp-sec{margin:18px 0 8px;font-size:10.5px;font-weight:700;letter-spacing:1.1px;
+  text-transform:uppercase;color:var(--text-muted)}
+.gp-tx{display:flex;align-items:center;gap:12px;padding:11px 13px;border-radius:12px;
+  background:var(--bg-secondary);border:1px solid var(--border);margin-bottom:8px;
+  position:relative;overflow:hidden}
+.gp-tx::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--faixa,var(--green))}
+.gp-tx.is-out::before{background:var(--red)}
+.gp-tx-info{flex:1;min-width:0}
+.gp-tx-desc{font-size:13.5px;font-weight:600;color:var(--text-primary);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.gp-tx-meta{display:flex;align-items:center;gap:7px;margin-top:4px}
+.gp-tag{font-size:10px;font-weight:700;color:var(--text-secondary);background:rgba(255,255,255,.05);
+  border-radius:5px;padding:2px 7px;white-space:nowrap}
+.gp-data{font-size:10.5px;color:var(--text-muted);font-variant-numeric:tabular-nums}
+.gp-valor{font-size:14px;font-weight:800;white-space:nowrap;font-variant-numeric:tabular-nums}
+.gp-anexo{flex-shrink:0;display:inline-flex;align-items:center;gap:5px;cursor:pointer;
+  background:rgba(99,102,241,.12);border:1px solid rgba(99,102,241,.3);color:#a5b4fc;
+  border-radius:8px;padding:5px 9px;font-size:10.5px;font-weight:700;transition:.15s}
+.gp-anexo:hover{background:rgba(99,102,241,.22);border-color:rgba(99,102,241,.55);color:#c7d2fe}
+
+.gp-vazio{padding:18px 4px;text-align:center;font-size:13px;color:var(--text-muted)}
+.gp-rodape{margin-top:14px;padding-top:12px;border-top:1px solid var(--border);
+  font-size:11px;line-height:1.5;color:var(--text-muted)}
+
+@media (max-width:520px){
+  .gp-hero{flex-direction:column;align-items:flex-start;text-align:left}
+  .gp-lucro{font-size:27px}
+  .gp-anexo span{display:none}
+}
