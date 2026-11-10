@@ -112,8 +112,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
-<link rel="stylesheet" href="style.css?v=273"/>
-<link rel="stylesheet" href="light.css?v=273"/>
+<link rel="stylesheet" href="style.css?v=274"/>
+<link rel="stylesheet" href="light.css?v=274"/>
 </head>
 <body>
 
@@ -1833,6 +1833,16 @@
         </div>
 
         <div class="form-card" style="margin-top:16px">
+          <div class="form-card-title">🔓 Liberar acesso por e-mail</div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+            <input class="form-input" id="adminLiberarEmail" type="email" placeholder="email@exemplo.com" autocomplete="off" style="flex:1;min-width:200px"
+              onkeydown="if(event.key==='Enter'){event.preventDefault();adminLiberarPorEmail();}"/>
+            <button class="btn-primary" style="width:auto;padding:9px 20px" onclick="adminLiberarPorEmail()">🔓 Liberar →</button>
+          </div>
+          <div style="font-size:12px;color:var(--text-muted);margin-top:6px">Funciona mesmo se a pessoa não aparecer na lista abaixo.</div>
+        </div>
+
+        <div class="form-card" style="margin-top:16px">
           <div class="form-card-title">Buscar usuário</div>
 
           <div class="adm-toolbar">
@@ -2762,9 +2772,9 @@
   </div>
 </div>
 
-<script src="config.js?v=273" defer></script>
-<script src="storage.js?v=273" defer></script>
-<script src="script.js?v=273" defer></script>
+<script src="config.js?v=274" defer></script>
+<script src="storage.js?v=274" defer></script>
+<script src="script.js?v=274" defer></script>
 
 <!-- ════════════════════════════════════════════
      Service Worker — habilita PWA instalavel

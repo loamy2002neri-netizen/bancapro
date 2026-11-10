@@ -1499,6 +1499,15 @@ async function adminDeleteUser(btn) {
   } catch (e) { showToast('Erro ao excluir usuário.', 'error'); }
 }
 
+// Painel do dono: liberar qualquer e-mail digitado (mesmo fora da lista)
+function adminLiberarPorEmail() {
+  const inp = document.getElementById('adminLiberarEmail');
+  const email = ((inp && inp.value) || '').trim().toLowerCase();
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { showToast('Digite um e-mail válido.', 'error'); return; }
+  adminSetStatus({ dataset: { email: email, status: 'active' } });
+  if (inp) inp.value = '';
+}
+
 function closeGrantModal() {
   document.getElementById('grantModal').classList.remove('open');
   _grantEmail = null;
